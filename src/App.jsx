@@ -5,7 +5,7 @@
   // ============ COMPONENTES ============
 
   // Navegación Principal
-  const Nav = ({ vista, cambiarVista, usuarioActivo, cerrarSesion, abrirMenu, menuAbierto, modoOscuro, toggleModoOscuro }) => {
+  const Nav = ({ cambiarVista, usuarioActivo, cerrarSesion, abrirMenu, menuAbierto, modoOscuro, toggleModoOscuro }) => {
     return (
       <nav className="nav">
         <div className="nav-contenedor">
@@ -213,8 +213,6 @@
     // Calcular ángulos para el pie chart (en grados)
     const anguloGras = (porcGras / 100) * 360;
     const anguloCarb = (porcCarb / 100) * 360;
-    const anguloProt = (porcProt / 100) * 360;
-
     // Función para crear path de arco SVG
     const crearArco = (startAngle, endAngle) => {
       const start = polarACartesiano(100, 100, 80, endAngle);
@@ -1090,11 +1088,7 @@
         <section className="hero">
           <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
           <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
-          <button className="btn-primario" onClick={() => document.getElementById('filtro-salud').scrollIntoView({ behavior: 'smooth' })}>
-            ¡Busca tu Tipo de Dieta Aquí!
-          </button>
         </section>
-
         <section className="categorias">
           {categorias.map(cat => (
             <button
@@ -1164,7 +1158,7 @@
   };
 
   // Vista Historial
-  const VistaHistorial = ({ recetas, toggleFav, favoritos }) => {
+  const VistaHistorial = ({ recetas}) => {
     const [periodo, setPeriodo] = useState('hoy');
 
     const historialRecetas = recetas.slice(0, 3);
@@ -1346,10 +1340,20 @@
     const [categoriaActiva, setCategoriaActiva] = useState('todas');
     const [robotActivo, setRobotActivo] = useState(false);
     const [menuAbierto, setMenuAbierto] = useState(false);
-    const [modoOscuro, setModoOscuro] = useState(false);
+    const [modoOscuro, setModoOscuro] = useState(() => {
+      const guardado = localStorage.getItem('modoOscuro');
+      if (guardado !== null) {
+        return guardado === 'true';
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    });
 
     const toggleModoOscuro = () => {
-      setModoOscuro(!modoOscuro);
+      setModoOscuro(prev => {
+        const nuevo = !prev;
+        localStorage.setItem('modoOscuro', nuevo);
+        return nuevo;
+      });
     };
 
     // Datos de ejemplo
@@ -2081,11 +2085,6 @@
       setUsuario(null);
       setVista('inicio');
     };
-
-    useEffect(() => {
-      setMenuAbierto(false);
-    }, [vista]);
-
     return (
       <div className={`app ${modoOscuro ? 'modo-oscuro' : ''}`}>
         <FondoAnimado />
@@ -2101,9 +2100,18 @@
         />
 
         <main className="main">
-          {vista === 'login' && <VistaLogin cambiarVista={setVista} iniciarSesion={iniciarSesion} />}
-          {vista === 'registro' && <VistaRegistro cambiarVista={setVista} />}
-          {vista === 'recuperar' && <VistaRecuperar cambiarVista={setVista} />}
+          {vista === 'login' && <VistaLogin cambiarVista={(nuevaVista) => {
+            setVista(nuevaVista);
+            setMenuAbierto(false);
+          }} iniciarSesion={iniciarSesion} />}
+          {vista === 'registro' && <VistaRegistro cambiarVista={(nuevaVista) => {
+            setVista(nuevaVista);
+            setMenuAbierto(false);
+          }} />}
+          {vista === 'recuperar' && <VistaRecuperar cambiarVista={(nuevaVista) => {
+            setVista(nuevaVista);
+            setMenuAbierto(false);
+          }} />}
           {vista === 'inicio' && (
             <VistaInicio
               recetas={recetas}

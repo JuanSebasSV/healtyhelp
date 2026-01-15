@@ -440,7 +440,7 @@
     margin-bottom: 3rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.6s ease;
-    position: relative; 
+    position: relative;
     overflow: hidden;
     isolation: isolate;
   }
@@ -458,27 +458,27 @@
     background-repeat: no-repeat;
     z-index: 0;
     opacity: 1;
+    filter: brightness(0.5);
   }
 
   .hero h1,
-  .hero p,
-  .hero button {
+  .hero p {
     position: relative;
     z-index: 1;
   }
 
   .hero h1 {
     font-size: 2.5rem;
-    color: #6cee01 !important;
+    color: #ffffff !important;
     margin-bottom: 1.5rem;
     font-family: 'Georgia', serif;
     line-height: 1.3;
-    text-shadow: 8px 8px 8px rgba(0, 0, 0, 1.9);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
   }
 
   .hero p {
     font-size: 1.2rem;
-    color: #ffffff !important;  
+    color: #ffffff !important;
     margin-bottom: 2rem;
     max-width: 800px;
     margin-left: auto;
@@ -723,7 +723,7 @@
   .modo-oscuro .filtro-info p {
     color: #ffffff !important;
   }
-  
+
   .filtro-check {
     position: absolute;
     top: 0.5rem;
@@ -745,6 +745,7 @@
       opacity: 0;
       max-height: 0;
     }
+
     to {
       opacity: 1;
       max-height: 2000px;
@@ -1220,6 +1221,8 @@
     border: 1px solid var(--gris-medio);
     border-radius: 50px;
     font-size: 0.9rem;
+    background: var(--blanco);
+    color: var(--negro);
   }
 
   .robot-input button {
@@ -1276,6 +1279,8 @@
     border-radius: 10px;
     font-size: 1rem;
     transition: var(--transicion);
+    background: var(--blanco);
+    color: var(--negro);
   }
 
   .auth-form input:focus {
@@ -1328,6 +1333,7 @@
     cursor: pointer;
     font-weight: 600;
     transition: var(--transicion);
+    color: var(--gris-oscuro);
   }
 
   .periodo-btns button:hover {
@@ -1368,6 +1374,7 @@
   }
 
   .historial-info {
+    color: var(--negro);
     padding: 1.5rem;
     flex: 1;
   }
@@ -1379,7 +1386,7 @@
   }
 
   .historial-fecha {
-    color: var(--gris-medio);
+    color: var(--negro);
     font-size: 0.9rem;
     margin-bottom: 1rem;
   }
@@ -1502,6 +1509,8 @@
     font-size: 1rem;
     font-family: inherit;
     transition: var(--transicion);
+    background: var(--blanco);
+    color: var(--negro);
   }
 
   .contacto-form input:focus,
@@ -1565,6 +1574,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -1575,6 +1585,7 @@
       opacity: 0;
       transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -1582,535 +1593,540 @@
   }
 
   @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(0);
     }
+
     50% {
       transform: translateY(-10px);
     }
   }
 
-/* ============ FONDO ANIMADO ============ */
-.fondo-animado {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-}
-
-/* Fondo estático con gradiente suave */
-.gradient-mesh {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, 
-    #1a4d2e 0%, 
-    #2d5a3d 50%,
-    #4f772d 100%
-  );
-}
-
-.modo-oscuro .gradient-mesh {
-  background: linear-gradient(135deg,
-    #0f1a14 0%,
-    #1a2820 50%,
-    #2d3d2f 100%
-  );
-}
-
-/* Ondas sinusoidales LÍNEAS (estilo monitor) */
-.onda-linea {
-  position: absolute;
-  width: 100%;
-  height: 200px;
-  left: 0;
-  pointer-events: none;
-}
-
-.onda-linea svg {
-  position: absolute;
-  width: 200%;
-  height: 100%;
-  left: 0;
-}
-
-.onda-linea-1 {
-  top: 20%;
-  animation: ondaScroll1 20s linear infinite;
-}
-
-.onda-linea-2 {
-  top: 50%;
-  animation: ondaScroll2 25s linear infinite;
-}
-
-.onda-linea-3 {
-  top: 75%;
-  animation: ondaScroll3 30s linear infinite;
-}
-
-/* Animaciones solo para las ondas */
-@keyframes ondaScroll1 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes ondaScroll2 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(50%);
-  }
-}
-
-@keyframes ondaScroll3 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-33.33%);
-  }
-}
-
-/* Modo oscuro */
-.modo-oscuro .onda-linea-1 path {
-  stroke: rgba(107, 158, 74, 0.6) !important;
-}
-
-.modo-oscuro .onda-linea-2 path {
-  stroke: rgba(45, 90, 61, 0.5) !important;
-}
-
-.modo-oscuro .onda-linea-3 path {
-  stroke: rgba(255, 154, 60, 0.15) !important;
-}
-
-/* Optimización de rendimiento */
-.onda-linea {
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* ============ MODAL RECETA DOS COLUMNAS ============ */
-.modal-overlay {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.modal-contenedor-receta {
-  display: flex;
-  gap: 2rem;
-  max-width: 1400px;
-  width: 95%;
-  max-height: 85vh;
-  position: relative;
-}
-
-.modal-col {
-  background: var(--blanco);
-  border-radius: 20px;
-  padding: 2rem;
-  overflow-y: auto;
-  box-shadow: var(--sombra-hover);
-}
-
-.modal-col::-webkit-scrollbar {
-  display: none;
-}
-
-.modal-col {
-  scrollbar-width: none;
-}
-
-.modal-izq {
-  flex: 1.2;
-}
-
-.modal-der {
-  flex: 0.8;
-}
-
-.modo-oscuro .modal-col {
-  background: rgba(45, 45, 45, 0.95);
-}
-
-/* ============ PANEL NUTRICIÓN ============ */
-.nutri-panel {
-  background: var(--gris-claro);
-  padding: 1.5rem;
-  border-radius: 15px;
-  text-align: center;
-  position: sticky;
-  top: 0;
-}
-
-.nutri-panel h3 {
-  color: var(--verde-bosque);
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.modo-oscuro .nutri-panel h3 {
-  color: var(--verde-hoja);
-}
-
-/* Gráfico circular */
-.nutri-chart {
-  width: 200px;
-  height: 200px;
-  margin: 1rem auto;
-  display: block;
-}
-
-/* Leyenda del gráfico */
-.nutri-leyenda {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
-}
-
-.nutri-leyenda-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--gris-oscuro);
-}
-
-.nutri-color {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  display: inline-block;
-}
-
-/* Tabla de totales */
-.nutri-tabla-container {
-  margin: 1.5rem 0;
-  overflow-x: auto;
-}
-
-.nutri-tabla {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.nutri-tabla thead {
-  background: var(--verde-bosque);
-  color: var(--blanco);
-}
-
-.modo-oscuro .nutri-tabla thead {
-  background: var(--verde-hoja);
-}
-
-.nutri-tabla th,
-.nutri-tabla td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--gris-medio);
-}
-
-.nutri-tabla th {
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.nutri-tabla td {
-  color: var(--gris-oscuro);
-}
-
-.nutri-tabla tbody tr:hover {
-  background: rgba(79, 119, 45, 0.05);
-}
-
-.modo-oscuro .nutri-tabla tbody tr:hover {
-  background: rgba(111, 158, 74, 0.1);
-}
-
-/* Botón detalle */
-.btn-nutri-detalle {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 1rem;
-  font-size: 0.95rem;
-}
-
-/* ============ MODAL NUTRICIÓN DETALLADA ============ */
-.modal-nutri-detalle {
-  max-width: 1100px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-nutri-amplio {
-  max-width: 1100px !important;
-}
-
-.modal-nutri-detalle h2 {
-  color: var(--verde-bosque);
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-  text-align: center;
-}
-
-.modo-oscuro .modal-nutri-detalle h2 {
-  color: var(--verde-hoja);
-}
-
-/* Secciones del modal detallado */
-.nutri-detalle-seccion {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--gris-medio);
-}
-
-.nutri-detalle-seccion:last-child {
-  border-bottom: none;
-}
-
-.nutri-detalle-seccion h3 {
-  color: var(--verde-hoja);
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--naranja);
-}
-
-.modo-oscuro .nutri-detalle-seccion h3 {
-  color: var(--naranja);
-}
-
-/* Tabla completa de nutrientes */
-.tabla-nutri-completa {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.tabla-nutri-completa thead {
-  background: var(--verde-bosque);
-  color: var(--blanco);
-}
-
-.modo-oscuro .tabla-nutri-completa thead {
-  background: var(--verde-hoja);
-}
-
-.tabla-nutri-completa th,
-.tabla-nutri-completa td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--gris-medio);
-}
-
-.tabla-nutri-completa th {
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-}
-
-.tabla-nutri-completa tbody tr:nth-child(even) {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.modo-oscuro .tabla-nutri-completa tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.tabla-nutri-completa tbody tr:hover {
-  background: rgba(79, 119, 45, 0.08);
-}
-
-.modo-oscuro .tabla-nutri-completa tbody tr:hover {
-  background: rgba(111, 158, 74, 0.15);
-}
-
-/* Grid de vitaminas y minerales */
-.nutri-grid-detalle {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 0.75rem;
-}
-
-.nutri-grid-3col {
-  grid-template-columns: repeat(3, 1fr) !important;
-}
-
-@media (max-width: 1200px) {
-  .nutri-grid-3col {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .nutri-grid-3col {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-.nutri-item-detalle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  background: var(--gris-claro);
-  border-radius: 8px;
-  border-left: 3px solid var(--verde-hoja);
-}
-
-.modo-oscuro .nutri-item-detalle {
-  background: rgba(64, 64, 64, 0.5);
-  border-left-color: var(--naranja);
-}
-
-.nutri-nombre {
-  font-size: 0.85rem;
-  color: var(--gris-oscuro);
-  flex: 1;
-}
-
-.nutri-valor {
-  font-weight: 600;
-  color: var(--verde-bosque);
-  margin: 0 0.5rem;
-}
-
-.modo-oscuro .nutri-valor {
-  color: var(--verde-hoja);
-}
-
-.nutri-dv {
-  font-size: 0.85rem;
-  color: var(--naranja);
-  font-weight: 600;
-  min-width: 45px;
-  text-align: right;
-}
-
-/* Grid simple (azúcares, grasas, etc) */
-.nutri-grid-simple {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.nutri-item-simple {
-  background: var(--gris-claro);
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  border-top: 3px solid var(--naranja);
-}
-
-.modo-oscuro .nutri-item-simple {
-  background: rgba(64, 64, 64, 0.5);
-}
-
-.nutri-item-simple span {
-  display: block;
-  color: var(--gris-oscuro);
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-}
-
-.nutri-item-simple strong {
-  display: block;
-  color: var(--verde-bosque);
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.modo-oscuro .nutri-item-simple strong {
-  color: var(--verde-hoja);
-}
-
-.nutri-dv-inline {
-  display: block;
-  color: var(--naranja);
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 0.25rem;
-}
-
-/* ============ RESPONSIVE PARA NUTRICIÓN ============ */
-@media (max-width: 968px) {
-  .modal-dos-columnas {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem;
+  /* ============ FONDO ANIMADO ============ */
+  .fondo-animado {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
   }
 
-  .modal-scroll {
-    max-height: none;
-    overflow-y: auto;
+  /* Fondo estático con gradiente suave */
+  .gradient-mesh {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+        #1a4d2e 0%,
+        #2d5a3d 50%,
+        #4f772d 100%);
   }
 
-  .modal-receta-ampliado {
+  .modo-oscuro .gradient-mesh {
+    background: linear-gradient(135deg,
+        #0f1a14 0%,
+        #1a2820 50%,
+        #2d3d2f 100%);
+  }
+
+  /* Ondas sinusoidales LÍNEAS (estilo monitor) */
+  .onda-linea {
+    position: absolute;
+    width: 100%;
+    height: 200px;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .onda-linea svg {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    left: 0;
+  }
+
+  .onda-linea-1 {
+    top: 20%;
+    animation: ondaScroll1 20s linear infinite;
+  }
+
+  .onda-linea-2 {
+    top: 50%;
+    animation: ondaScroll2 25s linear infinite;
+  }
+
+  .onda-linea-3 {
+    top: 75%;
+    animation: ondaScroll3 30s linear infinite;
+  }
+
+  /* Animaciones solo para las ondas */
+  @keyframes ondaScroll1 {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes ondaScroll2 {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(50%);
+    }
+  }
+
+  @keyframes ondaScroll3 {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-33.33%);
+    }
+  }
+
+  /* Modo oscuro */
+  .modo-oscuro .onda-linea-1 path {
+    stroke: rgba(107, 158, 74, 0.6) !important;
+  }
+
+  .modo-oscuro .onda-linea-2 path {
+    stroke: rgba(45, 90, 61, 0.5) !important;
+  }
+
+  .modo-oscuro .onda-linea-3 path {
+    stroke: rgba(255, 154, 60, 0.15) !important;
+  }
+
+  /* Optimización de rendimiento */
+  .onda-linea {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* ============ MODAL RECETA DOS COLUMNAS ============ */
+  .modal-overlay {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .modal-contenedor-receta {
+    display: flex;
+    gap: 2rem;
+    max-width: 1400px;
+    width: 95%;
     max-height: 85vh;
+    position: relative;
   }
 
+  .modal-col {
+    background: var(--blanco);
+    border-radius: 20px;
+    padding: 2rem;
+    overflow-y: auto;
+    box-shadow: var(--sombra-hover);
+  }
+
+  .modal-col::-webkit-scrollbar {
+    display: none;
+  }
+
+  .modal-col {
+    scrollbar-width: none;
+  }
+
+  .modal-izq {
+    flex: 1.2;
+  }
+
+  .modal-der {
+    flex: 0.8;
+  }
+
+  .modo-oscuro .modal-col {
+    background: rgba(45, 45, 45, 0.95);
+  }
+
+  /* ============ PANEL NUTRICIÓN ============ */
   .nutri-panel {
-    position: static;
+    background: var(--gris-claro);
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    position: sticky;
+    top: 0;
   }
 
-  .nutri-grid-detalle {
-    grid-template-columns: 1fr;
+  .nutri-panel h3 {
+    color: var(--verde-bosque);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 
-  .nutri-grid-simple {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .modal-receta-ampliado {
-    padding: 1rem;
-    width: 98%;
+  .modo-oscuro .nutri-panel h3 {
+    color: var(--verde-hoja);
   }
 
-  .modal-dos-columnas {
-    gap: 1rem;
-  }
-
+  /* Gráfico circular */
   .nutri-chart {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
+    margin: 1rem auto;
+    display: block;
   }
 
+  /* Leyenda del gráfico */
   .nutri-leyenda {
-    gap: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .nutri-leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--gris-oscuro);
+  }
+
+  .nutri-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  /* Tabla de totales */
+  .nutri-tabla-container {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  .nutri-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .nutri-tabla thead {
+    background: var(--verde-bosque);
+    color: var(--blanco);
+  }
+
+  .modo-oscuro .nutri-tabla thead {
+    background: var(--verde-hoja);
   }
 
   .nutri-tabla th,
   .nutri-tabla td {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-medio);
+  }
+
+  .nutri-tabla th {
+    font-weight: 600;
     font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .nutri-tabla td {
+    color: var(--gris-oscuro);
+  }
+
+  .nutri-tabla tbody tr:hover {
+    background: rgba(79, 119, 45, 0.05);
+  }
+
+  .modo-oscuro .nutri-tabla tbody tr:hover {
+    background: rgba(111, 158, 74, 0.1);
+  }
+
+  /* Botón detalle */
+  .btn-nutri-detalle {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* ============ MODAL NUTRICIÓN DETALLADA ============ */
+  .modal-nutri-detalle {
+    max-width: 1100px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-nutri-amplio {
+    max-width: 1100px !important;
+  }
+
+  .modal-nutri-detalle h2 {
+    color: var(--verde-bosque);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .modo-oscuro .modal-nutri-detalle h2 {
+    color: var(--verde-hoja);
+  }
+
+  /* Secciones del modal detallado */
+  .nutri-detalle-seccion {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--gris-medio);
+  }
+
+  .nutri-detalle-seccion:last-child {
+    border-bottom: none;
+  }
+
+  .nutri-detalle-seccion h3 {
+    color: var(--verde-hoja);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--naranja);
+    display: inline-block;
+  }
+
+  .modo-oscuro .nutri-detalle-seccion h3 {
+    color: var(--naranja);
+  }
+
+  /* Tabla completa de nutrientes */
+  .tabla-nutri-completa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .tabla-nutri-completa thead {
+    background: var(--verde-bosque);
+    color: var(--blanco);
+  }
+
+  .modo-oscuro .tabla-nutri-completa thead {
+    background: var(--verde-hoja);
   }
 
   .tabla-nutri-completa th,
   .tabla-nutri-completa td {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-medio);
   }
 
-  .nutri-grid-simple {
-    grid-template-columns: 1fr;
+  .tabla-nutri-completa th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
   }
-}
+
+  .tabla-nutri-completa tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .modo-oscuro .tabla-nutri-completa tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .tabla-nutri-completa tbody tr:hover {
+    background: rgba(79, 119, 45, 0.08);
+  }
+
+  .modo-oscuro .tabla-nutri-completa tbody tr:hover {
+    background: rgba(111, 158, 74, 0.15);
+  }
+
+  /* Grid de vitaminas y minerales */
+  .nutri-grid-detalle {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .nutri-grid-3col {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  @media (max-width: 1200px) {
+    .nutri-grid-3col {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nutri-grid-3col {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  .nutri-item-detalle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--gris-claro);
+    border-radius: 8px;
+    border-left: 3px solid var(--verde-hoja);
+  }
+
+  .modo-oscuro .nutri-item-detalle {
+    background: rgba(64, 64, 64, 0.5);
+    border-left-color: var(--naranja);
+  }
+
+  .nutri-nombre {
+    font-size: 0.85rem;
+    color: var(--gris-oscuro);
+    flex: 1;
+  }
+
+  .nutri-valor {
+    font-weight: 600;
+    color: var(--verde-bosque);
+    margin: 0 0.5rem;
+  }
+
+  .modo-oscuro .nutri-valor {
+    color: var(--verde-hoja);
+  }
+
+  .nutri-dv {
+    font-size: 0.85rem;
+    color: var(--naranja);
+    font-weight: 600;
+    min-width: 45px;
+    text-align: right;
+  }
+
+  /* Grid simple (azúcares, grasas, etc) */
+  .nutri-grid-simple {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .nutri-item-simple {
+    background: var(--gris-claro);
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    border-top: 3px solid var(--naranja);
+  }
+
+  .modo-oscuro .nutri-item-simple {
+    background: rgba(64, 64, 64, 0.5);
+  }
+
+  .nutri-item-simple span {
+    display: block;
+    color: var(--gris-oscuro);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nutri-item-simple strong {
+    display: block;
+    color: var(--verde-bosque);
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .modo-oscuro .nutri-item-simple strong {
+    color: var(--verde-hoja);
+  }
+
+  .nutri-dv-inline {
+    display: block;
+    color: var(--naranja);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+  }
+
+  /* ============ RESPONSIVE PARA NUTRICIÓN ============ */
+  @media (max-width: 968px) {
+    .modal-dos-columnas {
+      grid-template-columns: 1fr !important;
+      gap: 1.5rem;
+    }
+
+    .modal-scroll {
+      max-height: none;
+      overflow-y: auto;
+    }
+
+    .modal-receta-ampliado {
+      max-height: 85vh;
+    }
+
+    .nutri-panel {
+      position: static;
+    }
+
+    .nutri-grid-detalle {
+      grid-template-columns: 1fr;
+    }
+
+    .nutri-grid-simple {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .modal-receta-ampliado {
+      padding: 1rem;
+      width: 98%;
+    }
+
+    .modal-dos-columnas {
+      gap: 1rem;
+    }
+
+    .nutri-chart {
+      width: 180px;
+      height: 180px;
+    }
+
+    .nutri-leyenda {
+      gap: 1rem;
+    }
+
+    .nutri-tabla th,
+    .nutri-tabla td {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .tabla-nutri-completa th,
+    .tabla-nutri-completa td {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .nutri-grid-simple {
+      grid-template-columns: 1fr;
+    }
+  }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 968px) {
@@ -2182,6 +2198,7 @@
     .modal-img {
       height: 200px;
     }
+
     .modal-contenedor-receta {
       flex-direction: column;
       max-height: none;
