@@ -1,4 +1,4 @@
-Documentación del Proyecto Healthy Help
+Documentación Proyecto Healthy Help
 ARCHIVO 1: App.jsx
 ________________________________________
 IMPORTACIONES INICIALES
