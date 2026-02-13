@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
+import './VistaContacto.css';
 
 const VistaContacto = () => {
   const [datosForm, setDatosForm] = useState({

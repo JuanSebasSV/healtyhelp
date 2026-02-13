@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { validateRegisterForm } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import './Register.css';
 
-const Register = ({ onNavigate }) => {
+const Register = () => {
+  const navigate = useNavigate();
   const { register } = useAuth();
   const [datos, setDatos] = useState({ 
     nombre: '', 
@@ -15,7 +18,7 @@ const Register = ({ onNavigate }) => {
   const [loading, setLoading] = useState(false);
 
   const manejarRegistro = async () => {
-    // 🛡️ Validación frontend
+    // Validación frontend
     const validationErrors = validateRegisterForm(
       datos.nombre,
       datos.email,
@@ -30,7 +33,7 @@ const Register = ({ onNavigate }) => {
 
     setLoading(true);
 
-    // 🔒 Llamada al backend
+    // Llamada al backend
     const result = await register({
       name: datos.nombre,
       email: datos.email,
@@ -39,7 +42,7 @@ const Register = ({ onNavigate }) => {
 
     if (result.success) {
       toast.success('¡Cuenta creada exitosamente! Bienvenido');
-      onNavigate('inicio');
+      navigate('/');
     } else {
       toast.error(result.error || 'Error al crear la cuenta');
       setErrors({ general: result.error });
@@ -60,61 +63,61 @@ const Register = ({ onNavigate }) => {
   };
 
   return (
-    <div className="vista-auth">
-      <div className="auth-card">
+    <div className="vistaAuth">
+      <div className="authCard">
         <h2>Crear Cuenta</h2>
-        <div className="auth-form">
-          <div className="form-group">
+        <div className="authForm">
+          <div className="formGroup">
             <input 
               type="text" 
               placeholder="Nombre completo"
               value={datos.nombre}
               onChange={(e) => handleChange('nombre', e.target.value)}
-              className={errors.nombre ? 'input-error' : ''}
+              className={errors.nombre ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+            {errors.nombre && <span className="errorMessage">{errors.nombre}</span>}
           </div>
           
-          <div className="form-group">
+          <div className="formGroup">
             <input 
               type="email" 
               placeholder="Correo electrónico"
               value={datos.email}
               onChange={(e) => handleChange('email', e.target.value)}
-              className={errors.email ? 'input-error' : ''}
+              className={errors.email ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && <span className="errorMessage">{errors.email}</span>}
           </div>
           
-          <div className="form-group">
+          <div className="formGroup">
             <input 
               type="password" 
               placeholder="Contraseña"
               value={datos.pass}
               onChange={(e) => handleChange('pass', e.target.value)}
-              className={errors.password ? 'input-error' : ''}
+              className={errors.password ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && <span className="errorMessage">{errors.password}</span>}
           </div>
           
-          <div className="form-group">
+          <div className="formGroup">
             <input 
               type="password" 
               placeholder="Confirmar contraseña"
               value={datos.passConf}
               onChange={(e) => handleChange('passConf', e.target.value)}
               onKeyPress={handleKeyPress}
-              className={errors.passwordConf ? 'input-error' : ''}
+              className={errors.passwordConf ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.passwordConf && <span className="error-message">{errors.passwordConf}</span>}
+            {errors.passwordConf && <span className="errorMessage">{errors.passwordConf}</span>}
           </div>
 
           {errors.general && (
-            <div className="error-message" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <div className="errorMessage" style={{ textAlign: 'center', marginBottom: '1rem' }}>
               {errors.general}
             </div>
           )}
@@ -129,9 +132,9 @@ const Register = ({ onNavigate }) => {
         </div>
         <p>
           ¿Ya tienes cuenta?{' '}
-          <span onClick={() => onNavigate('login')} className="link-text">
+          <Link to="/login" className="linkText">
             Inicia sesión
-          </span>
+          </Link>
         </p>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ModalNutricionDetallada from './ModalNutricionDetallada';
+import './NutricionGrafico.css';
 
 const NutricionGrafico = ({ nutri, onModalChange }) => {
   const [verDetalle, setVerDetalle] = useState(false);
@@ -37,11 +38,11 @@ const NutricionGrafico = ({ nutri, onModalChange }) => {
 
   return (
     <>
-      <div className="nutri-panel">
+      <div className="nutriPanel">
         <h3>Nutrición</h3>
         
         {/* Gráfico circular */}
-        <svg viewBox="0 0 200 200" className="nutri-chart">
+        <svg viewBox="0 0 200 200" className="nutriChart">
           {/* Fat - Cyan */}
           <path
             d={crearArco(0, anguloGras)}
@@ -68,24 +69,24 @@ const NutricionGrafico = ({ nutri, onModalChange }) => {
         </svg>
 
         {/* Leyenda del gráfico */}
-        <div className="nutri-leyenda">
-          <div className="nutri-leyenda-item">
-            <span className="nutri-color" style={{backgroundColor: '#06b6d4'}}></span>
+        <div className="nutriLeyenda">
+          <div className="nutriLeyendaItem">
+            <span className="nutriColor" style={{backgroundColor: '#06b6d4'}}></span>
             <span>Grasas {porcGras}%</span>
           </div>
-          <div className="nutri-leyenda-item">
-            <span className="nutri-color" style={{backgroundColor: '#eab308'}}></span>
+          <div className="nutriLeyendaItem">
+            <span className="nutriColor" style={{backgroundColor: '#eab308'}}></span>
             <span>Carbohidratos {porcCarb}%</span>
           </div>
-          <div className="nutri-leyenda-item">
-            <span className="nutri-color" style={{backgroundColor: '#a855f7'}}></span>
+          <div className="nutriLeyendaItem">
+            <span className="nutriColor" style={{backgroundColor: '#a855f7'}}></span>
             <span>Proteínas {porcProt}%</span>
           </div>
         </div>
 
         {/* Tabla de totales vs objetivos */}
-        <div className="nutri-tabla-container">
-          <table className="nutri-tabla">
+        <div className="nutriTablaContainer">
+          <table className="nutriTabla">
             <thead>
               <tr>
                 <th>Nutrientes</th>
@@ -135,7 +136,7 @@ const NutricionGrafico = ({ nutri, onModalChange }) => {
 
         {/* Botón para ver detalles */}
         <button
-          className="btn-primario btn-nutri-detalle"
+          className="btn-primario btnNutriDetalle"
           onClick={() => {
             setVerDetalle(true);
             if (onModalChange) onModalChange(true);

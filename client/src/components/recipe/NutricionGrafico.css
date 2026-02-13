@@ -1,0 +1,128 @@
+/* NutricionGrafico.css */
+
+.nutriPanel {
+  background: var(--gris-claro);
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+}
+
+.modo-oscuro .nutriPanel {
+  background: rgba(64, 64, 64, 0.5);
+}
+
+.nutriPanel h3 {
+  color: var(--verde-bosque);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modo-oscuro .nutriPanel h3 {
+  color: var(--verde-hoja);
+}
+
+.nutriChart {
+  width: 200px;
+  height: 200px;
+  margin: 1rem auto;
+  display: block;
+}
+
+.nutriLeyenda {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.nutriLeyendaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--gris-oscuro);
+}
+
+.nutriColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.nutriTablaContainer {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.nutriTabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.nutriTabla thead {
+  background: var(--verde-bosque);
+  color: var(--blanco);
+}
+
+.modo-oscuro .nutriTabla thead {
+  background: var(--verde-hoja);
+}
+
+.nutriTabla th,
+.nutriTabla td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gris-medio);
+}
+
+.nutriTabla th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nutriTabla td {
+  color: var(--gris-oscuro);
+}
+
+.nutriTabla tbody tr:hover {
+  background: rgba(79, 119, 45, 0.05);
+}
+
+.modo-oscuro .nutriTabla tbody tr:hover {
+  background: rgba(111, 158, 74, 0.1);
+}
+
+.btnNutriDetalle {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 968px) {
+  .nutriPanel {
+    position: static;
+  }
+
+  .nutriChart {
+    width: 180px;
+    height: 180px;
+  }
+
+  .nutriLeyenda {
+    gap: 1rem;
+  }
+
+  .nutriTabla th,
+  .nutriTabla td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}

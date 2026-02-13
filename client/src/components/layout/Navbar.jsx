@@ -1,37 +1,44 @@
 import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import './Navbar.css';
 
-const Navbar = ({ onNavigate, vistaActual, modoOscuro, toggleModoOscuro }) => {
-  const { user, logout, isAdmin } = useAuth(); // 🔒 Usar hook seguro
+const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
+  const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [menuAbierto, setMenuAbierto] = useState(false);
 
-  const handleNavigate = (vista) => {
-    onNavigate(vista);
+  const handleNavigate = (ruta) => {
+    navigate(ruta);
     setMenuAbierto(false);
   };
 
   const handleCerrarSesion = () => {
-    logout(); // 🔒 Logout seguro que limpia token
+    logout();
     setMenuAbierto(false);
-    onNavigate('inicio');
+    navigate('/');
   };
+
+  // Determinar ruta actual para marcar item activo
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="nav">
-      <div className="nav-contenedor">
-        <div className="nav-logo" onClick={() => handleNavigate('inicio')}>
-          <div className="logo-icono">
+      <div className="navContenedor">
+        <div className="navLogo" onClick={() => handleNavigate('/')}>
+          <div className="logoIcono">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 21h10" />
               <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z" />
               <path d="M11.38 12a2.4 2.4 0 0 1-.4-4.77 2.4 2.4 0 0 1 3.2-2.77 2.4 2.4 0 0 1 3.47-.63 2.4 2.4 0 0 1 3.37 3.37 2.4 2.4 0 0 1-1.1 3.7 2.51 2.51 0 0 1 .03 1.1" />
             </svg>
           </div>
-          <span className="logo-texto">Healthy Help</span>
+          <span className="logoTexto">Healthy Help</span>
         </div>
         
         <button 
-          className="nav-hamburguesa" 
+          className="navHamburguesa" 
           onClick={() => setMenuAbierto(!menuAbierto)}
           aria-label="Menú"
         >
@@ -40,37 +47,43 @@ const Navbar = ({ onNavigate, vistaActual, modoOscuro, toggleModoOscuro }) => {
           <span></span>
         </button>
 
-        <ul className={`nav-menu ${menuAbierto ? 'activo' : ''}`}>
+        <ul className={`navMenu ${menuAbierto ? 'activo' : ''}`}>
           <li 
-            onClick={() => handleNavigate('inicio')}
-            className={vistaActual === 'inicio' ? 'activo' : ''}
+            onClick={() => handleNavigate('/')}
+            className={isActive('/') ? 'activo' : ''}
           >
             Inicio
           </li>
+          
+          {user && (
+            <>
+              <li 
+                onClick={() => handleNavigate('/historial')}
+                className={isActive('/historial') ? 'activo' : ''}
+              >
+                Historial
+              </li>
+              <li 
+                onClick={() => handleNavigate('/favoritos')}
+                className={isActive('/favoritos') ? 'activo' : ''}
+              >
+                Favoritos
+              </li>
+            </>
+          )}
+          
           <li 
-            onClick={() => handleNavigate('historial')}
-            className={vistaActual === 'historial' ? 'activo' : ''}
-          >
-            Historial
-          </li>
-          <li 
-            onClick={() => handleNavigate('favoritos')}
-            className={vistaActual === 'favoritos' ? 'activo' : ''}
-          >
-            Favoritos
-          </li>
-          <li 
-            onClick={() => handleNavigate('contacto')}
-            className={vistaActual === 'contacto' ? 'activo' : ''}
+            onClick={() => handleNavigate('/contacto')}
+            className={isActive('/contacto') ? 'activo' : ''}
           >
             Contáctanos
           </li>
 
-          {/* 🔒 Mostrar panel admin solo si es admin */}
-          {user && isAdmin() && (
+          {/* Mostrar panel admin solo si es admin */}
+          {user && isAdmin && isAdmin() && (
             <li 
-              onClick={() => handleNavigate('admin')}
-              className={vistaActual === 'admin' ? 'activo' : ''}
+              onClick={() => handleNavigate('/admin')}
+              className={isActive('/admin') ? 'activo' : ''}
               style={{ 
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 borderRadius: '4px',
@@ -83,7 +96,7 @@ const Navbar = ({ onNavigate, vistaActual, modoOscuro, toggleModoOscuro }) => {
 
           <li>
             <button 
-              className="btn-tema" 
+              className="btnTema" 
               onClick={toggleModoOscuro} 
               title={modoOscuro ? 'Modo Claro' : 'Modo Oscuro'}
               aria-label={modoOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
@@ -110,8 +123,8 @@ const Navbar = ({ onNavigate, vistaActual, modoOscuro, toggleModoOscuro }) => {
 
           {user ? (
             <>
-              <li className="nav-usuario">
-                <span className="usuario-nombre">
+              <li className="navUsuario">
+                <span className="usuarioNombre">
                   👤 {user.name}
                 </span>
                 {user.role === 'admin' && (
@@ -135,7 +148,7 @@ const Navbar = ({ onNavigate, vistaActual, modoOscuro, toggleModoOscuro }) => {
             </>
           ) : (
             <li>
-              <button className="btn-primario" onClick={() => handleNavigate('login')}>
+              <button className="btn-primario" onClick={() => handleNavigate('/login')}>
                 Inicio de sesión
               </button>
             </li>

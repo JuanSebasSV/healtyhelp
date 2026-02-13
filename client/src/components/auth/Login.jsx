@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { validateLoginForm } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import './Login.css';
 
-const Login = ({ onNavigate }) => {
+const Login = () => {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
@@ -11,7 +14,7 @@ const Login = ({ onNavigate }) => {
   const [loading, setLoading] = useState(false);
 
   const manejarSubmit = async () => {
-    // 🛡️ Validación frontend
+    // Validación frontend
     const validationErrors = validateLoginForm(email, pass);
     
     if (Object.keys(validationErrors).length > 0) {
@@ -21,12 +24,12 @@ const Login = ({ onNavigate }) => {
 
     setLoading(true);
 
-    // 🔒 Llamada al backend
+    // Llamada al backend
     const result = await login({ email, password: pass });
 
     if (result.success) {
       toast.success('¡Bienvenido!');
-      onNavigate('inicio');
+      navigate('/');
     } else {
       toast.error(result.error || 'Error al iniciar sesión');
       setErrors({ general: result.error });
@@ -35,7 +38,7 @@ const Login = ({ onNavigate }) => {
     setLoading(false);
   };
 
-  // 🔒 Login con Google
+  // Login con Google
   const handleGoogleLogin = () => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     window.location.href = `${apiUrl}/auth/google`;
@@ -48,11 +51,11 @@ const Login = ({ onNavigate }) => {
   };
 
   return (
-    <div className="vista-auth">
-      <div className="auth-card">
+    <div className="vistaAuth">
+      <div className="authCard">
         <h2>Iniciar Sesión</h2>
-        <div className="auth-form">
-          <div className="form-group">
+        <div className="authForm">
+          <div className="formGroup">
             <input
               type="email"
               placeholder="Correo electrónico"
@@ -61,13 +64,13 @@ const Login = ({ onNavigate }) => {
                 setEmail(e.target.value);
                 setErrors({ ...errors, email: '' });
               }}
-              className={errors.email ? 'input-error' : ''}
+              className={errors.email ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && <span className="errorMessage">{errors.email}</span>}
           </div>
           
-          <div className="form-group">
+          <div className="formGroup">
             <input
               type="password"
               placeholder="Contraseña"
@@ -77,14 +80,14 @@ const Login = ({ onNavigate }) => {
                 setErrors({ ...errors, password: '' });
               }}
               onKeyPress={handleKeyPress}
-              className={errors.password ? 'input-error' : ''}
+              className={errors.password ? 'inputError' : ''}
               disabled={loading}
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && <span className="errorMessage">{errors.password}</span>}
           </div>
 
           {errors.general && (
-            <div className="error-message" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <div className="errorMessage" style={{ textAlign: 'center', marginBottom: '1rem' }}>
               {errors.general}
             </div>
           )}
@@ -97,26 +100,12 @@ const Login = ({ onNavigate }) => {
             {loading ? 'Cargando...' : 'Entrar'}
           </button>
 
-          {/* 🔒 Botón de Google OAuth */}
+          {/* Botón de Google OAuth */}
           <button 
             type="button"
             onClick={handleGoogleLogin}
-            className="btn-google"
+            className="btnGoogle"
             disabled={loading}
-            style={{
-              marginTop: '1rem',
-              background: '#db4437',
-              color: 'white',
-              border: 'none',
-              padding: '0.75rem',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem'
-            }}
           >
             <svg width="18" height="18" viewBox="0 0 18 18">
               <path fill="currentColor" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
@@ -129,14 +118,14 @@ const Login = ({ onNavigate }) => {
         </div>
         <p>
           ¿No tienes cuenta?{' '}
-          <span onClick={() => onNavigate('registro')} className="link-text">
+          <Link to="/registro" className="linkText">
             Regístrate
-          </span>
+          </Link>
         </p>
         <p>
-          <span onClick={() => onNavigate('recuperar')} className="link-text">
+          <Link to="/recuperar" className="linkText">
             ¿Olvidaste tu contraseña?
-          </span>
+          </Link>
         </p>
       </div>
     </div>

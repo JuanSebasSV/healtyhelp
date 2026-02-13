@@ -1,0 +1,454 @@
+/* VistaInicio.css */
+
+.vistaInicio {
+  animation: fadeIn 0.6s ease;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  margin-bottom: 3rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 1;
+  filter: brightness(0.5);
+}
+
+.modo-oscuro .hero {
+  background: rgba(20, 20, 20, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.modo-oscuro .hero::before {
+  filter: brightness(0.5) contrast(1.1);
+}
+
+.hero h1,
+.hero p {
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #ffffff !important;
+  margin-bottom: 1.5rem;
+  font-family: 'Georgia', serif;
+  line-height: 1.3;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.modo-oscuro .hero h1 {
+  color: #ff9a3c !important;
+  text-shadow: none;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #ffffff !important;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.categorias {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.catBtn {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid transparent;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  box-shadow: var(--sombra);
+}
+
+.catBtn:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-hover);
+}
+
+.catBtn.activo {
+  background: var(--naranja);
+  color: var(--blanco);
+  border-color: var(--naranja);
+}
+
+.modo-oscuro .catBtn {
+  background: rgba(64, 64, 64, 0.9);
+  border-color: #505050;
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .catBtn:hover {
+  border-color: var(--verde-hoja);
+}
+
+.modo-oscuro .catBtn.activo {
+  background: var(--naranja);
+  color: var(--blanco);
+  border-color: var(--naranja);
+}
+
+.catIcono {
+  font-size: 2rem;
+}
+
+.catIcono svg {
+  stroke: var(--verde-bosque);
+  transition: var(--transicion);
+}
+
+.catBtn.activo .catIcono svg {
+  stroke: var(--blanco);
+}
+
+.modo-oscuro .catIcono svg {
+  stroke: var(--verde-hoja);
+}
+
+.modo-oscuro .catBtn.activo .catIcono svg {
+  stroke: var(--blanco);
+}
+
+.catBtn span:not(.catIcono) {
+  color: var(--verde-bosque);
+}
+
+.catBtn.activo span:not(.catIcono) {
+  color: var(--blanco);
+}
+
+.modo-oscuro .catBtn span:not(.catIcono) {
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .catBtn.activo span:not(.catIcono) {
+  color: var(--blanco);
+}
+
+.filtroSalud {
+  background: rgba(255, 255, 255, 0.07);
+  padding: 0;
+  border-radius: 20px;
+  margin-bottom: 3rem;
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.modo-oscuro .filtroSalud {
+  background: rgba(45, 45, 45, 0.95);
+  color: var(--gris-oscuro);
+}
+
+.filtroHeader {
+  padding: 2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: var(--transicion);
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  position: relative;
+}
+
+.filtroHeader:hover {
+  background: linear-gradient(135deg, var(--verde-hoja), var(--verde-bosque));
+}
+
+.modo-oscuro .filtroHeader {
+  background: linear-gradient(135deg, #1a2820, #2d5a3d);
+}
+
+.filtroHeader h2 {
+  color: var(--blanco);
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.filtroToggle {
+  position: absolute;
+  right: 2rem;
+  font-size: 1.5rem;
+  color: var(--blanco);
+  transition: var(--transicion);
+}
+
+.filtroContenido {
+  padding: 2rem;
+  animation: slideDown 0.3s ease;
+}
+
+.filtroInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filtroInfo p {
+  color: var(--blanco);
+  margin: 0;
+  flex: 1;
+  min-width: 250px;
+}
+
+.modo-oscuro .filtroInfo p {
+  color: #ffffff !important;
+}
+
+.btnLimpiar {
+  padding: 0.75rem 1.5rem;
+  background: var(--naranja);
+  color: var(--blanco);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transicion);
+  white-space: nowrap;
+}
+
+.btnLimpiar:hover {
+  background: #d66e00;
+  transform: translateY(-2px);
+}
+
+.filtroGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.filtroCard {
+  position: relative;
+  padding: 1.25rem;
+  background: var(--gris-claro);
+  border: 3px solid var(--gris-medio);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: var(--transicion);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  min-height: 100px;
+}
+
+.filtroCard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra);
+  border-color: var(--verde-hoja);
+}
+
+.filtroCard.activo {
+  background: var(--verde-bosque);
+  border-color: var(--verde-bosque);
+  color: var(--blanco);
+}
+
+.modo-oscuro .filtroCard {
+  background: rgba(64, 64, 64, 0.9);
+  border-color: #505050;
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .filtroCard:hover {
+  border-color: var(--verde-hoja);
+}
+
+.modo-oscuro .filtroCard.activo {
+  background: var(--verde-hoja);
+  border-color: var(--verde-hoja);
+  color: var(--blanco);
+}
+
+.filtroIcono {
+  font-size: 2rem;
+}
+
+.filtroIcono svg {
+  stroke: var(--verde-bosque);
+  fill: none;
+  stroke-width: 2;
+}
+
+.filtroCard.activo .filtroIcono svg {
+  stroke: var(--blanco);
+}
+
+.modo-oscuro .filtroIcono svg {
+  stroke: var(--verde-hoja);
+}
+
+.modo-oscuro .filtroCard.activo .filtroIcono svg {
+  stroke: var(--blanco);
+}
+
+.filtroNombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.filtroCard .filtroNombre {
+  color: var(--verde-bosque);
+}
+
+.filtroCard.activo .filtroNombre {
+  color: var(--blanco);
+}
+
+.modo-oscuro .filtroCard .filtroNombre {
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .filtroCard.activo .filtroNombre {
+  color: var(--blanco);
+}
+
+.filtroCheck {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--naranja);
+  color: var(--blanco);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.recetasGrid {
+  animation: fadeIn 0.6s ease;
+}
+
+.recetasGrid h2 {
+  text-align: center;
+  color: var(--blanco);
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-family: 'Georgia', serif;
+}
+
+.modo-oscuro .recetasGrid h2 {
+  color: var(--gris-oscuro);
+}
+
+.sinResultados {
+  text-align: center;
+  color: var(--blanco);
+  font-size: 1.2rem;
+  padding: 3rem;
+}
+
+@media (max-width: 968px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .categorias {
+    gap: 0.75rem;
+  }
+
+  .catBtn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .filtroGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .filtroCard {
+    padding: 1rem;
+    min-height: 90px;
+  }
+
+  .filtroIcono {
+    font-size: 1.5rem;
+  }
+
+  .filtroNombre {
+    font-size: 0.85rem;
+  }
+
+  .filtroHeader h2 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .filtroGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .filtroCard {
+    padding: 0.75rem;
+    min-height: 80px;
+  }
+
+  .filtroInfo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtroInfo p {
+    min-width: 100%;
+  }
+
+  .btnLimpiar {
+    width: 100%;
+  }
+
+  .filtroHeader {
+    padding: 1.5rem;
+  }
+
+  .filtroHeader h2 {
+    font-size: 1.2rem;
+  }
+}

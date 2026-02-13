@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { isValidEmail } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import './ForgotPassword.css';
 
-const ForgotPassword = ({ onNavigate }) => {
+const ForgotPassword = () => {
+  const navigate = useNavigate();
   const { forgotPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -11,7 +14,7 @@ const ForgotPassword = ({ onNavigate }) => {
   const [loading, setLoading] = useState(false);
 
   const manejarRecuperar = async () => {
-    // 🛡️ Validación frontend
+    // Validación frontend
     if (!email) {
       setError('El correo es requerido');
       return;
@@ -24,7 +27,7 @@ const ForgotPassword = ({ onNavigate }) => {
 
     setLoading(true);
 
-    // 🔒 Llamada al backend
+    // Llamada al backend
     const result = await forgotPassword(email);
 
     if (result.success) {
@@ -33,7 +36,7 @@ const ForgotPassword = ({ onNavigate }) => {
       
       // Opcional: redirigir después de 3 segundos
       setTimeout(() => {
-        onNavigate('login');
+        navigate('/login');
       }, 3000);
     } else {
       toast.error(result.error || 'Error al enviar el correo');
@@ -50,16 +53,16 @@ const ForgotPassword = ({ onNavigate }) => {
   };
 
   return (
-    <div className="vista-auth">
-      <div className="auth-card">
+    <div className="vistaAuth">
+      <div className="authCard">
         <h2>Recuperar Contraseña</h2>
         {!enviado ? (
           <>
-            <p className="auth-description">
+            <p className="authDescription">
               Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
             </p>
-            <div className="auth-form">
-              <div className="form-group">
+            <div className="authForm">
+              <div className="formGroup">
                 <input 
                   type="email" 
                   placeholder="Correo electrónico"
@@ -69,10 +72,10 @@ const ForgotPassword = ({ onNavigate }) => {
                     setError('');
                   }}
                   onKeyPress={handleKeyPress}
-                  className={error ? 'input-error' : ''}
+                  className={error ? 'inputError' : ''}
                   disabled={loading}
                 />
-                {error && <span className="error-message">{error}</span>}
+                {error && <span className="errorMessage">{error}</span>}
               </div>
               <button 
                 onClick={manejarRecuperar} 
@@ -83,13 +86,13 @@ const ForgotPassword = ({ onNavigate }) => {
               </button>
             </div>
             <p>
-              <span onClick={() => onNavigate('login')} className="link-text">
+              <Link to="/login" className="linkText">
                 Volver al inicio de sesión
-              </span>
+              </Link>
             </p>
           </>
         ) : (
-          <div className="success-message">
+          <div className="successMessage">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
               <polyline points="22 4 12 14.01 9 11.01"/>
@@ -109,4 +112,3 @@ const ForgotPassword = ({ onNavigate }) => {
 };
 
 export default ForgotPassword;
-export { validateEmail as isValidEmail };

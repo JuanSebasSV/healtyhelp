@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './VistaHistorial.css';
 
 // 🔒 TODO: Conectar con backend para obtener historial real del usuario
 const VistaHistorial = ({ recetas }) => {

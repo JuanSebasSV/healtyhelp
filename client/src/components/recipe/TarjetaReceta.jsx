@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import DetalleReceta from './DetalleReceta';
+import './TarjetaReceta.css';
 
 const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
   const [verDetalle, setVerDetalle] = useState(false);
 
   return (
     <>
-      <div className="tarjeta-receta" onClick={() => setVerDetalle(true)}>
-        <div className="tarjeta-img">
+      <div className="tarjetaReceta" onClick={() => setVerDetalle(true)}>
+        <div className="tarjetaImg">
           <img src={receta.img} alt={receta.nombre} />
           <button
-            className={`btn-fav ${esFav ? 'activo' : ''}`}
+            className={`btnFav ${esFav ? 'activo' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               toggleFav(receta.id);
@@ -21,10 +22,10 @@ const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
             </svg>
           </button>
         </div>
-        <div className="tarjeta-info">
+        <div className="tarjetaInfo">
           <h3>{receta.nombre}</h3>
           <p>{receta.desc}</p>
-          <div className="tarjeta-puntuacion">
+          <div className="tarjetaPuntuacion">
             ⭐ {receta.puntos}/5
           </div>
         </div>

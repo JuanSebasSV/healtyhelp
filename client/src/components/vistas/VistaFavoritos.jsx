@@ -1,5 +1,6 @@
 import React from 'react';
 import TarjetaReceta from '../recipe/TarjetaReceta';
+import './VistaFavoritos.css';
 
 // 🔒 TODO: Guardar favoritos en el backend asociados al usuario
 const VistaFavoritos = ({ recetas, toggleFav, favoritos }) => {

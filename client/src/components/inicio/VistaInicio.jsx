@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TarjetaReceta from '../recipe/TarjetaReceta';
+import './VistaInicio.css';
 
 const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
@@ -81,7 +82,7 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
   });
 
   return (
-    <div className="vista-inicio">
+    <div className="vistaInicio">
       <section className="hero">
         <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
         <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
@@ -91,42 +92,42 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
         {categorias.map(cat => (
           <button
             key={cat.id}
-            className={`cat-btn ${categoriaActiva === cat.id ? 'activo' : ''}`}
+            className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
             onClick={() => cambiarCategoria(cat.id)}
           >
-            <span className="cat-icono" dangerouslySetInnerHTML={{__html: cat.icono}}></span>
+            <span className="catIcono" dangerouslySetInnerHTML={{__html: cat.icono}}></span>
             <span>{cat.nombre}</span>
           </button>
         ))}
       </section>
 
-      <section id="filtro-salud" className="filtro-salud">
-        <div className="filtro-header" onClick={() => setFiltroAbierto(!filtroAbierto)}>
+      <section id="filtro-salud" className="filtroSalud">
+        <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
           <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
-          <span className="filtro-toggle">{filtroAbierto ? '▲' : '▼'}</span>
+          <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
         </div>
         
         {filtroAbierto && (
-          <div className="filtro-contenido">
-            <div className="filtro-info">
+          <div className="filtroContenido">
+            <div className="filtroInfo">
               <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
               {filtrosActivos.length > 0 && (
-                <button className="btn-limpiar" onClick={limpiarFiltros}>
+                <button className="btnLimpiar" onClick={limpiarFiltros}>
                   Limpiar filtros ({filtrosActivos.length})
                 </button>
               )}
             </div>
-            <div className="filtro-grid">
+            <div className="filtroGrid">
               {condicionesSalud.map(condicion => (
                 <button
                   key={condicion.id}
-                  className={`filtro-card ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
+                  className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
                   onClick={() => toggleFiltro(condicion.id)}
                 >
-                  <span className="filtro-icono" dangerouslySetInnerHTML={{__html: condicion.icono}}></span>
-                  <span className="filtro-nombre">{condicion.nombre}</span>
+                  <span className="filtroIcono" dangerouslySetInnerHTML={{__html: condicion.icono}}></span>
+                  <span className="filtroNombre">{condicion.nombre}</span>
                   {filtrosActivos.includes(condicion.id) && (
-                    <span className="filtro-check">✓</span>
+                    <span className="filtroCheck">✓</span>
                   )}
                 </button>
               ))}
@@ -135,7 +136,7 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
         )}
       </section>
 
-      <section className="recetas-grid">
+      <section className="recetasGrid">
         <h2>Recetas Recomendadas</h2>
         <div className="grid">
           {recetasFiltradas.map(receta => (
@@ -148,7 +149,7 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
           ))}
         </div>
         {recetasFiltradas.length === 0 && (
-          <p className="sin-resultados">No hay recetas disponibles con estos filtros.</p>
+          <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
         )}
       </section>
     </div>

@@ -1,0 +1,100 @@
+/* FondoAnimado.css */
+
+.fondoAnimado {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.gradientMesh {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg,
+      #1a4d2e 0%,
+      #2d5a3d 50%,
+      #4f772d 100%);
+}
+
+.modo-oscuro .gradientMesh {
+  background: linear-gradient(135deg,
+      #0f1a14 0%,
+      #1a2820 50%,
+      #2d3d2f 100%);
+}
+
+.ondaLinea {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  left: 0;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ondaLinea svg {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  left: 0;
+}
+
+.ondaLinea1 {
+  top: 20%;
+  animation: ondaScroll1 20s linear infinite;
+}
+
+.ondaLinea2 {
+  top: 50%;
+  animation: ondaScroll2 25s linear infinite;
+}
+
+.ondaLinea3 {
+  top: 75%;
+  animation: ondaScroll3 30s linear infinite;
+}
+
+@keyframes ondaScroll1 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes ondaScroll2 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+@keyframes ondaScroll3 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+.modo-oscuro .ondaLinea1 path {
+  stroke: rgba(107, 158, 74, 0.6) !important;
+}
+
+.modo-oscuro .ondaLinea2 path {
+  stroke: rgba(45, 90, 61, 0.5) !important;
+}
+
+.modo-oscuro .ondaLinea3 path {
+  stroke: rgba(255, 154, 60, 0.15) !important;
+}

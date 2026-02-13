@@ -1,0 +1,250 @@
+/* RobotIA.css */
+
+.robotBoton {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--naranja);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--sombra-hover);
+  z-index: 1500;
+  transition: var(--transicion);
+  animation: float 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.robotBoton:hover {
+  transform: scale(1.1);
+}
+
+.robotIcono {
+  font-size: 2.5rem;
+}
+
+.robotChat {
+  position: fixed;
+  bottom: 6rem;
+  right: 2rem;
+  width: 350px;
+  max-height: 500px;
+  background: var(--blanco);
+  border-radius: 20px;
+  box-shadow: var(--sombra-hover);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+
+.modo-oscuro .robotChat {
+  background: rgba(45, 45, 45, 0.95);
+}
+
+.robotHeader {
+  background: var(--verde-bosque);
+  color: var(--blanco);
+  padding: 1rem;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modo-oscuro .robotHeader {
+  background: var(--verde-hoja);
+}
+
+.robotHeader h3 {
+  font-size: 1.2rem;
+}
+
+.robotHeader button {
+  background: none;
+  border: none;
+  color: var(--blanco);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+
+.robotHeader button:hover {
+  transform: rotate(90deg);
+}
+
+.robotMensajes {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.robotBienvenida {
+  background: var(--gris-claro);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .robotBienvenida {
+  background: rgba(64, 64, 64, 0.8);
+  color: var(--gris-oscuro);
+}
+
+.robotMensaje {
+  padding: 0.75rem;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  max-width: 80%;
+  word-wrap: break-word;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.robotMensaje.usuario {
+  background: var(--verde-hoja);
+  color: var(--blanco);
+  margin-left: auto;
+  flex-direction: row-reverse;
+}
+
+.robotMensaje.ia {
+  background: var(--gris-claro);
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .robotMensaje.ia {
+  background: rgba(64, 64, 64, 0.8);
+  color: var(--gris-oscuro);
+}
+
+.robotMensajeAvatar {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.robotMensajeTexto {
+  flex: 1;
+}
+
+.robotInput {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid var(--gris-medio);
+}
+
+.robotInput textarea {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--gris-medio);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: var(--blanco);
+  color: var(--negro);
+  resize: none;
+  font-family: inherit;
+  min-height: 40px;
+  max-height: 120px;
+}
+
+.modo-oscuro .robotInput textarea {
+  background: rgba(64, 64, 64, 0.8);
+  border-color: #505050;
+  color: var(--gris-oscuro);
+}
+
+.robotInput button {
+  padding: 0.75rem 1rem;
+  background: var(--naranja);
+  color: var(--blanco);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transicion);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.robotInput button:hover:not(:disabled) {
+  background: #d66e00;
+  transform: translateY(-2px);
+}
+
+.robotInput button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.robotFooter {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  border-top: 1px solid var(--gris-medio);
+  background: var(--gris-claro);
+  border-radius: 0 0 20px 20px;
+}
+
+.modo-oscuro .robotFooter {
+  background: rgba(30, 30, 30, 0.8);
+  border-color: #404040;
+}
+
+.robotFooter small {
+  color: var(--gris-oscuro);
+  font-size: 0.85rem;
+}
+
+.typingIndicator {
+  display: flex;
+  gap: 4px;
+  padding: 0.5rem 0;
+}
+
+.typingIndicator span {
+  width: 8px;
+  height: 8px;
+  background: var(--gris-oscuro);
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite;
+}
+
+.typingIndicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typingIndicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 968px) {
+  .robotChat {
+    width: calc(100% - 2rem);
+    right: 1rem;
+    left: 1rem;
+  }
+  
+  .robotBoton {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}

@@ -1,0 +1,117 @@
+/* TarjetaReceta.css */
+
+.tarjetaReceta {
+  background: var(--blanco);
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transicion);
+  box-shadow: var(--sombra);
+}
+
+.modo-oscuro .tarjetaReceta {
+  background: rgba(45, 45, 45, 0.95);
+  color: var(--gris-oscuro);
+}
+
+.tarjetaReceta:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--sombra-hover);
+}
+
+.tarjetaImg {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.tarjetaImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transicion);
+}
+
+.tarjetaReceta:hover .tarjetaImg img {
+  transform: scale(1.1);
+}
+
+.btnFav {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 45px;
+  height: 45px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transicion);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.btnFav svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--negro);
+  stroke-width: 2;
+  fill: none;
+  transition: var(--transicion);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.btnFav:hover svg {
+  stroke: #dc2626;
+  transform: scale(1.15);
+  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+}
+
+.btnFav.activo svg {
+  fill: #dc2626;
+  stroke: #dc2626;
+  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.5));
+}
+
+.modo-oscuro .btnFav svg {
+  stroke: var(--blanco);
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
+}
+
+.modo-oscuro .btnFav:hover svg {
+  stroke: #dc2626;
+  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+}
+
+.modo-oscuro .btnFav.activo svg {
+  fill: #dc2626;
+  stroke: #dc2626;
+  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.5));
+}
+
+.tarjetaInfo {
+  padding: 1.5rem;
+}
+
+.tarjetaInfo h3 {
+  color: var(--verde-bosque);
+  margin-bottom: 0.75rem;
+  font-size: 1.3rem;
+}
+
+.modo-oscuro .tarjetaInfo h3 {
+  color: var(--verde-hoja);
+}
+
+.tarjetaInfo p {
+  color: var(--gris-oscuro);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.tarjetaPuntuacion {
+  color: var(--naranja);
+  font-weight: 600;
+  font-size: 1.1rem;
+}

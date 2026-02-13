@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NutricionGrafico from './NutricionGrafico';
+import './DetalleReceta.css';
 
 const DetalleReceta = ({ receta, cerrar }) => {
   const [verNutriDetalle, setVerNutriDetalle] = useState(false);
@@ -13,15 +14,15 @@ const DetalleReceta = ({ receta, cerrar }) => {
 
   return (
     <div className="modal-overlay" onClick={cerrar}>
-      <div className="modal-contenedor-receta" onClick={(e) => e.stopPropagation()}>
+      <div className="modalContenedorReceta" onClick={(e) => e.stopPropagation()}>
         {!verNutriDetalle && <button className="modal-cerrar" onClick={cerrar}>✕</button>}
 
-        <div className="modal-col modal-izq">
-          <img src={receta.img} alt={receta.nombre} className="modal-img" />
+        <div className="modalCol modalIzq">
+          <img src={receta.img} alt={receta.nombre} className="modalImg" />
           <h2>{receta.nombre}</h2>
-          <p className="modal-desc">{receta.desc}</p>
+          <p className="modalDesc">{receta.desc}</p>
 
-          <div className="modal-seccion">
+          <div className="modalSeccion">
             <h3>Ingredientes</h3>
             <ul>
               {receta.ingredientes.map((ing, i) => (
@@ -30,7 +31,7 @@ const DetalleReceta = ({ receta, cerrar }) => {
             </ul>
           </div>
 
-          <div className="modal-seccion">
+          <div className="modalSeccion">
             <h3>Preparación</h3>
             <ol>
               {receta.pasos.map((paso, i) => (
@@ -39,7 +40,7 @@ const DetalleReceta = ({ receta, cerrar }) => {
             </ol>
           </div>
 
-          <div className="modal-seccion">
+          <div className="modalSeccion">
             <h3>Puntuación: ⭐ {receta.puntos}/5</h3>
             <div className="comentarios">
               {receta.comentarios.map((com, i) => (
@@ -52,7 +53,7 @@ const DetalleReceta = ({ receta, cerrar }) => {
           </div>
         </div>
 
-        <div className="modal-col modal-der">
+        <div className="modalCol modalDer">
           <NutricionGrafico nutri={receta.nutri} onModalChange={setVerNutriDetalle} />
         </div>
       </div>

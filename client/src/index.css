@@ -1,68 +1,301 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* css global - Variables globales y estilos base compartidos */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* ============ RESET ============ */
+* {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============ VARIABLES CSS ============ */
+:root {
+  --verde-bosque: #1a4d2e;
+  --verde-hoja: #4f772d;
+  --naranja: #f77f00;
+  --blanco: #ffffff;
+  --gris-claro: #f8f9fa;
+  --gris-medio: #dee2e6;
+  --gris-oscuro: #2d2d2d;
+  --negro: #000000;
+  --sombra: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --transicion: all 0.3s ease;
+}
+
+/* ============ VARIABLES MODO OSCURO ============ */
+.modo-oscuro {
+  --verde-bosque: #2d5a3d;
+  --verde-hoja: #6b9e4a;
+  --naranja: #ff9a3c;
+  --blanco: #1a1a1a;
+  --gris-claro: #2d2d2d;
+  --gris-medio: #404040;
+  --gris-oscuro: #e0e0e0;
+  --negro: #ffffff;
+  --sombra: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* ============ ESTILOS BASE ============ */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--gris-oscuro);
+  background: transparent;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+.modo-oscuro body {
+  background: transparent;
+}
+
+.app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.main {
+  flex: 1;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* ============ BOTONES GLOBALES ============ */
+.btn-primario,
+.btn-secundario {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: var(--transicion);
+  font-size: 1rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.btn-primario {
+  background: var(--naranja);
+  color: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+.btn-primario:hover {
+  background: #d66e00;
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-hover);
+}
+
+.btn-secundario {
+  background: transparent;
+  color: var(--blanco);
+  border: 2px solid var(--blanco);
+}
+
+.btn-secundario:hover {
+  background: var(--blanco);
+  color: var(--verde-bosque);
+}
+
+/* ============ ANIMACIONES GLOBALES ============ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 2000px;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ============ ESTILOS COMPARTIDOS AUTH ============ */
+.vista-auth {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  background: var(--blanco);
+  padding: 3rem;
+  border-radius: 20px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: var(--sombra-hover);
+  animation: fadeIn 0.6s ease;
+}
+
+.modo-oscuro .auth-card {
+  background: rgba(45, 45, 45, 0.95);
+  color: var(--gris-oscuro);
+}
+
+.auth-card h2 {
+  text-align: center;
+  color: var(--verde-bosque);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-family: 'Georgia', serif;
+}
+
+.modo-oscuro .auth-card h2 {
+  color: var(--verde-hoja);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-form input {
+  padding: 1rem;
+  border: 2px solid var(--gris-medio);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: var(--transicion);
+  background: var(--blanco);
+  color: var(--negro);
+}
+
+.modo-oscuro .auth-form input {
+  background: rgba(64, 64, 64, 0.8);
+  border-color: #505050;
+  color: var(--gris-oscuro);
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--verde-hoja);
+}
+
+.auth-card p {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--gris-oscuro);
+}
+
+.auth-card p span {
+  color: var(--naranja);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-card p span:hover {
+  text-decoration: underline;
+}
+
+/* ============ MODAL OVERLAY COMPARTIDO ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.modo-oscuro .modal-overlay {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.modal-cerrar {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  border: none;
+  background: var(--blanco);
+  color: var(--gris-oscuro);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  z-index: 2001;
+  box-shadow: var(--sombra-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-cerrar:hover {
+  background: var(--naranja);
+  color: var(--blanco);
+  transform: scale(1.05);
+}
+
+.modo-oscuro .modal-cerrar {
+  background: rgba(64, 64, 64, 0.9);
+  color: var(--gris-oscuro);
+}
+
+.modo-oscuro .modal-cerrar:hover {
+  background: var(--naranja);
+  color: var(--blanco);
+}
+
+/* ============ GRID COMPARTIDO ============ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+}
+
+/* ============ RESPONSIVE BASE ============ */
+@media (max-width: 968px) {
+  .main {
+    padding: 1rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 2rem 1.5rem;
   }
 }

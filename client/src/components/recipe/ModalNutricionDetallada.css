@@ -1,0 +1,222 @@
+/* ModalNutricionDetallada.css */
+
+.modalNutriDetalle {
+  max-width: 1100px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--blanco);
+  border-radius: 20px;
+  padding: 2rem;
+  animation: slideUp 0.3s ease;
+}
+
+.modo-oscuro .modalNutriDetalle {
+  background: rgba(45, 45, 45, 0.95);
+}
+
+.modalNutriDetalle h2 {
+  color: var(--verde-bosque);
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.modo-oscuro .modalNutriDetalle h2 {
+  color: var(--verde-hoja);
+}
+
+.nutriDetalleSeccion {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--gris-medio);
+}
+
+.nutriDetalleSeccion:last-child {
+  border-bottom: none;
+}
+
+.nutriDetalleSeccion h3 {
+  color: var(--verde-hoja);
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--naranja);
+  display: inline-block;
+}
+
+.modo-oscuro .nutriDetalleSeccion h3 {
+  color: var(--naranja);
+}
+
+.tablaNutriCompleta {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tablaNutriCompleta thead {
+  background: var(--verde-bosque);
+  color: var(--blanco);
+}
+
+.modo-oscuro .tablaNutriCompleta thead {
+  background: var(--verde-hoja);
+}
+
+.tablaNutriCompleta th,
+.tablaNutriCompleta td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gris-medio);
+}
+
+.tablaNutriCompleta th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.tablaNutriCompleta tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.modo-oscuro .tablaNutriCompleta tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tablaNutriCompleta tbody tr:hover {
+  background: rgba(79, 119, 45, 0.08);
+}
+
+.modo-oscuro .tablaNutriCompleta tbody tr:hover {
+  background: rgba(111, 158, 74, 0.15);
+}
+
+.nutriGridDetalle {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.75rem;
+}
+
+.nutriGrid3col {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+
+.nutriItemDetalle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--gris-claro);
+  border-radius: 8px;
+  border-left: 3px solid var(--verde-hoja);
+}
+
+.modo-oscuro .nutriItemDetalle {
+  background: rgba(64, 64, 64, 0.5);
+  border-left-color: var(--naranja);
+}
+
+.nutriNombre {
+  font-size: 0.85rem;
+  color: var(--gris-oscuro);
+  flex: 1;
+}
+
+.nutriValor {
+  font-weight: 600;
+  color: var(--verde-bosque);
+  margin: 0 0.5rem;
+}
+
+.modo-oscuro .nutriValor {
+  color: var(--verde-hoja);
+}
+
+.nutriDv {
+  font-size: 0.85rem;
+  color: var(--naranja);
+  font-weight: 600;
+  min-width: 45px;
+  text-align: right;
+}
+
+.nutriGridSimple {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.nutriItemSimple {
+  background: var(--gris-claro);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  border-top: 3px solid var(--naranja);
+}
+
+.modo-oscuro .nutriItemSimple {
+  background: rgba(64, 64, 64, 0.5);
+}
+
+.nutriItemSimple span {
+  display: block;
+  color: var(--gris-oscuro);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.nutriItemSimple strong {
+  display: block;
+  color: var(--verde-bosque);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.modo-oscuro .nutriItemSimple strong {
+  color: var(--verde-hoja);
+}
+
+.nutriDvInline {
+  display: block;
+  color: var(--naranja);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 1200px) {
+  .nutriGrid3col {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 968px) {
+  .nutriGridDetalle {
+    grid-template-columns: 1fr;
+  }
+
+  .nutriGridSimple {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .nutriGrid3col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modalNutriDetalle {
+    padding: 1rem;
+  }
+
+  .tablaNutriCompleta th,
+  .tablaNutriCompleta td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .nutriGridSimple {
+    grid-template-columns: 1fr;
+  }
+}

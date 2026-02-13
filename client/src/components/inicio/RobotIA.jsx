@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import './RobotIA.css';
 
 // 🤖 Robot IA - Preparado para integración con Claude API
 // 🔒 TODO: Integrar con Anthropic API cuando esté listo
@@ -47,7 +48,7 @@ const RobotIA = ({ activo, toggleIA }) => {
   return (
     <>
       {/* Botón flotante */}
-      <button className="robot-boton" onClick={toggleIA} title="Asistente IA">
+      <button className="robotBoton" onClick={toggleIA} title="Asistente IA">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
           <path d="M12 8V4H8" />
           <rect width="16" height="12" x="4" y="8" rx="2" />
@@ -60,20 +61,20 @@ const RobotIA = ({ activo, toggleIA }) => {
       
       {/* Panel de chat */}
       {activo && (
-        <div className="robot-chat">
-          <div className="robot-header">
+        <div className="robotChat">
+          <div className="robotHeader">
             <h3>🤖 Asistente IA</h3>
             <button onClick={toggleIA} aria-label="Cerrar">✕</button>
           </div>
 
-          <div className="robot-mensajes">
+          <div className="robotMensajes">
             {chat.length === 0 && (
-              <div className="robot-bienvenida">
+              <div className="robotBienvenida">
                 <p>¡Hola! 👋</p>
                 <p>Pregúntame sobre:</p>
-                <ul>
+                <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem' }}>
                   <li>🥗 Recetas saludables</li>
-                  <li>🍎 Ingredientes y nutrición</li>
+                  <li>🎃 Ingredientes y nutrición</li>
                   <li>💪 Consejos para tu dieta</li>
                   <li>🍽️ Sustitutos de alimentos</li>
                 </ul>
@@ -81,21 +82,21 @@ const RobotIA = ({ activo, toggleIA }) => {
             )}
 
             {chat.map((msg, i) => (
-              <div key={i} className={`robot-mensaje ${msg.tipo}`}>
-                <div className="robot-mensaje-avatar">
+              <div key={i} className={`robotMensaje ${msg.tipo}`}>
+                <div className="robotMensajeAvatar">
                   {msg.tipo === 'usuario' ? '👤' : '🤖'}
                 </div>
-                <div className="robot-mensaje-texto">
+                <div className="robotMensajeTexto">
                   {msg.texto}
                 </div>
               </div>
             ))}
 
             {cargando && (
-              <div className="robot-mensaje ia">
-                <div className="robot-mensaje-avatar">🤖</div>
-                <div className="robot-mensaje-texto">
-                  <span className="typing-indicator">
+              <div className="robotMensaje ia">
+                <div className="robotMensajeAvatar">🤖</div>
+                <div className="robotMensajeTexto">
+                  <span className="typingIndicator">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -105,7 +106,7 @@ const RobotIA = ({ activo, toggleIA }) => {
             )}
           </div>
 
-          <div className="robot-input">
+          <div className="robotInput">
             <textarea
               placeholder="Escribe tu pregunta... (Shift + Enter para nueva línea)"
               value={mensaje}
@@ -127,7 +128,7 @@ const RobotIA = ({ activo, toggleIA }) => {
           </div>
 
           {/* 📝 Nota de desarrollo */}
-          <div className="robot-footer">
+          <div className="robotFooter">
             <small style={{ opacity: 0.6 }}>
               💡 Próximamente: Integración con Claude AI
             </small>

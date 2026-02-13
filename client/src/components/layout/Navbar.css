@@ -1,0 +1,197 @@
+/* Navbar.css */
+
+.nav {
+  background: rgba(26, 77, 46, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--sombra);
+  width: 100%;
+}
+
+.modo-oscuro .nav {
+  background: rgba(26, 26, 26, 0.95);
+}
+
+.navContenedor {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+
+.navLogo:hover {
+  transform: scale(1.05);
+}
+
+.logoIcono {
+  font-size: 2rem;
+}
+
+.logoIcono svg {
+  stroke: #ffffff;
+  transition: var(--transicion);
+}
+
+.navLogo:hover .logoIcono svg {
+  stroke: var(--naranja);
+}
+
+.logoTexto {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Georgia', serif;
+}
+
+.modo-oscuro .logoIcono svg {
+  stroke: #ffffff;
+}
+
+.modo-oscuro .logoTexto {
+  color: #ffffff;
+}
+
+.navHamburguesa {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.navHamburguesa span {
+  width: 25px;
+  height: 3px;
+  background: var(--blanco);
+  border-radius: 3px;
+  transition: var(--transicion);
+}
+
+.navMenu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navMenu li {
+  color: var(--blanco);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transicion);
+  position: relative;
+}
+
+.navMenu li:not(:has(button)):hover {
+  color: var(--naranja);
+}
+
+.navMenu li:not(:has(button))::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--naranja);
+  transition: var(--transicion);
+}
+
+.modo-oscuro .navMenu li {
+  color: #ffffff !important;
+}
+
+.navMenu li:not(:has(button)):hover::after {
+  width: 100%;
+}
+
+.navUsuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.usuarioNombre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnTema {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnTema svg {
+  stroke: var(--blanco);
+  transition: var(--transicion);
+}
+
+.modo-oscuro .btnTema svg {
+  stroke: var(--naranja);
+}
+
+.btnTema:hover {
+  transform: scale(1.1) rotate(20deg);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modo-oscuro .btnTema {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.modo-oscuro .btnTema:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 968px) {
+  .navHamburguesa {
+    display: flex;
+  }
+
+  .navMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(26, 77, 46, 0.98);
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1.5rem;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transicion);
+  }
+
+  .navMenu.activo {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+}
