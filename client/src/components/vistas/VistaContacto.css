@@ -86,11 +86,11 @@
 }
 
 .info-item p {
-  color: var(--gris-oscuro);
+  color: var(--negro);
 }
 
 .modo-oscuro .info-item p {
-  color: var(--gris-claro);
+  color: #ffff;
 }
 
 .contacto-form {
