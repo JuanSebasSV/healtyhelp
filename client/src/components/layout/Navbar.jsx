@@ -123,22 +123,22 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
 
           {user ? (
             <>
-              <li className="navUsuario">
-                <span className="usuarioNombre">
-                  👤 {user.name}
-                </span>
-                {user.role === 'admin' && (
-                  <span style={{ 
-                    marginLeft: '0.5rem', 
-                    fontSize: '0.75rem', 
-                    background: '#667eea', 
-                    color: 'white',
-                    padding: '0.2rem 0.5rem',
-                    borderRadius: '12px'
-                  }}>
-                    ADMIN
-                  </span>
-                )}
+              <li
+                className="navUsuario"
+                onClick={() => handleNavigate('/perfil')}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="nav-avatar-mini">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="nav-avatar-img" />
+                  ) : (
+                    <div className="nav-avatar-iniciales">
+                      {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                    </div>
+                  )}
+                  {user.role === 'admin' && <span className="nav-admin-dot" />}
+                </div>
+                <span className="nav-nombre">{user.name?.split(' ')[0]}</span>
               </li>
               <li>
                 <button className="btn-secundario" onClick={handleCerrarSesion}>

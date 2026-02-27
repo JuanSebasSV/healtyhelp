@@ -59,4 +59,28 @@ router.get('/google/callback',
   }
 );
 
+// Actualizar perfil
+router.put('/profile', protect, async (req, res) => {
+  try {
+    const { name, password } = req.body;
+    const user = await User.findById(req.user._id).select('+password');
+
+    if (name) user.name = name;
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+      }
+      user.password = password;
+    }
+
+    await user.save();
+
+    const updatedUser = await User.findById(req.user._id);
+    res.json({ user: updatedUser, message: 'Perfil actualizado' });
+  } catch (error) {
+    console.error('Error actualizando perfil:', error);
+    res.status(500).json({ error: 'Error al actualizar perfil' });
+  }
+});
+
 module.exports = router;

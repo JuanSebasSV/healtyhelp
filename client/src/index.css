@@ -1,4 +1,4 @@
-/* css global - Variables globales y estilos base compartidos */
+/* index.css global - Variables globales y estilos base compartidos */
 
 /* ============ RESET ============ */
 * {
@@ -90,13 +90,13 @@ body {
 
 .btn-secundario {
   background: transparent;
-  color: var(--blanco);
-  border: 2px solid var(--blanco);
+  color:#ffffff;
+  border: 2px solid white;
 }
 
 .btn-secundario:hover {
-  background: var(--blanco);
-  color: var(--verde-bosque);
+  background: #ffffff;
+  color: #d66e00;
 }
 
 /* ============ ANIMACIONES GLOBALES ============ */
@@ -298,4 +298,9 @@ body {
   .auth-card {
     padding: 2rem 1.5rem;
   }
+}
+
+.contenido-principal {
+  padding-top: 1rem;
+  min-height: calc(100vh - 64px);
 }

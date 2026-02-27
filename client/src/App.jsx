@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 // Context
 import { AuthProvider } from './context/AuthContext';
 
+// Profile
+import UserProfile from './components/profile/UserProfile';
 // Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -168,6 +170,15 @@ function AppContent() {
                   <Stats />
                 </PrivateRoute>
               } 
+            />
+
+            <Route
+              path="/perfil"
+              element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              }
             />
 
             {/* Ruta 404 */}

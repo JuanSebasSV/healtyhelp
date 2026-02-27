@@ -121,17 +121,6 @@
   width: 100%;
 }
 
-.navUsuario {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.usuarioNombre {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 
 .btnTema {
   padding: 0.5rem 1rem;
@@ -194,4 +183,73 @@
     opacity: 1;
     pointer-events: all;
   }
+}
+
+/* Avatar mini en navbar */
+.navUsuario {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: var(--transicion);
+}
+
+.navUsuario:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: var(--naranja);
+}
+
+.nav-avatar-mini {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.nav-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.6);
+}
+
+.nav-avatar-iniciales {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.6);
+  letter-spacing: -0.5px;
+}
+
+.nav-admin-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  background: var(--naranja);
+  border-radius: 50%;
+  border: 1.5px solid rgba(26,77,46,0.9);
+}
+
+.nav-nombre {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+.navMenu li.navUsuario::after {
+  display: none;
 }
