@@ -34,10 +34,9 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Encriptar contraseña antes de guardar
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password') || !this.password) return next();
+userSchema.pre('save', async function() {
+  if (!this.isModified('password') || !this.password) return;
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 // Método para comparar contraseñas
