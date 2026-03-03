@@ -304,3 +304,50 @@ body {
   padding-top: 1rem;
   min-height: calc(100vh - 64px);
 }
+
+/* ============ SCROLLBAR OCULTA — agregar en index.css o App.css ============ */
+
+/* Oculta la barra pero mantiene el scroll funcional */
+html, body {
+  overflow-x: hidden;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari */
+}
+
+/*Ojito*/
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding-right: 2.8rem; /* espacio para el ojito */
+}
+
+.eyeButton {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.eyeButton:hover {
+  color: #555;
+}
+
+.eyeButton:focus {
+  outline: none;
+}

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User'); // ✅ FIX: faltaba este import
 require('../config/passport');
 
 // Importar controladores
@@ -47,10 +48,7 @@ router.get('/google/callback',
   }),
   (req, res) => {
     try {
-      // Generar JWT
       const token = generateToken(req.user._id);
-      
-      // Redirigir al frontend con el token
       res.redirect(`${process.env.FRONTEND_URL}/google-callback?token=${token}`);
     } catch (error) {
       console.error('Error en Google callback:', error);
@@ -66,7 +64,12 @@ router.put('/profile', protect, async (req, res) => {
     const user = await User.findById(req.user._id).select('+password');
 
     if (name) user.name = name;
+
     if (password) {
+      // ✅ FIX: usuarios de Google no pueden cambiar contraseña
+      if (user.googleId) {
+        return res.status(400).json({ error: 'Las cuentas de Google no pueden cambiar la contraseña' });
+      }
       if (password.length < 6) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
       }

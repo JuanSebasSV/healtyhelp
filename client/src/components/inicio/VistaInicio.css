@@ -4,6 +4,7 @@
   animation: fadeIn 0.6s ease;
 }
 
+/* ============ HERO ============ */
 .hero {
   text-align: center;
   padding: 4rem 2rem;
@@ -75,6 +76,7 @@
   margin-right: auto;
 }
 
+/* ============ CATEGORÍAS — glassmorphism ============ */
 .categorias {
   display: flex;
   gap: 1rem;
@@ -84,8 +86,10 @@
 }
 
 .catBtn {
-  background: rgba(255, 255, 255, 0.95);
-  border: 3px solid transparent;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   padding: 1rem 2rem;
   border-radius: 15px;
   display: flex;
@@ -94,34 +98,39 @@
   gap: 0.5rem;
   cursor: pointer;
   transition: var(--transicion);
-  box-shadow: var(--sombra);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  color: #ffffff;
 }
 
 .catBtn:hover {
   transform: translateY(-5px);
-  box-shadow: var(--sombra-hover);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(247, 127, 0, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(247,127,0,0.2);
 }
 
 .catBtn.activo {
-  background: var(--naranja);
-  color: var(--blanco);
+  background: rgba(247, 127, 0, 0.35);
   border-color: var(--naranja);
+  box-shadow: 0 4px 20px rgba(247, 127, 0, 0.3);
+  color: #ffffff;
 }
 
 .modo-oscuro .catBtn {
-  background: rgba(64, 64, 64, 0.9);
-  border-color: #505050;
-  color: var(--gris-oscuro);
+  background: rgba(15, 35, 20, 0.55);
+  border-color: rgba(79, 119, 45, 0.35);
+  color: #e0e0e0;
 }
 
 .modo-oscuro .catBtn:hover {
-  border-color: var(--verde-hoja);
+  background: rgba(30, 60, 35, 0.7);
+  border-color: rgba(247, 127, 0, 0.5);
 }
 
 .modo-oscuro .catBtn.activo {
-  background: var(--naranja);
-  color: var(--blanco);
+  background: rgba(247, 127, 0, 0.3);
   border-color: var(--naranja);
+  color: #ffffff;
 }
 
 .catIcono {
@@ -129,50 +138,57 @@
 }
 
 .catIcono svg {
-  stroke: var(--verde-bosque);
+  stroke: rgba(255, 255, 255, 0.9);
   transition: var(--transicion);
 }
 
 .catBtn.activo .catIcono svg {
-  stroke: var(--blanco);
+  stroke: #ffffff;
 }
 
 .modo-oscuro .catIcono svg {
-  stroke: var(--verde-hoja);
+  stroke: rgba(200, 230, 180, 0.85);
 }
 
 .modo-oscuro .catBtn.activo .catIcono svg {
-  stroke: var(--blanco);
+  stroke: #ffffff;
 }
 
 .catBtn span:not(.catIcono) {
-  color: var(--verde-bosque);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .catBtn.activo span:not(.catIcono) {
-  color: var(--blanco);
+  color: #ffffff;
 }
 
 .modo-oscuro .catBtn span:not(.catIcono) {
-  color: var(--gris-oscuro);
+  color: #e0e0e0;
 }
 
 .modo-oscuro .catBtn.activo span:not(.catIcono) {
-  color: var(--blanco);
+  color: #ffffff;
 }
 
+/* ============ FILTRO SALUD — glassmorphism ============ */
 .filtroSalud {
-  background: rgba(255, 255, 255, 0.07);
-  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 20px;
   margin-bottom: 3rem;
-  box-shadow: var(--sombra);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
 .modo-oscuro .filtroSalud {
-  background: rgba(45, 45, 45, 0.95);
-  color: var(--gris-oscuro);
+  background: rgba(10, 25, 15, 0.5);
+  border-color: rgba(79, 119, 45, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .filtroHeader {
@@ -182,35 +198,48 @@
   justify-content: center;
   align-items: center;
   transition: var(--transicion);
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  background: rgba(26, 77, 46, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
 }
 
 .filtroHeader:hover {
-  background: linear-gradient(135deg, var(--verde-hoja), var(--verde-bosque));
+  background: rgba(26, 77, 46, 0.75);
 }
 
 .modo-oscuro .filtroHeader {
-  background: linear-gradient(135deg, #1a2820, #2d5a3d);
+  background: rgba(10, 25, 15, 0.7);
+  border-bottom-color: rgba(79, 119, 45, 0.25);
+}
+
+.modo-oscuro .filtroHeader:hover {
+  background: rgba(20, 45, 25, 0.8);
 }
 
 .filtroHeader h2 {
-  color: var(--blanco);
+  color: #ffffff;
   margin: 0;
   font-size: 1.8rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 .filtroToggle {
   position: absolute;
   right: 2rem;
   font-size: 1.5rem;
-  color: var(--blanco);
+  color: rgba(255, 255, 255, 0.85);
   transition: var(--transicion);
 }
 
 .filtroContenido {
   padding: 2rem;
   animation: slideDown 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.modo-oscuro .filtroContenido {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .filtroInfo {
@@ -223,33 +252,38 @@
 }
 
 .filtroInfo p {
-  color: var(--blanco);
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
   flex: 1;
   min-width: 250px;
 }
 
 .modo-oscuro .filtroInfo p {
-  color: #ffffff !important;
+  color: rgba(220, 240, 210, 0.85) !important;
 }
 
 .btnLimpiar {
   padding: 0.75rem 1.5rem;
-  background: var(--naranja);
-  color: var(--blanco);
-  border: none;
+  background: rgba(247, 127, 0, 0.25);
+  border: 1.5px solid rgba(247, 127, 0, 0.5);
+  color: #ffb347;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
   transition: var(--transicion);
   white-space: nowrap;
+  backdrop-filter: blur(8px);
 }
 
 .btnLimpiar:hover {
-  background: #d66e00;
+  background: var(--naranja);
+  border-color: var(--naranja);
+  color: #ffffff;
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.35);
 }
 
+/* ============ FILTRO CARDS — glassmorphism ============ */
 .filtroGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -259,8 +293,10 @@
 .filtroCard {
   position: relative;
   padding: 1.25rem;
-  background: var(--gris-claro);
-  border: 3px solid var(--gris-medio);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   border-radius: 15px;
   cursor: pointer;
   transition: var(--transicion);
@@ -270,34 +306,35 @@
   gap: 0.75rem;
   text-align: center;
   min-height: 100px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
 }
 
 .filtroCard:hover {
   transform: translateY(-5px);
-  box-shadow: var(--sombra);
-  border-color: var(--verde-hoja);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(247, 127, 0, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .filtroCard.activo {
-  background: var(--verde-bosque);
-  border-color: var(--verde-bosque);
-  color: var(--blanco);
+  background: rgba(26, 77, 46, 0.5);
+  border-color: rgba(79, 119, 45, 0.8);
+  box-shadow: 0 4px 20px rgba(26, 77, 46, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .modo-oscuro .filtroCard {
-  background: rgba(64, 64, 64, 0.9);
-  border-color: #505050;
-  color: var(--gris-oscuro);
+  background: rgba(15, 35, 20, 0.5);
+  border-color: rgba(79, 119, 45, 0.25);
 }
 
 .modo-oscuro .filtroCard:hover {
-  border-color: var(--verde-hoja);
+  background: rgba(25, 55, 30, 0.65);
+  border-color: rgba(247, 127, 0, 0.45);
 }
 
 .modo-oscuro .filtroCard.activo {
-  background: var(--verde-hoja);
-  border-color: var(--verde-hoja);
-  color: var(--blanco);
+  background: rgba(79, 119, 45, 0.3);
+  border-color: rgba(107, 158, 74, 0.6);
 }
 
 .filtroIcono {
@@ -305,43 +342,42 @@
 }
 
 .filtroIcono svg {
-  stroke: var(--verde-bosque);
+  stroke: rgba(255, 255, 255, 0.85);
   fill: none;
   stroke-width: 2;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
 
 .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco);
+  stroke: #ffffff;
 }
 
 .modo-oscuro .filtroIcono svg {
-  stroke: var(--verde-hoja);
+  stroke: rgba(180, 220, 160, 0.85);
 }
 
 .modo-oscuro .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco);
+  stroke: #ffffff;
 }
 
 .filtroNombre {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.3;
-}
-
-.filtroCard .filtroNombre {
-  color: var(--verde-bosque);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 
 .filtroCard.activo .filtroNombre {
-  color: var(--blanco);
+  color: #ffffff;
 }
 
 .modo-oscuro .filtroCard .filtroNombre {
-  color: var(--gris-oscuro);
+  color: rgba(210, 235, 195, 0.9);
 }
 
 .modo-oscuro .filtroCard.activo .filtroNombre {
-  color: var(--blanco);
+  color: #ffffff;
 }
 
 .filtroCheck {
@@ -349,40 +385,48 @@
   top: 0.5rem;
   right: 0.5rem;
   background: var(--naranja);
-  color: var(--blanco);
-  width: 28px;
-  height: 28px;
+  color: #ffffff;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(247,127,0,0.4);
 }
 
+/* ============ RECETAS GRID ============ */
 .recetasGrid {
   animation: fadeIn 0.6s ease;
 }
 
 .recetasGrid h2 {
   text-align: center;
-  color: var(--blanco);
+  color: #ffffff;
   font-size: 2.5rem;
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .modo-oscuro .recetasGrid h2 {
-  color: var(--gris-oscuro);
+  color: rgba(210, 235, 195, 0.95);
 }
 
 .sinResultados {
   text-align: center;
-  color: var(--blanco);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.2rem;
   padding: 3rem;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
 }
 
+/* ============ RESPONSIVE ============ */
 @media (max-width: 968px) {
   .hero h1 {
     font-size: 2rem;

@@ -108,7 +108,7 @@ const RobotIA = ({ activo, toggleIA }) => {
 
           <div className="robotInput">
             <textarea
-              placeholder="Escribe tu pregunta... (Shift + Enter para nueva línea)"
+              placeholder="Escribe tu pregunta..."  
               value={mensaje}
               onChange={(e) => setMensaje(e.target.value)}
               onKeyPress={handleKeyPress}

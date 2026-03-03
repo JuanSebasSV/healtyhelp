@@ -9,42 +9,48 @@
 
 .vista-favoritos h1 {
   text-align: center;
-  color: var(--blanco);
+  color: #ffffff;
   font-size: 2.5rem;
   margin-bottom: 3rem;
   font-family: 'Georgia', serif;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .modo-oscuro .vista-favoritos h1 {
-  color: var(--gris-oscuro);
+  color: rgba(210, 235, 195, 0.95);
 }
 
 .vacio {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   padding: 4rem 2rem;
   border-radius: 20px;
   text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .modo-oscuro .vacio {
-  background: rgba(45, 45, 45, 0.95);
+  background: rgba(10, 25, 15, 0.55);
+  border-color: rgba(79, 119, 45, 0.3);
 }
 
 .vacio-icono {
   font-size: 5rem;
-  color: var(--gris-medio);
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 1rem;
 }
 
 .modo-oscuro .vacio-icono {
-  color: #606060;
+  color: rgba(180, 210, 160, 0.4);
 }
 
 .vacio p {
-  color: var(--gris-oscuro);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.2rem;
 }
 
 .modo-oscuro .vacio p {
-  color: var(--gris-claro);
+  color: rgba(210, 235, 195, 0.8);
 }

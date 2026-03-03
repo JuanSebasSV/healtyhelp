@@ -8,25 +8,22 @@
 
 .vista-contacto h1 {
   text-align: center;
-  color: var(--blanco);
+  color: #ffffff;
   font-size: 2.5rem;
   margin-bottom: 1rem;
   font-family: 'Georgia', serif;
-}
-
-.modo-oscuro .vista-contacto h1 {
-  color: var(--gris-oscuro);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .contacto-subtitulo {
   text-align: center;
-  color: var(--blanco);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1.1rem;
   margin-bottom: 3rem;
 }
 
 .modo-oscuro .contacto-subtitulo {
-  color: var(--gris-oscuro);
+  color: rgba(210, 235, 195, 0.85);
 }
 
 .contacto-contenedor {
@@ -44,22 +41,33 @@
 }
 
 .info-item {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
   padding: 1.5rem;
   border-radius: 15px;
   display: flex;
   gap: 1rem;
-  box-shadow: var(--sombra);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: var(--transicion);
 }
 
 .modo-oscuro .info-item {
-  background: rgba(45, 45, 45, 0.95);
+  background: rgba(15, 35, 20, 0.55);
+  border-color: rgba(79, 119, 45, 0.3);
 }
 
 .info-item:hover {
   transform: translateX(-5px);
-  box-shadow: var(--sombra-hover);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(247, 127, 0, 0.45);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+}
+
+.modo-oscuro .info-item:hover {
+  background: rgba(25, 55, 30, 0.65);
+  border-color: rgba(247, 127, 0, 0.4);
 }
 
 .info-icono {
@@ -68,50 +76,53 @@
 }
 
 .info-icono svg {
-  stroke: var(--verde-bosque);
+  stroke: rgba(255, 255, 255, 0.9);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
 }
 
 .modo-oscuro .info-icono svg {
-  stroke: var(--verde-hoja);
+  stroke: rgba(180, 220, 160, 0.9);
 }
 
 .info-item h3 {
-  color: var(--verde-bosque);
+  color: #ffffff;
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
-}
-
-.modo-oscuro .info-item h3 {
-  color: var(--verde-hoja);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .info-item p {
-  color: var(--negro);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .modo-oscuro .info-item p {
-  color: #ffff;
+  color: rgba(210, 235, 195, 0.8);
 }
 
 .contacto-form {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: var(--sombra);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .modo-oscuro .contacto-form {
-  background: rgba(45, 45, 45, 0.95);
+  background: rgba(10, 25, 15, 0.55);
+  border-color: rgba(79, 119, 45, 0.3);
 }
 
 .contacto-form h2 {
-  color: var(--verde-bosque);
+  color: #ffffff;
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 
 .modo-oscuro .contacto-form h2 {
-  color: var(--verde-hoja);
+  color: rgba(180, 220, 160, 0.95);
 }
 
 .contacto-form input,
@@ -119,26 +130,38 @@
   width: 100%;
   padding: 1rem;
   margin-bottom: 1rem;
-  border: 2px solid var(--gris-medio);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   font-size: 1rem;
   font-family: inherit;
   transition: var(--transicion);
-  background: var(--blanco);
-  color: var(--negro);
+  color: #ffffff;
+}
+
+.contacto-form input::placeholder,
+.contacto-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .modo-oscuro .contacto-form input,
 .modo-oscuro .contacto-form textarea {
-  background: rgba(64, 64, 64, 0.8);
-  border-color: #505050;
-  color: var(--gris-oscuro);
+  background: rgba(15, 35, 20, 0.4);
+  border-color: rgba(79, 119, 45, 0.3);
+  color: rgba(210, 235, 195, 0.9);
+}
+
+.modo-oscuro .contacto-form input::placeholder,
+.modo-oscuro .contacto-form textarea::placeholder {
+  color: rgba(180, 210, 160, 0.35);
 }
 
 .contacto-form input:focus,
 .contacto-form textarea:focus {
   outline: none;
-  border-color: var(--verde-hoja);
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
 }
 
 .contacto-form textarea {
