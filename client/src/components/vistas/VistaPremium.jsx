@@ -78,24 +78,35 @@ const LogoPayPal = () => (
 );
 
 const LogoNequi = () => (
-  <svg viewBox="0 0 90 34" width="82" height="30" aria-label="Nequi">
-    <rect width="90" height="34" rx="8" fill="#6B21A8"/>
-    {/* N shape */}
-    <path d="M10 8 L10 26 L15 26 L15 16 L22 26 L27 26 L27 8 L22 8 L22 18 L15 8 Z" fill="white"/>
-    {/* equi text */}
-    <text x="31" y="22" fontFamily="'Helvetica Neue', Arial, sans-serif" fontSize="13"
-      fontWeight="700" fill="white" letterSpacing="0.3">equi</text>
-    {/* pink dot accent */}
-    <circle cx="80" cy="10" r="4" fill="#F472B6"/>
+  <svg viewBox="0 0 90 36" width="82" height="32" aria-label="Nequi">
+    {/* Fondo blanco con borde morado sutil */}
+    <rect width="90" height="36" rx="9" fill="white"/>
+    <rect width="90" height="36" rx="9" fill="none" stroke="#6B21A8" strokeWidth="1.5"/>
+    {/* N bold en morado */}
+    <text x="10" y="25" fontFamily="'Helvetica Neue', Arial, sans-serif"
+      fontSize="17" fontWeight="900" fill="#6B21A8" letterSpacing="-0.5">N</text>
+    {/* equi en negro */}
+    <text x="24" y="25" fontFamily="'Helvetica Neue', Arial, sans-serif"
+      fontSize="17" fontWeight="900" fill="#1a1a1a" letterSpacing="-0.3">equi</text>
+    {/* Punto rosa característico */}
+    <circle cx="82" cy="8" r="5" fill="#F472B6"/>
   </svg>
 );
 
 const LogoMercadoPago = () => (
-  <svg viewBox="0 0 130 34" width="110" height="30" aria-label="Mercado Pago">
-    <circle cx="17" cy="17" r="15" fill="#009EE3"/>
-    <path fill="white" d="M17 6a11 11 0 1 0 0 22A11 11 0 0 0 17 6zm0 3.5c1.8 0 3.5.7 4.7 1.8L10.2 22.8A7.5 7.5 0 0 1 17 9.5zm0 15c-1.8 0-3.5-.7-4.7-1.8l11.5-11.5A7.47 7.47 0 0 1 24.5 17c0 4.1-3.4 7.5-7.5 7.5z"/>
-    <text x="36" y="14" fontFamily="'Helvetica Neue', Arial, sans-serif" fontSize="9.5" fontWeight="700" fill="#009EE3" letterSpacing="0.2">mercado</text>
-    <text x="36" y="26" fontFamily="'Helvetica Neue', Arial, sans-serif" fontSize="9.5" fontWeight="700" fill="#009EE3" letterSpacing="0.2">pago</text>
+  <svg viewBox="0 0 110 36" width="100" height="32" aria-label="Mercado Pago">
+    {/* Fondo azul app */}
+    <rect width="110" height="36" rx="9" fill="#009EE3"/>
+    {/* Símbolo circular blanco */}
+    <circle cx="20" cy="18" r="11" fill="white" opacity="0.25"/>
+    <circle cx="20" cy="18" r="8" fill="none" stroke="white" strokeWidth="2"/>
+    <path stroke="white" strokeWidth="2" strokeLinecap="round"
+      d="M14 18 Q17 13 20 18 Q23 23 26 18"/>
+    {/* Texto blanco */}
+    <text x="36" y="14" fontFamily="'Helvetica Neue', Arial, sans-serif"
+      fontSize="8.5" fontWeight="700" fill="white" letterSpacing="0.3">mercado</text>
+    <text x="36" y="27" fontFamily="'Helvetica Neue', Arial, sans-serif"
+      fontSize="8.5" fontWeight="700" fill="white" letterSpacing="0.3">pago</text>
   </svg>
 );
 
