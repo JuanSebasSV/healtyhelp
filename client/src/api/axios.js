@@ -5,10 +5,10 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 15000 // ✅ 15 segundos — por si Render está durmiendo
+  timeout: 15000
 });
 
-// 🔒 Interceptor: Agregar token automáticamente
+// Agregar token automáticamente
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -20,25 +20,10 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🔒 Interceptor: Manejar errores de autenticación
+// ✅ Sin redirección automática — AuthContext maneja los 401
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // ✅ Solo redirigir al login si hay respuesta 401 real del servidor
-    // No redirigir si es timeout, red caída o servidor durmiendo
-    if (error.response?.status === 401) {
-      const rutasPublicas = ['/login', '/registro', '/recuperar'];
-      const estaEnRutaPublica = rutasPublicas.some(r => window.location.pathname.startsWith(r));
-      
-      // Solo redirigir si no está ya en una ruta pública
-      if (!estaEnRutaPublica) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;

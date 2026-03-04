@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Profile
+import UserProfile from './components/profile/UserProfile';
+
 // Context
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthProvider';
 
 // Layout
 import Navbar from './components/layout/Navbar';
@@ -171,6 +174,15 @@ function AppContent() {
                   <Stats />
                 </PrivateRoute>
               } 
+            />
+
+            <Route
+              path="/perfil"
+              element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              }
             />
 
             <Route path="/premium" element={<VistaPremium />} />
