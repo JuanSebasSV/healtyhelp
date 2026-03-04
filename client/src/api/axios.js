@@ -4,7 +4,8 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 15000 // ✅ 15 segundos — por si Render está durmiendo
 });
 
 // 🔒 Interceptor: Agregar token automáticamente
@@ -23,11 +24,18 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // ✅ Solo redirigir al login si hay respuesta 401 real del servidor
+    // No redirigir si es timeout, red caída o servidor durmiendo
     if (error.response?.status === 401) {
-      // Token expirado o inválido
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const rutasPublicas = ['/login', '/registro', '/recuperar'];
+      const estaEnRutaPublica = rutasPublicas.some(r => window.location.pathname.startsWith(r));
+      
+      // Solo redirigir si no está ya en una ruta pública
+      if (!estaEnRutaPublica) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

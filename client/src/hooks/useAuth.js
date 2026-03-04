@@ -24,7 +24,7 @@ const useAuth = () => {
     register: context.register,
     forgotPassword: context.forgotPassword,
     resetPassword: context.resetPassword,
-    isAdmin: context.isAdmin,
+    isAdmin: context.isAdmin, 
     loading: context.loading,
     checkAuth: context.checkAuth
   };
