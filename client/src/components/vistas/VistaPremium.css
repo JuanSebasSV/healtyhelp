@@ -516,3 +516,59 @@
     padding: 2rem 1rem 3rem;
   }
 }
+
+/* ============ LOGOS MÉTODOS ============ */
+.premium__metodo-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 36px;
+}
+
+.premium__metodo-logos-lg {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Icono SVG en beneficio-card */
+.premium__beneficio-icono {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 185, 60, 0.12);
+  border: 1px solid rgba(255, 185, 60, 0.25);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd47a;
+}
+
+/* Chip icono en éxito */
+.chip-icono {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+  color: #ffd47a;
+  width: 16px;
+  height: 16px;
+}
+
+.chip-icono svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Disclaimer con icono inline */
+.premium__disclaimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  margin: 0;
+}
