@@ -123,7 +123,7 @@ function AppContent() {
             />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Register />} />
-            <Route path="/auth/google/callback" element={<GoogleCallback />} />
+            <Route path="/google-callback" element={<GoogleCallback />} />
             <Route path="/recuperar" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/contacto" element={<VistaContacto />} />
