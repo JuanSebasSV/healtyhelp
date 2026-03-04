@@ -1,37 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
 
 const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [filtroAbierto, setFiltroAbierto] = useState(false);
+  const navigate = useNavigate();
 
   const categorias = [
-    {
-      id: 'todas',
-      nombre: 'Todas',
-      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
-    },
-    {
-      id: 'desayuno',
-      nombre: 'Desayuno',
-      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
-    },
-    {
-      id: 'almuerzo',
-      nombre: 'Almuerzo',
-      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="6"/><path d="M12 14v8"/><path d="M8.5 20h7"/></svg>'
-    },
-    {
-      id: 'cena',
-      nombre: 'Cena',
-      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'
-    },
-    {
-      id: 'postres-snacks',
-      nombre: 'Postres & Snacks',
-      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/></svg>'
-    }
+    { id: 'todas', nombre: 'Todas', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
+    { id: 'desayuno', nombre: 'Desayuno', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>' },
+    { id: 'almuerzo', nombre: 'Almuerzo', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="6"/><path d="M12 14v8"/><path d="M8.5 20h7"/></svg>' },
+    { id: 'cena', nombre: 'Cena', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' },
+    { id: 'postres-snacks', nombre: 'Postres & Snacks', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/></svg>' }
   ];
 
   const condicionesSalud = [
@@ -56,38 +38,52 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
   ];
 
   const toggleFiltro = (filtroId) => {
-    setFiltrosActivos(prev => 
-      prev.includes(filtroId) 
-        ? prev.filter(f => f !== filtroId)
-        : [...prev, filtroId]
+    setFiltrosActivos(prev =>
+      prev.includes(filtroId) ? prev.filter(f => f !== filtroId) : [...prev, filtroId]
     );
   };
 
-  const limpiarFiltros = () => {
-    setFiltrosActivos([]);
-  };
+  const limpiarFiltros = () => setFiltrosActivos([]);
 
   const recetasFiltradas = recetas.filter(r => {
     const coincideCategoria = categoriaActiva === 'todas' || r.cat === categoriaActiva;
-
-    if (filtrosActivos.length === 0) {
-      return coincideCategoria;
-    }
-
-    const cumpleTodosFiltros = filtrosActivos.every(filtro =>
-      r.salud.includes(filtro)
-    );
-
-    return coincideCategoria && cumpleTodosFiltros;
+    if (filtrosActivos.length === 0) return coincideCategoria;
+    return coincideCategoria && filtrosActivos.every(f => r.salud.includes(f));
   });
 
   return (
     <div className="vistaInicio">
+
+      {/* ============ HERO ============ */}
       <section className="hero">
         <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
         <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
       </section>
-      
+
+      {/* ============ BANNER PREMIUM ============ */}
+      <section className="premiumBanner" onClick={() => navigate('/premium')}>
+        <div className="premiumBanner__estrellas">
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="premiumBanner__estrella" style={{ animationDelay: `${i * 0.4}s` }}>✦</span>
+          ))}
+        </div>
+        <div className="premiumBanner__contenido">
+          <div className="premiumBanner__izq">
+            <span className="premiumBanner__badge">✨ NUEVO</span>
+            <h3 className="premiumBanner__titulo">Healthy Help <span>Premium</span></h3>
+            <p className="premiumBanner__desc">IA personalizada · Planes nutricionales · Sin límites</p>
+          </div>
+          <button className="premiumBanner__cta">
+            Descubrir
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        <div className="premiumBanner__brillo" />
+      </section>
+
+      {/* ============ CATEGORÍAS ============ */}
       <section className="categorias">
         {categorias.map(cat => (
           <button
@@ -95,18 +91,18 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
             className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
             onClick={() => cambiarCategoria(cat.id)}
           >
-            <span className="catIcono" dangerouslySetInnerHTML={{__html: cat.icono}}></span>
+            <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
             <span>{cat.nombre}</span>
           </button>
         ))}
       </section>
 
+      {/* ============ FILTRO SALUD ============ */}
       <section id="filtro-salud" className="filtroSalud">
         <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
           <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
           <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
         </div>
-        
         {filtroAbierto && (
           <div className="filtroContenido">
             <div className="filtroInfo">
@@ -124,11 +120,9 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
                   className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
                   onClick={() => toggleFiltro(condicion.id)}
                 >
-                  <span className="filtroIcono" dangerouslySetInnerHTML={{__html: condicion.icono}}></span>
+                  <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
                   <span className="filtroNombre">{condicion.nombre}</span>
-                  {filtrosActivos.includes(condicion.id) && (
-                    <span className="filtroCheck">✓</span>
-                  )}
+                  {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
                 </button>
               ))}
             </div>
@@ -136,6 +130,7 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
         )}
       </section>
 
+      {/* ============ RECETAS ============ */}
       <section className="recetasGrid">
         <h2>Recetas Recomendadas</h2>
         <div className="grid">
@@ -152,6 +147,7 @@ const VistaInicio = ({ recetas, toggleFav, favoritos, cambiarCategoria, categori
           <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
         )}
       </section>
+
     </div>
   );
 };

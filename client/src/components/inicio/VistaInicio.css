@@ -496,3 +496,228 @@
     font-size: 1.2rem;
   }
 }
+
+/* ============ PREMIUM BANNER ============ */
+.premiumBanner {
+  position: relative;
+  margin-bottom: 3rem;
+  border-radius: 20px;
+  padding: 1.4rem 2rem;
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(
+    115deg,
+    rgba(247, 127, 0, 0.18) 0%,
+    rgba(255, 200, 80, 0.12) 40%,
+    rgba(247, 127, 0, 0.18) 100%
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid rgba(255, 185, 60, 0.45);
+  box-shadow:
+    0 8px 32px rgba(247, 127, 0, 0.2),
+    inset 0 1px 0 rgba(255, 220, 120, 0.25);
+  transition: var(--transicion);
+  animation: premiumEntrada 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes premiumEntrada {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.premiumBanner:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 185, 60, 0.75);
+  box-shadow:
+    0 16px 48px rgba(247, 127, 0, 0.32),
+    inset 0 1px 0 rgba(255, 220, 120, 0.35);
+}
+
+.premiumBanner:hover .premiumBanner__brillo {
+  transform: translateX(100%);
+}
+
+/* Brillo que pasa al hacer hover */
+.premiumBanner__brillo {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 220, 120, 0.18),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+
+/* Estrellas animadas de fondo */
+.premiumBanner__estrellas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.premiumBanner__estrella {
+  position: absolute;
+  color: rgba(255, 200, 80, 0.35);
+  font-size: 0.75rem;
+  animation: estrellaPulso 3s ease-in-out infinite;
+}
+
+.premiumBanner__estrella:nth-child(1) { top: 20%; left: 5%;   font-size: 0.6rem; }
+.premiumBanner__estrella:nth-child(2) { top: 60%; left: 15%;  font-size: 1rem;   }
+.premiumBanner__estrella:nth-child(3) { top: 15%; left: 40%;  font-size: 0.5rem; }
+.premiumBanner__estrella:nth-child(4) { top: 70%; left: 55%;  font-size: 0.8rem; }
+.premiumBanner__estrella:nth-child(5) { top: 25%; left: 75%;  font-size: 0.6rem; }
+.premiumBanner__estrella:nth-child(6) { top: 65%; left: 88%;  font-size: 1rem;   }
+
+@keyframes estrellaPulso {
+  0%, 100% { opacity: 0.2; transform: scale(1);    }
+  50%       { opacity: 0.7; transform: scale(1.4);  }
+}
+
+/* Layout interior */
+.premiumBanner__contenido {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.premiumBanner__izq {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Badge NUEVO */
+.premiumBanner__badge {
+  display: inline-block;
+  background: rgba(255, 185, 60, 0.25);
+  border: 1px solid rgba(255, 185, 60, 0.55);
+  color: #ffd47a;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 0.2rem 0.7rem;
+  border-radius: 50px;
+  width: fit-content;
+  animation: badgePulso 2.5s ease-in-out infinite;
+}
+
+@keyframes badgePulso {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 185, 60, 0); }
+  50%       { box-shadow: 0 0 0 4px rgba(255, 185, 60, 0.2); }
+}
+
+/* Título */
+.premiumBanner__titulo {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: 'Georgia', serif;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.premiumBanner__titulo span {
+  background: linear-gradient(90deg, #ffd47a, #f77f00, #ffd47a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textoDorado 3s linear infinite;
+}
+
+@keyframes textoDorado {
+  to { background-position: 200% center; }
+}
+
+/* Descripción */
+.premiumBanner__desc {
+  font-size: 0.85rem;
+  color: rgba(255, 220, 150, 0.8);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Botón CTA */
+.premiumBanner__cta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: linear-gradient(135deg, rgba(247,127,0,0.5), rgba(255,160,30,0.4));
+  border: 1.5px solid rgba(255, 185, 60, 0.65);
+  border-radius: 50px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.premiumBanner__cta:hover {
+  background: linear-gradient(135deg, rgba(247,127,0,0.75), rgba(255,160,30,0.65));
+  transform: translateX(4px);
+  box-shadow: 0 6px 24px rgba(247, 127, 0, 0.4);
+}
+
+.premiumBanner__cta svg {
+  transition: transform 0.3s ease;
+}
+
+.premiumBanner:hover .premiumBanner__cta svg {
+  transform: translateX(4px);
+}
+
+/* Modo oscuro */
+.modo-oscuro .premiumBanner {
+  background: linear-gradient(
+    115deg,
+    rgba(180, 90, 0, 0.25) 0%,
+    rgba(200, 130, 20, 0.15) 40%,
+    rgba(180, 90, 0, 0.25) 100%
+  );
+  border-color: rgba(220, 150, 40, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 200, 80, 0.15);
+}
+
+.modo-oscuro .premiumBanner:hover {
+  border-color: rgba(220, 150, 40, 0.65);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 200, 80, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .premiumBanner {
+    padding: 1.2rem 1.25rem;
+  }
+
+  .premiumBanner__titulo {
+    font-size: 1.1rem;
+  }
+
+  .premiumBanner__desc {
+    font-size: 0.78rem;
+  }
+
+  .premiumBanner__cta {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.85rem;
+  }
+}

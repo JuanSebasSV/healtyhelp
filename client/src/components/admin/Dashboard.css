@@ -1,0 +1,283 @@
+/* Dashboard.css - Panel Administrativo */
+
+.admin-dashboard {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+/* ============ HEADER ============ */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.admin-header h1 {
+  color: #ffffff;
+  font-size: 2rem;
+  margin-bottom: 0.4rem;
+  font-family: 'Georgia', serif;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.admin-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+.modo-oscuro .admin-header {
+  border-bottom-color: rgba(79, 119, 45, 0.25);
+}
+
+.modo-oscuro .admin-header h1 {
+  color: rgba(210, 245, 185, 0.97);
+}
+
+.modo-oscuro .admin-subtitle {
+  color: rgba(200, 230, 185, 0.7);
+}
+
+/* ============ BTN VOLVER ============ */
+.btn-back {
+  padding: 0.65rem 1.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transicion);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--naranja);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.modo-oscuro .btn-back {
+  background: rgba(15, 35, 20, 0.5);
+  border-color: rgba(79, 119, 45, 0.35);
+  color: rgba(210, 245, 185, 0.9);
+}
+
+.modo-oscuro .btn-back:hover {
+  background: rgba(25, 55, 30, 0.65);
+  border-color: var(--naranja);
+}
+
+/* ============ CONTROLES ============ */
+.admin-controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: var(--transicion);
+  color: #ffffff;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.search-box input:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
+}
+
+.filter-box select {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  cursor: pointer;
+  min-width: 200px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: var(--transicion);
+  outline: none;
+}
+
+.filter-box select:focus {
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
+}
+
+.filter-box select option {
+  background: #1a4d2e;
+  color: #ffffff;
+}
+
+.modo-oscuro .search-box input,
+.modo-oscuro .filter-box select {
+  background: rgba(15, 35, 20, 0.55);
+  border-color: rgba(79, 119, 45, 0.35);
+  color: rgba(220, 245, 205, 0.97);
+}
+
+.modo-oscuro .search-box input::placeholder {
+  color: rgba(180, 210, 160, 0.45);
+}
+
+.modo-oscuro .search-box input:focus,
+.modo-oscuro .filter-box select:focus {
+  border-color: var(--naranja);
+  background: rgba(25, 55, 30, 0.65);
+}
+
+.modo-oscuro .filter-box select option {
+  background: #0a1a0f;
+}
+
+/* ============ BTN EXPORTAR ============ */
+.btn-export {
+  padding: 0.75rem 1.5rem;
+  background: rgba(247, 127, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(247, 127, 0, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #ffffff;
+  transition: var(--transicion);
+  font-size: 0.95rem;
+}
+
+.btn-export:hover {
+  background: var(--naranja);
+  border-color: var(--naranja);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 127, 0, 0.4);
+}
+
+/* ============ PAGINACIÓN ============ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pagination button {
+  padding: 0.65rem 1.4rem;
+  background: rgba(79, 119, 45, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(79, 119, 45, 0.45);
+  border-radius: 50px;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transicion);
+}
+
+.pagination button:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.35);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination button:not(:disabled):hover {
+  background: var(--verde-hoja);
+  border-color: var(--verde-hoja);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(79, 119, 45, 0.4);
+}
+
+.page-info {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.modo-oscuro .page-info {
+  color: rgba(200, 230, 185, 0.85);
+}
+
+/* ============ FOOTER ADMIN ============ */
+.admin-footer {
+  text-align: center;
+  padding: 1rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.88rem;
+  margin-top: 1rem;
+}
+
+.modo-oscuro .admin-footer {
+  color: rgba(180, 210, 160, 0.4);
+}
+
+/* ============ LOADING ============ */
+.admin-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top: 4px solid var(--verde-hoja);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 968px) {
+  .admin-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-box select {
+    width: 100%;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .btn-back {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}

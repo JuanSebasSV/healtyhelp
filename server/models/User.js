@@ -29,6 +29,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+
+  isSuperAdmin: {
+    type: Boolean,
+    default: false
+  },
+
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: String,
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, { timestamps: true });

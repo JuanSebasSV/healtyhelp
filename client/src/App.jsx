@@ -6,8 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 // Context
 import { AuthProvider } from './context/AuthContext';
 
-// Profile
-import UserProfile from './components/profile/UserProfile';
 // Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -31,6 +29,9 @@ import VistaContacto from './components/vistas/VistaContacto';
 import Dashboard from './components/admin/Dashboard';
 import UserList from './components/admin/UserList';
 import Stats from './components/admin/Stats';
+
+// Premium
+import VistaPremium from './components/vistas/VistaPremium';
 
 // Otros
 import RobotIA from './components/inicio/RobotIA';
@@ -119,7 +120,7 @@ function AppContent() {
             />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Register />} />
-            <Route path="/google-callback" element={<GoogleCallback />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             <Route path="/recuperar" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/contacto" element={<VistaContacto />} />
@@ -172,14 +173,7 @@ function AppContent() {
               } 
             />
 
-            <Route
-              path="/perfil"
-              element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              }
-            />
+            <Route path="/premium" element={<VistaPremium />} />
 
             {/* Ruta 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -83,12 +83,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
           {user && isAdmin && isAdmin() && (
             <li 
               onClick={() => handleNavigate('/admin')}
-              className={isActive('/admin') ? 'activo' : ''}
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                borderRadius: '4px',
-                padding: '0.5rem 1rem'
-              }}
+              className={`nav-admin-btn ${isActive('/admin') ? 'activo' : ''}`}
             >
               🛡️ Admin Panel
             </li>
