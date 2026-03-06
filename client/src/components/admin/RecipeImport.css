@@ -1,0 +1,228 @@
+/* ============================================
+   RecipeImport.css
+   Vive dentro de .recipe-content (glassmorphism)
+   ============================================ */
+
+.recipe-import {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.recipe-import h2 {
+  font-family: 'Georgia', serif;
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.modo-oscuro .recipe-import h2 { color: rgba(210, 245, 185, 0.97); }
+
+/* ── Instrucciones ── */
+.import-instructions {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+}
+.import-instructions h3 {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.92rem;
+  margin-bottom: 0.85rem;
+  font-weight: 700;
+}
+.import-instructions pre {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  overflow-x: auto;
+  line-height: 1.7;
+}
+
+.modo-oscuro .import-instructions {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(79, 119, 45, 0.18);
+}
+.modo-oscuro .import-instructions h3 { color: rgba(180, 210, 160, 0.75); }
+.modo-oscuro .import-instructions pre { color: rgba(180, 210, 160, 0.6); }
+
+/* ── Opciones de modo ── */
+.import-options {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+.import-options label {
+  flex: 1;
+  min-width: 230px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+.import-options label:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.import-options label.active {
+  background: rgba(79, 119, 45, 0.2);
+  border-color: rgba(79, 119, 45, 0.55);
+}
+.import-options input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--verde-hoja);
+  cursor: pointer;
+}
+.import-options span {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.modo-oscuro .import-options label {
+  background: rgba(10, 25, 15, 0.45);
+  border-color: rgba(79, 119, 45, 0.2);
+}
+.modo-oscuro .import-options label.active {
+  background: rgba(79, 119, 45, 0.28);
+  border-color: rgba(79, 119, 45, 0.5);
+}
+.modo-oscuro .import-options span { color: rgba(210, 245, 185, 0.8); }
+
+/* ── Dropzone ── */
+.file-dropzone {
+  border: 2.5px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  transition: var(--transicion);
+  margin-bottom: 1.75rem;
+  cursor: pointer;
+}
+.file-dropzone:hover,
+.file-dropzone.active {
+  border-color: var(--verde-hoja);
+  background: rgba(79, 119, 45, 0.1);
+}
+.file-dropzone.active { transform: scale(1.015); }
+
+.file-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: var(--transicion);
+}
+.file-dropzone:hover .file-label,
+.file-dropzone.active .file-label { color: rgba(255, 255, 255, 0.9); }
+
+.modo-oscuro .file-dropzone { border-color: rgba(79, 119, 45, 0.25); }
+.modo-oscuro .file-label { color: rgba(180, 210, 160, 0.6); }
+
+/* ── Vista previa ── */
+.preview-section {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+}
+.preview-section h3 {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.preview-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--verde-hoja);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.85rem;
+}
+.preview-card h4 {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+.preview-card p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+.preview-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.preview-meta .badge {
+  padding: 0.2rem 0.65rem;
+  background: rgba(79, 119, 45, 0.25);
+  border: 1px solid rgba(79, 119, 45, 0.45);
+  color: #a7d588;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.preview-more {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  font-size: 0.88rem;
+  margin-top: 0.5rem;
+}
+
+.modo-oscuro .preview-section { border-color: rgba(79, 119, 45, 0.18); }
+.modo-oscuro .preview-card { border-left-color: var(--verde-hoja); }
+.modo-oscuro .preview-card h4 { color: rgba(210, 245, 185, 0.9); }
+.modo-oscuro .preview-card p { color: rgba(180, 210, 160, 0.5); }
+
+/* ── Botón importar ── */
+.btn-import {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transicion);
+  box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
+}
+.btn-import:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(79, 119, 45, 0.4);
+  filter: brightness(1.1);
+}
+.btn-import:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.35);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .import-options { flex-direction: column; }
+  .import-options label { min-width: 100%; }
+  .file-dropzone { padding: 2rem 1rem; }
+}

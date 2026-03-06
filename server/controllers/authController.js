@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
-// Generar JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
@@ -19,7 +18,13 @@ exports.register = async (req, res) => {
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ error: 'Email ya registrado' });
+      // Si existe pero es de Google, sugerirle que use Google
+      if (userExists.googleId && !userExists.password) {
+        return res.status(400).json({ 
+          error: 'Este correo ya está registrado con Google. Usa el botón "Continuar con Google".' 
+        });
+      }
+      return res.status(400).json({ error: 'Este correo ya está registrado. Intenta iniciar sesión.' });
     }
 
     const user = await User.create({ name, email, password });
@@ -32,7 +37,11 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        avatar: user.avatar,
+        googleId: user.googleId,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -47,18 +56,20 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Usuarios de Google no tienen contraseña
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Si es usuario de Google, no puede hacer login con contraseña
+    // Si es usuario de Google SIN contraseña, no puede hacer login normal
     if (user.googleId && !user.password) {
-      return res.status(401).json({ error: 'Esta cuenta usa Google para iniciar sesión' });
+      return res.status(401).json({ 
+        error: 'Esta cuenta usa Google para iniciar sesión. Usa el botón "Continuar con Google".' 
+      });
     }
 
+    // Si tiene googleId pero TAMBIÉN tiene contraseña (vinculó ambos), permitir login normal
     if (!(await user.comparePassword(password))) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
@@ -72,7 +83,11 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        avatar: user.avatar,
+        googleId: user.googleId,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -88,23 +103,16 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      // Por seguridad, no revelar si el email existe o no
       return res.json({ success: true, message: 'Si el correo existe, recibirás un enlace' });
     }
 
-    // Usuarios de Google no pueden resetear contraseña
     if (user.googleId && !user.password) {
-      return res.status(400).json({ error: 'Esta cuenta usa Google para iniciar sesión' });
+      return res.status(400).json({ error: 'Esta cuenta usa Google para iniciar sesión. No necesita contraseña.' });
     }
 
-    // Generar token de reseteo
     const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // ✅ 30 minutos (antes eran 10)
-
+    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
@@ -134,21 +142,16 @@ exports.forgotPassword = async (req, res) => {
               Hola <strong>${user.name}</strong>, recibimos una solicitud para restablecer la contraseña de tu cuenta.
             </p>
             <p style="color: #555; line-height: 1.6;">
-              Haz clic en el botón para crear una nueva contraseña. Este enlace expira en <strong>30 minutos</strong>.
+              Este enlace expira en <strong>30 minutos</strong>.
             </p>
             <div style="text-align: center; margin: 2rem 0;">
-              <a href="${resetUrl}"
-                style="background: #f77f00; color: white; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1rem; display: inline-block;">
+              <a href="${resetUrl}" style="background: #f77f00; color: white; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1rem; display: inline-block;">
                 Restablecer contraseña
               </a>
             </div>
-            <p style="color: #999; font-size: 0.85rem; line-height: 1.6;">
-              Si no solicitaste este cambio, puedes ignorar este correo. Tu contraseña no cambiará.
-            </p>
+            <p style="color: #999; font-size: 0.85rem;">Si no solicitaste este cambio, ignora este correo.</p>
             <hr style="border: none; border-top: 1px solid #eee; margin: 1.5rem 0;">
-            <p style="color: #bbb; font-size: 0.8rem; text-align: center;">
-              © Healthy Help — Cuida tu salud con confianza
-            </p>
+            <p style="color: #bbb; font-size: 0.8rem; text-align: center;">© Healthy Help — Cuida tu salud con confianza</p>
           </div>
         </div>
       `
@@ -157,7 +160,6 @@ exports.forgotPassword = async (req, res) => {
     res.json({ success: true, message: 'Email enviado' });
 
   } catch (error) {
-    // Si falla el email, limpiar el token para no dejar datos colgados
     try {
       const user = await User.findOne({ email: req.body.email });
       if (user) {
@@ -166,7 +168,6 @@ exports.forgotPassword = async (req, res) => {
         await user.save({ validateBeforeSave: false });
       }
     } catch (_) {}
-
     console.error('Error forgotPassword:', error);
     res.status(500).json({ error: 'Error al enviar el correo. Intenta más tarde.' });
   }
@@ -177,10 +178,7 @@ exports.forgotPassword = async (req, res) => {
 // ============================================================
 exports.resetPassword = async (req, res) => {
   try {
-    const resetPasswordToken = crypto
-      .createHash('sha256')
-      .update(req.params.token)
-      .digest('hex');
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
     const user = await User.findOne({
       resetPasswordToken,
@@ -191,7 +189,6 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ error: 'Token inválido o expirado. Solicita un nuevo enlace.' });
     }
 
-    // Validar que la contraseña tenga mínimo 6 caracteres
     if (!req.body.password || req.body.password.length < 6) {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
     }
@@ -202,7 +199,6 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-
     res.json({ success: true, token });
 
   } catch (error) {

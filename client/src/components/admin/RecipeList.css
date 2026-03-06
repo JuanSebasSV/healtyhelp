@@ -1,0 +1,216 @@
+/* ============================================
+   RecipeList.css
+   Vive dentro de .recipe-content (glassmorphism)
+   — los fondos deben ser semitransparentes
+   ============================================ */
+
+/* ── Controles ── */
+.list-controls {
+  display: flex;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transicion);
+}
+.search-input::placeholder { color: rgba(255, 255, 255, 0.35); }
+.search-input:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+}
+
+.filter-select {
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  min-width: 185px;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transicion);
+}
+.filter-select option { background: #1a4d2e; color: #fff; }
+.filter-select:focus {
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+}
+
+.selection-count {
+  background: var(--naranja);
+  color: #ffffff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.modo-oscuro .search-input,
+.modo-oscuro .filter-select {
+  background: rgba(10, 25, 15, 0.5);
+  border-color: rgba(79, 119, 45, 0.28);
+  color: rgba(220, 245, 205, 0.95);
+}
+.modo-oscuro .search-input::placeholder { color: rgba(180, 210, 160, 0.38); }
+.modo-oscuro .filter-select option { background: #0a1a0f; }
+
+/* ── Tabla ── */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recipes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.recipes-table thead {
+  background: rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.recipes-table th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.recipes-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: var(--transicion);
+}
+.recipes-table tbody tr:last-child { border-bottom: none; }
+.recipes-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.recipes-table td {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.modo-oscuro .recipes-table { background: rgba(0, 0, 0, 0.25); }
+.modo-oscuro .recipes-table thead { background: rgba(10, 25, 15, 0.5); }
+.modo-oscuro .recipes-table th { color: rgba(180, 210, 160, 0.55); }
+.modo-oscuro .recipes-table tbody tr { border-bottom-color: rgba(79, 119, 45, 0.1); }
+.modo-oscuro .recipes-table tbody tr:hover { background: rgba(79, 119, 45, 0.08); }
+.modo-oscuro .recipes-table td { color: rgba(210, 245, 185, 0.88); }
+
+/* ── Imagen thumbnail ── */
+.recipe-thumbnail {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: block;
+}
+
+/* ── Nombre + descripción ── */
+.recipe-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.recipe-name strong {
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+.recipe-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.4;
+}
+.modo-oscuro .recipe-name strong { color: rgba(210, 245, 185, 0.95); }
+.modo-oscuro .recipe-desc { color: rgba(180, 210, 160, 0.45); }
+
+/* ── Badges de categoría ── */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.badge.cat-desayuno       { background: rgba(255, 193, 7, 0.18);  color: #fcd34d; border: 1px solid rgba(255,193,7,0.3); }
+.badge.cat-almuerzo       { background: rgba(52, 211, 153, 0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
+.badge.cat-cena           { background: rgba(96, 165, 250, 0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.3); }
+.badge.cat-postres-snacks { background: rgba(244, 114, 182, 0.15);color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3); }
+
+.health-count {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.modo-oscuro .health-count { color: rgba(180, 210, 160, 0.55); }
+
+/* ── Botones de acción ── */
+.action-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+.btn-edit,
+.btn-delete {
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  background: transparent;
+  transition: var(--transicion);
+  line-height: 1;
+}
+.btn-edit:hover {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: rgba(96, 165, 250, 0.4);
+  transform: scale(1.1);
+}
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: scale(1.1);
+}
+
+/* ── Estado vacío ── */
+.recipes-empty,
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+.recipes-empty h3 { font-size: 1.6rem; margin-bottom: 0.75rem; }
+.recipes-empty p,
+.no-results p { font-size: 0.95rem; opacity: 0.7; }
+
+.modo-oscuro .recipes-empty,
+.modo-oscuro .no-results { color: rgba(180, 210, 160, 0.5); }
+
+/* ── Responsive ── */
+@media (max-width: 968px) {
+  .list-controls { flex-direction: column; }
+  .search-input, .filter-select { width: 100%; min-width: 100%; }
+  .recipes-table { min-width: 820px; }
+  .recipes-table th,
+  .recipes-table td { padding: 0.75rem 0.6rem; font-size: 0.88rem; }
+  .recipe-thumbnail { width: 44px; height: 44px; }
+}

@@ -77,12 +77,21 @@ const UserProfile = () => {
             <div className="avatar-wrapper">
               <div className="avatar-anillo" />
               {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="avatar-img" />
-              ) : (
-                <div className="avatar-iniciales">
-                  <span>{getInitials(user?.name)}</span>
-                </div>
-              )}
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="avatar-img"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div className="avatar-iniciales" style={{ display: user?.avatar ? 'none' : 'flex' }}>
+                <span>{getInitials(user?.name)}</span>
+              </div>
               <div className="avatar-badge">
                 {user?.role === 'admin' ? '🛡️' : '🌿'}
               </div>

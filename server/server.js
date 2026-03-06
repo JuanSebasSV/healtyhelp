@@ -10,13 +10,27 @@ require('dotenv').config();
 
 const app = express();
 
+// ✅ CORS primero — antes que cualquier otro middleware
+app.use(cors({
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://frhealtyhelp.onrender.com'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 // 🛡️ SEGURIDAD: Headers HTTP seguros
 app.use(helmet());
 
 // 🛡️ SEGURIDAD: Prevenir ataques HPP
 app.use(hpp());
 
-// 🛡️ SEGURIDAD: Rate limiting (máx 100 peticiones por IP cada 15 min)
+// 🛡️ SEGURIDAD: Rate limiting general (100 peticiones por IP cada 15 min)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -24,10 +38,10 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// 🛡️ SEGURIDAD: Rate limiting estricto para login (5 intentos cada 15 min)
+// 🛡️ Rate limiting para login — más permisivo en desarrollo
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: process.env.NODE_ENV === 'production' ? 20 : 100,
   message: 'Demasiados intentos de login, espera 15 minutos'
 });
 app.use('/api/auth/login', authLimiter);
@@ -45,11 +59,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
-}));
-
 // 🔒 Inicializar Passport
 app.use(passport.initialize());
 
@@ -64,6 +73,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Rutas
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/recipes', require('./routes/recipes'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

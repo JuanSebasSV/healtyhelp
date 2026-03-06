@@ -125,12 +125,21 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
               >
                 <div className="nav-avatar-mini">
                   {user.avatar ? (
-                    <img src={user.avatar} alt={user.name} className="nav-avatar-img" />
-                  ) : (
-                    <div className="nav-avatar-iniciales">
-                      {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                    </div>
-                  )}
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="nav-avatar-img"
+                      referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="nav-avatar-iniciales" style={{ display: user.avatar ? 'none' : 'flex' }}>
+                    {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                  </div>
                   {user.role === 'admin' && <span className="nav-admin-dot" />}
                 </div>
                 <span className="nav-nombre">{user.name?.split(' ')[0]}</span>

@@ -32,6 +32,7 @@ import VistaContacto from './components/vistas/VistaContacto';
 import Dashboard from './components/admin/Dashboard';
 import UserList from './components/admin/UserList';
 import Stats from './components/admin/Stats';
+import RecipeManagement from './components/admin/RecipeManagement';
 
 // Premium
 import VistaPremium from './components/vistas/VistaPremium';
@@ -183,6 +184,14 @@ function AppContent() {
                   <UserProfile />
                 </PrivateRoute>
               }
+            />
+            <Route 
+              path="/admin/recipes" 
+              element={
+                <PrivateRoute requireAdmin={true}>
+                  <RecipeManagement />
+                </PrivateRoute>
+              } 
             />
 
             <Route path="/premium" element={<VistaPremium />} />

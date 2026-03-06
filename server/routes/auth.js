@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // ✅ FIX: faltaba este import
+const User = require('../models/User');
 require('../config/passport');
 
-// Importar controladores
 const {
   register,
   login,
@@ -15,7 +14,6 @@ const {
 
 const { protect } = require('../middleware/auth');
 
-// Función helper para generar JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
@@ -28,21 +26,38 @@ router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:token', resetPassword);
 
-// Obtener usuario actual (protegido)
+// ===== OBTENER USUARIO ACTUAL =====
 router.get('/me', protect, async (req, res) => {
-  res.json({ user: req.user });
+  try {
+    // Buscar usuario fresco desde BD con todos los campos
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(401).json({ error: 'Usuario no encontrado' });
+    }
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        googleId: user.googleId,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener usuario' });
+  }
 });
 
 // ===== RUTAS DE GOOGLE OAUTH =====
-
-// Iniciar login con Google
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-// Callback de Google
 router.get('/google/callback',
-  passport.authenticate('google', { 
+  passport.authenticate('google', {
     session: false,
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`
   }),
@@ -57,7 +72,7 @@ router.get('/google/callback',
   }
 );
 
-// Actualizar perfil
+// ===== ACTUALIZAR PERFIL =====
 router.put('/profile', protect, async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -66,8 +81,7 @@ router.put('/profile', protect, async (req, res) => {
     if (name) user.name = name;
 
     if (password) {
-      // ✅ FIX: usuarios de Google no pueden cambiar contraseña
-      if (user.googleId) {
+      if (user.googleId && !user.password) {
         return res.status(400).json({ error: 'Las cuentas de Google no pueden cambiar la contraseña' });
       }
       if (password.length < 6) {
@@ -79,7 +93,19 @@ router.put('/profile', protect, async (req, res) => {
     await user.save();
 
     const updatedUser = await User.findById(req.user._id);
-    res.json({ user: updatedUser, message: 'Perfil actualizado' });
+    res.json({
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        avatar: updatedUser.avatar,
+        googleId: updatedUser.googleId,
+        isVerified: updatedUser.isVerified,
+        createdAt: updatedUser.createdAt
+      },
+      message: 'Perfil actualizado'
+    });
   } catch (error) {
     console.error('Error actualizando perfil:', error);
     res.status(500).json({ error: 'Error al actualizar perfil' });

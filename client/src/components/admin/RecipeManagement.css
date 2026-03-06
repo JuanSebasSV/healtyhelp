@@ -1,0 +1,159 @@
+/* ============================================
+   RecipeManagement.css
+   Contenedor de la sección de recetas dentro
+   del Dashboard. NO tiene header propio porque
+   ya está en el Dashboard padre.
+   ============================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Contenedor raíz ── */
+.recipe-management-content {
+  animation: fadeIn 0.35s ease;
+}
+
+/* ── Estadísticas de recetas (mini cards) ── */
+.recipe-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.recipe-stats .stat-card {
+  flex: 1;
+  min-width: 130px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: var(--transicion);
+}
+.recipe-stats .stat-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.recipe-stats .stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}
+.recipe-stats .stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.modo-oscuro .recipe-stats .stat-card {
+  background: rgba(10, 25, 15, 0.55);
+  border-color: rgba(79, 119, 45, 0.25);
+}
+.modo-oscuro .recipe-stats .stat-label { color: rgba(180, 210, 160, 0.5); }
+.modo-oscuro .recipe-stats .stat-value { color: rgba(210, 245, 185, 0.97); }
+
+/* ── Tabs internos (Lista / Importar / Crear / Exportar) ── */
+.recipe-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.recipe-tabs button {
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+.recipe-tabs button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+}
+.recipe-tabs button.active {
+  background: rgba(79, 119, 45, 0.3);
+  border-color: rgba(79, 119, 45, 0.6);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(79, 119, 45, 0.25);
+}
+
+/* Botón exportar (distinto estilo dentro de tabs) */
+.recipe-tabs .btn-export {
+  margin-left: auto;
+  padding: 0.6rem 1.2rem;
+  background: rgba(247, 127, 0, 0.18);
+  border: 1.5px solid rgba(247, 127, 0, 0.4);
+  border-radius: 10px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+.recipe-tabs .btn-export:hover {
+  background: var(--naranja);
+  border-color: var(--naranja);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
+}
+
+.modo-oscuro .recipe-tabs button {
+  background: rgba(10, 25, 15, 0.45);
+  border-color: rgba(79, 119, 45, 0.2);
+  color: rgba(180, 210, 160, 0.55);
+}
+.modo-oscuro .recipe-tabs button:hover { color: rgba(210, 245, 185, 0.9); }
+.modo-oscuro .recipe-tabs button.active {
+  background: rgba(79, 119, 45, 0.35);
+  border-color: rgba(79, 119, 45, 0.55);
+  color: rgba(210, 245, 185, 0.97);
+}
+
+/* ── Contenido (la vista activa) ── */
+.recipe-content {
+  /* Glassmorphism suave para el panel de contenido */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modo-oscuro .recipe-content {
+  background: rgba(10, 25, 15, 0.5);
+  border-color: rgba(79, 119, 45, 0.2);
+}
+
+/* ── Loading ── */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+}
+.modo-oscuro .loading { color: rgba(180, 210, 160, 0.6); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .recipe-content { padding: 1.25rem; }
+  .recipe-tabs { gap: 0.4rem; }
+  .recipe-tabs .btn-export { margin-left: 0; width: 100%; }
+  .recipe-stats .stat-card { min-width: calc(50% - 0.5rem); }
+}

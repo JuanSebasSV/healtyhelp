@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
 import UserList from './UserList';
 import Stats from './Stats';
-import './Dashboard.css';
+import RecipeManagement from './RecipeManagement';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [filterRole, setFilterRole] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
+  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'recipes'
 
   // 🛡️ SEGURIDAD: Verificar que sea admin
   useEffect(() => {
@@ -62,9 +63,7 @@ const Dashboard = () => {
     try {
       await api.delete(`/admin/users/${userId}`);
       toast.success('✅ Usuario eliminado correctamente');
-      
       await logAdminAction('delete_user', userId);
-      
       fetchData();
     } catch (error) {
       const errorMsg = error.response?.data?.error || 'Error eliminando usuario';
@@ -76,9 +75,7 @@ const Dashboard = () => {
     try {
       await api.put(`/admin/users/${userId}/role`, { role: newRole });
       toast.success(`✅ Rol actualizado a ${newRole}`);
-      
       await logAdminAction('change_role', userId, { newRole });
-      
       fetchData();
     } catch (error) {
       const errorMsg = error.response?.data?.error || 'Error cambiando rol';
@@ -101,8 +98,9 @@ const Dashboard = () => {
 
   // 🔍 Filtrar usuarios
   const filteredUsers = users.filter(u => {
-    const matchesSearch = u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         u.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || u.role === filterRole;
     return matchesSearch && matchesRole;
   });
@@ -159,69 +157,95 @@ const Dashboard = () => {
           ← Volver al inicio
         </button>
       </div>
-      
-      <Stats stats={stats} />
-      
-      <div className="admin-controls">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="🔍 Buscar por nombre o email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        
-        <div className="filter-box">
-          <select 
-            value={filterRole} 
-            onChange={(e) => setFilterRole(e.target.value)}
-          >
-            <option value="all">Todos los roles</option>
-            <option value="admin">Solo Admins</option>
-            <option value="user">Solo Usuarios</option>
-          </select>
-        </div>
 
-        <button onClick={exportToCSV} className="btn-export">
-          📥 Exportar CSV
+      <Stats stats={stats} />
+
+      {/* ─── Tabs principales ─── */}
+      <div className="admin-main-tabs">
+        <button
+          className={`main-tab ${activeTab === 'users' ? 'active' : ''}`}
+          onClick={() => setActiveTab('users')}
+        >
+          👥 Usuarios
+        </button>
+        <button
+          className={`main-tab ${activeTab === 'recipes' ? 'active' : ''}`}
+          onClick={() => setActiveTab('recipes')}
+        >
+          🍽️ Recetas
         </button>
       </div>
-      
-      <UserList 
-        users={currentUsers}
-        onDelete={handleDeleteUser}
-        onChangeRole={handleChangeRole}
-      />
 
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            ← Anterior
-          </button>
-          
-          <span className="page-info">
-            Página {currentPage} de {totalPages}
-          </span>
-          
-          <button 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Siguiente →
-          </button>
-        </div>
+      {/* ─── Pestaña Usuarios ─── */}
+      {activeTab === 'users' && (
+        <>
+          <div className="admin-controls">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="🔍 Buscar por nombre o email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="filter-box">
+              <select
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
+              >
+                <option value="all">Todos los roles</option>
+                <option value="admin">Solo Admins</option>
+                <option value="user">Solo Usuarios</option>
+              </select>
+            </div>
+
+            <button onClick={exportToCSV} className="btn-export">
+              📥 Exportar CSV
+            </button>
+          </div>
+
+          <UserList
+            users={currentUsers}
+            onDelete={handleDeleteUser}
+            onChangeRole={handleChangeRole}
+          />
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                ← Anterior
+              </button>
+
+              <span className="page-info">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
+
+          <div className="admin-footer">
+            <p>
+              Mostrando {currentUsers.length} de {filteredUsers.length} usuarios
+              {searchTerm && ` (filtrados de ${users.length} totales)`}
+            </p>
+          </div>
+        </>
       )}
 
-      <div className="admin-footer">
-        <p>
-          Mostrando {currentUsers.length} de {filteredUsers.length} usuarios
-          {searchTerm && ` (filtrados de ${users.length} totales)`}
-        </p>
-      </div>
+      {/* ─── Pestaña Recetas ─── */}
+      {activeTab === 'recipes' && (
+        <RecipeManagement />
+      )}
     </div>
   );
 };
