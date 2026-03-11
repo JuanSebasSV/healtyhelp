@@ -3,120 +3,32 @@ const AdminLog = require('../models/AdminLog');
 const fs = require('fs').promises;
 const path = require('path');
 
-// 📤 Importar recetas desde JSON
-exports.importRecipes = async (req, res) => {
-  try {
-    const { recipes, mode } = req.body;
-
-    if (!Array.isArray(recipes)) {
-      return res.status(400).json({ 
-        error: 'Formato inválido: se esperaba un array de recetas' 
-      });
-    }
-
-    // Validar estructura de cada receta
-    const validRecipes = [];
-    const errors = [];
-
-    recipes.forEach((recipe, index) => {
-      if (!recipe.nombre || !recipe.desc || !recipe.cat) {
-        errors.push(`Receta ${index + 1}: Faltan campos obligatorios`);
-      } else {
-        validRecipes.push(recipe);
-      }
-    });
-
-    if (errors.length > 0) {
-      return res.status(400).json({ 
-        error: 'Algunas recetas tienen errores',
-        details: errors
-      });
-    }
-
-    let result = {};
-
-    if (mode === 'replace') {
-      const count = await Recipe.countDocuments();
-      await Recipe.deleteMany({});
-      const created = await Recipe.insertMany(validRecipes);
-      result = {
-        deleted: count,
-        created: created.length
-      };
-    } else {
-      const created = await Recipe.insertMany(validRecipes);
-      result = {
-        created: created.length
-      };
-    }
-
-    // Log de auditoría
-    await AdminLog.create({
-      adminId: req.user._id,
-      action: 'IMPORT_RECIPES',
-      metadata: result
-    });
-
-    res.json({
-      success: true,
-      message: `${result.created} recetas importadas correctamente`,
-      result
-    });
-  } catch (error) {
-    console.error('Error importando recetas:', error);
-    res.status(500).json({ 
-      error: 'Error importando recetas',
-      details: error.message 
-    });
-  }
-};
-
-// 📥 Exportar todas las recetas a JSON
-exports.exportRecipes = async (req, res) => {
-  try {
-    const recipes = await Recipe.find().select('-__v').lean();
-
-    res.json({
-      success: true,
-      count: recipes.length,
-      recipes
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Error exportando recetas' });
-  }
-};
-
-// 📊 Obtener todas las recetas (con paginación y filtros)
+// ─────────────────────────────────────────────
+// 📊 Obtener todas las recetas (paginación + filtros)
+// ─────────────────────────────────────────────
 exports.getAllRecipes = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      search = '', 
-      cat = '', 
-      salud = '' 
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      cat = '',
+      salud = ''
     } = req.query;
 
-    // Construir filtros
     const filters = {};
-    
     if (search) {
       filters.$or = [
         { nombre: { $regex: search, $options: 'i' } },
-        { desc: { $regex: search, $options: 'i' } }
+        { desc:   { $regex: search, $options: 'i' } }
       ];
     }
-    
-    if (cat) {
-      filters.cat = cat;
-    }
-    
-    if (salud) {
-      filters.salud = salud;
-    }
+    if (cat)   filters.cat  = cat;
+    if (salud) filters.salud = salud;
 
     const total = await Recipe.countDocuments(filters);
     const recipes = await Recipe.find(filters)
+      .select('-resenas')          // no enviar array completo en el listado
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
@@ -135,27 +47,29 @@ exports.getAllRecipes = async (req, res) => {
   }
 };
 
-// 🔍 Obtener una receta por ID
+// ─────────────────────────────────────────────
+// 🔍 Obtener una receta por ID (incluye reseñas)
+// ─────────────────────────────────────────────
 exports.getRecipeById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const recipe = await Recipe.findById(id);
-
-    if (!recipe) {
-      return res.status(404).json({ error: 'Receta no encontrada' });
-    }
-
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
     res.json({ success: true, recipe });
   } catch (error) {
     res.status(500).json({ error: 'Error obteniendo receta' });
   }
 };
 
+// ─────────────────────────────────────────────
 // ➕ Crear receta
+// ─────────────────────────────────────────────
 exports.createRecipe = async (req, res) => {
   try {
-    const recipeData = req.body;
-    recipeData.createdBy = req.user._id;
+    const recipeData = { ...req.body, createdBy: req.user._id };
+    // Ignorar campos del sistema si vienen en el body
+    delete recipeData.resenas;
+    delete recipeData.puntosProm;
+    delete recipeData.totalResenas;
 
     const recipe = await Recipe.create(recipeData);
 
@@ -165,35 +79,30 @@ exports.createRecipe = async (req, res) => {
       metadata: { recipeName: recipe.nombre, recipeId: recipe._id }
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Receta creada correctamente',
-      recipe
-    });
+    res.status(201).json({ success: true, message: 'Receta creada correctamente', recipe });
   } catch (error) {
     console.error('Error creando receta:', error);
-    res.status(500).json({ 
-      error: 'Error creando receta',
-      details: error.message 
-    });
+    res.status(500).json({ error: 'Error creando receta', details: error.message });
   }
 };
 
+// ─────────────────────────────────────────────
 // ✏️ Actualizar receta
+// ─────────────────────────────────────────────
 exports.updateRecipe = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updates = req.body;
+    const updates = { ...req.body };
+    // Proteger campos del sistema
+    delete updates.resenas;
+    delete updates.puntosProm;
+    delete updates.totalResenas;
 
     const recipe = await Recipe.findByIdAndUpdate(
-      id,
+      req.params.id,
       updates,
       { new: true, runValidators: true }
     );
-
-    if (!recipe) {
-      return res.status(404).json({ error: 'Receta no encontrada' });
-    }
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     await AdminLog.create({
       adminId: req.user._id,
@@ -201,38 +110,23 @@ exports.updateRecipe = async (req, res) => {
       metadata: { recipeName: recipe.nombre, recipeId: recipe._id }
     });
 
-    res.json({
-      success: true,
-      message: 'Receta actualizada correctamente',
-      recipe
-    });
+    res.json({ success: true, message: 'Receta actualizada correctamente', recipe });
   } catch (error) {
     console.error('Error actualizando receta:', error);
-    res.status(500).json({ 
-      error: 'Error actualizando receta',
-      details: error.message 
-    });
+    res.status(500).json({ error: 'Error actualizando receta', details: error.message });
   }
 };
 
+// ─────────────────────────────────────────────
 // 🗑️ Eliminar receta
+// ─────────────────────────────────────────────
 exports.deleteRecipe = async (req, res) => {
   try {
-    const { id } = req.params;
-    const recipe = await Recipe.findByIdAndDelete(id);
+    const recipe = await Recipe.findByIdAndDelete(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    if (!recipe) {
-      return res.status(404).json({ error: 'Receta no encontrada' });
-    }
-
-    // Eliminar imagen si existe
     if (recipe.img && recipe.img.includes('/uploads/')) {
-      const imagePath = path.join(__dirname, '..', recipe.img);
-      try {
-        await fs.unlink(imagePath);
-      } catch (err) {
-        console.log('Error eliminando imagen:', err);
-      }
+      try { await fs.unlink(path.join(__dirname, '..', recipe.img)); } catch {}
     }
 
     await AdminLog.create({
@@ -241,20 +135,18 @@ exports.deleteRecipe = async (req, res) => {
       metadata: { recipeName: recipe.nombre }
     });
 
-    res.json({ 
-      success: true, 
-      message: 'Receta eliminada correctamente' 
-    });
+    res.json({ success: true, message: 'Receta eliminada correctamente' });
   } catch (error) {
     res.status(500).json({ error: 'Error eliminando receta' });
   }
 };
 
+// ─────────────────────────────────────────────
 // 🗑️ Eliminar múltiples recetas
+// ─────────────────────────────────────────────
 exports.deleteMultipleRecipes = async (req, res) => {
   try {
     const { ids } = req.body;
-
     if (!Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({ error: 'IDs inválidos' });
     }
@@ -267,40 +159,220 @@ exports.deleteMultipleRecipes = async (req, res) => {
       metadata: { count: result.deletedCount }
     });
 
-    res.json({
-      success: true,
-      message: `${result.deletedCount} recetas eliminadas`,
-      deleted: result.deletedCount
-    });
+    res.json({ success: true, message: `${result.deletedCount} recetas eliminadas`, deleted: result.deletedCount });
   } catch (error) {
     res.status(500).json({ error: 'Error eliminando recetas' });
   }
 };
 
-// 📊 Estadísticas de recetas
+// ─────────────────────────────────────────────
+// 📤 Importar recetas desde JSON
+// ─────────────────────────────────────────────
+exports.importRecipes = async (req, res) => {
+  try {
+    const { recipes, mode } = req.body;
+    if (!Array.isArray(recipes)) {
+      return res.status(400).json({ error: 'Formato inválido: se esperaba un array de recetas' });
+    }
+
+    const validRecipes = [];
+    const errors = [];
+
+    recipes.forEach((recipe, index) => {
+      if (!recipe.nombre || !recipe.desc || !recipe.cat) {
+        errors.push(`Receta ${index + 1}: Faltan campos obligatorios (nombre, desc, cat)`);
+      } else {
+        // Limpiar campos del sistema que no deben venir del JSON
+        const clean = { ...recipe };
+        delete clean.resenas;
+        delete clean.puntosProm;
+        delete clean.totalResenas;
+        validRecipes.push(clean);
+      }
+    });
+
+    if (errors.length > 0) {
+      return res.status(400).json({ error: 'Algunas recetas tienen errores', details: errors });
+    }
+
+    let result = {};
+    if (mode === 'replace') {
+      const count = await Recipe.countDocuments();
+      await Recipe.deleteMany({});
+      const created = await Recipe.insertMany(validRecipes);
+      result = { deleted: count, created: created.length };
+    } else {
+      const created = await Recipe.insertMany(validRecipes);
+      result = { created: created.length };
+    }
+
+    await AdminLog.create({
+      adminId: req.user._id,
+      action: 'IMPORT_RECIPES',
+      metadata: result
+    });
+
+    res.json({ success: true, message: `${result.created} recetas importadas correctamente`, result });
+  } catch (error) {
+    console.error('Error importando recetas:', error);
+    res.status(500).json({ error: 'Error importando recetas', details: error.message });
+  }
+};
+
+// ─────────────────────────────────────────────
+// 📥 Exportar todas las recetas
+// ─────────────────────────────────────────────
+exports.exportRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find().select('-__v -resenas').lean();
+    res.json({ success: true, count: recipes.length, recipes });
+  } catch (error) {
+    res.status(500).json({ error: 'Error exportando recetas' });
+  }
+};
+
+// ─────────────────────────────────────────────
+// 📊 Estadísticas
+// ─────────────────────────────────────────────
 exports.getRecipeStats = async (req, res) => {
   try {
     const total = await Recipe.countDocuments();
-    
     const byCategory = await Recipe.aggregate([
       { $group: { _id: '$cat', count: { $sum: 1 } } }
     ]);
-
     const byHealth = await Recipe.aggregate([
       { $unwind: '$salud' },
       { $group: { _id: '$salud', count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);
+    res.json({ success: true, stats: { total, byCategory, byHealth } });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo estadísticas' });
+  }
+};
+
+// ═════════════════════════════════════════════
+// ⭐ SISTEMA DE RESEÑAS
+// ═════════════════════════════════════════════
+
+// ─────────────────────────────────────────────
+// POST /recipes/:id/resenas
+// Crear reseña — un usuario solo puede tener una por receta
+// Requiere: { estrellas: 1-5, texto: string (opcional) }
+// ─────────────────────────────────────────────
+exports.crearResena = async (req, res) => {
+  try {
+    const { estrellas, texto = '' } = req.body;
+
+    if (!estrellas || estrellas < 1 || estrellas > 5) {
+      return res.status(400).json({ error: 'La puntuación debe ser entre 1 y 5' });
+    }
+
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    // Verificar si el usuario ya tiene una reseña
+    const yaReseno = recipe.resenas.find(
+      r => r.userId.toString() === req.user._id.toString()
+    );
+    if (yaReseno) {
+      return res.status(400).json({ error: 'Ya has dejado una reseña en esta receta. Puedes editarla.' });
+    }
+
+    recipe.resenas.push({
+      userId:    req.user._id,
+      userName:  req.user.name,
+      estrellas: parseInt(estrellas),
+      texto:     texto.trim(),
+    });
+
+    recipe.recalcularPuntos();
+    await recipe.save();
+
+    res.status(201).json({
+      success: true,
+      message: '¡Reseña publicada!',
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+      resena: recipe.resenas[recipe.resenas.length - 1],
+    });
+  } catch (error) {
+    console.error('Error creando reseña:', error);
+    res.status(500).json({ error: 'Error al publicar la reseña' });
+  }
+};
+
+// ─────────────────────────────────────────────
+// PUT /recipes/:id/resenas
+// Editar la propia reseña
+// ─────────────────────────────────────────────
+exports.editarResena = async (req, res) => {
+  try {
+    const { estrellas, texto = '' } = req.body;
+
+    if (!estrellas || estrellas < 1 || estrellas > 5) {
+      return res.status(400).json({ error: 'La puntuación debe ser entre 1 y 5' });
+    }
+
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    const resena = recipe.resenas.find(
+      r => r.userId.toString() === req.user._id.toString()
+    );
+    if (!resena) {
+      return res.status(404).json({ error: 'No tienes una reseña en esta receta' });
+    }
+
+    resena.estrellas = parseInt(estrellas);
+    resena.texto     = texto.trim();
+
+    recipe.recalcularPuntos();
+    await recipe.save();
 
     res.json({
       success: true,
-      stats: {
-        total,
-        byCategory,
-        byHealth
-      }
+      message: 'Reseña actualizada',
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+      resena,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Error obteniendo estadísticas' });
+    console.error('Error editando reseña:', error);
+    res.status(500).json({ error: 'Error al editar la reseña' });
+  }
+};
+
+// ─────────────────────────────────────────────
+// GET /recipes/:id/resenas
+// Obtener todas las reseñas de una receta (paginadas)
+// ─────────────────────────────────────────────
+exports.getResenas = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const recipe = await Recipe.findById(req.params.id).select('resenas puntosProm totalResenas nombre');
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    // Ordenar por más recientes primero
+    const ordenadas = [...recipe.resenas].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    const paginated = ordenadas.slice(skip, skip + parseInt(limit));
+
+    res.json({
+      success: true,
+      resenas:      paginated,
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+      pagination: {
+        total: recipe.resenas.length,
+        page:  parseInt(page),
+        pages: Math.ceil(recipe.resenas.length / parseInt(limit)),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo reseñas' });
   }
 };

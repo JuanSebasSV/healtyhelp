@@ -40,6 +40,9 @@ import VistaPremium from './components/vistas/VistaPremium';
 // Otros
 import RobotIA from './components/inicio/RobotIA';
 
+// API
+import api from './api/axios';
+
 // Hook de autenticación
 import useAuth from './hooks/useAuth';
 
@@ -49,13 +52,14 @@ function AppContent() {
     const saved = localStorage.getItem('modoOscuro');
     return saved ? JSON.parse(saved) : false;
   });
-  const [categoriaActiva, setCategoriaActiva] = useState('todas');
-  const [favoritos, setFavoritos] = useState(() => {
+  const [categoriaActiva, setCategoriaActiva]   = useState('todas');
+  const [favoritos, setFavoritos]               = useState(() => {
     const saved = localStorage.getItem('favoritos');
     return saved ? JSON.parse(saved) : [];
   });
-  const [robotIAActivo, setRobotIAActivo] = useState(false);
-  const [recetas, setRecetas] = useState([]);
+  const [robotIAActivo, setRobotIAActivo]       = useState(false);
+  const [recetas, setRecetas]                   = useState([]);
+  const [cargandoRecetas, setCargandoRecetas]   = useState(true);
 
   // Aplicar modo oscuro
   useEffect(() => {
@@ -74,22 +78,23 @@ function AppContent() {
   }, []);
 
   const cargarRecetas = async () => {
+    setCargandoRecetas(true);
     try {
-      // TODO: Descomentar cuando tengas el endpoint
-      // const response = await api.get('/recipes');
-      // setRecetas(response.data.recipes);
-      
-      // Temporalmente usa un array vacío hasta que conectes el backend
-      setRecetas([]);
+      // Pedir todas las recetas (límite alto para traer todas)
+      const { data } = await api.get('/recipes?limit=200');
+      setRecetas(data.recipes || []);
     } catch (error) {
       console.error('Error al cargar recetas:', error);
+      setRecetas([]);
+    } finally {
+      setCargandoRecetas(false);
     }
   };
 
   const toggleModoOscuro = () => setModoOscuro(!modoOscuro);
-  const toggleRobotIA = () => setRobotIAActivo(!robotIAActivo);
+  const toggleRobotIA    = () => setRobotIAActivo(!robotIAActivo);
   const cambiarCategoria = (cat) => setCategoriaActiva(cat);
-  
+
   const toggleFav = (recetaId) => {
     setFavoritos(prev =>
       prev.includes(recetaId)
@@ -102,44 +107,45 @@ function AppContent() {
     <Router>
       <div className="App">
         <FondoAnimado />
-        <Navbar 
-          modoOscuro={modoOscuro} 
+        <Navbar
+          modoOscuro={modoOscuro}
           toggleModoOscuro={toggleModoOscuro}
         />
 
         <main className="contenido-principal">
           <Routes>
             {/* Rutas públicas */}
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
                 <VistaInicio
                   recetas={recetas}
+                  cargandoRecetas={cargandoRecetas}
                   toggleFav={toggleFav}
                   favoritos={favoritos}
                   cambiarCategoria={cambiarCategoria}
                   categoriaActiva={categoriaActiva}
                 />
-              } 
+              }
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Register />} />
-            <Route path="/google-callback" element={<GoogleCallback />} />
-            <Route path="/recuperar" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/contacto" element={<VistaContacto />} />
+            <Route path="/login"                    element={<Login />} />
+            <Route path="/registro"                 element={<Register />} />
+            <Route path="/google-callback"          element={<GoogleCallback />} />
+            <Route path="/recuperar"                element={<ForgotPassword />} />
+            <Route path="/reset-password/:token"    element={<ResetPassword />} />
+            <Route path="/contacto"                 element={<VistaContacto />} />
 
             {/* Rutas protegidas */}
-            <Route 
-              path="/historial" 
+            <Route
+              path="/historial"
               element={
                 <PrivateRoute>
                   <VistaHistorial recetas={recetas} />
                 </PrivateRoute>
-              } 
+              }
             />
-            <Route 
-              path="/favoritos" 
+            <Route
+              path="/favoritos"
               element={
                 <PrivateRoute>
                   <VistaFavoritos
@@ -148,35 +154,34 @@ function AppContent() {
                     favoritos={favoritos}
                   />
                 </PrivateRoute>
-              } 
+              }
             />
 
             {/* Rutas de administrador */}
-            <Route 
-              path="/admin" 
+            <Route
+              path="/admin"
               element={
                 <PrivateRoute requireAdmin={true}>
                   <Dashboard />
                 </PrivateRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin/users" 
+            <Route
+              path="/admin/users"
               element={
                 <PrivateRoute requireAdmin={true}>
                   <UserList />
                 </PrivateRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin/stats" 
+            <Route
+              path="/admin/stats"
               element={
                 <PrivateRoute requireAdmin={true}>
                   <Stats />
                 </PrivateRoute>
-              } 
+              }
             />
-
             <Route
               path="/perfil"
               element={
@@ -185,18 +190,18 @@ function AppContent() {
                 </PrivateRoute>
               }
             />
-            <Route 
-              path="/admin/recipes" 
+            <Route
+              path="/admin/recipes"
               element={
                 <PrivateRoute requireAdmin={true}>
                   <RecipeManagement />
                 </PrivateRoute>
-              } 
+              }
             />
 
             <Route path="/premium" element={<VistaPremium />} />
 
-            {/* Ruta 404 */}
+            {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
@@ -205,9 +210,9 @@ function AppContent() {
 
         {/* Robot IA flotante */}
         {user && (
-          <RobotIA 
-            activo={robotIAActivo} 
-            toggleIA={toggleRobotIA} 
+          <RobotIA
+            activo={robotIAActivo}
+            toggleIA={toggleRobotIA}
           />
         )}
 

@@ -1,176 +1,123 @@
 import React from 'react';
 import './ModalNutricionDetallada.css';
 
+// Componente auxiliar para una fila de dato
+const FilaNutri = ({ nombre, valor, unidad }) => (
+  <div className="nutriItemDetalle">
+    <span className="nutriNombre">{nombre}</span>
+    <span className="nutriValor">{valor ?? 0} {unidad}</span>
+  </div>
+);
+
 const ModalNutricionDetallada = ({ nutri, cerrar }) => {
   return (
     <div className="modal-overlay" onClick={cerrar}>
       <button className="modal-cerrar" onClick={cerrar}>✕</button>
-      
+
       <div className="modalNutriDetalle" onClick={(e) => e.stopPropagation()}>
         <h2>Información Nutricional Detallada</h2>
 
-        {/* Macronutrientes */}
+        {/* ── Vitaminas y Minerales ── */}
         <div className="nutriDetalleSeccion">
-          <h3>Macronutrientes</h3>
+          <h3>Vitaminas y Minerales</h3>
           <div className="nutriGridDetalle">
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Calorías</span>
-              <span className="nutriValor">{nutri.cal}</span>
-              <span className="nutriDv">-</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Carbohidratos</span>
-              <span className="nutriValor">{nutri.carb}g</span>
-              <span className="nutriDv">{Math.round((nutri.carb / 275) * 100)}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Grasas Totales</span>
-              <span className="nutriValor">{nutri.gras}g</span>
-              <span className="nutriDv">{Math.round((nutri.gras / 78) * 100)}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Proteínas</span>
-              <span className="nutriValor">{nutri.prot}g</span>
-              <span className="nutriDv">{Math.round((nutri.prot / 50) * 100)}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Fibra Dietética</span>
-              <span className="nutriValor">{nutri.fiber}g</span>
-              <span className="nutriDv">{Math.round((nutri.fiber / 25) * 100)}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Azúcares</span>
-              <span className="nutriValor">{nutri.azucar || 0}g</span>
-              <span className="nutriDv">-</span>
-            </div>
+            <FilaNutri nombre="Alfa caroteno"               valor={nutri.alfaCaroteno} unidad="µg" />
+            <FilaNutri nombre="Beta caroteno"               valor={nutri.betaCaroteno} unidad="µg" />
+            <FilaNutri nombre="Cafeína"                     valor={nutri.cafeina}      unidad="mg" />
+            <FilaNutri nombre="Colina"                      valor={nutri.colina}       unidad="mg" />
+            <FilaNutri nombre="Cobre"                       valor={nutri.cobre}        unidad="mg" />
+            <FilaNutri nombre="Flúor"                       valor={nutri.fluor}        unidad="µg" />
+            <FilaNutri nombre="Folato (Vitamina B9)"        valor={nutri.folato}       unidad="µg" />
+            <FilaNutri nombre="Licopeno"                    valor={nutri.licopeno}     unidad="µg" />
+            <FilaNutri nombre="Magnesio"                    valor={nutri.magnesio}     unidad="mg" />
+            <FilaNutri nombre="Manganeso"                   valor={nutri.manganeso}    unidad="mg" />
+            <FilaNutri nombre="Niacina (Vitamina B3)"       valor={nutri.niacina}      unidad="mg" />
+            <FilaNutri nombre="Ácido pantoténico (Vit. B5)" valor={nutri.acidoPant}    unidad="mg" />
+            <FilaNutri nombre="Fósforo"                     valor={nutri.fosforo}      unidad="mg" />
+            <FilaNutri nombre="Retinol"                     valor={nutri.retinol}      unidad="µg" />
+            <FilaNutri nombre="Riboflavina (Vitamina B2)"   valor={nutri.riboflavina}  unidad="mg" />
+            <FilaNutri nombre="Selenio"                     valor={nutri.selenio}      unidad="µg" />
+            <FilaNutri nombre="Teobromina"                  valor={nutri.teobromina}   unidad="mg" />
+            <FilaNutri nombre="Tiamina (Vitamina B1)"       valor={nutri.tiamina}      unidad="mg" />
+            <FilaNutri nombre="Vitamina A (UI)"             valor={nutri.vitAui}       unidad="IU" />
+            <FilaNutri nombre="Vitamina A"                  valor={nutri.vitA}         unidad="µg" />
+            <FilaNutri nombre="Vitamina B12"                valor={nutri.vitB12}       unidad="µg" />
+            <FilaNutri nombre="Vitamina B6"                 valor={nutri.vitB6}        unidad="mg" />
+            <FilaNutri nombre="Vitamina C"                  valor={nutri.vitC}         unidad="mg" />
+            <FilaNutri nombre="Vitamina D (UI)"             valor={nutri.vitDui}       unidad="IU" />
+            <FilaNutri nombre="Vitamina D2"                 valor={nutri.vitD2}        unidad="µg" />
+            <FilaNutri nombre="Vitamina D3"                 valor={nutri.vitD3}        unidad="µg" />
+            <FilaNutri nombre="Vitamina E"                  valor={nutri.vitE}         unidad="mg" />
+            <FilaNutri nombre="Vitamina K"                  valor={nutri.vitK}         unidad="µg" />
+            <FilaNutri nombre="Zinc"                        valor={nutri.zinc}         unidad="mg" />
           </div>
         </div>
 
-        {/* Grasas */}
+        {/* ── Azúcares ── */}
         <div className="nutriDetalleSeccion">
-          <h3>Tipos de Grasas</h3>
+          <h3>Azúcares</h3>
           <div className="nutriGridDetalle">
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Grasas Saturadas</span>
-              <span className="nutriValor">{nutri.grasSat || 0}g</span>
-              <span className="nutriDv">{nutri.grasSat ? Math.round((nutri.grasSat / 20) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Grasas Trans</span>
-              <span className="nutriValor">{nutri.grasTrans || 0}g</span>
-              <span className="nutriDv">-</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Grasas Monoinsaturadas</span>
-              <span className="nutriValor">{nutri.grasMono || 0}g</span>
-              <span className="nutriDv">-</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Grasas Poliinsaturadas</span>
-              <span className="nutriValor">{nutri.grasPoli || 0}g</span>
-              <span className="nutriDv">-</span>
-            </div>
+            <FilaNutri nombre="Azúcar total" valor={nutri.azucar}   unidad="g" />
+            <FilaNutri nombre="Sacarosa"     valor={nutri.sacarosa} unidad="g" />
+            <FilaNutri nombre="Glucosa"      valor={nutri.glucosa}  unidad="g" />
+            <FilaNutri nombre="Fructosa"     valor={nutri.fructosa} unidad="g" />
+            <FilaNutri nombre="Lactosa"      valor={nutri.lactosa}  unidad="g" />
+            <FilaNutri nombre="Maltosa"      valor={nutri.maltosa}  unidad="g" />
+            <FilaNutri nombre="Galactosa"    valor={nutri.galactosa}unidad="g" />
+            <FilaNutri nombre="Almidón"      valor={nutri.almidon}  unidad="g" />
           </div>
         </div>
 
-        {/* Minerales */}
+        {/* ── Grasas ── */}
         <div className="nutriDetalleSeccion">
-          <h3>Minerales</h3>
-          <div className="nutriGridDetalle nutriGrid3col">
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Sodio</span>
-              <span className="nutriValor">{nutri.sodio}mg</span>
-              <span className="nutriDv">{Math.round((nutri.sodio / 2300) * 100)}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Potasio</span>
-              <span className="nutriValor">{nutri.potasio || 0}mg</span>
-              <span className="nutriDv">{nutri.potasio ? Math.round((nutri.potasio / 3500) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Calcio</span>
-              <span className="nutriValor">{nutri.calcio || 0}mg</span>
-              <span className="nutriDv">{nutri.calcio ? Math.round((nutri.calcio / 1000) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Hierro</span>
-              <span className="nutriValor">{nutri.hierro || 0}mg</span>
-              <span className="nutriDv">{nutri.hierro ? Math.round((nutri.hierro / 18) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Magnesio</span>
-              <span className="nutriValor">{nutri.magnesio || 0}mg</span>
-              <span className="nutriDv">{nutri.magnesio ? Math.round((nutri.magnesio / 400) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Zinc</span>
-              <span className="nutriValor">{nutri.zinc || 0}mg</span>
-              <span className="nutriDv">{nutri.zinc ? Math.round((nutri.zinc / 11) * 100) : 0}%</span>
-            </div>
+          <h3>Grasas</h3>
+          <div className="nutriGridDetalle">
+            <FilaNutri nombre="Grasas saturadas"      valor={nutri.grasSat}     unidad="g" />
+            <FilaNutri nombre="Grasas monoinsaturadas"valor={nutri.grasMonoins} unidad="g" />
+            <FilaNutri nombre="Grasas poliinsaturadas"valor={nutri.grasPoliins} unidad="g" />
+            <FilaNutri nombre="Grasas trans"          valor={nutri.grasTrans}   unidad="g" />
           </div>
         </div>
 
-        {/* Vitaminas */}
+        {/* ── Ácidos Grasos ── */}
         <div className="nutriDetalleSeccion">
-          <h3>Vitaminas</h3>
-          <div className="nutriGridDetalle nutriGrid3col">
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina A</span>
-              <span className="nutriValor">{nutri.vitA || 0}IU</span>
-              <span className="nutriDv">{nutri.vitA ? Math.round((nutri.vitA / 5000) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina C</span>
-              <span className="nutriValor">{nutri.vitC || 0}mg</span>
-              <span className="nutriDv">{nutri.vitC ? Math.round((nutri.vitC / 90) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina D</span>
-              <span className="nutriValor">{nutri.vitD || 0}IU</span>
-              <span className="nutriDv">{nutri.vitD ? Math.round((nutri.vitD / 800) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina E</span>
-              <span className="nutriValor">{nutri.vitE || 0}mg</span>
-              <span className="nutriDv">{nutri.vitE ? Math.round((nutri.vitE / 15) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina K</span>
-              <span className="nutriValor">{nutri.vitK || 0}µg</span>
-              <span className="nutriDv">{nutri.vitK ? Math.round((nutri.vitK / 120) * 100) : 0}%</span>
-            </div>
-            <div className="nutriItemDetalle">
-              <span className="nutriNombre">Vitamina B12</span>
-              <span className="nutriValor">{nutri.vitB12 || 0}µg</span>
-              <span className="nutriDv">{nutri.vitB12 ? Math.round((nutri.vitB12 / 2.4) * 100) : 0}%</span>
-            </div>
+          <h3>Ácidos Grasos</h3>
+          <div className="nutriGridDetalle">
+            <FilaNutri nombre="Omega 3 total"                       valor={nutri.omega3} unidad="g" />
+            <FilaNutri nombre="Omega 6 total"                       valor={nutri.omega6} unidad="g" />
+            <FilaNutri nombre="Ácido alfa-linolénico (ALA)"         valor={nutri.ala}    unidad="g" />
+            <FilaNutri nombre="Ácido docosahexaenoico (DHA)"        valor={nutri.dha}    unidad="g" />
+            <FilaNutri nombre="Ácido eicosapentaenoico (EPA)"       valor={nutri.epa}    unidad="g" />
+            <FilaNutri nombre="Ácido docosapentaenoico (DPA)"       valor={nutri.dpa}    unidad="g" />
           </div>
         </div>
 
-        {/* Otros */}
+        {/* ── Aminoácidos ── */}
         <div className="nutriDetalleSeccion">
-          <h3>Otros Nutrientes</h3>
-          <div className="nutriGridSimple">
-            <div className="nutriItemSimple">
-              <span>Colesterol</span>
-              <strong>{nutri.colesterol}mg</strong>
-              <span className="nutriDvInline">{Math.round((nutri.colesterol / 300) * 100)}% DV</span>
-            </div>
-            <div className="nutriItemSimple">
-              <span>Agua</span>
-              <strong>{nutri.agua || 0}g</strong>
-            </div>
-            <div className="nutriItemSimple">
-              <span>Cafeína</span>
-              <strong>{nutri.cafeina || 0}mg</strong>
-            </div>
+          <h3>Aminoácidos</h3>
+          <div className="nutriGridDetalle">
+            <FilaNutri nombre="Alanina"          valor={nutri.alanina}      unidad="g" />
+            <FilaNutri nombre="Arginina"         valor={nutri.arginina}     unidad="g" />
+            <FilaNutri nombre="Ácido aspártico"  valor={nutri.acidoAsp}     unidad="g" />
+            <FilaNutri nombre="Cistina"          valor={nutri.cistina}      unidad="g" />
+            <FilaNutri nombre="Ácido glutámico"  valor={nutri.acidoGlu}     unidad="g" />
+            <FilaNutri nombre="Glicina"          valor={nutri.glicina}      unidad="g" />
+            <FilaNutri nombre="Histidina"        valor={nutri.histidina}    unidad="g" />
+            <FilaNutri nombre="Hidroxiprolina"   valor={nutri.hidroxiprol}  unidad="g" />
+            <FilaNutri nombre="Isoleucina"       valor={nutri.isoleucina}   unidad="g" />
+            <FilaNutri nombre="Leucina"          valor={nutri.leucina}      unidad="g" />
+            <FilaNutri nombre="Lisina"           valor={nutri.lisina}       unidad="g" />
+            <FilaNutri nombre="Metionina"        valor={nutri.metionina}    unidad="g" />
+            <FilaNutri nombre="Fenilalanina"     valor={nutri.fenilalanina} unidad="g" />
+            <FilaNutri nombre="Prolina"          valor={nutri.prolina}      unidad="g" />
+            <FilaNutri nombre="Serina"           valor={nutri.serina}       unidad="g" />
+            <FilaNutri nombre="Treonina"         valor={nutri.treonina}     unidad="g" />
+            <FilaNutri nombre="Triptófano"       valor={nutri.triptofano}   unidad="g" />
+            <FilaNutri nombre="Tirosina"         valor={nutri.tirosina}     unidad="g" />
+            <FilaNutri nombre="Valina"           valor={nutri.valina}       unidad="g" />
           </div>
         </div>
 
-        <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(247, 127, 0, 0.1)', borderRadius: '10px', fontSize: '0.9rem', color: 'var(--gris-oscuro)' }}>
-          <strong>Nota:</strong> Los valores diarios (DV) están basados en una dieta de 2000 calorías. 
-          Tus valores diarios pueden ser mayores o menores dependiendo de tus necesidades calóricas.
-        </div>
       </div>
     </div>
   );

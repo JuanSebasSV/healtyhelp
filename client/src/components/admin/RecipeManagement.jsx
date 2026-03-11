@@ -7,11 +7,11 @@ import RecipeList from './RecipeList';
 import './RecipeManagement.css';
 
 const RecipeManagement = () => {
-  const [activeTab, setActiveTab] = useState('list');
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState(null);
-  const [editingRecipe, setEditingRecipe] = useState(null);
+  const [activeTab,      setActiveTab]      = useState('list');
+  const [recipes,        setRecipes]        = useState([]);
+  const [loading,        setLoading]        = useState(true);
+  const [stats,          setStats]          = useState(null);
+  const [editingRecipe,  setEditingRecipe]  = useState(null);
 
   useEffect(() => {
     fetchRecipes();
@@ -20,7 +20,7 @@ const RecipeManagement = () => {
 
   const fetchRecipes = async () => {
     try {
-      const { data } = await api.get('/recipes');
+      const { data } = await api.get('/recipes?limit=200');
       setRecipes(data.recipes);
     } catch (error) {
       toast.error('Error cargando recetas');
@@ -40,7 +40,6 @@ const RecipeManagement = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('¿Eliminar esta receta?')) return;
-
     try {
       await api.delete(`/recipes/${id}`);
       toast.success('✅ Receta eliminada');
@@ -48,6 +47,18 @@ const RecipeManagement = () => {
       fetchStats();
     } catch (error) {
       toast.error('❌ Error eliminando receta');
+    }
+  };
+
+  const handleDeleteMultiple = async (ids) => {
+    if (!window.confirm(`¿Eliminar ${ids.length} recetas seleccionadas? Esta acción no se puede deshacer.`)) return;
+    try {
+      await api.post('/recipes/delete-multiple', { ids });
+      toast.success(`✅ ${ids.length} recetas eliminadas`);
+      fetchRecipes();
+      fetchStats();
+    } catch (error) {
+      toast.error('❌ Error eliminando recetas');
     }
   };
 
@@ -66,17 +77,14 @@ const RecipeManagement = () => {
   const handleExport = async () => {
     try {
       const { data } = await api.get('/recipes/export/all');
-      
       const blob = new Blob([JSON.stringify(data.recipes, null, 2)], {
         type: 'application/json'
       });
-      
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
+      const a   = document.createElement('a');
+      a.href     = url;
       a.download = `recetas_${new Date().toISOString().split('T')[0]}.json`;
       a.click();
-      
       toast.success(`✅ ${data.count} recetas exportadas`);
     } catch (error) {
       toast.error('❌ Error exportando recetas');
@@ -88,8 +96,7 @@ const RecipeManagement = () => {
   }
 
   return (
-    <div className="recipe-management-content"> {/* ← Cambiado nombre de clase */}
-      {/* SIN HEADER - Ya está en tu Dashboard */}
+    <div className="recipe-management-content">
 
       {/* Estadísticas */}
       {stats && (
@@ -142,6 +149,7 @@ const RecipeManagement = () => {
             recipes={recipes}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            onDeleteMultiple={handleDeleteMultiple}
           />
         )}
 

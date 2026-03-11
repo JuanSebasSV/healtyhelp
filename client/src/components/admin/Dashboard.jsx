@@ -11,16 +11,16 @@ import RecipeManagement from './RecipeManagement';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
-  const [stats, setStats] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats]           = useState(null);
+  const [users, setUsers]           = useState([]);
+  const [loading, setLoading]       = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
-  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'recipes'
+  const [activeTab, setActiveTab]   = useState('users'); // 'users' | 'recipes'
 
-  // 🛡️ SEGURIDAD: Verificar que sea admin
+  // 🛡️ Verificar que sea admin
   useEffect(() => {
     if (!isAdmin()) {
       toast.error('Acceso denegado - Requiere permisos de administrador');
@@ -39,7 +39,6 @@ const Dashboard = () => {
         api.get('/admin/stats'),
         api.get('/admin/users')
       ]);
-
       setStats(statsRes.data.stats);
       setUsers(usersRes.data.users);
     } catch (error) {
@@ -59,11 +58,10 @@ const Dashboard = () => {
     if (!window.confirm('⚠️ ¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.')) {
       return;
     }
-
     try {
       await api.delete(`/admin/users/${userId}`);
       toast.success('✅ Usuario eliminado correctamente');
-      await logAdminAction('delete_user', userId);
+      // El propio deleteUser del backend ya registra el log — no hace falta duplicarlo
       fetchData();
     } catch (error) {
       const errorMsg = error.response?.data?.error || 'Error eliminando usuario';
@@ -75,24 +73,11 @@ const Dashboard = () => {
     try {
       await api.put(`/admin/users/${userId}/role`, { role: newRole });
       toast.success(`✅ Rol actualizado a ${newRole}`);
-      await logAdminAction('change_role', userId, { newRole });
+      // El propio updateUserRole del backend ya registra el log — no hace falta duplicarlo
       fetchData();
     } catch (error) {
       const errorMsg = error.response?.data?.error || 'Error cambiando rol';
       toast.error(`❌ ${errorMsg}`);
-    }
-  };
-
-  const logAdminAction = async (action, targetUserId, metadata = {}) => {
-    try {
-      await api.post('/admin/logs', {
-        action,
-        targetUserId,
-        metadata,
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error('Error logging admin action:', error);
     }
   };
 
@@ -106,15 +91,15 @@ const Dashboard = () => {
   });
 
   // 📄 Paginación
-  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfLastUser  = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const currentUsers     = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages       = Math.ceil(filteredUsers.length / usersPerPage);
 
   // 📥 Exportar usuarios a CSV
   const exportToCSV = () => {
     const headers = ['ID', 'Nombre', 'Email', 'Rol', 'Verificado', 'Fecha Registro'];
-    const csvData = filteredUsers.map(u => [
+    const csvData  = filteredUsers.map(u => [
       u._id,
       u.name,
       u.email,
@@ -129,9 +114,9 @@ const Dashboard = () => {
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
+    const url  = window.URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
     a.download = `usuarios_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     toast.success('✅ Datos exportados correctamente');
@@ -188,7 +173,6 @@ const Dashboard = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-
             <div className="filter-box">
               <select
                 value={filterRole}
@@ -199,7 +183,6 @@ const Dashboard = () => {
                 <option value="user">Solo Usuarios</option>
               </select>
             </div>
-
             <button onClick={exportToCSV} className="btn-export">
               📥 Exportar CSV
             </button>
@@ -219,11 +202,9 @@ const Dashboard = () => {
               >
                 ← Anterior
               </button>
-
               <span className="page-info">
                 Página {currentPage} de {totalPages}
               </span>
-
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}

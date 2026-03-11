@@ -4,6 +4,10 @@ import './TarjetaReceta.css';
 
 const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
   const [verDetalle, setVerDetalle] = useState(false);
+  // receta.puntosProm viene del backend (promedio calculado)
+  // receta.totalResenas es la cantidad de reseñas
+  const prom  = receta.puntosProm  || 0;
+  const total = receta.totalResenas || 0;
 
   return (
     <>
@@ -14,7 +18,7 @@ const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
             className={`btnFav ${esFav ? 'activo' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
-              toggleFav(receta.id);
+              toggleFav(receta._id);
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -22,17 +26,30 @@ const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
             </svg>
           </button>
         </div>
+
         <div className="tarjetaInfo">
           <h3>{receta.nombre}</h3>
           <p>{receta.desc}</p>
           <div className="tarjetaPuntuacion">
-            ⭐ {receta.puntos}/5
+            <span className="estrellas-mini">
+              {[1,2,3,4,5].map(n => (
+                <span key={n} className={n <= Math.round(prom) ? 'estrella llena' : 'estrella vacia'}>
+                  ★
+                </span>
+              ))}
+            </span>
+            <span className="prom-texto">
+              {prom > 0 ? `${prom} (${total})` : 'Sin reseñas'}
+            </span>
           </div>
         </div>
       </div>
 
       {verDetalle && (
-        <DetalleReceta receta={receta} cerrar={() => setVerDetalle(false)} />
+        <DetalleReceta
+          receta={receta}
+          cerrar={() => setVerDetalle(false)}
+        />
       )}
     </>
   );

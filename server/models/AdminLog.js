@@ -10,14 +10,20 @@ const adminLogSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: [
+      // ── Usuarios ──
       'DELETE_USER',
       'CHANGE_ROLE',
-      'CREATE_RECIPE',
-      'UPDATE_RECIPE',
-      'DELETE_RECIPE',
       'BAN_USER',
       'UNBAN_USER',
       'VERIFY_USER',
+      // ── Recetas ──
+      'CREATE_RECIPE',
+      'UPDATE_RECIPE',
+      'DELETE_RECIPE',
+      'DELETE_MULTIPLE_RECIPES',
+      'IMPORT_RECIPES',
+      'EXPORT_RECIPES',
+      // ── Sistema / Admin ──
       'SYSTEM_CONFIG',
       'INVITE_ADMIN',
       'ADMIN_INVITE_ACCEPTED',
@@ -26,7 +32,8 @@ const adminLogSchema = new mongoose.Schema({
   },
   targetUserId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    default: null
   },
   metadata: {
     type: mongoose.Schema.Types.Mixed,
@@ -34,7 +41,7 @@ const adminLogSchema = new mongoose.Schema({
   },
   ipAddress: String,
   userAgent: String
-}, { timestamps: true });
+}, { timestamps: true, versionKey: false });
 
 adminLogSchema.index({ adminId: 1, createdAt: -1 });
 adminLogSchema.index({ action: 1, createdAt: -1 });

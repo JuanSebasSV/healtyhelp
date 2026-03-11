@@ -3,7 +3,9 @@ const AdminLog = require('../models/AdminLog');
 const AdminInvitation = require('../models/AdminInvitation');
 const crypto = require('crypto');
 
+// ─────────────────────────────────────────────
 // 📊 Obtener todos los usuarios
+// ─────────────────────────────────────────────
 exports.getAllUsers = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: 'No autenticado' });
@@ -17,7 +19,9 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
 // 📊 Estadísticas
+// ─────────────────────────────────────────────
 exports.getStats = async (req, res) => {
   try {
     const [totalUsers, admins, regularUsers, verifiedUsers, googleUsers, recentUsers] =
@@ -32,14 +36,19 @@ exports.getStats = async (req, res) => {
         })
       ]);
 
-    res.json({ success: true, stats: { totalUsers, admins, regularUsers, verifiedUsers, googleUsers, recentUsers } });
+    res.json({
+      success: true,
+      stats: { totalUsers, admins, regularUsers, verifiedUsers, googleUsers, recentUsers }
+    });
   } catch (error) {
     console.error('Error en getStats:', error);
     res.status(500).json({ error: 'Error obteniendo estadísticas' });
   }
 };
 
+// ─────────────────────────────────────────────
 // 🗑️ Eliminar usuario
+// ─────────────────────────────────────────────
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -58,7 +67,10 @@ exports.deleteUser = async (req, res) => {
       }
     }
 
-    await logAdminAction(req.user._id, 'DELETE_USER', id, { userName: user.name, userEmail: user.email });
+    await logAdminAction(req.user._id, 'DELETE_USER', id, {
+      userName:  user.name,
+      userEmail: user.email
+    });
     await user.deleteOne();
 
     res.json({ success: true, message: `Usuario ${user.name} eliminado correctamente` });
@@ -68,7 +80,9 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
 // 🔄 Cambiar rol
+// ─────────────────────────────────────────────
 exports.updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +113,11 @@ exports.updateUserRole = async (req, res) => {
     user.role = role;
     await user.save();
 
-    await logAdminAction(req.user._id, 'CHANGE_ROLE', id, { userName: user.name, oldRole, newRole: role });
+    await logAdminAction(req.user._id, 'CHANGE_ROLE', id, {
+      userName: user.name,
+      oldRole,
+      newRole: role
+    });
 
     res.json({
       success: true,
@@ -112,19 +130,29 @@ exports.updateUserRole = async (req, res) => {
   }
 };
 
-// 📝 Crear log
+// ─────────────────────────────────────────────
+// 📝 Crear log manual (desde el frontend)
+// Normaliza action a mayúsculas para consistencia
+// ─────────────────────────────────────────────
 exports.createLog = async (req, res) => {
   try {
     const { action, targetUserId, metadata } = req.body;
-    await logAdminAction(req.user._id, action, targetUserId, metadata);
+
+    // Normalizar a mayúsculas para compatibilidad con el enum
+    const normalizedAction = action?.toUpperCase().replace(/ /g, '_');
+
+    await logAdminAction(req.user._id, normalizedAction, targetUserId || null, metadata || {});
     res.json({ success: true });
   } catch (error) {
     console.error('Error creando log:', error);
+    // No reventar — el log es secundario
     res.status(500).json({ error: 'Error registrando acción' });
   }
 };
 
+// ─────────────────────────────────────────────
 // 📊 Obtener logs
+// ─────────────────────────────────────────────
 exports.getLogs = async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
@@ -141,7 +169,11 @@ exports.getLogs = async (req, res) => {
     res.json({
       success: true,
       logs,
-      pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) }
+      pagination: {
+        total,
+        page:  parseInt(page),
+        pages: Math.ceil(total / parseInt(limit))
+      }
     });
   } catch (error) {
     console.error('Error obteniendo logs:', error);
@@ -149,7 +181,9 @@ exports.getLogs = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
 // 📧 Invitar admin
+// ─────────────────────────────────────────────
 exports.inviteAdmin = async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -157,63 +191,74 @@ exports.inviteAdmin = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ error: 'Email ya registrado' });
 
-    const inviteToken = crypto.randomBytes(32).toString('hex');
+    const inviteToken   = crypto.randomBytes(32).toString('hex');
     const inviteExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await AdminInvitation.create({
       email,
       name,
-      invitedBy: req.user._id,
-      token: crypto.createHash('sha256').update(inviteToken).digest('hex'),
-      expiresAt: inviteExpires
+      invitedBy:  req.user._id,
+      token:      crypto.createHash('sha256').update(inviteToken).digest('hex'),
+      expiresAt:  inviteExpires
     });
 
     const inviteUrl = `${process.env.FRONTEND_URL}/admin/accept-invite/${inviteToken}`;
     console.log('Invite URL generada:', inviteUrl);
 
-    await logAdminAction(req.user._id, 'CHANGE_ROLE', null, { invitedEmail: email, invitedName: name });
+    await logAdminAction(req.user._id, 'INVITE_ADMIN', null, {
+      invitedEmail: email,
+      invitedName:  name
+    });
 
-    res.json({ success: true, message: `Invitación enviada a ${email}`, expiresAt: inviteExpires });
+    res.json({
+      success:   true,
+      message:   `Invitación enviada a ${email}`,
+      expiresAt: inviteExpires
+    });
   } catch (error) {
     console.error('Error invitando admin:', error);
     res.status(500).json({ error: 'Error enviando invitación' });
   }
 };
 
+// ─────────────────────────────────────────────
 // ✅ Aceptar invitación
+// ─────────────────────────────────────────────
 exports.acceptAdminInvite = async (req, res) => {
   try {
-    const { token } = req.params;
+    const { token }    = req.params;
     const { password } = req.body;
 
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const invitation = await AdminInvitation.findOne({
-      token: hashedToken,
+      token:     hashedToken,
       expiresAt: { $gt: Date.now() },
-      used: false
+      used:      false
     });
 
     if (!invitation) return res.status(400).json({ error: 'Invitación inválida o expirada' });
 
     const newAdmin = await User.create({
-      name: invitation.name,
-      email: invitation.email,
+      name:       invitation.name,
+      email:      invitation.email,
       password,
-      role: 'admin',
+      role:       'admin',
       isVerified: true
     });
 
-    invitation.used = true;
+    invitation.used   = true;
     invitation.usedAt = new Date();
     await invitation.save();
 
-    await logAdminAction(invitation.invitedBy, 'CHANGE_ROLE', newAdmin._id, { newAdminEmail: newAdmin.email });
+    await logAdminAction(invitation.invitedBy, 'ADMIN_INVITE_ACCEPTED', newAdmin._id, {
+      newAdminEmail: newAdmin.email
+    });
 
     res.json({
       success: true,
       message: 'Cuenta de admin creada exitosamente',
-      user: { id: newAdmin._id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role }
+      user:    { id: newAdmin._id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role }
     });
   } catch (error) {
     console.error('Error aceptando invitación:', error);
@@ -221,7 +266,9 @@ exports.acceptAdminInvite = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
 // 📋 Invitaciones pendientes
+// ─────────────────────────────────────────────
 exports.getPendingInvitations = async (req, res) => {
   try {
     const invitations = await AdminInvitation.find({ used: false })
@@ -234,7 +281,9 @@ exports.getPendingInvitations = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
 // 🗑️ Revocar invitación
+// ─────────────────────────────────────────────
 exports.revokeInvitation = async (req, res) => {
   try {
     const { id } = req.params;
@@ -242,7 +291,9 @@ exports.revokeInvitation = async (req, res) => {
     const invitation = await AdminInvitation.findByIdAndDelete(id);
     if (!invitation) return res.status(404).json({ error: 'Invitación no encontrada' });
 
-    await logAdminAction(req.user._id, 'CHANGE_ROLE', null, { revokedEmail: invitation.email });
+    await logAdminAction(req.user._id, 'REVOKE_INVITATION', null, {
+      revokedEmail: invitation.email
+    });
 
     res.json({ success: true, message: 'Invitación revocada' });
   } catch (error) {
@@ -250,12 +301,19 @@ exports.revokeInvitation = async (req, res) => {
   }
 };
 
-// 🔧 Helper interno
+// ─────────────────────────────────────────────
+// 🔧 Helper interno — nunca lanza, solo loguea error
+// ─────────────────────────────────────────────
 async function logAdminAction(adminId, action, targetUserId, metadata = {}) {
   try {
-    await AdminLog.create({ adminId, action, targetUserId, metadata, timestamp: new Date() });
+    await AdminLog.create({
+      adminId,
+      action,
+      targetUserId: targetUserId || null,
+      metadata,
+    });
   } catch (error) {
-    console.error('Error creando log de auditoría:', error);
+    console.error('Error creando log de auditoría:', error.message);
   }
 }
 

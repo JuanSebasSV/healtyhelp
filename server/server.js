@@ -101,3 +101,7 @@ app.listen(PORT, () => {
   console.log(`📡 API URL: http://localhost:${PORT}/api`);
   console.log(`🔐 Google OAuth: http://localhost:${PORT}/api/auth/google\n`);
 });
+
+// recetas admin
+const AdminLog = require('./models/AdminLog');
+console.log('AdminLog enum:', AdminLog.schema.path('action').enumValues);

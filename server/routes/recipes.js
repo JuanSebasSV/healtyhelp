@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 const { protect, admin } = require('../middleware/auth');
 const {
   getAllRecipes,
@@ -10,34 +10,41 @@ const {
   deleteMultipleRecipes,
   importRecipes,
   exportRecipes,
-  getRecipeStats
+  getRecipeStats,
+  // Reseñas
+  crearResena,
+  editarResena,
+  getResenas,
 } = require('../controllers/recipeController');
 
 // ─────────────────────────────────────────────
-// 🌐 Rutas públicas (sin autenticación)
+// 🌐 Rutas públicas
 // ─────────────────────────────────────────────
-router.get('/', getAllRecipes);
+router.get('/',    getAllRecipes);
 router.get('/:id', getRecipeById);
 
 // ─────────────────────────────────────────────
-// 🔒 A partir de aquí: requiere auth + admin
-// IMPORTANTE: las rutas con segmentos fijos como
-// /export/all y /stats/summary deben declararse
-// ANTES de /:id para que Express no las confunda
-// con un parámetro dinámico.
+// ⭐ Reseñas — requiere login pero NO admin
+// Deben ir ANTES del bloque router.use(admin)
+// ─────────────────────────────────────────────
+router.get ('/:id/resenas', getResenas);           // ver reseñas (público)
+router.post('/:id/resenas', protect, crearResena); // crear reseña (usuario)
+router.put ('/:id/resenas', protect, editarResena);// editar propia reseña
+
+// ─────────────────────────────────────────────
+// 🔒 Rutas de admin
+// Las rutas con segmentos fijos van ANTES de /:id
 // ─────────────────────────────────────────────
 router.use(protect);
 router.use(admin);
 
-// Exportar / Importar / Estadísticas (rutas fijas primero)
-router.get('/export/all', exportRecipes);
-router.get('/stats/summary', getRecipeStats);
-router.post('/import', importRecipes);
+router.get ('/export/all',      exportRecipes);
+router.get ('/stats/summary',   getRecipeStats);
+router.post('/import',          importRecipes);
 router.post('/delete-multiple', deleteMultipleRecipes);
 
-// CRUD individual
-router.post('/', createRecipe);
-router.put('/:id', updateRecipe);
-router.delete('/:id', deleteRecipe);
+router.post  ('/',     createRecipe);
+router.put   ('/:id',  updateRecipe);
+router.delete('/:id',  deleteRecipe);
 
 module.exports = router;

@@ -1,31 +1,33 @@
 import { useState } from 'react';
 import './RecipeList.css';
 
-const RecipeList = ({ recipes, onDelete, onEdit }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCat, setFilterCat] = useState('all');
+const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
+  const [searchTerm,      setSearchTerm]      = useState('');
+  const [filterCat,       setFilterCat]       = useState('all');
   const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   const filteredRecipes = recipes.filter(recipe => {
     const matchesSearch = recipe.nombre.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCat = filterCat === 'all' || recipe.cat === filterCat;
+    const matchesCat    = filterCat === 'all' || recipe.cat === filterCat;
     return matchesSearch && matchesCat;
   });
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedRecipes(filteredRecipes.map(r => r._id));
-    } else {
-      setSelectedRecipes([]);
-    }
+    setSelectedRecipes(e.target.checked ? filteredRecipes.map(r => r._id) : []);
   };
 
   const handleSelectOne = (id) => {
     setSelectedRecipes(prev =>
-      prev.includes(id)
-        ? prev.filter(recipeId => recipeId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter(rid => rid !== id) : [...prev, id]
     );
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedRecipes.length === 0) return;
+    if (onDeleteMultiple) {
+      onDeleteMultiple(selectedRecipes);
+      setSelectedRecipes([]);
+    }
   };
 
   if (recipes.length === 0) {
@@ -61,9 +63,9 @@ const RecipeList = ({ recipes, onDelete, onEdit }) => {
         </select>
 
         {selectedRecipes.length > 0 && (
-          <span className="selection-count">
-            {selectedRecipes.length} seleccionadas
-          </span>
+          <button className="btn-bulk-delete" onClick={handleBulkDelete}>
+            🗑️ Eliminar {selectedRecipes.length} seleccionadas
+          </button>
         )}
       </div>
 
@@ -75,14 +77,17 @@ const RecipeList = ({ recipes, onDelete, onEdit }) => {
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
-                  checked={selectedRecipes.length === filteredRecipes.length && filteredRecipes.length > 0}
+                  checked={
+                    selectedRecipes.length === filteredRecipes.length &&
+                    filteredRecipes.length > 0
+                  }
                 />
               </th>
               <th>Imagen</th>
               <th>Nombre</th>
               <th>Categoría</th>
               <th>Condiciones</th>
-              <th>⭐</th>
+              <th>⭐ Puntos</th>
               <th>Calorías</th>
               <th>Acciones</th>
             </tr>
@@ -98,16 +103,22 @@ const RecipeList = ({ recipes, onDelete, onEdit }) => {
                   />
                 </td>
                 <td>
-                  <img
-                    src={recipe.img}
-                    alt={recipe.nombre}
-                    className="recipe-thumbnail"
-                  />
+                  {recipe.img ? (
+                    <img
+                      src={recipe.img}
+                      alt={recipe.nombre}
+                      className="recipe-thumbnail"
+                    />
+                  ) : (
+                    <div className="recipe-thumbnail-placeholder">🍽️</div>
+                  )}
                 </td>
                 <td>
                   <div className="recipe-name">
                     <strong>{recipe.nombre}</strong>
-                    <span className="recipe-desc">{recipe.desc?.substring(0, 60)}...</span>
+                    <span className="recipe-desc">
+                      {recipe.desc?.substring(0, 60)}{recipe.desc?.length > 60 ? '...' : ''}
+                    </span>
                   </div>
                 </td>
                 <td>
@@ -120,8 +131,13 @@ const RecipeList = ({ recipes, onDelete, onEdit }) => {
                     {recipe.salud?.length || 0} condiciones
                   </span>
                 </td>
-                <td>{recipe.puntos || 0}</td>
-                <td>{recipe.nutri?.cal || 0}</td>
+                {/* puntosProm es el campo correcto del modelo, no puntos */}
+                <td>
+                  {recipe.puntosProm > 0
+                    ? `${recipe.puntosProm} (${recipe.totalResenas})`
+                    : '—'}
+                </td>
+                <td>{recipe.nutri?.cal || 0} kcal</td>
                 <td>
                   <div className="action-buttons">
                     <button
