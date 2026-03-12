@@ -2,80 +2,72 @@
 
 .modalContenedorReceta {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   max-width: 1400px;
   width: 95%;
-  max-height: 85vh;
+  max-height: 88vh;
   position: relative;
 }
 
+/* ── Columnas ── */
 .modalCol {
-  background: var(--blanco);
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 2rem;
   overflow-y: auto;
-  box-shadow: var(--sombra-hover);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.modalCol::-webkit-scrollbar {
-  display: none;
-}
+.modalCol::-webkit-scrollbar { display: none; }
+.modalCol { scrollbar-width: none; }
 
-.modalCol {
-  scrollbar-width: none;
-}
-
-.modalIzq {
-  flex: 1.2;
-}
-
-.modalDer {
-  flex: 0.8;
-}
+.modalIzq { flex: 1.2; }
+.modalDer { flex: 0.8; }
 
 .modo-oscuro .modalCol {
-  background: rgba(45, 45, 45, 0.95);
+  background: rgba(20, 40, 25, 0.6);
+  border-color: rgba(79, 119, 45, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(107, 158, 74, 0.15);
 }
 
 .modalImg {
   width: 100%;
   height: 300px;
   object-fit: cover;
-  border-radius: 15px;
+  border-radius: 14px;
   margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
+/* ── Títulos ── */
 .modalContenedorReceta h2 {
-  color: var(--verde-bosque);
-  font-size: 2rem;
+  color: white;
+  font-size: 1.9rem;
   margin-bottom: 1rem;
-}
-
-.modo-oscuro .modalContenedorReceta h2 {
-  color: var(--verde-hoja);
+  font-family: 'Georgia', serif;
 }
 
 .modalDesc {
-  color: var(--gris-oscuro);
-  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
   margin-bottom: 2rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
+/* ── Secciones ── */
 .modalSeccion {
   margin-bottom: 2rem;
 }
 
 .modalSeccion h3 {
-  color: var(--verde-hoja);
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--gris-medio);
-  padding-bottom: 0.5rem;
-}
-
-.modo-oscuro .modalSeccion h3 {
   color: var(--naranja);
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .modalSeccion ul,
@@ -84,58 +76,306 @@
 }
 
 .modalSeccion li {
-  margin-bottom: 0.5rem;
-  color: var(--gris-oscuro);
+  margin-bottom: 0.55rem;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
+  font-size: 0.95rem;
 }
 
-.comentarios {
-  margin-top: 1rem;
+/* ════════════════════════════════
+   RESEÑAS
+════════════════════════════════ */
+.resenas-seccion {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 1.5rem;
 }
 
-.comentario {
-  background: var(--gris-claro);
-  padding: 1rem;
+.resenas-resumen {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.resenas-prom-numero {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #f59e0b;
+  line-height: 1;
+  min-width: 60px;
+  text-align: center;
+}
+
+.resenas-prom-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.resenas-total-txt {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+/* ── Estrellas ── */
+.estrellas-input {
+  display: flex;
+  gap: 0.2rem;
+  cursor: default;
+}
+.estrellas-input:not(.readonly) { cursor: pointer; }
+
+.estrella-ico {
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+.estrella-ico.llena  { color: #f59e0b; }
+.estrella-ico.vacia  { color: rgba(255, 255, 255, 0.2); }
+
+.estrellas-input:not(.readonly) .estrella-ico:hover {
+  transform: scale(1.2);
+}
+
+/* ── Formulario reseña ── */
+.resena-form {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.resena-form-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.85rem;
+}
+
+.resena-form .estrellas-input { margin-bottom: 0.85rem; }
+.resena-form .estrella-ico { font-size: 2rem; }
+
+.resena-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
-  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+.resena-textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+.resena-textarea:focus {
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
 }
 
-.modo-oscuro .comentario {
-  background: rgba(64, 64, 64, 0.8);
-  color: var(--gris-oscuro);
+.resena-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  justify-content: flex-end;
 }
 
-.comentario strong {
-  color: var(--verde-bosque);
-  display: block;
-  margin-bottom: 0.5rem;
+.btn-cancelar-resena {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-cancelar-resena:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
 }
 
-.modo-oscuro .comentario strong {
-  color: var(--verde-hoja);
+.btn-enviar-resena {
+  padding: 0.6rem 1.4rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 12px rgba(79, 119, 45, 0.3);
+}
+.btn-enviar-resena:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(79, 119, 45, 0.45);
+}
+.btn-enviar-resena:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.comentario p {
-  color: var(--gris-oscuro);
+/* ── Mi reseña ── */
+.mi-resena-card { display: flex; flex-direction: column; gap: 0.6rem; }
+.mi-resena-header { display: flex; align-items: center; justify-content: space-between; }
+.mi-resena-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(167, 213, 136, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
+.btn-editar-resena {
+  padding: 0.3rem 0.8rem;
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.35);
+  border-radius: 8px;
+  color: var(--naranja);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-editar-resena:hover {
+  background: rgba(247, 127, 0, 0.25);
+  border-color: rgba(247, 127, 0, 0.55);
+}
+
+.mi-resena-texto {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Aviso login ── */
+.resena-login-aviso {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.88rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Lista de reseñas ── */
+.resenas-lista { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.resenas-estado {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  padding: 1.5rem 0;
+}
+.resenas-vacio { font-style: italic; }
+
+.resena-item {
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease;
+}
+.resena-item:hover { border-color: rgba(255, 255, 255, 0.18); }
+.resena-item.propia {
+  background: rgba(79, 119, 45, 0.1);
+  border-color: rgba(79, 119, 45, 0.25);
+}
+
+.resena-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.resena-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.resena-item-meta { display: flex; flex-direction: column; gap: 0.1rem; flex: 1; }
+.resena-nombre { font-size: 0.9rem; font-weight: 700; color: rgba(167, 213, 136, 0.9); }
+.resena-fecha { font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); }
+
+.resena-item .estrellas-input { margin-left: auto; }
+.resena-item .estrella-ico { font-size: 1rem; }
+
+.resena-texto {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.55;
+  margin: 0;
+  padding-left: calc(38px + 0.75rem);
+}
+
+/* ── Paginación ── */
+.resenas-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.resenas-paginacion button {
+  padding: 0.45rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(167, 213, 136, 0.85);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.resenas-paginacion button:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border-color: transparent;
+  color: #fff;
+}
+.resenas-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
+.resenas-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
+
+/* ── Responsive ── */
 @media (max-width: 968px) {
   .modalContenedorReceta {
     flex-direction: column;
     max-height: none;
     overflow-y: auto;
   }
-
-  .modalCol {
-    max-height: none;
-  }
-
-  .modalIzq,
-  .modalDer {
-    flex: 1;
-  }
-
-  .modalImg {
-    height: 200px;
-  }
+  .modalCol    { max-height: none; }
+  .modalIzq, .modalDer { flex: 1; }
+  .modalImg    { height: 200px; }
+  .resena-texto { padding-left: 0; }
 }

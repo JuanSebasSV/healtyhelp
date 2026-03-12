@@ -1,117 +1,222 @@
 /* TarjetaReceta.css */
 
 .tarjetaReceta {
-  background: var(--blanco);
-  border-radius: 15px;
-  overflow: hidden;
+  position: relative;
+  border-radius: 20px;
+  overflow: visible;
   cursor: pointer;
-  transition: var(--transicion);
-  box-shadow: var(--sombra);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s ease;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
-.modo-oscuro .tarjetaReceta {
-  background: rgba(45, 45, 45, 0.95);
-  color: var(--gris-oscuro);
+/* Brillo superior */
+.tarjetaReceta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.7) 30%,
+    rgba(255, 255, 255, 0.7) 70%,
+    transparent
+  );
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 20px;
+}
+
+/* Acento de color en el borde izquierdo */
+.tarjetaReceta::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #f77f00 0%, #4f772d 100%);
+  border-radius: 20px 0 0 20px;
+  z-index: 2;
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 .tarjetaReceta:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--sombra-hover);
+  transform: translateY(-10px) scale(1.015);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(247, 127, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+.modo-oscuro .tarjetaReceta {
+  background: rgba(10, 22, 14, 0.62);
+  border-color: rgba(79, 119, 45, 0.35);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(107, 158, 74, 0.2);
+}
+
+.modo-oscuro .tarjetaReceta:hover {
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(247, 127, 0, 0.4),
+    inset 0 1px 0 rgba(107, 158, 74, 0.25);
+}
+
+/* ── Bloque imagen — independiente con su propio border-radius ── */
 .tarjetaImg {
   position: relative;
   height: 220px;
   overflow: hidden;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
 .tarjetaImg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: var(--transicion);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: brightness(0.92) saturate(1.08);
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
-  transform: scale(1.1);
+  transform: scale(1.08);
+  filter: brightness(1) saturate(1.15);
 }
 
+.tarjetaImg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.22));
+  pointer-events: none;
+}
+
+/* ── Botón favorito ── */
 .btnFav {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 45px;
-  height: 45px;
-  background: none;
-  border: none;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
   transition: var(--transicion);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  z-index: 3;
 }
 
 .btnFav svg {
-  width: 28px;
-  height: 28px;
-  stroke: var(--negro);
+  width: 22px;
+  height: 22px;
+  stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 2;
   fill: none;
   transition: var(--transicion);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
 }
 
-.btnFav:hover svg {
-  stroke: #dc2626;
-  transform: scale(1.15);
-  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+.btnFav:hover {
+  background: rgba(220, 38, 38, 0.25);
+  border-color: rgba(220, 38, 38, 0.5);
+  transform: scale(1.1);
 }
 
-.btnFav.activo svg {
-  fill: #dc2626;
-  stroke: #dc2626;
-  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.5));
-}
+.btnFav:hover svg { stroke: #dc2626; }
+.btnFav.activo { background: rgba(220, 38, 38, 0.3); border-color: rgba(220, 38, 38, 0.6); }
+.btnFav.activo svg { fill: #dc2626; stroke: #dc2626; }
 
-.modo-oscuro .btnFav svg {
-  stroke: var(--blanco);
-  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
-}
-
-.modo-oscuro .btnFav:hover svg {
-  stroke: #dc2626;
-  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
-}
-
-.modo-oscuro .btnFav.activo svg {
-  fill: #dc2626;
-  stroke: #dc2626;
-  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.5));
-}
-
+/* ── Bloque info — independiente con su propio border-radius ── */
 .tarjetaInfo {
-  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 1.1rem 1.1rem 1.1rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.modo-oscuro .tarjetaInfo {
+  background: rgba(10, 22, 14, 0.35);
+  border-color: rgba(79, 119, 45, 0.18);
 }
 
 .tarjetaInfo h3 {
-  color: var(--verde-bosque);
-  margin-bottom: 0.75rem;
-  font-size: 1.3rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
 }
 
-.modo-oscuro .tarjetaInfo h3 {
-  color: var(--verde-hoja);
-}
+.modo-oscuro .tarjetaInfo h3 { color: rgba(220, 245, 200, 0.95); }
 
 .tarjetaInfo p {
-  color: var(--gris-oscuro);
-  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 0.85rem;
   line-height: 1.5;
+  font-size: 0.88rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  flex: 1;
 }
 
+.modo-oscuro .tarjetaInfo p { color: rgba(200, 230, 180, 0.6); }
+
+/* ── Puntuación ── */
 .tarjetaPuntuacion {
-  color: var(--naranja);
-  font-weight: 600;
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
 }
+
+.modo-oscuro .tarjetaPuntuacion { border-top-color: rgba(79, 119, 45, 0.2); }
+
+.estrellas-mini { display: flex; gap: 0.1rem; }
+
+.estrella-ico {
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+.estrella-ico.llena { color: #f59e0b; }
+.estrella-ico.vacia { color: rgba(255, 255, 255, 0.22); }
+.modo-oscuro .estrella-ico.vacia { color: rgba(255, 255, 255, 0.15); }
+
+.tarjeta-prom-txt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+}
+.modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }

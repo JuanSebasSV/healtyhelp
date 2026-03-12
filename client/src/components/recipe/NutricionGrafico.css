@@ -1,26 +1,28 @@
 /* NutricionGrafico.css */
 
 .nutriPanel {
-  background: var(--gris-claro);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
   padding: 1.5rem;
-  border-radius: 15px;
   text-align: center;
   position: sticky;
   top: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .modo-oscuro .nutriPanel {
-  background: rgba(64, 64, 64, 0.5);
+  background: rgba(20, 40, 25, 0.55);
+  border-color: rgba(79, 119, 45, 0.28);
 }
 
 .nutriPanel h3 {
-  color: var(--verde-bosque);
-  font-size: 1.5rem;
+  color: var(--naranja);
+  font-size: 1.4rem;
   margin-bottom: 1rem;
-}
-
-.modo-oscuro .nutriPanel h3 {
-  color: var(--verde-hoja);
+  font-family: 'Georgia', serif;
 }
 
 .nutriChart {
@@ -28,12 +30,13 @@
   height: 200px;
   margin: 1rem auto;
   display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
 }
 
 .nutriLeyenda {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   margin: 1rem 0;
   flex-wrap: wrap;
 }
@@ -41,88 +44,88 @@
 .nutriLeyendaItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--gris-oscuro);
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .nutriColor {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 3px;
   display: inline-block;
 }
 
+/* ── Tabla ── */
 .nutriTablaContainer {
-  margin: 1.5rem 0;
-  overflow-x: auto;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.nutriTabla {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
+.nutriSeccion {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
 }
 
-.nutriTabla thead {
-  background: var(--verde-bosque);
-  color: var(--blanco);
-}
-
-.modo-oscuro .nutriTabla thead {
-  background: var(--verde-hoja);
-}
-
-.nutriTabla th,
-.nutriTabla td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--gris-medio);
-}
-
-.nutriTabla th {
-  font-weight: 600;
-  font-size: 0.85rem;
+.nutriSeccionTitulo {
+  display: block;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: rgba(255, 185, 60, 0.8);
+  background: rgba(247, 127, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.nutriTabla td {
-  color: var(--gris-oscuro);
+.nutriFila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
+}
+.nutriFila:last-child { border-bottom: none; }
+.nutriFila:hover { background: rgba(255, 255, 255, 0.04); }
+
+.nutriFila strong {
+  color: white;
+  font-weight: 700;
 }
 
-.nutriTabla tbody tr:hover {
-  background: rgba(79, 119, 45, 0.05);
-}
-
-.modo-oscuro .nutriTabla tbody tr:hover {
-  background: rgba(111, 158, 74, 0.1);
-}
+.nutriFilaDestacada { background: rgba(247, 127, 0, 0.08); }
+.nutriFilaDestacada span { color: rgba(255, 185, 60, 0.85); font-weight: 600; }
+.nutriFilaDestacada strong { color: #f59e0b; font-size: 1rem; }
 
 .btnNutriDetalle {
   width: 100%;
   margin-top: 1rem;
-  padding: 1rem;
-  font-size: 0.95rem;
+  padding: 0.9rem;
+  font-size: 0.92rem;
+  background: rgba(247, 127, 0, 0.15);
+  border: 1px solid rgba(247, 127, 0, 0.4);
+  border-radius: 50px;
+  color: var(--naranja);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.btnNutriDetalle:hover {
+  background: var(--naranja);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 127, 0, 0.35);
 }
 
 @media (max-width: 968px) {
-  .nutriPanel {
-    position: static;
-  }
-
-  .nutriChart {
-    width: 180px;
-    height: 180px;
-  }
-
-  .nutriLeyenda {
-    gap: 1rem;
-  }
-
-  .nutriTabla th,
-  .nutriTabla td {
-    padding: 0.5rem;
-    font-size: 0.85rem;
-  }
+  .nutriPanel { position: static; }
+  .nutriChart { width: 180px; height: 180px; }
 }

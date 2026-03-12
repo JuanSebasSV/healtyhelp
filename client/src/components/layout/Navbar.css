@@ -3,68 +3,53 @@
 .nav {
   background: rgba(26, 77, 46, 0.95);
   backdrop-filter: blur(10px);
-  padding: 1rem 0;
+  -webkit-backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: var(--sombra);
   width: 100%;
+  height: var(--navbar-h);
+  display: flex;
+  align-items: center;
 }
+.modo-oscuro .nav { background: rgba(26, 26, 26, 0.95); }
 
-.modo-oscuro .nav {
-  background: rgba(26, 26, 26, 0.95);
-}
-
+/* Usa las mismas variables de page que contenido-principal → alineación perfecta */
 .navContenedor {
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--page-px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  gap: 1rem;
 }
 
+/* ── Logo ── */
 .navLogo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
   transition: var(--transicion);
+  flex-shrink: 0;
 }
+.navLogo:hover { transform: scale(1.05); }
 
-.navLogo:hover {
-  transform: scale(1.05);
-}
-
-.logoIcono {
-  font-size: 2rem;
-}
-
-.logoIcono svg {
-  stroke: #ffffff;
-  transition: var(--transicion);
-}
-
-.navLogo:hover .logoIcono svg {
-  stroke: var(--naranja);
-}
+.logoIcono svg { stroke: #ffffff; transition: var(--transicion); }
+.navLogo:hover .logoIcono svg { stroke: var(--naranja); }
 
 .logoTexto {
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
   color: #ffffff;
   font-family: 'Georgia', serif;
 }
+.modo-oscuro .logoTexto { color: #ffffff; }
 
-.modo-oscuro .logoIcono svg {
-  stroke: #ffffff;
-}
-
-.modo-oscuro .logoTexto {
-  color: #ffffff;
-}
-
+/* ── Hamburguesa ── */
 .navHamburguesa {
   display: none;
   flex-direction: column;
@@ -73,57 +58,34 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
+  flex-shrink: 0;
 }
+.navHamburguesa span { width: 25px; height: 3px; background: var(--blanco); border-radius: 3px; transition: var(--transicion); }
 
-.navHamburguesa span {
-  width: 25px;
-  height: 3px;
-  background: var(--blanco);
-  border-radius: 3px;
-  transition: var(--transicion);
-}
-
+/* ── Menú ── */
 .navMenu {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: clamp(0.75rem, 1.5vw, 2rem);
   align-items: center;
+  flex-wrap: nowrap;
 }
-
-.navMenu li {
-  color: var(--blanco);
-  cursor: pointer;
-  font-weight: 500;
-  transition: var(--transicion);
-  position: relative;
-}
-
-.navMenu li:not(:has(button)):hover {
-  color: var(--naranja);
-}
-
+.navMenu li { color: var(--blanco); cursor: pointer; font-weight: 500; transition: var(--transicion); position: relative; white-space: nowrap; }
+.navMenu li:not(:has(button)):hover { color: var(--naranja); }
 .navMenu li:not(:has(button))::after {
   content: '';
   position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
+  bottom: -5px; left: 0;
+  width: 0; height: 2px;
   background: var(--naranja);
   transition: var(--transicion);
 }
+.navMenu li:not(:has(button)):hover::after { width: 100%; }
+.modo-oscuro .navMenu li { color: #ffffff !important; }
 
-.modo-oscuro .navMenu li {
-  color: #ffffff !important;
-}
-
-.navMenu li:not(:has(button)):hover::after {
-  width: 100%;
-}
-
-/* ============ BOTÓN TEMA ============ */
+/* ── Botón tema ── */
 .btnTema {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   border: none;
   border-radius: 50px;
   font-size: 1.5rem;
@@ -135,30 +97,13 @@
   align-items: center;
   justify-content: center;
 }
+.btnTema svg { stroke: var(--blanco); transition: var(--transicion); }
+.modo-oscuro .btnTema svg { stroke: var(--naranja); }
+.btnTema:hover { transform: scale(1.1) rotate(20deg); background: rgba(255, 255, 255, 0.2); }
+.modo-oscuro .btnTema { background: rgba(0, 0, 0, 0.2); }
+.modo-oscuro .btnTema:hover { background: rgba(0, 0, 0, 0.3); }
 
-.btnTema svg {
-  stroke: var(--blanco);
-  transition: var(--transicion);
-}
-
-.modo-oscuro .btnTema svg {
-  stroke: var(--naranja);
-}
-
-.btnTema:hover {
-  transform: scale(1.1) rotate(20deg);
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.modo-oscuro .btnTema {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.modo-oscuro .btnTema:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-/* ============ BOTONES SESIÓN — glassmorphism ============ */
+/* ── Botones sesión ── */
 .btn-primario {
   padding: 0.6rem 1.3rem;
   background: rgba(247, 127, 0, 0.25) !important;
@@ -172,14 +117,12 @@
   transition: var(--transicion);
   box-shadow: 0 2px 12px rgba(247, 127, 0, 0.2);
 }
-
 .btn-primario:hover {
   background: var(--naranja) !important;
   border-color: var(--naranja) !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(247, 127, 0, 0.4) !important;
 }
-
 .btn-secundario {
   padding: 0.6rem 1.3rem;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -192,7 +135,6 @@
   cursor: pointer;
   transition: var(--transicion);
 }
-
 .btn-secundario:hover {
   background: rgba(255, 255, 255, 0.16) !important;
   border-color: rgba(247, 127, 0, 0.55) !important;
@@ -200,86 +142,53 @@
   transform: translateY(-2px);
 }
 
-/* ============ AVATAR MINI ============ */
+/* ── Usuario / Avatar ── */
 .navUsuario {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   padding: 0.4rem 0.8rem;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 50px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: var(--transicion);
 }
-
-.navUsuario:hover {
-  background: rgba(255,255,255,0.18);
-  border-color: var(--naranja);
-}
+.navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: var(--naranja); }
 
 .nav-avatar-mini {
   position: relative;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  flex-shrink: 0;
+  width: 32px; height: 32px; min-width: 32px;
   border-radius: 50%;
-  overflow: hidden; /* ← corta cualquier desbordamiento */
+  overflow: hidden;
+  flex-shrink: 0;
 }
-
 .nav-avatar-img {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: center top; /* centra cara en fotos de Google */
-  border: 2px solid rgba(255,255,255,0.6);
+  object-position: center top;
+  border: 2px solid rgba(255, 255, 255, 0.6);
   display: block;
 }
-
 .nav-avatar-iniciales {
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: white;
-  border: 2px solid rgba(255,255,255,0.6);
-  letter-spacing: -0.5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800; color: white;
+  border: 2px solid rgba(255, 255, 255, 0.6);
 }
-
 .nav-admin-dot {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 9px;
-  height: 9px;
-  background: var(--naranja);
-  border-radius: 50%;
-  border: 1.5px solid rgba(26,77,46,0.9);
-  z-index: 2;
+  position: absolute; bottom: 0; right: 0;
+  width: 9px; height: 9px;
+  background: var(--naranja); border-radius: 50%;
+  border: 1.5px solid rgba(26, 77, 46, 0.9); z-index: 2;
 }
+.nav-nombre { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; }
+.navMenu li.navUsuario::after { display: none; }
 
-.nav-nombre {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: white;
-  white-space: nowrap;
-}
-
-.navMenu li.navUsuario::after {
-  display: none;
-}
-
-/* ============ BOTÓN ADMIN PANEL ============ */
+/* ── Admin btn ── */
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   backdrop-filter: blur(10px);
@@ -290,7 +199,6 @@
   font-weight: 700 !important;
   transition: var(--transicion) !important;
 }
-
 .nav-admin-btn:hover {
   background: rgba(129, 140, 248, 0.32) !important;
   border-color: rgba(129, 140, 248, 0.65) !important;
@@ -298,36 +206,26 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.3);
 }
-
-.nav-admin-btn::after {
-  display: none !important;
-}
+.nav-admin-btn::after { display: none !important; }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 968px) {
-  .navHamburguesa {
-    display: flex;
-  }
+  .navHamburguesa { display: flex; }
 
   .navMenu {
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    top: 100%; left: 0; right: 0;
     background: rgba(26, 77, 46, 0.98);
     backdrop-filter: blur(20px);
     flex-direction: column;
-    padding: 2rem;
-    gap: 1.5rem;
+    /* Mismo padding horizontal que la página */
+    padding: clamp(1rem, 3vw, 2rem) var(--page-px);
+    gap: 1.25rem;
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
     transition: var(--transicion);
+    z-index: 999;
   }
-
-  .navMenu.activo {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: all;
-  }
+  .navMenu.activo { transform: translateY(0); opacity: 1; pointer-events: all; }
 }

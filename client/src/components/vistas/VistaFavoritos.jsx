@@ -2,9 +2,9 @@ import React from 'react';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaFavoritos.css';
 
-// 🔒 TODO: Guardar favoritos en el backend asociados al usuario
+// 🔒 TODO: Persistir favoritos en el backend asociados al usuario
 const VistaFavoritos = ({ recetas, toggleFav, favoritos }) => {
-  const recetasFav = recetas.filter(r => favoritos.includes(r.id));
+  const recetasFav = recetas.filter(r => favoritos.includes(r._id));
 
   return (
     <div className="vista-favoritos">
@@ -18,7 +18,7 @@ const VistaFavoritos = ({ recetas, toggleFav, favoritos }) => {
         <div className="grid">
           {recetasFav.map(receta => (
             <TarjetaReceta
-              key={receta.id}
+              key={receta._id}
               receta={receta}
               toggleFav={toggleFav}
               esFav={true}
