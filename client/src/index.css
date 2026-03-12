@@ -21,13 +21,10 @@
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
 
-  /* ── Espaciado relativo ──
-     clamp(mínimo, preferido-en-vw, máximo)
-     Se adapta automáticamente a cualquier pantalla sin px fijos. */
-  --page-px:  clamp(1rem, 4vw, 4rem);     /* padding horizontal de página  */
-  --page-py:  clamp(1.25rem, 2.5vw, 2rem); /* padding vertical de página    */
-  --page-max: 1400px;                       /* ancho máximo del contenido    */
-  --navbar-h: 64px;                         /* altura fija del navbar sticky */
+  --page-px:  clamp(1rem, 4vw, 4rem);
+  --page-py:  clamp(1.25rem, 2.5vw, 2rem);
+  --page-max: 1400px;
+  --navbar-h: 64px;
 }
 
 /* ============ VARIABLES MODO OSCURO ============ */
@@ -67,22 +64,13 @@ body {
   flex-direction: column;
 }
 
-/*
-  contenido-principal
-  ───────────────────
-  ÚNICA fuente de verdad para el espaciado de página.
-  Ninguna vista hija debe definir padding horizontal propio;
-  solo gestionan su layout interno.
-*/
 .contenido-principal {
   flex: 1;
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
-  /* Compensar el navbar sticky + respiro superior */
   padding-top:    calc(var(--navbar-h) + var(--page-py));
   padding-bottom: calc(var(--page-py) * 2);
-  /* Escala con la pantalla, nunca toca los bordes */
   padding-left:   var(--page-px);
   padding-right:  var(--page-px);
   min-height: calc(100vh - var(--navbar-h));
@@ -122,7 +110,6 @@ body {
   border: none;
   background: var(--blanco);
   color: var(--gris-oscuro);
-  font-size: 1.4rem;
   cursor: pointer;
   transition: var(--transicion);
   z-index: 2001;
@@ -131,9 +118,18 @@ body {
   align-items: center;
   justify-content: center;
 }
-.modal-cerrar:hover { background: var(--naranja); color: var(--blanco); transform: scale(1.05); }
-.modo-oscuro .modal-cerrar { background: rgba(64, 64, 64, 0.9); color: var(--gris-oscuro); }
-.modo-oscuro .modal-cerrar:hover { background: var(--naranja); color: var(--blanco); }
+.modal-cerrar svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--gris-oscuro);
+  transition: stroke 0.3s ease;
+}
+.modal-cerrar:hover { background: var(--naranja); transform: scale(1.05); }
+.modal-cerrar:hover svg { stroke: var(--blanco); }
+.modo-oscuro .modal-cerrar { background: rgba(64, 64, 64, 0.9); }
+.modo-oscuro .modal-cerrar svg { stroke: var(--gris-oscuro); }
+.modo-oscuro .modal-cerrar:hover { background: var(--naranja); }
+.modo-oscuro .modal-cerrar:hover svg { stroke: var(--blanco); }
 
 /* ============ AUTH ============ */
 .vista-auth {

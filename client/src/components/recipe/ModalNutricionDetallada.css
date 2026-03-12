@@ -22,28 +22,30 @@
   border-color: rgba(79, 119, 45, 0.28);
 }
 
-/* ── Header con volver + título + cerrar ── */
+/* ── Header: volver | título | cerrar en grid para alineación perfecta ── */
 .modalNutriHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.75rem;
   gap: 1rem;
+  margin-bottom: 1.75rem;
 }
 
 .modalNutriHeader h2 {
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   text-align: center;
   font-family: 'Georgia', serif;
   margin: 0;
-  flex: 1;
 }
 
+/* ── Botón volver ── */
 .btn-volver-nutri {
-  padding: 0.5rem 1.1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   color: rgba(167, 213, 136, 0.9);
   font-size: 0.88rem;
@@ -51,17 +53,52 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+.btn-volver-nutri svg {
+  width: 15px;
+  height: 15px;
+  stroke: rgba(167, 213, 136, 0.9);
   flex-shrink: 0;
+  transition: stroke 0.2s ease;
 }
 
 .btn-volver-nutri:hover {
-  background: rgba(79, 119, 45, 0.25);
+  background: rgba(79, 119, 45, 0.22);
   border-color: rgba(79, 119, 45, 0.5);
   color: white;
 }
 
-.modal-cerrar-nutri {
+.btn-volver-nutri:hover svg {
+  stroke: white;
+}
+
+/* ── Botón cerrar profesional ── */
+.btn-cerrar-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  padding: 0;
+}
+
+.btn-cerrar-modal:hover {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.45);
+  color: #f87171;
+  transform: scale(1.08);
+}
+
+.btn-cerrar-modal svg {
+  display: block;
 }
 
 /* ── Secciones ── */
@@ -119,9 +156,9 @@
 @media (max-width: 968px) {
   .nutriGridDetalle { grid-template-columns: 1fr; }
   .modalNutriDetalle { padding: 1.25rem; }
-  .modalNutriHeader h2 { font-size: 1.3rem; }
+  .modalNutriHeader h2 { font-size: 1.2rem; }
 }
 @media (max-width: 640px) {
   .modalNutriDetalle { padding: 1rem; }
-  .modalNutriHeader h2 { font-size: 1.1rem; }
+  .modalNutriHeader h2 { font-size: 1rem; }
 }

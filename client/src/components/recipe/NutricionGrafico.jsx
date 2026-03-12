@@ -81,7 +81,7 @@ const NutricionGrafico = ({ nutri, abrirNutricion }) => {
         </div>
       </div>
 
-      <button className="btnNutriDetalle" onClick={abrirNutricion}>
+      <button className="btnNutriDetalle" onClick={e => { e.stopPropagation(); abrirNutricion(); }}>
         Información Nutricional Detallada
       </button>
     </div>

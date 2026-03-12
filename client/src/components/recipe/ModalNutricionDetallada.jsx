@@ -11,14 +11,22 @@ const FilaNutri = ({ nombre, valor, unidad }) => (
 const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
   return (
     <div className="modal-overlay" onClick={cerrar}>
+      <button className="modal-cerrar" onClick={cerrar}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
       <div className="modalNutriDetalle" onClick={e => e.stopPropagation()}>
 
         <div className="modalNutriHeader">
           <button className="btn-volver-nutri" onClick={volver}>
-            ← Volver
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver
           </button>
           <h2>Información Nutricional Detallada</h2>
-          <button className="modal-cerrar modal-cerrar-nutri" onClick={cerrar}>✕</button>
         </div>
 
         {/* ── Vitaminas y Minerales ── */}

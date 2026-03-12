@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
 import DetalleReceta from './DetalleReceta';
+import ModalNutricionDetallada from './ModalNutricionDetallada';
 import './TarjetaReceta.css';
 
 const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
-  const [verDetalle, setVerDetalle] = useState(false);
+  const [vista, setVista] = useState(null);
 
   const prom  = receta.puntosProm   || 0;
   const total = receta.totalResenas || 0;
 
   return (
     <>
-      <article className="tarjetaReceta" onClick={() => setVerDetalle(true)}>
-
-        {/* ── Bloque imagen ── */}
+      <div className="tarjetaReceta" onClick={() => setVista('detalle')}>
         <div className="tarjetaImg">
-          <img src={receta.img} alt={receta.nombre} loading="lazy" />
+          <img src={receta.img} alt={receta.nombre} />
           <button
             className={`btnFav ${esFav ? 'activo' : ''}`}
             onClick={e => { e.stopPropagation(); toggleFav(receta._id); }}
-            aria-label={esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -26,7 +24,6 @@ const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
           </button>
         </div>
 
-        {/* ── Bloque info ── */}
         <div className="tarjetaInfo">
           <h3>{receta.nombre}</h3>
           <p>{receta.desc}</p>
@@ -44,11 +41,22 @@ const TarjetaReceta = ({ receta, toggleFav, esFav }) => {
             </span>
           </div>
         </div>
+      </div>
 
-      </article>
+      {vista === 'detalle' && (
+        <DetalleReceta
+          receta={receta}
+          cerrar={() => setVista(null)}
+          abrirNutricion={() => setVista('nutricion')}
+        />
+      )}
 
-      {verDetalle && (
-        <DetalleReceta receta={receta} cerrar={() => setVerDetalle(false)} />
+      {vista === 'nutricion' && (
+        <ModalNutricionDetallada
+          nutri={receta.nutri}
+          cerrar={() => setVista(null)}
+          volver={() => setVista('detalle')}
+        />
       )}
     </>
   );

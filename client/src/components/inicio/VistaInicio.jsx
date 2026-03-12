@@ -55,29 +55,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
       </section>
 
-      {/* ── Banner Premium ── */}
-      <section className="premiumBanner" onClick={() => navigate('/premium')}>
-        <div className="premiumBanner__estrellas">
-          {[...Array(6)].map((_, i) => (
-            <span key={i} className="premiumBanner__estrella" style={{ animationDelay: `${i * 0.4}s` }}>✦</span>
-          ))}
-        </div>
-        <div className="premiumBanner__contenido">
-          <div className="premiumBanner__izq">
-            <span className="premiumBanner__badge">✨ NUEVO</span>
-            <h3 className="premiumBanner__titulo">Healthy Help <span>Premium</span></h3>
-            <p className="premiumBanner__desc">IA personalizada · Planes nutricionales · Sin límites</p>
-          </div>
-          <button className="premiumBanner__cta">
-            Descubrir
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
-        </div>
-        <div className="premiumBanner__brillo" />
-      </section>
-
       {/* ── Categorías ── */}
       <section className="categorias">
         {categorias.map(cat => (

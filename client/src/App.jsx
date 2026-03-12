@@ -34,9 +34,6 @@ import UserList from './components/admin/UserList';
 import Stats from './components/admin/Stats';
 import RecipeManagement from './components/admin/RecipeManagement';
 
-// Premium
-import VistaPremium from './components/vistas/VistaPremium';
-
 // Otros
 import RobotIA from './components/inicio/RobotIA';
 
@@ -199,7 +196,6 @@ function AppContent() {
               }
             />
 
-            <Route path="/premium" element={<VistaPremium />} />
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
