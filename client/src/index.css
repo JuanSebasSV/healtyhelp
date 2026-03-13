@@ -24,7 +24,7 @@
   --page-px:  clamp(1rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
   --page-max: 1400px;
-  --navbar-h: 64px;
+  --navbar-h: 94px;
 }
 
 /* ============ VARIABLES MODO OSCURO ============ */

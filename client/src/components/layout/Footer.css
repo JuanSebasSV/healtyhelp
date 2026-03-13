@@ -1,7 +1,7 @@
 /* Footer.css */
 
 .footer {
-  background: var(--verde-bosque);
+  background: rgba(9, 48, 1, 0.95);
   color: var(--blanco);
   /* Usa las mismas variables de página → alineación consistente con el contenido */
   padding: clamp(2rem, 4vw, 3rem) var(--page-px) clamp(1rem, 2vw, 1.5rem);

@@ -1,7 +1,7 @@
 /* Navbar.css */
 
 .nav {
-  background: rgba(26, 77, 46, 0.95);
+  background: rgba(9, 48, 1, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -42,7 +42,7 @@
 .navLogo:hover .logoIcono svg { stroke: var(--naranja); }
 
 .logoTexto {
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
   font-weight: 700;
   color: #ffffff;
   font-family: 'Georgia', serif;
@@ -160,7 +160,7 @@
   position: relative;
   width: 32px; height: 32px; min-width: 32px;
   border-radius: 50%;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 }
 .nav-avatar-img {

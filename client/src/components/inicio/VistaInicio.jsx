@@ -50,10 +50,20 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     <div className="vistaInicio">
 
       {/* ── Hero ── */}
-      <section className="hero">
-        <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
-        <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
-      </section>
+      <div className="hero">
+  <div className="hero-texto">
+    <span className="hero-tag">🌿 Tu dieta, tu salud</span>
+    <h1>
+      Sabemos que llevar una dieta especial puede ser un reto,
+      pero no tienes que hacerlo solo.
+    </h1>
+    <p>
+      Aquí te ofrecemos recetas pensadas para ti, con ingredientes
+      fáciles de conseguir y preparaciones sencillas pero exquisitas.
+    </p>
+    <div className="hero-linea"></div>
+  </div>
+</div>
 
       {/* ── Categorías ── */}
       <section className="categorias">
