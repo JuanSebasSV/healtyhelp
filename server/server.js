@@ -6,6 +6,7 @@ const { filterXSS } = require('xss');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const passport = require('passport');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -69,6 +70,8 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('❌ Error MongoDB:', err);
     process.exit(1);
   });
+//imagenes de perfil
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Rutas
 app.use('/api/auth', require('./routes/auth'));

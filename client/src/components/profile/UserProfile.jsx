@@ -9,7 +9,9 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const [editando, setEditando] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [subiendoAvatar, setSubiendoAvatar] = useState(false);
   const [mensaje, setMensaje] = useState(null);
+  const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -45,6 +47,73 @@ const UserProfile = () => {
     }
   };
 
+  // ===== FUNCIÓN PARA SUBIR AVATAR =====
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar tamaño (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMensaje({ tipo: 'error', texto: 'La imagen no puede pesar más de 5MB' });
+      return;
+    }
+
+    // Validar tipo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setMensaje({ tipo: 'error', texto: 'Solo se permiten imágenes JPG, PNG o WEBP' });
+      return;
+    }
+
+    setSubiendoAvatar(true);
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      console.log('Subiendo avatar:', file.name, file.type, file.size);
+      
+      const { data } = await api.post('/auth/upload-avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      console.log('Avatar subido exitosamente:', data);
+      
+      // Actualizar usuario DESPUÉS de confirmar que se guardó
+      await checkAuth();
+      setMensaje({ tipo: 'exito', texto: '✅ Foto actualizada correctamente' });
+      setTimeout(() => setMensaje(null), 3000);
+    } catch (error) {
+      console.error('Error al subir avatar:', error.response?.data || error.message);
+      setMensaje({ 
+        tipo: 'error', 
+        texto: error.response?.data?.error || 'Error al subir la imagen. Intenta de nuevo.' 
+      });
+    } finally {
+      setSubiendoAvatar(false);
+      // Limpiar el input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // ===== FUNCIÓN PARA ELIMINAR AVATAR =====
+  const handleEliminarAvatar = async () => {
+    if (!window.confirm('¿Eliminar tu foto de perfil?')) return;
+
+    try {
+      await api.delete('/auth/delete-avatar');
+      await checkAuth();
+      setMensaje({ tipo: 'exito', texto: '✅ Foto eliminada' });
+      setTimeout(() => setMensaje(null), 3000);
+    } catch (error) {
+      setMensaje({ 
+        tipo: 'error', 
+        texto: error.response?.data?.error || 'Error al eliminar' 
+      });
+    }
+  };
+
   const handleCerrarSesion = () => {
     logout();
     navigate('/');
@@ -58,6 +127,20 @@ const UserProfile = () => {
   const joinDate = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long' })
     : 'Fecha desconocida';
+
+  // Construir URL del avatar
+  const getAvatarUrl = () => {
+    if (!user?.avatar) return null;
+    
+    // Si es de Google, retornar tal cual
+    if (user.avatar.startsWith('http')) {
+      return user.avatar;
+    }
+    
+    // Si es local, construir URL completa
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    return `${apiUrl}${user.avatar}`;
+  };
 
   return (
     <div className="perfil-pagina">
@@ -73,12 +156,22 @@ const UserProfile = () => {
         {/* Columna izquierda — Tarjeta de identidad */}
         <div className="perfil-sidebar">
           <div className="perfil-identidad">
-            {/* Avatar */}
+            {/* Avatar con opciones */}
             <div className="avatar-wrapper">
               <div className="avatar-anillo" />
-              {user?.avatar ? (
+              
+              {/* Input oculto para subir imagen */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                style={{ display: 'none' }}
+              />
+              
+              {getAvatarUrl() ? (
                 <img
-                  src={user.avatar}
+                  src={getAvatarUrl()}
                   alt={user.name}
                   className="avatar-img"
                   referrerPolicy="no-referrer"
@@ -89,12 +182,31 @@ const UserProfile = () => {
                   }}
                 />
               ) : null}
-              <div className="avatar-iniciales" style={{ display: user?.avatar ? 'none' : 'flex' }}>
+              
+              <div className="avatar-iniciales" style={{ display: getAvatarUrl() ? 'none' : 'flex' }}>
                 <span>{getInitials(user?.name)}</span>
               </div>
+              
               <div className="avatar-badge">
                 {user?.role === 'admin' ? '🛡️' : '🌿'}
               </div>
+              
+              {/* Botón de cambiar foto */}
+              <button 
+                className="avatar-edit-btn"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={subiendoAvatar}
+                title="Cambiar foto"
+              >
+                {subiendoAvatar ? (
+                  <span className="spinner-small" />
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                )}
+              </button>
             </div>
 
             <h2 className="perfil-nombre">{user?.name}</h2>
@@ -104,6 +216,16 @@ const UserProfile = () => {
               <div className="perfil-rol-badge">
                 <span>Administrador</span>
               </div>
+            )}
+
+            {/* Botón para eliminar avatar (solo si tiene y no es de Google) */}
+            {user?.avatar && !user.avatar.includes('googleusercontent.com') && (
+              <button 
+                className="btn-eliminar-avatar"
+                onClick={handleEliminarAvatar}
+              >
+                Eliminar foto
+              </button>
             )}
 
             <div className="perfil-stats">
@@ -240,25 +362,27 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Sección contraseña — solo si no es Google */}
-          {!user?.googleId && (
-            <div className="perfil-seccion">
-              <div className="seccion-titulo">
-                <div className="seccion-icono">🔒</div>
-                <h3>Seguridad</h3>
-              </div>
+          {/* Sección contraseña — PARA TODOS LOS USUARIOS */}
+          <div className="perfil-seccion">
+            <div className="seccion-titulo">
+              <div className="seccion-icono">🔒</div>
+              <h3>Seguridad</h3>
+            </div>
 
-              {editando ? (
+            {editando ? (
+              <>
                 <div className="campos-grid">
                   <div className="campo-grupo">
-                    <label className="campo-label">Nueva contraseña</label>
+                    <label className="campo-label">
+                      {user?.googleId && !user?.password ? 'Establecer contraseña' : 'Nueva contraseña'}
+                    </label>
                     <input
                       className="campo-input"
                       type="password"
                       name="password"
                       value={form.password}
                       onChange={handleChange}
-                      placeholder="Dejar vacío para no cambiar"
+                      placeholder={user?.googleId && !user?.password ? 'Crear contraseña para acceso alternativo' : 'Dejar vacío para no cambiar'}
                     />
                   </div>
                   <div className="campo-grupo">
@@ -269,18 +393,36 @@ const UserProfile = () => {
                       name="confirmPassword"
                       value={form.confirmPassword}
                       onChange={handleChange}
-                      placeholder="Repetir nueva contraseña"
+                      placeholder="Repetir contraseña"
                     />
                   </div>
                 </div>
-              ) : (
-                <div className="campo-grupo">
-                  <label className="campo-label">Contraseña</label>
-                  <div className="campo-valor">••••••••••</div>
+                {user?.googleId && !user?.password && (
+                  <p className="campo-hint" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}>
+                    💡 Al establecer una contraseña, podrás acceder con email/contraseña si Google no está disponible.
+                  </p>
+                )}
+                <p className="campo-hint" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}>
+                  💡 La contraseña debe tener al menos 6 caracteres, incluir letras y números. No puede ser solo números ni solo letras.
+                </p>
+              </>
+            ) : (
+              <div className="campo-grupo">
+                <label className="campo-label">Contraseña</label>
+                <div className="campo-valor">
+                  {user?.googleId && !user?.password 
+                    ? 'Sin contraseña (solo Google)'
+                    : '••••••••••'
+                  }
                 </div>
-              )}
-            </div>
-          )}
+                {user?.googleId && !user?.password && (
+                  <p className="campo-hint" style={{ marginTop: '0.5rem' }}>
+                    Puedes establecer una contraseña para acceso alternativo
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Sección cuenta Google */}
           {user?.googleId && (
