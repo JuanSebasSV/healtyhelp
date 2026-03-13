@@ -1,28 +1,73 @@
 /* ModalNutricionDetallada.css */
 
-.modalNutriDetalle {
+/* ── Wrapper: contiene el botón flotante + el modal ── */
+.modalNutriWrapper {
+  position: relative;
   max-width: 1100px;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   border-radius: 22px;
-  padding: 2rem;
-  animation: slideUp 0.3s ease;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: slideUp 0.3s ease;
 }
 
-.modalNutriDetalle::-webkit-scrollbar { display: none; }
-.modalNutriDetalle { scrollbar-width: none; }
-
-.modo-oscuro .modalNutriDetalle {
+.modo-oscuro .modalNutriWrapper {
   background: rgba(20, 40, 25, 0.65);
   border-color: rgba(79, 119, 45, 0.28);
 }
 
-/* ── Header: volver | título | cerrar en grid para alineación perfecta ── */
+/* ── Botón cerrar (idéntico al de DetalleReceta) ── */
+.modalNutriWrapper .btn-cerrar-modal {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+.modalNutriWrapper .btn-cerrar-modal svg {
+  width: 15px;
+  height: 15px;
+  stroke: rgba(255, 255, 255, 0.75);
+  transition: stroke 0.2s ease;
+}
+.modalNutriWrapper .btn-cerrar-modal:hover {
+  background: rgba(220, 38, 38, 0.35);
+  border-color: rgba(220, 38, 38, 0.5);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+}
+.modalNutriWrapper .btn-cerrar-modal:hover svg {
+  stroke: #fff;
+}
+
+/* ── Contenido scrollable ── */
+.modalNutriDetalle {
+  overflow-y: auto;
+  border-radius: 22px;
+  padding: 2rem;
+}
+.modalNutriDetalle::-webkit-scrollbar { display: none; }
+.modalNutriDetalle { scrollbar-width: none; }
+
+/* ── Header ── */
 .modalNutriHeader {
   display: flex;
   align-items: center;
@@ -54,7 +99,6 @@
   transition: all 0.2s ease;
   white-space: nowrap;
 }
-
 .btn-volver-nutri svg {
   width: 15px;
   height: 15px;
@@ -62,44 +106,12 @@
   flex-shrink: 0;
   transition: stroke 0.2s ease;
 }
-
 .btn-volver-nutri:hover {
   background: rgba(79, 119, 45, 0.22);
   border-color: rgba(79, 119, 45, 0.5);
   color: white;
 }
-
-.btn-volver-nutri:hover svg {
-  stroke: white;
-}
-
-/* ── Botón cerrar profesional ── */
-.btn-cerrar-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.55);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  padding: 0;
-}
-
-.btn-cerrar-modal:hover {
-  background: rgba(220, 38, 38, 0.18);
-  border-color: rgba(220, 38, 38, 0.45);
-  color: #f87171;
-  transform: scale(1.08);
-}
-
-.btn-cerrar-modal svg {
-  display: block;
-}
+.btn-volver-nutri:hover svg { stroke: white; }
 
 /* ── Secciones ── */
 .nutriDetalleSeccion {

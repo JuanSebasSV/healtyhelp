@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import NutricionGrafico from './NutricionGrafico';
+import BtnConsumo from './BtnConsumo';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import useAuth from '../../hooks/useAuth';
 import './DetalleReceta.css';
 
+/* ─── Estrellas ─────────────────────────────────────────── */
 const Estrellas = ({ valor, onChange, readonly = false }) => {
   const [hover, setHover] = useState(0);
   return (
@@ -13,7 +15,7 @@ const Estrellas = ({ valor, onChange, readonly = false }) => {
         <span
           key={n}
           className={`estrella-ico ${n <= (hover || valor) ? 'llena' : 'vacia'}`}
-          onClick={() => !readonly && onChange && onChange(n)}
+          onClick={() => !readonly && onChange?.(n)}
           onMouseEnter={() => !readonly && setHover(n)}
           onMouseLeave={() => !readonly && setHover(0)}
         >★</span>
@@ -22,6 +24,141 @@ const Estrellas = ({ valor, onChange, readonly = false }) => {
   );
 };
 
+const formatFecha = (f) => new Date(f).toLocaleDateString('es-ES', {
+  year: 'numeric', month: 'short', day: 'numeric'
+});
+
+/* ─── Sección de respuestas ─────────────────────────────── */
+const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isAuthenticated }) => {
+  const [respuestas,    setRespuestas]    = useState(respInit || []);
+  const [texto,         setTexto]         = useState('');
+  const [enviando,      setEnviando]      = useState(false);
+  const [expandido,     setExpandido]     = useState(false);
+  const [respondiendo,  setRespondiendo]  = useState(false); // ← controla si el input es visible
+
+  const handleEnviar = async () => {
+    if (!texto.trim()) return;
+    setEnviando(true);
+    try {
+      const { data } = await api.post(
+        `/recipes/${recetaId}/resenas/${resenaId}/respuestas`,
+        { texto }
+      );
+      setRespuestas(prev => [...prev, data.respuesta]);
+      setTexto('');
+      setRespondiendo(false);
+      setExpandido(true);
+      toast.success('✅ Respuesta publicada');
+    } catch (e) {
+      toast.error(`❌ ${e.response?.data?.error || 'Error al responder'}`);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const handleCancelar = () => {
+    setTexto('');
+    setRespondiendo(false);
+  };
+
+  const handleBorrar = async (respId) => {
+    if (!window.confirm('¿Eliminar esta respuesta?')) return;
+    try {
+      await api.delete(`/recipes/${recetaId}/resenas/${resenaId}/respuestas/${respId}`);
+      setRespuestas(prev => prev.filter(r => r._id !== respId));
+      toast.success('Respuesta eliminada');
+    } catch (e) {
+      toast.error(`❌ ${e.response?.data?.error || 'Error al borrar'}`);
+    }
+  };
+
+  return (
+    <div className="resp-seccion">
+
+      {/* Botones: "Ver respuestas" + "Responder" en la misma fila */}
+      <div className="resp-acciones-fila">
+        {respuestas.length > 0 && (
+          <button className="btn-toggle-resp" onClick={() => setExpandido(v => !v)}>
+            {expandido
+              ? '▲ Ocultar respuestas'
+              : `▼ ${respuestas.length} respuesta${respuestas.length !== 1 ? 's' : ''}`}
+          </button>
+        )}
+        {isAuthenticated && (
+          <button
+            className="btn-responder"
+            onClick={() => { setRespondiendo(true); }}
+          >
+            ↩ Responder
+          </button>
+        )}
+      </div>
+
+      {/* Lista de respuestas */}
+      {expandido && respuestas.length > 0 && (
+        <div className="resp-lista">
+          {respuestas.map(rp => (
+            <div key={rp._id} className="resp-item">
+              <div className="resp-avatar">{rp.userName.charAt(0).toUpperCase()}</div>
+              <div className="resp-cuerpo">
+                <div className="resp-meta">
+                  <span className="resp-nombre">{rp.userName}</span>
+                  <span className="resp-fecha">{formatFecha(rp.createdAt)}</span>
+                  {isAuthenticated && user &&
+                    (user._id === rp.userId?.toString() || user.role === 'admin') && (
+                      <button
+                        className="btn-borrar-resp"
+                        onClick={() => handleBorrar(rp._id)}
+                        title="Eliminar respuesta"
+                      >🗑️</button>
+                    )}
+                </div>
+                <p className="resp-texto">{rp.texto}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Input — solo visible tras pulsar "Responder" */}
+      {respondiendo && (
+        <div className="resp-form">
+          <div className="resp-avatar resp-avatar--yo">
+            {user?.name?.charAt(0).toUpperCase()}
+          </div>
+          <div className="resp-input-wrap">
+            <textarea
+              className="resp-textarea"
+              placeholder="Escribe una respuesta..."
+              value={texto}
+              onChange={e => setTexto(e.target.value)}
+              rows={2}
+              maxLength={500}
+              lang="es"
+              spellCheck="true"
+              autoFocus
+            />
+            <div className="resp-actions">
+              <button className="btn-cancelar-resp" onClick={handleCancelar} disabled={enviando}>
+                Cancelar
+              </button>
+              <button
+                className="btn-enviar-resp"
+                onClick={handleEnviar}
+                disabled={enviando || !texto.trim()}
+              >
+                {enviando ? '⏳' : '↩ Publicar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};
+
+/* ─── Componente principal ───────────────────────────────── */
 const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   const { user, isAuthenticated } = useAuth();
 
@@ -31,6 +168,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   const [cargandoRes,   setCargandoRes]   = useState(true);
   const [pagina,        setPagina]        = useState(1);
   const [totalPags,     setTotalPags]     = useState(1);
+  const [orden,         setOrden]         = useState('reciente');
 
   const [miResena,      setMiResena]      = useState(null);
   const [editando,      setEditando]      = useState(false);
@@ -39,21 +177,37 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   const [enviando,      setEnviando]      = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = 'unset'; };
+    const scrollY = window.scrollY;
+    document.body.style.position  = 'fixed';
+    document.body.style.top       = `-${scrollY}px`;
+    document.body.style.left      = '0';
+    document.body.style.right     = '0';
+    document.body.style.overflowY = 'scroll';
+    return () => {
+      document.body.style.position  = '';
+      document.body.style.top       = '';
+      document.body.style.left      = '';
+      document.body.style.right     = '';
+      document.body.style.overflowY = '';
+      window.scrollTo(0, scrollY);
+    };
   }, []);
 
-  const cargarResenas = useCallback(async (pag = 1) => {
+  const cargarResenas = useCallback(async (pag = 1, ord = orden) => {
     setCargandoRes(true);
     try {
-      const { data } = await api.get(`/recipes/${receta._id}/resenas?page=${pag}&limit=5`);
+      const { data } = await api.get(
+        `/recipes/${receta._id}/resenas?page=${pag}&limit=5&orden=${ord}`
+      );
       setResenas(data.resenas);
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
       setTotalPags(data.pagination.pages);
 
       if (user) {
-        const mia = data.resenas.find(r => r.userId === user._id);
+        const mia = data.resenas.find(
+          r => r.userId?.toString() === user._id?.toString()
+        );
         if (mia) {
           setMiResena(mia);
           setFormEstrellas(mia.estrellas);
@@ -65,9 +219,14 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     } finally {
       setCargandoRes(false);
     }
-  }, [receta._id, user]);
+  }, [receta._id, user, orden]);
 
-  useEffect(() => { cargarResenas(1); }, [cargarResenas]);
+  useEffect(() => { cargarResenas(1, orden); }, [orden]);
+
+  const cambiarOrden = (nuevoOrden) => {
+    setOrden(nuevoOrden);
+    setPagina(1);
+  };
 
   const handleSubmitResena = async () => {
     if (!formEstrellas) { toast.error('Selecciona una puntuación'); return; }
@@ -86,7 +245,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       setTotalResenas(data.totalResenas);
       setMiResena(data.resena);
       setEditando(false);
-      cargarResenas(1);
+      cargarResenas(1, orden);
     } catch (error) {
       toast.error(`❌ ${error.response?.data?.error || 'Error al publicar la reseña'}`);
     } finally {
@@ -94,15 +253,44 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     }
   };
 
-  const formatFecha = (f) => new Date(f).toLocaleDateString('es-ES', {
-    year: 'numeric', month: 'short', day: 'numeric'
-  });
+  const handleBorrarResena = async (resenaId) => {
+    if (!window.confirm('¿Eliminar esta reseña? No se puede deshacer.')) return;
+    try {
+      await api.delete(`/recipes/${receta._id}/resenas/${resenaId}`);
+      toast.success('Reseña eliminada');
+      setMiResena(null);
+      setFormEstrellas(5);
+      setFormTexto('');
+      cargarResenas(1, orden);
+    } catch (e) {
+      toast.error(`❌ ${e.response?.data?.error || 'Error al borrar'}`);
+    }
+  };
+
+  const handleVotar = async (resenaId, tipo) => {
+    if (!isAuthenticated) { toast.info('Inicia sesión para votar'); return; }
+    try {
+      const { data } = await api.post(
+        `/recipes/${receta._id}/resenas/${resenaId}/voto`,
+        { tipo }
+      );
+      setResenas(prev => prev.map(r =>
+        r._id === resenaId
+          ? { ...r, likes: data.likes, dislikes: data.dislikes, miVoto: data.miVoto }
+          : r
+      ));
+    } catch (e) {
+      toast.error(`❌ ${e.response?.data?.error || 'Error al votar'}`);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={cerrar}>
       <div className="modalContenedorReceta" onClick={e => e.stopPropagation()}>
-        <button className="modal-cerrar" onClick={cerrar} aria-label="Cerrar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+
+        <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
         </button>
@@ -115,19 +303,17 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
 
           <div className="modalSeccion">
             <h3>Ingredientes</h3>
-            <ul>
-              {receta.ingredientes.map((ing, i) => <li key={i}>{ing}</li>)}
-            </ul>
+            <ul>{receta.ingredientes.map((ing, i) => <li key={i}>{ing}</li>)}</ul>
           </div>
 
           <div className="modalSeccion">
             <h3>Preparación</h3>
-            <ol>
-              {receta.pasos.map((paso, i) => <li key={i}>{paso}</li>)}
-            </ol>
+            <ol>{receta.pasos.map((paso, i) => <li key={i}>{paso}</li>)}</ol>
           </div>
 
-          {/* ── Sección reseñas ── */}
+          <BtnConsumo recetaId={receta._id} />
+
+          {/* ══════════ RESEÑAS ══════════ */}
           <div className="modalSeccion resenas-seccion">
 
             <div className="resenas-resumen">
@@ -150,9 +336,14 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                   <div className="mi-resena-card">
                     <div className="mi-resena-header">
                       <span className="mi-resena-label">Tu reseña</span>
-                      <button className="btn-editar-resena" onClick={() => setEditando(true)}>
-                        ✏️ Editar
-                      </button>
+                      <div className="mi-resena-acciones">
+                        <button className="btn-editar-resena" onClick={() => setEditando(true)}>
+                          ✏️ Editar
+                        </button>
+                        <button className="btn-borrar-resena" onClick={() => handleBorrarResena(miResena._id)}>
+                          🗑️ Borrar
+                        </button>
+                      </div>
                     </div>
                     <Estrellas valor={miResena.estrellas} readonly />
                     {miResena.texto && (
@@ -172,6 +363,8 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                       onChange={e => setFormTexto(e.target.value)}
                       maxLength={500}
                       rows={3}
+                      lang="es"
+                      spellCheck="true"
                     />
                     <div className="resena-form-actions">
                       {miResena && (
@@ -204,6 +397,22 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               </p>
             )}
 
+            {/* Filtro orden */}
+            <div className="resenas-filtro">
+              <span className="resenas-filtro-label">Ordenar por:</span>
+              <div className="resenas-filtro-btns">
+                <button
+                  className={`btn-orden ${orden === 'reciente' ? 'activo' : ''}`}
+                  onClick={() => cambiarOrden('reciente')}
+                >🕐 Más recientes</button>
+                <button
+                  className={`btn-orden ${orden === 'relevancia' ? 'activo' : ''}`}
+                  onClick={() => cambiarOrden('relevancia')}
+                >👍 Más relevantes</button>
+              </div>
+            </div>
+
+            {/* Lista de reseñas */}
             <div className="resenas-lista">
               {cargandoRes ? (
                 <p className="resenas-estado">Cargando reseñas...</p>
@@ -212,24 +421,59 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                   Sé el primero en dejar una reseña ✨
                 </p>
               ) : (
-                resenas.map(r => (
-                  <div
-                    key={r._id}
-                    className={`resena-item ${user && r.userId === user._id ? 'propia' : ''}`}
-                  >
-                    <div className="resena-item-header">
-                      <div className="resena-avatar">
-                        {r.userName.charAt(0).toUpperCase()}
+                resenas.map(r => {
+                  const esPropia = user && r.userId?.toString() === user._id?.toString();
+                  const esAdmin  = user?.role === 'admin';
+                  return (
+                    <div key={r._id} className={`resena-item ${esPropia ? 'propia' : ''}`}>
+
+                      <div className="resena-item-header">
+                        <div className="resena-avatar">
+                          {r.userName.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="resena-item-meta">
+                          <span className="resena-nombre">{r.userName}</span>
+                          <span className="resena-fecha">{formatFecha(r.createdAt)}</span>
+                        </div>
+                        <Estrellas valor={r.estrellas} readonly />
+                        {isAuthenticated && (esPropia || esAdmin) && (
+                          <button
+                            className="btn-borrar-resena-lista"
+                            onClick={() => handleBorrarResena(r._id)}
+                            title="Eliminar reseña"
+                          >🗑️</button>
+                        )}
                       </div>
-                      <div className="resena-item-meta">
-                        <span className="resena-nombre">{r.userName}</span>
-                        <span className="resena-fecha">{formatFecha(r.createdAt)}</span>
+
+                      {r.texto && <p className="resena-texto">{r.texto}</p>}
+
+                      {/* Votos */}
+                      <div className="resena-votos">
+                        <span className="votos-label">¿Te resultó útil?</span>
+                        <button
+                          className={`btn-voto btn-like ${r.miVoto === 'like' ? 'activo' : ''}`}
+                          onClick={() => handleVotar(r._id, 'like')}
+                          title="Es útil"
+                        >👍 <span>{r.likes}</span></button>
+                        <button
+                          className={`btn-voto btn-dislike ${r.miVoto === 'dislike' ? 'activo' : ''}`}
+                          onClick={() => handleVotar(r._id, 'dislike')}
+                          title="No es útil"
+                        >👎 <span>{r.dislikes}</span></button>
                       </div>
-                      <Estrellas valor={r.estrellas} readonly />
+
+                      {/* Respuestas */}
+                      <SeccionRespuestas
+                        recetaId={receta._id}
+                        resenaId={r._id}
+                        respuestas={r.respuestas || []}
+                        user={user}
+                        isAuthenticated={isAuthenticated}
+                      />
+
                     </div>
-                    {r.texto && <p className="resena-texto">{r.texto}</p>}
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
@@ -237,12 +481,12 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               <div className="resenas-paginacion">
                 <button
                   disabled={pagina === 1}
-                  onClick={() => { const p = pagina - 1; setPagina(p); cargarResenas(p); }}
+                  onClick={() => { const p = pagina - 1; setPagina(p); cargarResenas(p, orden); }}
                 >← Anterior</button>
                 <span>{pagina} / {totalPags}</span>
                 <button
                   disabled={pagina === totalPags}
-                  onClick={() => { const p = pagina + 1; setPagina(p); cargarResenas(p); }}
+                  onClick={() => { const p = pagina + 1; setPagina(p); cargarResenas(p, orden); }}
                 >Siguiente →</button>
               </div>
             )}

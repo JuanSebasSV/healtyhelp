@@ -100,6 +100,13 @@ body {
 }
 .modo-oscuro .modal-overlay { background: rgba(0, 0, 0, 0.9); }
 
+@media (max-width: 968px) {
+  .modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+}
+
 .modal-cerrar {
   position: fixed;
   top:   clamp(0.75rem, 2vw, 2rem);
@@ -107,28 +114,48 @@ body {
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  border: none;
-  background: var(--blanco);
-  color: var(--gris-oscuro);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--blanco);
   cursor: pointer;
   transition: var(--transicion);
   z-index: 2001;
-  box-shadow: var(--sombra-hover);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.modal-cerrar--izq {
+  right: unset;
+  left: clamp(0.25rem, 1vw, 0.75rem);
+  width: 36px;
+  height: 36px;
+}
+.modal-cerrar--izq svg {
+  width: 14px;
+  height: 14px;
+}
 .modal-cerrar svg {
   width: 18px;
   height: 18px;
-  stroke: var(--gris-oscuro);
+  stroke: var(--blanco);
   transition: stroke 0.3s ease;
 }
-.modal-cerrar:hover { background: var(--naranja); transform: scale(1.05); }
+.modal-cerrar:hover {
+  background: rgba(247, 127, 0, 0.85);
+  border-color: rgba(247, 127, 0, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(247, 127, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
 .modal-cerrar:hover svg { stroke: var(--blanco); }
-.modo-oscuro .modal-cerrar { background: rgba(64, 64, 64, 0.9); }
-.modo-oscuro .modal-cerrar svg { stroke: var(--gris-oscuro); }
-.modo-oscuro .modal-cerrar:hover { background: var(--naranja); }
+.modo-oscuro .modal-cerrar {
+  background: rgba(20, 40, 25, 0.55);
+  border-color: rgba(79, 119, 45, 0.35);
+}
+.modo-oscuro .modal-cerrar svg { stroke: rgba(255, 255, 255, 0.85); }
+.modo-oscuro .modal-cerrar:hover { background: rgba(247, 127, 0, 0.85); }
 .modo-oscuro .modal-cerrar:hover svg { stroke: var(--blanco); }
 
 /* ============ AUTH ============ */

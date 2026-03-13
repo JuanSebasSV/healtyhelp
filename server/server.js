@@ -74,6 +74,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/recipes', require('./routes/recipes'));
+app.use('/api/consumos', require('./routes/consumos'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

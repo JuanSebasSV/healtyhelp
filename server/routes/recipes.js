@@ -1,50 +1,36 @@
 const express = require('express');
 const router  = express.Router();
 const { protect, admin } = require('../middleware/auth');
+
 const {
-  getAllRecipes,
-  getRecipeById,
-  createRecipe,
-  updateRecipe,
-  deleteRecipe,
-  deleteMultipleRecipes,
-  importRecipes,
-  exportRecipes,
-  getRecipeStats,
-  // Reseñas
-  crearResena,
-  editarResena,
-  getResenas,
+  getAllRecipes, getRecipeById, createRecipe, updateRecipe,
+  deleteRecipe, deleteMultipleRecipes, importRecipes, exportRecipes, getRecipeStats,
+  getResenas, crearResena, editarResena, borrarResena,
+  votarResena, responderResena, borrarRespuesta,
 } = require('../controllers/recipeController');
 
-// ─────────────────────────────────────────────
-// 🌐 Rutas públicas
-// ─────────────────────────────────────────────
-router.get('/',    getAllRecipes);
+// ── Públicas ──
+router.get('/', getAllRecipes);
 router.get('/:id', getRecipeById);
 
-// ─────────────────────────────────────────────
-// ⭐ Reseñas — requiere login pero NO admin
-// Deben ir ANTES del bloque router.use(admin)
-// ─────────────────────────────────────────────
-router.get ('/:id/resenas', getResenas);           // ver reseñas (público)
-router.post('/:id/resenas', protect, crearResena); // crear reseña (usuario)
-router.put ('/:id/resenas', protect, editarResena);// editar propia reseña
+// ── Reseñas (protect pero NO admin) ──
+router.get   ('/:id/resenas',                              getResenas);
+router.post  ('/:id/resenas',                protect,      crearResena);
+router.put   ('/:id/resenas',                protect,      editarResena);
+router.delete('/:id/resenas/:resenaId',      protect,      borrarResena);
+router.post  ('/:id/resenas/:resenaId/voto', protect,      votarResena);
+router.post  ('/:id/resenas/:resenaId/respuestas',             protect, responderResena);
+router.delete('/:id/resenas/:resenaId/respuestas/:respId',     protect, borrarRespuesta);
 
-// ─────────────────────────────────────────────
-// 🔒 Rutas de admin
-// Las rutas con segmentos fijos van ANTES de /:id
-// ─────────────────────────────────────────────
+// ── Admin (rutas fijas ANTES de /:id para evitar colisiones) ──
 router.use(protect);
 router.use(admin);
-
-router.get ('/export/all',      exportRecipes);
-router.get ('/stats/summary',   getRecipeStats);
-router.post('/import',          importRecipes);
-router.post('/delete-multiple', deleteMultipleRecipes);
-
-router.post  ('/',     createRecipe);
-router.put   ('/:id',  updateRecipe);
-router.delete('/:id',  deleteRecipe);
+router.get   ('/export/all',      exportRecipes);
+router.get   ('/stats/summary',   getRecipeStats);
+router.post  ('/import',          importRecipes);
+router.post  ('/delete-multiple', deleteMultipleRecipes);
+router.post  ('/',                createRecipe);
+router.put   ('/:id',             updateRecipe);
+router.delete('/:id',             deleteRecipe);
 
 module.exports = router;

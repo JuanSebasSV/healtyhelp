@@ -24,7 +24,7 @@ import ResetPassword from './components/auth/ResetPassword';
 
 // Vistas principales
 import VistaInicio from './components/inicio/VistaInicio';
-import VistaHistorial from './components/vistas/VistaHistorial';
+import VistaSeguimiento from './components/vistas/VistaSeguimiento';
 import VistaFavoritos from './components/vistas/VistaFavoritos';
 import VistaContacto from './components/vistas/VistaContacto';
 
@@ -58,18 +58,15 @@ function AppContent() {
   const [recetas, setRecetas]                   = useState([]);
   const [cargandoRecetas, setCargandoRecetas]   = useState(true);
 
-  // Aplicar modo oscuro
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
     localStorage.setItem('modoOscuro', JSON.stringify(modoOscuro));
   }, [modoOscuro]);
 
-  // Guardar favoritos
   useEffect(() => {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
   }, [favoritos]);
 
-  // Cargar recetas desde el backend
   useEffect(() => {
     cargarRecetas();
   }, []);
@@ -77,7 +74,6 @@ function AppContent() {
   const cargarRecetas = async () => {
     setCargandoRecetas(true);
     try {
-      // Pedir todas las recetas (límite alto para traer todas)
       const { data } = await api.get('/recipes?limit=200');
       setRecetas(data.recipes || []);
     } catch (error) {
@@ -134,13 +130,16 @@ function AppContent() {
 
             {/* Rutas protegidas */}
             <Route
-              path="/historial"
+              path="/seguimiento"
               element={
                 <PrivateRoute>
-                  <VistaHistorial recetas={recetas} />
+                  <VistaSeguimiento recetas={recetas} />
                 </PrivateRoute>
               }
             />
+            {/* Redirigir /historial a /seguimiento por compatibilidad */}
+            <Route path="/historial" element={<Navigate to="/seguimiento" replace />} />
+
             <Route
               path="/favoritos"
               element={
@@ -196,7 +195,6 @@ function AppContent() {
               }
             />
 
-
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -204,7 +202,6 @@ function AppContent() {
 
         <Footer />
 
-        {/* Robot IA flotante */}
         {user && (
           <RobotIA
             activo={robotIAActivo}
@@ -212,7 +209,6 @@ function AppContent() {
           />
         )}
 
-        {/* Toast notifications */}
         <ToastContainer
           position="top-right"
           autoClose={3000}

@@ -20,7 +20,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
     navigate('/');
   };
 
-  // Determinar ruta actual para marcar item activo
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -58,10 +57,10 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
           {user && (
             <>
               <li 
-                onClick={() => handleNavigate('/historial')}
-                className={isActive('/historial') ? 'activo' : ''}
+                onClick={() => handleNavigate('/seguimiento')}
+                className={isActive('/seguimiento') ? 'activo' : ''}
               >
-                Historial
+                Seguimiento
               </li>
               <li 
                 onClick={() => handleNavigate('/favoritos')}
@@ -79,7 +78,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
             Contáctanos
           </li>
 
-          {/* Mostrar panel admin solo si es admin */}
           {user && isAdmin && isAdmin() && (
             <li 
               onClick={() => handleNavigate('/admin')}

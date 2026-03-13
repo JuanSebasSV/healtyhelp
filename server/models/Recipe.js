@@ -85,38 +85,40 @@ const nutriSchema = new mongoose.Schema({
 }, { _id: false });
 
 // ─────────────────────────────────────────────
-// Sub-esquema de reseña (estrellas + comentario)
-// Un usuario = una reseña por receta
+// Sub-esquema de respuesta (dentro de una reseña)
 // ─────────────────────────────────────────────
-const resenaSchema = new mongoose.Schema(
+const respuestaSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    userName: {
-      type: String,
-      required: true,
-    },
-    estrellas: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 5,
-    },
-    texto: {
-      type: String,
-      trim: true,
-      maxlength: [500, 'El comentario no puede superar 500 caracteres'],
-      default: '',
-    },
+    userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userName: { type: String, required: true },
+    texto:    { type: String, required: true, trim: true, maxlength: [500, 'Máximo 500 caracteres'] },
   },
   { timestamps: true }
 );
 
 // ─────────────────────────────────────────────
-// Esquema principal
+// Sub-esquema de reseña
+// likes    = array de userIds que marcaron "Es útil"
+// dislikes = array de userIds que marcaron "No es útil"
+// respuestas = comentarios anidados (estilo YouTube)
+// ─────────────────────────────────────────────
+const resenaSchema = new mongoose.Schema(
+  {
+    userId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userName:   { type: String, required: true },
+    estrellas:  { type: Number, required: true, min: 1, max: 5 },
+    texto:      { type: String, trim: true, maxlength: [500, 'Máximo 500 caracteres'], default: '' },
+    // Votos de utilidad
+    likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
+    dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
+    // Respuestas anidadas
+    respuestas: { type: [respuestaSchema], default: [] },
+  },
+  { timestamps: true }
+);
+
+// ─────────────────────────────────────────────
+// Esquema principal de receta
 // ─────────────────────────────────────────────
 const recipeSchema = new mongoose.Schema(
   {
@@ -132,7 +134,7 @@ const recipeSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, 'Máximo 1000 caracteres'],
     },
-    img:  { type: String, default: '' },
+    img:          { type: String, default: '' },
     cat: {
       type: String,
       required: [true, 'La categoría es obligatoria'],
@@ -141,40 +143,33 @@ const recipeSchema = new mongoose.Schema(
         message: 'Categoría inválida: {VALUE}',
       },
     },
-    salud:       { type: [String], default: [] },
-    ingredientes:{ type: [String], default: [] },
-    pasos:       { type: [String], default: [] },
+    salud:        { type: [String], default: [] },
+    ingredientes: { type: [String], default: [] },
+    pasos:        { type: [String], default: [] },
 
-    // ── Reseñas reales ──
-    resenas:     { type: [resenaSchema], default: [] },
-    // Estos dos se recalculan automáticamente con recalcularPuntos()
-    puntosProm:  { type: Number, default: 0 },   // promedio con 1 decimal
-    totalResenas:{ type: Number, default: 0 },   // cantidad de reseñas
+    resenas:      { type: [resenaSchema], default: [] },
+    puntosProm:   { type: Number, default: 0 },
+    totalResenas: { type: Number, default: 0 },
 
-    nutri: { type: nutriSchema, default: () => ({}) },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    nutri:     { type: nutriSchema, default: () => ({}) },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true, versionKey: false }
 );
 
 // ── Recalcular promedio ──
-// Llamar con: recipe.recalcularPuntos(); await recipe.save();
 recipeSchema.methods.recalcularPuntos = function () {
   const total = this.resenas.length;
   if (total === 0) {
-    this.puntosProm  = 0;
+    this.puntosProm   = 0;
     this.totalResenas = 0;
   } else {
     const suma = this.resenas.reduce((acc, r) => acc + r.estrellas, 0);
-    this.puntosProm  = Math.round((suma / total) * 10) / 10;
+    this.puntosProm   = Math.round((suma / total) * 10) / 10;
     this.totalResenas = total;
   }
 };
 
-// Índices
 recipeSchema.index({ nombre: 'text', desc: 'text' });
 recipeSchema.index({ cat: 1 });
 recipeSchema.index({ salud: 1 });

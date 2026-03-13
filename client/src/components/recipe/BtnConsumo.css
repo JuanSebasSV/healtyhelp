@@ -1,0 +1,185 @@
+/* ── Wrapper ── */
+.btnConsumo-wrapper {
+  position: relative;
+  margin: 1.25rem 0;
+}
+
+.btnConsumo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Botón principal ── */
+.btnConsumo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  border: 2px solid var(--verde-hoja);
+  background: transparent;
+  color: var(--verde-hoja);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  flex: 1;
+  justify-content: center;
+}
+
+.btnConsumo svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.btnConsumo:hover:not(:disabled) {
+  background: var(--verde-hoja);
+  color: var(--blanco);
+}
+
+.btnConsumo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnConsumo--registrado {
+  background: var(--verde-hoja);
+  color: var(--blanco);
+}
+
+.btnConsumo--registrado:hover:not(:disabled) {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+/* ── Animación de señalado: pulso + brillo para llamar la atención ── */
+.btnConsumo--señalar {
+  animation: consumoSeñalar 2.2s ease forwards;
+}
+
+@keyframes consumoSeñalar {
+  0%   { box-shadow: 0 0 0 0 rgba(79, 119, 45, 0.7);  border-color: var(--verde-hoja); }
+  25%  { box-shadow: 0 0 0 8px rgba(79, 119, 45, 0.35); background: rgba(79, 119, 45, 0.12); }
+  50%  { box-shadow: 0 0 0 14px rgba(79, 119, 45, 0.12); background: rgba(79, 119, 45, 0.2); }
+  75%  { box-shadow: 0 0 0 8px rgba(79, 119, 45, 0.08); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 119, 45, 0);    background: transparent; }
+}
+
+/* Spinner */
+.btnConsumo-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: consumoSpin 0.6s linear infinite;
+}
+
+@keyframes consumoSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Botón ? ── */
+.btnConsumo-help {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--verde-hoja);
+  background: transparent;
+  color: var(--verde-hoja);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnConsumo-help:hover {
+  background: var(--verde-hoja);
+  color: var(--blanco);
+}
+
+/* ── Nubecita tooltip ── */
+/* Posicionada encima del botón, con la cola apuntando hacia él */
+.btnConsumo-tooltip {
+  position: absolute;
+  bottom: calc(100% + 16px);
+  left: 0;
+  right: 0;
+  background: var(--blanco);
+  border: 1.5px solid rgba(79, 119, 45, 0.3);
+  border-radius: 14px;
+  padding: 1rem 2.5rem 0.9rem 1rem;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  z-index: 200;
+  animation: tooltipIn 0.22s ease;
+}
+
+@keyframes tooltipIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.btnConsumo-tooltip p {
+  margin: 0 0 0.55rem;
+  font-size: 0.84rem;
+  color: var(--gris-oscuro);
+  line-height: 1.55;
+}
+
+.btnConsumo-tooltip p:last-of-type {
+  margin-bottom: 0;
+}
+
+.btnConsumo-tooltip strong {
+  color: var(--verde-bosque);
+}
+
+/* Cola triangular apuntando hacia abajo (al botón) */
+.btnConsumo-tooltip-cola {
+  position: absolute;
+  bottom: -9px;
+  left: 2.5rem;
+  width: 16px;
+  height: 16px;
+  background: var(--blanco);
+  border-right: 1.5px solid rgba(79, 119, 45, 0.3);
+  border-bottom: 1.5px solid rgba(79, 119, 45, 0.3);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+/* X de cerrar tooltip */
+.btnConsumo-tooltip-cerrar {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--gris-oscuro);
+  opacity: 0.45;
+  transition: var(--transicion);
+}
+
+.btnConsumo-tooltip-cerrar:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.btnConsumo-tooltip-cerrar svg {
+  width: 13px;
+  height: 13px;
+}

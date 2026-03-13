@@ -1,0 +1,152 @@
+/* ResumenNutricional.css */
+
+.resumen-nutri-panel {
+  position: sticky;
+  top: 0;
+}
+
+.resumen-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+.resumen-vacio-icono { font-size: 3rem; }
+.resumen-vacio p {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.resumen-titulo {
+  color: var(--naranja);
+  font-size: 1.2rem;
+  font-family: 'Georgia', serif;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.resumen-periodo-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: rgba(247,127,0,0.15);
+  border: 1px solid rgba(247,127,0,0.3);
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  color: var(--naranja);
+  text-transform: capitalize;
+}
+
+.resumen-subtitulo {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 1rem;
+}
+
+/* ── Gráfica dona ── */
+.resumen-chart {
+  width: 160px;
+  height: 160px;
+  display: block;
+  margin: 0 auto 0.75rem;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+}
+
+.resumen-leyenda {
+  display: flex;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+}
+.resumen-leyenda span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.resumen-leyenda i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Acordeón ── */
+.resumen-acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.resumen-sec-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+.resumen-sec-header:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+.resumen-sec-header.abierto {
+  background: rgba(247,127,0,0.1);
+  border-color: rgba(247,127,0,0.3);
+  color: var(--naranja);
+  border-radius: 10px 10px 0 0;
+}
+
+.resumen-sec-body {
+  border: 1px solid rgba(247,127,0,0.15);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+.resumen-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.resumen-fila:last-child { border-bottom: none; }
+.resumen-fila:hover { background: rgba(255,255,255,0.04); }
+.resumen-fila strong {
+  color: rgba(255,200,80,0.9);
+  font-weight: 700;
+}
+.resumen-fila.destaca {
+  background: rgba(247,127,0,0.07);
+}
+.resumen-fila.destaca span {
+  color: rgba(255,185,60,0.85);
+  font-weight: 600;
+}
+.resumen-fila.destaca strong {
+  color: #f59e0b;
+  font-size: 0.9rem;
+}

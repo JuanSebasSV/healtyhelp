@@ -5,8 +5,49 @@
   gap: 1.5rem;
   max-width: 1400px;
   width: 95%;
-  max-height: 88vh;
+  height: 88vh;
   position: relative;
+}
+
+/* ── Botón cerrar profesional ── */
+.btn-cerrar-modal {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-cerrar-modal svg {
+  width: 15px;
+  height: 15px;
+  stroke: rgba(255, 255, 255, 0.75);
+  transition: stroke 0.2s ease;
+}
+
+.btn-cerrar-modal:hover {
+  background: rgba(220, 38, 38, 0.35);
+  border-color: rgba(220, 38, 38, 0.5);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+}
+
+.btn-cerrar-modal:hover svg {
+  stroke: #fff;
 }
 
 /* ── Columnas ── */
@@ -14,6 +55,7 @@
   border-radius: 22px;
   padding: 2rem;
   overflow-y: auto;
+  height: 100%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -230,7 +272,13 @@
 
 /* ── Mi reseña ── */
 .mi-resena-card { display: flex; flex-direction: column; gap: 0.6rem; }
-.mi-resena-header { display: flex; align-items: center; justify-content: space-between; }
+.mi-resena-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .mi-resena-label {
   font-size: 0.82rem;
   font-weight: 700;
@@ -238,7 +286,10 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-
+.mi-resena-acciones {
+  display: flex;
+  gap: 0.5rem;
+}
 .btn-editar-resena {
   padding: 0.3rem 0.8rem;
   background: rgba(247, 127, 0, 0.12);
@@ -253,6 +304,21 @@
 .btn-editar-resena:hover {
   background: rgba(247, 127, 0, 0.25);
   border-color: rgba(247, 127, 0, 0.55);
+}
+.btn-borrar-resena {
+  padding: 0.3rem 0.8rem;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-borrar-resena:hover {
+  background: rgba(220, 38, 38, 0.22);
+  border-color: rgba(220, 38, 38, 0.55);
 }
 
 .mi-resena-texto {
@@ -275,6 +341,40 @@
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.88rem;
   margin-bottom: 1.25rem;
+}
+
+/* ── Filtro de orden ── */
+.resenas-filtro {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.resenas-filtro-label {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.resenas-filtro-btns { display: flex; gap: 0.5rem; }
+.btn-orden {
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-orden:hover { background: rgba(255, 255, 255, 0.12); color: white; }
+.btn-orden.activo {
+  background: rgba(247, 127, 0, 0.2);
+  border-color: rgba(247, 127, 0, 0.5);
+  color: var(--naranja);
 }
 
 /* ── Lista de reseñas ── */
@@ -330,13 +430,238 @@
 .resena-item .estrellas-input { margin-left: auto; }
 .resena-item .estrella-ico { font-size: 1rem; }
 
+/* Botón borrar en lista (autor / admin) */
+.btn-borrar-resena-lista {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.btn-borrar-resena-lista:hover {
+  background: rgba(220, 38, 38, 0.22);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
 .resena-texto {
   font-size: 0.88rem;
   color: rgba(255, 255, 255, 0.65);
   line-height: 1.55;
-  margin: 0;
+  margin: 0 0 0.75rem;
   padding-left: calc(38px + 0.75rem);
 }
+
+/* ── Votos de utilidad ── */
+.resena-votos {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  padding-left: calc(38px + 0.75rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.5rem;
+}
+.votos-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-right: 0.25rem;
+}
+.btn-voto {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-voto span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 0.8rem;
+  text-align: center;
+}
+.btn-like:hover    { background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4);  color: #4ade80; }
+.btn-dislike:hover { background: rgba(239, 68, 68, 0.12);  border-color: rgba(239, 68, 68, 0.35); color: #f87171; }
+.btn-like.activo    { background: rgba(34, 197, 94, 0.2);  border-color: rgba(34, 197, 94, 0.55); color: #4ade80; font-weight: 700; }
+.btn-dislike.activo { background: rgba(239, 68, 68, 0.18); border-color: rgba(239, 68, 68, 0.5);  color: #f87171; font-weight: 700; }
+
+/* ════════════════════════════════
+   RESPUESTAS (estilo YouTube)
+════════════════════════════════ */
+.resp-seccion {
+  margin-top: 0.5rem;
+  padding-left: calc(38px + 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-toggle-resp {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(167, 213, 136, 0.8);
+  padding: 0.15rem 0;
+  transition: color 0.2s ease;
+  text-align: left;
+}
+.btn-toggle-resp:hover { color: rgba(167, 213, 136, 1); }
+
+.resp-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.resp-item {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.resp-avatar {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(79, 119, 45, 0.7), rgba(107, 158, 74, 0.7));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.resp-avatar--yo {
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+}
+
+.resp-cuerpo { flex: 1; }
+.resp-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+.resp-nombre { font-size: 0.82rem; font-weight: 700; color: rgba(167, 213, 136, 0.85); }
+.resp-fecha  { font-size: 0.72rem; color: rgba(255, 255, 255, 0.3); }
+.btn-borrar-resp {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: rgba(248, 113, 113, 0.6);
+  padding: 0;
+  transition: color 0.2s ease;
+}
+.btn-borrar-resp:hover { color: #f87171; }
+
+.resp-texto {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Formulario de respuesta */
+.resp-form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin-top: 0.35rem;
+}
+.resp-input-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.resp-textarea {
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.84rem;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.resp-textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+.resp-textarea:focus {
+  border-color: rgba(255, 255, 255, 0.35);
+  border-bottom-color: var(--naranja);
+  box-shadow: 0 2px 0 rgba(247, 127, 0, 0.2);
+}
+.resp-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.btn-cancelar-resp {
+  padding: 0.35rem 0.85rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-cancelar-resp:hover { border-color: rgba(255, 255, 255, 0.4); color: white; }
+.btn-enviar-resp {
+  padding: 0.35rem 0.85rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-enviar-resp:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 119, 45, 0.4);
+}
+.btn-enviar-resp:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.resp-acciones-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-responder {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 0.15rem 0;
+  transition: color 0.2s ease;
+}
+.btn-responder:hover { color: rgba(255, 255, 255, 0.85); }
 
 /* ── Paginación ── */
 .resenas-paginacion {
@@ -371,11 +696,22 @@
 @media (max-width: 968px) {
   .modalContenedorReceta {
     flex-direction: column;
-    max-height: none;
-    overflow-y: auto;
+    height: auto;
+    overflow-y: visible;
   }
-  .modalCol    { max-height: none; }
+  .modalCol {
+    height: auto;
+    overflow-y: visible;
+  }
   .modalIzq, .modalDer { flex: 1; }
-  .modalImg    { height: 200px; }
-  .resena-texto { padding-left: 0; }
+  .modalImg { height: 200px; }
+  .resena-texto  { padding-left: 0; }
+  .resena-votos  { padding-left: 0; }
+  .resp-seccion  { padding-left: 0; }
+}
+
+@media (max-width: 480px) {
+  .resenas-filtro { flex-direction: column; align-items: flex-start; }
+  .votos-label    { display: none; }
+  .btn-voto       { padding: 0.25rem 0.55rem; font-size: 0.78rem; }
 }
