@@ -10,11 +10,55 @@ const generateToken = (id) => {
 };
 
 // ============================================================
+// VALIDACIÓN DE CONTRASEÑA CENTRALIZADA
+// ============================================================
+const validatePassword = (password) => {
+  const errors = [];
+  
+  if (!password || password.length < 6) {
+    errors.push('La contraseña debe tener al menos 6 caracteres');
+  }
+  
+  // Debe contener al menos una letra
+  if (!/[a-zA-Z]/.test(password)) {
+    errors.push('La contraseña debe contener al menos una letra');
+  }
+  
+  // Debe contener al menos un número
+  if (!/[0-9]/.test(password)) {
+    errors.push('La contraseña debe contener al menos un número');
+  }
+  
+  // No puede ser solo números
+  if (/^\d+$/.test(password)) {
+    errors.push('La contraseña no puede ser solo números');
+  }
+  
+  // No puede ser solo letras
+  if (/^[a-zA-Z]+$/.test(password)) {
+    errors.push('La contraseña no puede ser solo letras');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+// ============================================================
 // REGISTRO
 // ============================================================
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    // VALIDACIÓN DE CONTRASEÑA
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({ 
+        error: passwordValidation.errors.join('. ')
+      });
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -117,7 +161,7 @@ exports.forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransporter({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
       secure: false,
@@ -189,8 +233,12 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ error: 'Token inválido o expirado. Solicita un nuevo enlace.' });
     }
 
-    if (!req.body.password || req.body.password.length < 6) {
-      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    // VALIDACIÓN DE CONTRASEÑA
+    const passwordValidation = validatePassword(req.body.password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({ 
+        error: passwordValidation.errors.join('. ')
+      });
     }
 
     user.password = req.body.password;
@@ -206,3 +254,6 @@ exports.resetPassword = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+// Exportar la función de validación
+module.exports.validatePassword = validatePassword;
