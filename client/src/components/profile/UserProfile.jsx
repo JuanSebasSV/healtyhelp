@@ -1,3 +1,4 @@
+// client/src/components/profile/UserProfile.jsx
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
@@ -49,8 +50,6 @@ const UserProfile = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-
-    // Validar contraseña en tiempo real
     if (name === 'password') {
       if (value) {
         const { errors } = validatePassword(value);
@@ -61,7 +60,6 @@ const UserProfile = () => {
     }
   };
 
-  // ── Seleccionar y subir avatar ──
   const handleAvatarClick = () => {
     if (!subiendoAvatar) fileInputRef.current?.click();
   };
@@ -75,12 +73,10 @@ const UserProfile = () => {
       return;
     }
 
-    // Preview inmediato
     const reader = new FileReader();
     reader.onload = (ev) => setAvatarPreview(ev.target.result);
     reader.readAsDataURL(file);
 
-    // Subir a Cloudinary vía backend
     setSubiendoAvatar(true);
     try {
       const formData = new FormData();
@@ -113,9 +109,7 @@ const UserProfile = () => {
     }
   };
 
-  // ── Guardar nombre y/o contraseña ──
   const handleGuardar = async () => {
-    // Validar contraseña si se quiere cambiar
     if (form.password) {
       const { isValid, errors } = validatePassword(form.password);
       if (!isValid) {
@@ -133,7 +127,6 @@ const UserProfile = () => {
     try {
       const payload = { name: form.name };
       if (form.password) payload.password = form.password;
-
       await api.put('/auth/profile', payload);
       await checkAuth();
       setEditando(false);
@@ -181,7 +174,6 @@ const UserProfile = () => {
         <div className="perfil-sidebar">
           <div className="perfil-identidad">
 
-            {/* Avatar — clic abre foto en grande */}
             <div
               className={`avatar-wrapper ${avatarSrc ? 'avatar-wrapper--clickable' : ''}`}
               onClick={() => avatarSrc && setVerFoto(true)}
@@ -206,7 +198,6 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* Botón cámara — fuera del avatar-wrapper, debajo */}
             <button
               className="avatar-cambiar"
               onClick={handleAvatarClick}
@@ -230,7 +221,6 @@ const UserProfile = () => {
               onChange={handleAvatarChange}
             />
 
-            {/* Botón quitar foto — solo si tiene avatar */}
             {user?.avatar && (
               <button
                 className="btn-quitar-avatar"
@@ -281,7 +271,7 @@ const UserProfile = () => {
 
             <button className="btn-cerrar-sesion" onClick={handleCerrarSesion}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <path d="M9 21H5a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
                 <line x1="21" y1="12" x2="9" y2="12"/>
               </svg>
@@ -340,7 +330,6 @@ const UserProfile = () => {
             </div>
           )}
 
-          {/* Datos personales */}
           <div className="perfil-seccion">
             <div className="seccion-titulo">
               <div className="seccion-icono">🌱</div>
@@ -378,7 +367,6 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Seguridad — solo si no es cuenta Google pura */}
           {!user?.googleId && (
             <div className="perfil-seccion">
               <div className="seccion-titulo">
@@ -402,7 +390,6 @@ const UserProfile = () => {
                         <EyeIcon open={showPass} />
                       </button>
                     </div>
-                    {/* Indicadores de requisitos */}
                     {form.password && (
                       <ul className="password-requisitos">
                         {[
@@ -447,7 +434,6 @@ const UserProfile = () => {
             </div>
           )}
 
-          {/* Cuenta Google */}
           {user?.googleId && (
             <div className="perfil-seccion perfil-seccion--google">
               <div className="google-vinculo">
@@ -476,7 +462,7 @@ const UserProfile = () => {
 
         </div>
       </div>
-      {/* ── Modal ver foto de perfil ── */}
+
       {verFoto && avatarSrc && (
         <div className="foto-modal-overlay" onClick={() => setVerFoto(false)}>
           <div className="foto-modal" onClick={e => e.stopPropagation()}>

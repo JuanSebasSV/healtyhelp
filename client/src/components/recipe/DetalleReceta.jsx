@@ -30,11 +30,11 @@ const formatFecha = (f) => new Date(f).toLocaleDateString('es-ES', {
 
 /* ─── Sección de respuestas ─────────────────────────────── */
 const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isAuthenticated }) => {
-  const [respuestas,    setRespuestas]    = useState(respInit || []);
-  const [texto,         setTexto]         = useState('');
-  const [enviando,      setEnviando]      = useState(false);
-  const [expandido,     setExpandido]     = useState(false);
-  const [respondiendo,  setRespondiendo]  = useState(false); // ← controla si el input es visible
+  const [respuestas,   setRespuestas]   = useState(respInit || []);
+  const [texto,        setTexto]        = useState('');
+  const [enviando,     setEnviando]     = useState(false);
+  const [expandido,    setExpandido]    = useState(false);
+  const [respondiendo, setRespondiendo] = useState(false);
 
   const handleEnviar = async () => {
     if (!texto.trim()) return;
@@ -56,11 +56,6 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
     }
   };
 
-  const handleCancelar = () => {
-    setTexto('');
-    setRespondiendo(false);
-  };
-
   const handleBorrar = async (respId) => {
     if (!window.confirm('¿Eliminar esta respuesta?')) return;
     try {
@@ -74,8 +69,6 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
 
   return (
     <div className="resp-seccion">
-
-      {/* Botones: "Ver respuestas" + "Responder" en la misma fila */}
       <div className="resp-acciones-fila">
         {respuestas.length > 0 && (
           <button className="btn-toggle-resp" onClick={() => setExpandido(v => !v)}>
@@ -85,16 +78,12 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
           </button>
         )}
         {isAuthenticated && (
-          <button
-            className="btn-responder"
-            onClick={() => { setRespondiendo(true); }}
-          >
+          <button className="btn-responder" onClick={() => setRespondiendo(true)}>
             ↩ Responder
           </button>
         )}
       </div>
 
-      {/* Lista de respuestas */}
       {expandido && respuestas.length > 0 && (
         <div className="resp-lista">
           {respuestas.map(rp => (
@@ -105,7 +94,9 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
                   <span className="resp-nombre">{rp.userName}</span>
                   <span className="resp-fecha">{formatFecha(rp.createdAt)}</span>
                   {isAuthenticated && user &&
-                    (user._id === rp.userId?.toString() || user.role === 'admin') && (
+                    (rp.userId?.toString() === user._id?.toString() ||
+                    rp.userId?.toString() === user.id?.toString() ||
+                    user.role === 'admin') && (
                       <button
                         className="btn-borrar-resp"
                         onClick={() => handleBorrar(rp._id)}
@@ -120,7 +111,6 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
         </div>
       )}
 
-      {/* Input — solo visible tras pulsar "Responder" */}
       {respondiendo && (
         <div className="resp-form">
           <div className="resp-avatar resp-avatar--yo">
@@ -139,21 +129,16 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
               autoFocus
             />
             <div className="resp-actions">
-              <button className="btn-cancelar-resp" onClick={handleCancelar} disabled={enviando}>
+              <button className="btn-cancelar-resp" onClick={() => { setTexto(''); setRespondiendo(false); }} disabled={enviando}>
                 Cancelar
               </button>
-              <button
-                className="btn-enviar-resp"
-                onClick={handleEnviar}
-                disabled={enviando || !texto.trim()}
-              >
+              <button className="btn-enviar-resp" onClick={handleEnviar} disabled={enviando || !texto.trim()}>
                 {enviando ? '⏳' : '↩ Publicar'}
               </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };
@@ -176,6 +161,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   const [formTexto,     setFormTexto]     = useState('');
   const [enviando,      setEnviando]      = useState(false);
 
+  // ── Bloquear scroll del body ──
   useEffect(() => {
     const scrollY = window.scrollY;
     document.body.style.position  = 'fixed';
@@ -193,9 +179,11 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     };
   }, []);
 
+  // ── Cargar reseñas — SIEMPRE busca la propia en TODAS las páginas ──
   const cargarResenas = useCallback(async (pag = 1, ord = orden) => {
     setCargandoRes(true);
     try {
+      // Petición principal para la página actual
       const { data } = await api.get(
         `/recipes/${receta._id}/resenas?page=${pag}&limit=5&orden=${ord}`
       );
@@ -204,14 +192,40 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       setTotalResenas(data.totalResenas);
       setTotalPags(data.pagination.pages);
 
+      // Buscar la reseña propia en la página actual
       if (user) {
         const mia = data.resenas.find(
-          r => r.userId?.toString() === user._id?.toString()
+          r => r.userId?.toString() === user._id?.toString() ||
+              r.userId?.toString() === user.id?.toString()
         );
         if (mia) {
           setMiResena(mia);
           setFormEstrellas(mia.estrellas);
           setFormTexto(mia.texto || '');
+        } else if (pag === 1) {
+          // Si no está en la pág 1, buscarla en todas las demás páginas
+          const totalPaginas = data.pagination.pages;
+          let encontrada = false;
+          for (let p = 2; p <= totalPaginas && !encontrada; p++) {
+            const { data: d2 } = await api.get(
+              `/recipes/${receta._id}/resenas?page=${p}&limit=5&orden=${ord}`
+            );
+            const mia2 = d2.resenas.find(
+              r => r.userId?.toString() === user._id?.toString() ||
+                  r.userId?.toString() === user.id?.toString()
+            );
+            if (mia2) {
+              encontrada = true;
+              setMiResena(mia2);
+              setFormEstrellas(mia2.estrellas);
+              setFormTexto(mia2.texto || '');
+            }
+          }
+          if (!encontrada) {
+            setMiResena(null);
+            setFormEstrellas(5);
+            setFormTexto('');
+          }
         }
       }
     } catch {
@@ -228,6 +242,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     setPagina(1);
   };
 
+  // ── Publicar / editar reseña ──
   const handleSubmitResena = async () => {
     if (!formEstrellas) { toast.error('Selecciona una puntuación'); return; }
     setEnviando(true);
@@ -244,8 +259,10 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
       setMiResena(data.resena);
+      setFormEstrellas(data.resena.estrellas);
+      setFormTexto(data.resena.texto || '');
       setEditando(false);
-      cargarResenas(1, orden);
+      cargarResenas(pagina, orden);
     } catch (error) {
       toast.error(`❌ ${error.response?.data?.error || 'Error al publicar la reseña'}`);
     } finally {
@@ -253,6 +270,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     }
   };
 
+  // ── Borrar reseña ──
   const handleBorrarResena = async (resenaId) => {
     if (!window.confirm('¿Eliminar esta reseña? No se puede deshacer.')) return;
     try {
@@ -261,12 +279,14 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       setMiResena(null);
       setFormEstrellas(5);
       setFormTexto('');
+      setEditando(false);
       cargarResenas(1, orden);
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al borrar'}`);
     }
   };
 
+  // ── Votar ──
   const handleVotar = async (resenaId, tipo) => {
     if (!isAuthenticated) { toast.info('Inicia sesión para votar'); return; }
     try {
@@ -316,6 +336,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
           {/* ══════════ RESEÑAS ══════════ */}
           <div className="modalSeccion resenas-seccion">
 
+            {/* Resumen puntuación */}
             <div className="resenas-resumen">
               <span className="resenas-prom-numero">
                 {puntosProm > 0 ? puntosProm : '—'}
@@ -330,6 +351,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               </div>
             </div>
 
+            {/* Formulario / mi reseña */}
             {isAuthenticated && (
               <div className="resena-form">
                 {miResena && !editando ? (
@@ -422,7 +444,10 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                 </p>
               ) : (
                 resenas.map(r => {
-                  const esPropia = user && r.userId?.toString() === user._id?.toString();
+                  const esPropia = user && (
+                    r.userId?.toString() === user._id?.toString() ||
+                    r.userId?.toString() === user.id?.toString()
+                  );
                   const esAdmin  = user?.role === 'admin';
                   return (
                     <div key={r._id} className={`resena-item ${esPropia ? 'propia' : ''}`}>
@@ -477,6 +502,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               )}
             </div>
 
+            {/* Paginación */}
             {totalPags > 1 && (
               <div className="resenas-paginacion">
                 <button

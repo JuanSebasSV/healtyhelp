@@ -1,7 +1,11 @@
+// server/routes/auth.js
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 const User = require('../models/User');
 require('../config/passport');
 
