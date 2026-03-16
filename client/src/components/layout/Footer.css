@@ -1,14 +1,15 @@
 /* Footer.css */
 
 .footer {
-  background: rgba(9, 48, 1, 0.95);
+  background: linear-gradient(90deg, #020d08 0%, #041a11 20%, #0a3d29 50%, #1a7a4f 75%, #25a860 100%);
   color: var(--blanco);
-  /* Usa las mismas variables de página → alineación consistente con el contenido */
   padding: clamp(2rem, 4vw, 3rem) var(--page-px) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);
   width: 100%;
 }
-.modo-oscuro .footer { background: #1a1a1a; }
+.modo-oscuro .footer {
+  background: linear-gradient(90deg, #010905 0%, #021208 20%, #062b10 50%, #0f4d1e 75%, #1a7a30 100%);
+}
 
 .footerContenido {
   max-width: var(--page-max);
@@ -23,19 +24,20 @@
 .footerSeccion h4 {
   margin-bottom: 0.85rem;
   font-family: 'Georgia', serif;
+  color: #ffd750;
 }
 
 .footerSeccion ul { list-style: none; }
-.footerSeccion li { margin-bottom: 0.5rem; cursor: pointer; transition: var(--transicion); }
-.footerSeccion li:hover { color: var(--naranja); transform: translateX(5px); }
+.footerSeccion li { margin-bottom: 0.5rem; cursor: pointer; transition: var(--transicion); color: rgba(255, 255, 255, 0.8); }
+.footerSeccion li:hover { color: #ffd750; transform: translateX(5px); }
 
 .footerCopy {
   max-width: var(--page-max);
   margin: 0 auto;
   text-align: center;
   padding-top: clamp(1rem, 2vw, 1.5rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.88rem;
 }
 

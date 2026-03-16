@@ -1,7 +1,7 @@
 /* Navbar.css */
 
 .nav {
-  background: rgba(9, 48, 1, 0.95);
+  background: linear-gradient(90deg, #020d08 0%, #041a11 20%, #0a3d29 50%, #1a7a4f 75%, #25a860 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -13,9 +13,10 @@
   display: flex;
   align-items: center;
 }
-.modo-oscuro .nav { background: rgba(26, 26, 26, 0.95); }
+.modo-oscuro .nav {
+  background: linear-gradient(90deg, #010905 0%, #021208 20%, #062b10 50%, #0f4d1e 75%, #1a7a30 100%);
+}
 
-/* Usa las mismas variables de page que contenido-principal → alineación perfecta */
 .navContenedor {
   width: 100%;
   max-width: var(--page-max);
@@ -39,7 +40,7 @@
 .navLogo:hover { transform: scale(1.05); }
 
 .logoIcono svg { stroke: #ffffff; transition: var(--transicion); }
-.navLogo:hover .logoIcono svg { stroke: var(--naranja); }
+.navLogo:hover .logoIcono svg { stroke: #ffd750; }
 
 .logoTexto {
   font-size: clamp(1.3rem, 2vw, 1.7rem);
@@ -71,13 +72,13 @@
   flex-wrap: nowrap;
 }
 .navMenu li { color: var(--blanco); cursor: pointer; font-weight: 500; transition: var(--transicion); position: relative; white-space: nowrap; }
-.navMenu li:not(:has(button)):hover { color: var(--naranja); }
+.navMenu li:not(:has(button)):hover { color: #ffd750; }
 .navMenu li:not(:has(button))::after {
   content: '';
   position: absolute;
   bottom: -5px; left: 0;
   width: 0; height: 2px;
-  background: var(--naranja);
+  background: #ffd750;
   transition: var(--transicion);
 }
 .navMenu li:not(:has(button)):hover::after { width: 100%; }
@@ -98,7 +99,7 @@
   justify-content: center;
 }
 .btnTema svg { stroke: var(--blanco); transition: var(--transicion); }
-.modo-oscuro .btnTema svg { stroke: var(--naranja); }
+.modo-oscuro .btnTema svg { stroke: #ffd750; }
 .btnTema:hover { transform: scale(1.1) rotate(20deg); background: rgba(255, 255, 255, 0.2); }
 .modo-oscuro .btnTema { background: rgba(0, 0, 0, 0.2); }
 .modo-oscuro .btnTema:hover { background: rgba(0, 0, 0, 0.3); }
@@ -106,22 +107,23 @@
 /* ── Botones sesión ── */
 .btn-primario {
   padding: 0.6rem 1.3rem;
-  background: rgba(247, 127, 0, 0.25) !important;
+  background: rgba(255, 215, 80, 0.2) !important;
   backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(247, 127, 0, 0.55) !important;
+  border: 1.5px solid rgba(255, 215, 80, 0.55) !important;
   border-radius: 50px !important;
   color: #ffffff !important;
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transicion);
-  box-shadow: 0 2px 12px rgba(247, 127, 0, 0.2);
+  box-shadow: 0 2px 12px rgba(255, 215, 80, 0.2);
 }
 .btn-primario:hover {
-  background: var(--naranja) !important;
-  border-color: var(--naranja) !important;
+  background: #ffd750 !important;
+  border-color: #ffd750 !important;
+  color: #1a1a00 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(247, 127, 0, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(255, 215, 80, 0.4) !important;
 }
 .btn-secundario {
   padding: 0.6rem 1.3rem;
@@ -137,7 +139,7 @@
 }
 .btn-secundario:hover {
   background: rgba(255, 255, 255, 0.16) !important;
-  border-color: rgba(247, 127, 0, 0.55) !important;
+  border-color: rgba(255, 215, 80, 0.55) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
 }
@@ -154,7 +156,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: var(--transicion);
 }
-.navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: var(--naranja); }
+.navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: #ffd750; }
 
 .nav-avatar-mini {
   position: relative;
@@ -174,7 +176,7 @@
 .nav-avatar-iniciales {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  background: linear-gradient(135deg, #0a3d18, #25a83e);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; font-weight: 800; color: white;
   border: 2px solid rgba(255, 255, 255, 0.6);
@@ -182,29 +184,29 @@
 .nav-admin-dot {
   position: absolute; bottom: 0; right: 0;
   width: 9px; height: 9px;
-  background: var(--naranja); border-radius: 50%;
-  border: 1.5px solid rgba(26, 77, 46, 0.9); z-index: 2;
+  background: #ffd750; border-radius: 50%;
+  border: 1.5px solid #0a3d18; z-index: 2;
 }
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
 
 /* ── Admin btn ── */
 .nav-admin-btn {
-  background: rgba(129, 140, 248, 0.18) !important;
+  background: rgba(255, 215, 80, 0.15) !important;
   backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(129, 140, 248, 0.4) !important;
+  border: 1.5px solid rgba(255, 215, 80, 0.4) !important;
   border-radius: 8px !important;
-  color: #c7d2fe !important;
+  color: #ffd750 !important;
   padding: 0.45rem 1rem !important;
   font-weight: 700 !important;
   transition: var(--transicion) !important;
 }
 .nav-admin-btn:hover {
-  background: rgba(129, 140, 248, 0.32) !important;
-  border-color: rgba(129, 140, 248, 0.65) !important;
+  background: rgba(255, 215, 80, 0.28) !important;
+  border-color: rgba(255, 215, 80, 0.65) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(129, 140, 248, 0.3);
+  box-shadow: 0 4px 16px rgba(255, 215, 80, 0.3);
 }
 .nav-admin-btn::after { display: none !important; }
 
@@ -215,10 +217,9 @@
   .navMenu {
     position: absolute;
     top: 100%; left: 0; right: 0;
-    background: rgba(26, 77, 46, 0.98);
+    background: linear-gradient(180deg, #0a3d18 0%, #020d05 100%);
     backdrop-filter: blur(20px);
     flex-direction: column;
-    /* Mismo padding horizontal que la página */
     padding: clamp(1rem, 3vw, 2rem) var(--page-px);
     gap: 1.25rem;
     transform: translateY(-100%);
