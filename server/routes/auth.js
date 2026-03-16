@@ -1,11 +1,7 @@
-// server/routes/auth.js
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs').promises;
 const User = require('../models/User');
 require('../config/passport');
 
@@ -45,7 +41,8 @@ router.get('/me', protect, async (req, res) => {
       user: {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: user.isVerified, createdAt: user.createdAt
+        googleId: user.googleId, isVerified: user.isVerified,
+        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -118,7 +115,8 @@ router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) =
       user: {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: user.isVerified, createdAt: user.createdAt
+        googleId: user.googleId, isVerified: user.isVerified,
+        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
       },
       message: 'Avatar actualizado'
     });

@@ -14,7 +14,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await User.find()
       .select('name email role avatar googleId createdAt isSuperAdmin')
       .sort({ createdAt: -1 });
-      
+
     res.json({ success: true, count: users.length, users });
   } catch (error) {
     console.error('Error en getAllUsers:', error);
@@ -23,84 +23,62 @@ exports.getAllUsers = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// Estadísticas (SIN isVerified, CON superAdmins)
+// Estadísticas
 // ─────────────────────────────────────────────
 exports.getStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const admins = await User.countDocuments({ role: 'admin' });
+    const totalUsers  = await User.countDocuments();
+    const admins      = await User.countDocuments({ role: 'admin' });
     const regularUsers = await User.countDocuments({ role: 'user' });
     const superAdmins = await User.countDocuments({ isSuperAdmin: true });
 
     res.json({
       success: true,
-      stats: {
-        totalUsers,
-        admins: admins - superAdmins,
-        superAdmins,
-        regularUsers
-      }
+      stats: { totalUsers, admins: admins - superAdmins, superAdmins, regularUsers }
     });
   } catch (error) {
-    console.error('Error en getStats:', error);
     res.status(500).json({ error: 'Error obteniendo estadísticas' });
   }
 };
 
 // ─────────────────────────────────────────────
-// Eliminar usuario (SUPER ADMIN SIN RESTRICCIONES)
+// Eliminar usuario
 // ─────────────────────────────────────────────
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
     const userToDelete = await User.findById(id);
-    if (!userToDelete) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!userToDelete) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // 🔒 PROTECCIÓN ABSOLUTA — verificación directa en BD
+    // No importa quién mande la petición, el superadmin NUNCA se puede eliminar
+    if (userToDelete.isSuperAdmin === true) {
+      return res.status(403).json({
+        error: 'La cuenta Super Administrador no puede ser eliminada bajo ninguna circunstancia'
+      });
     }
 
-    // REGLA 1: Super Admin puede eliminar a CUALQUIERA (excepto a sí mismo)
-    if (req.user.isSuperAdmin) {
-      if (id === req.user._id.toString()) {
-        return res.status(400).json({ 
-          error: 'No puedes eliminarte a ti mismo' 
-        });
-      }
-      // Super Admin puede continuar sin más validaciones
-    } else {
-      // REGLA 2: Admin normal NO puede eliminar a Super Admin
-      if (userToDelete.isSuperAdmin) {
-        return res.status(403).json({ 
-          error: 'Solo el Super Administrador puede eliminar al Super Administrador' 
-        });
-      }
+    // Nadie puede eliminarse a sí mismo
+    if (id === req.user._id.toString()) {
+      return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' });
+    }
 
-      // REGLA 3: Admin normal NO puede eliminar a otros admins
-      if (userToDelete.role === 'admin') {
-        return res.status(403).json({ 
-          error: 'Solo el Super Administrador puede eliminar a otros Administradores' 
-        });
-      }
-
-      // REGLA 4: Admin normal no puede eliminarse a sí mismo
-      if (id === req.user._id.toString()) {
-        return res.status(400).json({ 
-          error: 'No puedes eliminarte a ti mismo' 
-        });
-      }
+    // Admin normal NO puede eliminar a otros admins
+    if (!req.user.isSuperAdmin && userToDelete.role === 'admin') {
+      return res.status(403).json({
+        error: 'Solo el Super Administrador puede eliminar a otros Administradores'
+      });
     }
 
     await logAdminAction(req.user._id, 'DELETE_USER', id, {
       userName: userToDelete.name,
       userEmail: userToDelete.email
     });
-    
+
     await userToDelete.deleteOne();
 
-    res.json({ 
-      success: true, 
-      message: `Usuario ${userToDelete.name} eliminado correctamente` 
-    });
+    res.json({ success: true, message: `Usuario ${userToDelete.name} eliminado correctamente` });
   } catch (error) {
     console.error('Error en deleteUser:', error);
     res.status(500).json({ error: 'Error eliminando usuario' });
@@ -108,7 +86,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// Cambiar rol (SUPER ADMIN SIN RESTRICCIONES)
+// Cambiar rol
 // ─────────────────────────────────────────────
 exports.updateUserRole = async (req, res) => {
   try {
@@ -120,44 +98,31 @@ exports.updateUserRole = async (req, res) => {
     }
 
     const targetUser = await User.findById(id);
-    if (!targetUser) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!targetUser) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // 🔒 PROTECCIÓN ABSOLUTA — el superadmin nunca puede ser degradado
+    // No importa quién mande la petición ni qué token tenga
+    if (targetUser.isSuperAdmin === true) {
+      return res.status(403).json({
+        error: 'El rol del Super Administrador no puede ser modificado bajo ninguna circunstancia'
+      });
     }
 
-    // REGLA 1: Super Admin puede cambiar rol de CUALQUIERA (excepto a sí mismo)
-    if (req.user.isSuperAdmin) {
-      if (id === req.user._id.toString()) {
-        return res.status(400).json({ 
-          error: 'No puedes modificar tu propio rol' 
-        });
-      }
-      // Super Admin puede continuar sin más validaciones
-    } else {
-      // REGLA 2: Admin normal NO puede modificar al Super Admin
-      if (targetUser.isSuperAdmin) {
-        return res.status(403).json({ 
-          error: 'Solo el Super Administrador puede modificar al Super Administrador' 
-        });
-      }
+    // Nadie puede modificar su propio rol
+    if (id === req.user._id.toString()) {
+      return res.status(400).json({ error: 'No puedes modificar tu propio rol' });
+    }
 
-      // REGLA 3: Admin normal NO puede modificar a otros admins
+    // Admin normal NO puede modificar a otros admins ni promover a admin
+    if (!req.user.isSuperAdmin) {
       if (targetUser.role === 'admin') {
-        return res.status(403).json({ 
-          error: 'Solo el Super Administrador puede modificar a otros Administradores' 
+        return res.status(403).json({
+          error: 'Solo el Super Administrador puede modificar a otros Administradores'
         });
       }
-
-      // REGLA 4: Admin normal NO puede promover a admin
       if (role === 'admin') {
-        return res.status(403).json({ 
-          error: 'Solo el Super Administrador puede promover a Administrador' 
-        });
-      }
-
-      // REGLA 5: Admin normal no puede modificarse a sí mismo
-      if (id === req.user._id.toString()) {
-        return res.status(400).json({ 
-          error: 'No puedes modificar tu propio rol' 
+        return res.status(403).json({
+          error: 'Solo el Super Administrador puede promover a Administrador'
         });
       }
     }
@@ -175,11 +140,11 @@ exports.updateUserRole = async (req, res) => {
     res.json({
       success: true,
       message: `Rol de ${targetUser.name} actualizado a ${role}`,
-      user: { 
-        _id: targetUser._id, 
-        name: targetUser.name, 
-        email: targetUser.email, 
-        role: targetUser.role 
+      user: {
+        _id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role
       }
     });
   } catch (error) {
@@ -189,18 +154,15 @@ exports.updateUserRole = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// Crear log manual (desde el frontend)
+// Crear log manual
 // ─────────────────────────────────────────────
 exports.createLog = async (req, res) => {
   try {
     const { action, targetUserId, metadata } = req.body;
-
     const normalizedAction = action?.toUpperCase().replace(/ /g, '_');
-
     await logAdminAction(req.user._id, normalizedAction, targetUserId || null, metadata || {});
     res.json({ success: true });
   } catch (error) {
-    console.error('Error creando log:', error);
     res.status(500).json({ error: 'Error registrando acción' });
   }
 };
@@ -211,7 +173,6 @@ exports.createLog = async (req, res) => {
 exports.getLogs = async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
-
     const logs = await AdminLog.find()
       .populate('adminId', 'name email')
       .populate('targetUserId', 'name email')
@@ -220,18 +181,11 @@ exports.getLogs = async (req, res) => {
       .skip((parseInt(page) - 1) * parseInt(limit));
 
     const total = await AdminLog.countDocuments();
-
     res.json({
-      success: true,
-      logs,
-      pagination: {
-        total,
-        page: parseInt(page),
-        pages: Math.ceil(total / parseInt(limit))
-      }
+      success: true, logs,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) }
     });
   } catch (error) {
-    console.error('Error obteniendo logs:', error);
     res.status(500).json({ error: 'Error obteniendo logs' });
   }
 };
@@ -242,16 +196,14 @@ exports.getLogs = async (req, res) => {
 exports.inviteAdmin = async (req, res) => {
   try {
     const { email, name } = req.body;
-
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ error: 'Email ya registrado' });
 
-    const inviteToken = crypto.randomBytes(32).toString('hex');
+    const inviteToken   = crypto.randomBytes(32).toString('hex');
     const inviteExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await AdminInvitation.create({
-      email,
-      name,
+      email, name,
       invitedBy: req.user._id,
       token: crypto.createHash('sha256').update(inviteToken).digest('hex'),
       expiresAt: inviteExpires
@@ -260,30 +212,21 @@ exports.inviteAdmin = async (req, res) => {
     const inviteUrl = `${process.env.FRONTEND_URL}/admin/accept-invite/${inviteToken}`;
     console.log('Invite URL generada:', inviteUrl);
 
-    await logAdminAction(req.user._id, 'INVITE_ADMIN', null, {
-      invitedEmail: email,
-      invitedName: name
-    });
+    await logAdminAction(req.user._id, 'INVITE_ADMIN', null, { invitedEmail: email, invitedName: name });
 
-    res.json({
-      success: true,
-      message: `Invitación enviada a ${email}`,
-      expiresAt: inviteExpires
-    });
+    res.json({ success: true, message: `Invitación enviada a ${email}`, expiresAt: inviteExpires });
   } catch (error) {
-    console.error('Error invitando admin:', error);
     res.status(500).json({ error: 'Error enviando invitación' });
   }
 };
 
 // ─────────────────────────────────────────────
-// Aceptar invitación (SIN isVerified)
+// Aceptar invitación
 // ─────────────────────────────────────────────
 exports.acceptAdminInvite = async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const invitation = await AdminInvitation.findOne({
@@ -292,9 +235,7 @@ exports.acceptAdminInvite = async (req, res) => {
       used: false
     });
 
-    if (!invitation) {
-      return res.status(400).json({ error: 'Invitación inválida o expirada' });
-    }
+    if (!invitation) return res.status(400).json({ error: 'Invitación inválida o expirada' });
 
     const newAdmin = await User.create({
       name: invitation.name,
@@ -303,7 +244,7 @@ exports.acceptAdminInvite = async (req, res) => {
       role: 'admin'
     });
 
-    invitation.used = true;
+    invitation.used   = true;
     invitation.usedAt = new Date();
     await invitation.save();
 
@@ -314,15 +255,9 @@ exports.acceptAdminInvite = async (req, res) => {
     res.json({
       success: true,
       message: 'Cuenta de admin creada exitosamente',
-      user: { 
-        id: newAdmin._id, 
-        name: newAdmin.name, 
-        email: newAdmin.email, 
-        role: newAdmin.role 
-      }
+      user: { id: newAdmin._id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role }
     });
   } catch (error) {
-    console.error('Error aceptando invitación:', error);
     res.status(500).json({ error: 'Error creando cuenta' });
   }
 };
@@ -335,7 +270,6 @@ exports.getPendingInvitations = async (req, res) => {
     const invitations = await AdminInvitation.find({ used: false })
       .populate('invitedBy', 'name email')
       .sort({ createdAt: -1 });
-
     res.json({ success: true, invitations });
   } catch (error) {
     res.status(500).json({ error: 'Error obteniendo invitaciones' });
@@ -348,16 +282,10 @@ exports.getPendingInvitations = async (req, res) => {
 exports.revokeInvitation = async (req, res) => {
   try {
     const { id } = req.params;
-
     const invitation = await AdminInvitation.findByIdAndDelete(id);
-    if (!invitation) {
-      return res.status(404).json({ error: 'Invitación no encontrada' });
-    }
+    if (!invitation) return res.status(404).json({ error: 'Invitación no encontrada' });
 
-    await logAdminAction(req.user._id, 'REVOKE_INVITATION', null, {
-      revokedEmail: invitation.email
-    });
-
+    await logAdminAction(req.user._id, 'REVOKE_INVITATION', null, { revokedEmail: invitation.email });
     res.json({ success: true, message: 'Invitación revocada' });
   } catch (error) {
     res.status(500).json({ error: 'Error revocando invitación' });
@@ -369,12 +297,7 @@ exports.revokeInvitation = async (req, res) => {
 // ─────────────────────────────────────────────
 async function logAdminAction(adminId, action, targetUserId, metadata = {}) {
   try {
-    await AdminLog.create({
-      adminId,
-      action,
-      targetUserId: targetUserId || null,
-      metadata
-    });
+    await AdminLog.create({ adminId, action, targetUserId: targetUserId || null, metadata });
   } catch (error) {
     console.error('Error creando log de auditoría:', error.message);
   }

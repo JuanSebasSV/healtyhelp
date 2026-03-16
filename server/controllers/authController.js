@@ -1,4 +1,3 @@
-// server/controllers/authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -59,13 +58,6 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({ 
-        error: passwordValidation.errors.join('. ')
-      });
-    }
-
     const userExists = await User.findOne({ email });
     if (userExists) {
       if (userExists.googleId && !userExists.password) {
@@ -73,6 +65,7 @@ exports.register = async (req, res) => {
           error: 'Este correo ya está registrado con Google. Usa el botón "Continuar con Google".'
         });
       }
+      // Si existe pero no verificó, reenviar código
       if (!userExists.isVerified) {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         userExists.verificationCode   = crypto.createHash('sha256').update(code).digest('hex');
@@ -88,6 +81,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Este correo ya está registrado. Intenta iniciar sesión.' });
     }
 
+    // Generar código de 6 dígitos
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     const user = await User.create({
@@ -212,6 +206,7 @@ exports.login = async (req, res) => {
 
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
+    // Cuenta bloqueada?
     if (user.isLocked) {
       const minutosRestantes = Math.ceil((user.lockUntil - Date.now()) / 60000);
       return res.status(423).json({
@@ -227,6 +222,7 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Cuenta sin verificar?
     if (!user.isVerified) {
       return res.status(401).json({
         error: 'Debes verificar tu correo antes de iniciar sesión.',
@@ -239,6 +235,7 @@ exports.login = async (req, res) => {
     if (!esValida) {
       await user.incLoginAttempts();
 
+      // Si acaba de bloquearse, enviar email de alerta
       if (user.loginAttempts + 1 >= 5) {
         await enviarAlertaBloqueo(user.email, user.name);
         return res.status(423).json({
@@ -255,6 +252,7 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Login exitoso — resetear intentos
     await user.resetLoginAttempts();
     const token = generateToken(user._id);
 
@@ -263,7 +261,8 @@ exports.login = async (req, res) => {
       user: {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: user.isVerified, createdAt: user.createdAt
+        googleId: user.googleId, isVerified: user.isVerified,
+        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -389,7 +388,7 @@ exports.resetPassword = async (req, res) => {
     user.password            = req.body.password;
     user.resetPasswordToken  = undefined;
     user.resetPasswordExpire = undefined;
-    await user.resetLoginAttempts();
+    await user.resetLoginAttempts(); // desbloquear si estaba bloqueado
 
     const token = generateToken(user._id);
     res.json({ success: true, token });
@@ -397,14 +396,3 @@ exports.resetPassword = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-const validatePassword = (password) => {
-  const errors = [];
-  if (password.length < 8)     errors.push('Debe tener al menos 8 caracteres');
-  if (!/[a-z]/.test(password)) errors.push('Debe contener al menos una letra minúscula');
-  if (!/[A-Z]/.test(password)) errors.push('Debe contener al menos una letra mayúscula');
-  if (!/\d/.test(password))    errors.push('Debe contener al menos un número');
-  return { isValid: errors.length === 0, errors };
-};
-
-module.exports.validatePassword = validatePassword;

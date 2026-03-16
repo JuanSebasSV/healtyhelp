@@ -323,3 +323,110 @@
   .salud-grid { grid-template-columns: 1fr; }
   .nutri-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Títulos de sección con SVG alineado ── */
+.form-section h3 {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Botones add/remove con SVG ── */
+.btn-add {
+  display: flex;
+  align-items: center;
+}
+
+.btn-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Spinner en botón submit ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Fix inputs dentro de dynamic-input (ingredientes y pasos) ── */
+.dynamic-input input,
+.dynamic-input textarea {
+  width: 100%;
+  padding: 0.72rem 1rem;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px;
+  color: #ffffff !important;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transicion);
+  font-family: inherit;
+  box-sizing: border-box;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.dynamic-input input::placeholder,
+.dynamic-input textarea::placeholder {
+  color: rgba(255, 255, 255, 0.28) !important;
+}
+
+.dynamic-input input:focus,
+.dynamic-input textarea:focus {
+  border-color: var(--naranja) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12) !important;
+}
+
+/* Fix autofill que pone fondo blanco */
+.dynamic-input input:-webkit-autofill,
+.dynamic-input textarea:-webkit-autofill,
+.form-group input:-webkit-autofill,
+.form-group textarea:-webkit-autofill,
+.form-group select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px rgba(26, 77, 46, 0.8) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+}
+
+.dynamic-input textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.6;
+}
+
+/* ── Checkboxes modernos glassmorphism ── */
+.salud-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.salud-checkbox input[type="checkbox"]:checked {
+  background: rgba(79, 119, 45, 0.55);
+  border-color: rgba(107, 158, 74, 0.8);
+}
+
+.salud-checkbox input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.salud-checkbox input[type="checkbox"]:hover {
+  border-color: rgba(107, 158, 74, 0.6);
+  background: rgba(79, 119, 45, 0.15);
+}

@@ -157,3 +157,25 @@
   .recipe-tabs .btn-export { margin-left: 0; width: 100%; }
   .recipe-stats .stat-card { min-width: calc(50% - 0.5rem); }
 }
+
+/* ── Tabs con SVG alineado ── */
+.recipe-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Fix visibilidad SVGs en tabs ── */
+.recipe-tabs button svg {
+  stroke: currentColor;
+  opacity: 0.9;
+}
+
+.recipe-tabs button.active svg {
+  opacity: 1;
+}
+
+.recipe-tabs .btn-export svg {
+  stroke: #ffffff;
+  opacity: 1;
+}

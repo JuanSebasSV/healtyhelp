@@ -14,9 +14,11 @@ const Stats = ({ stats }) => {
   return (
     <div className="stats-container">
       <div className="stats-grid">
+
+        {/* Total usuarios */}
         <div className="stat-card primary">
           <div className="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
@@ -29,11 +31,12 @@ const Stats = ({ stats }) => {
             <span className="stat-label">Registrados en la plataforma</span>
           </div>
         </div>
-        
+
+        {/* Super Admin */}
         <div className="stat-card super-admin">
           <div className="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
           </div>
           <div className="stat-content">
@@ -43,11 +46,13 @@ const Stats = ({ stats }) => {
           </div>
         </div>
 
+        {/* Administradores */}
         <div className="stat-card success">
           <div className="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M6 20v-2a6 6 0 0 1 12 0v2"/>
+              <path d="M19 11l1.5 1.5L23 10"/>
             </svg>
           </div>
           <div className="stat-content">
@@ -56,10 +61,11 @@ const Stats = ({ stats }) => {
             <span className="stat-label">{adminPercentage}% del total</span>
           </div>
         </div>
-        
+
+        {/* Usuarios regulares */}
         <div className="stat-card info">
           <div className="stat-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
@@ -70,6 +76,7 @@ const Stats = ({ stats }) => {
             <span className="stat-label">{100 - adminPercentage - superAdminPercentage}% del total</span>
           </div>
         </div>
+
       </div>
     </div>
   );

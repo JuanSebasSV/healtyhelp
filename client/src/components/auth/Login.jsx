@@ -2,54 +2,51 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Login.css';
-import api from '../../api/axios';
 import { useAuth } from '../../hooks/useAuth';
 import { validateLoginForm } from '../../utils/validation';
 
 const Login = () => {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [lockUntil, setLockUntil] = useState(null);
 
-  // FIX: Calcular minutosRestantes con useMemo para evitar llamadas impuras en render
+  const [formData, setFormData]       = useState({ email: '', password: '' });
+  const [loading, setLoading]         = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors]           = useState({});
+  const [lockUntil, setLockUntil]     = useState(null);
+
   const minutosRestantes = useMemo(() => {
     if (!lockUntil) return 15;
     return Math.max(1, Math.ceil((new Date(lockUntil) - Date.now()) / 60000));
   }, [lockUntil]);
 
+  // Restaurar bloqueo guardado en localStorage
   useEffect(() => {
     const bloqueadoHasta = localStorage.getItem('accountLockedUntil');
-    if (bloqueadoHasta) {
-      const tiempoBloqueo = new Date(bloqueadoHasta);
-      if (tiempoBloqueo > new Date()) {
-        setLockUntil(bloqueadoHasta);
-      } else {
-        localStorage.removeItem('accountLockedUntil');
-      }
+    if (bloqueadoHasta && new Date(bloqueadoHasta) > new Date()) {
+      setLockUntil(bloqueadoHasta);
+    } else {
+      localStorage.removeItem('accountLockedUntil');
     }
   }, []);
+
+  const esBloqueado = lockUntil && new Date(lockUntil) > new Date();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (lockUntil && new Date(lockUntil) > new Date()) {
+    if (esBloqueado) {
       toast.error(`Cuenta bloqueada. Intenta en ${minutosRestantes} minuto(s)`);
       return;
     }
 
-    const validationErrors = validateLoginForm(formData);
+    const validationErrors = validateLoginForm(formData.email, formData.password);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -58,40 +55,29 @@ const Login = () => {
     setLoading(true);
     setErrors({});
 
-    try {
-      const response = await api.post('/auth/login', formData);
-      const { token, user } = response.data;
+    const result = await login({ email: formData.email, password: formData.password });
 
+    if (result.success) {
       localStorage.removeItem('accountLockedUntil');
       setLockUntil(null);
-
-      login(token, user);
-      toast.success(`Bienvenido, ${user.name}`);
+      toast.success('¡Bienvenido!');
       navigate('/');
-    } catch (error) {
-      console.error('Error en login:', error);
-
-      if (error.response?.status === 423) {
-        const bloqueadoHasta = error.response.data.lockUntil;
-        setLockUntil(bloqueadoHasta);
-        localStorage.setItem('accountLockedUntil', bloqueadoHasta);
-        const mins = Math.max(1, Math.ceil((new Date(bloqueadoHasta) - Date.now()) / 60000));
-        toast.error(`Cuenta bloqueada por intentos fallidos. Intenta en ${mins} minuto(s)`);
-      } else if (error.response?.status === 401) {
-        const errorMsg = error.response.data.error;
-        const intentosRestantes = error.response.data.attemptsLeft;
-
-        if (intentosRestantes !== undefined) {
-          toast.error(`${errorMsg}. Intentos restantes: ${intentosRestantes}`);
-        } else {
-          toast.error(errorMsg || 'Credenciales incorrectas');
-        }
-      } else {
-        toast.error(error.response?.data?.error || 'Error al iniciar sesión');
-      }
-    } finally {
-      setLoading(false);
+    } else if (result.locked) {
+      setLockUntil(result.lockUntil);
+      localStorage.setItem('accountLockedUntil', result.lockUntil);
+      toast.error(`Cuenta bloqueada. Intenta en ${minutosRestantes} minuto(s)`);
+    } else if (result.needsVerification) {
+      toast.info('Debes verificar tu correo primero');
+      navigate('/verificar-email', { state: { email: formData.email } });
+    } else {
+      const msg = result.attemptsLeft !== undefined
+        ? `${result.error}. Intentos restantes: ${result.attemptsLeft}`
+        : result.error || 'Credenciales incorrectas';
+      toast.error(msg);
+      setErrors({ general: msg });
     }
+
+    setLoading(false);
   };
 
   const handleGoogleLogin = () => {
@@ -112,16 +98,14 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              type="email" id="email" name="email"
+              value={formData.email} onChange={handleChange}
               placeholder="tu@email.com"
-              disabled={lockUntil && new Date(lockUntil) > new Date()}
+              disabled={esBloqueado}
               className={errors.email ? 'input-error' : ''}
               autoComplete="email"
             />
@@ -132,26 +116,17 @@ const Login = () => {
             <label htmlFor="password">Contraseña</label>
             <div className="password-input-wrapper">
               <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
+                type={showPassword ? 'text' : 'password'} id="password" name="password"
+                value={formData.password} onChange={handleChange}
                 placeholder="••••••••"
-                disabled={lockUntil && new Date(lockUntil) > new Date()}
+                disabled={esBloqueado}
                 className={errors.password ? 'input-error' : ''}
                 autoComplete="current-password"
               />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
+              <button type="button" className="toggle-password" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                 {showPassword ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -164,49 +139,41 @@ const Login = () => {
             {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
-          {lockUntil && new Date(lockUntil) > new Date() && (
+          {errors.general && (
+            <span className="error-message" style={{ display: 'block', textAlign: 'center', marginBottom: '0.75rem' }}>
+              {errors.general}
+            </span>
+          )}
+
+          {esBloqueado && (
             <div className="lock-warning">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
                 <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
-              Cuenta bloqueada. Intenta en {minutosRestantes} minuto(s)
+              Cuenta bloqueada. Intenta en {minutosRestantes} minuto(s) —{' '}
+              <Link to="/recuperar" style={{ color: 'inherit', fontWeight: 700 }}>
+                Restablecer contraseña
+              </Link>
             </div>
           )}
 
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={loading || (lockUntil && new Date(lockUntil) > new Date())}
-          >
+          <button type="submit" className="btn-primary" disabled={loading || esBloqueado}>
             {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
 
-          <div className="divider">
-            <span>O continúa con</span>
-          </div>
+          <div className="divider"><span>O continúa con</span></div>
 
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            className="btn-google"
-            disabled={lockUntil && new Date(lockUntil) > new Date()}
-          >
-            <img
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-              alt="Google"
-            />
+          <button type="button" onClick={handleGoogleLogin} className="btn-google" disabled={esBloqueado}>
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
             Continuar con Google
           </button>
 
           <div className="login-footer">
-            <Link to="/forgot-password" className="link">
-              ¿Olvidaste tu contraseña?
-            </Link>
-            <p>
-              ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
-            </p>
+            <Link to="/recuperar" className="link">¿Olvidaste tu contraseña?</Link>
+            <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
           </div>
+
         </form>
       </div>
     </div>

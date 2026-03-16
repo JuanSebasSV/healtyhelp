@@ -3,23 +3,25 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RecipeForm.css';
 
+const IcoInfo    = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
+const IcoSalud   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>;
+const IcoIng     = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/></svg>;
+const IcoPasos   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
+const IcoNutri   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
+const IcoX       = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IcoPlus    = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{verticalAlign:'middle',marginRight:'5px'}}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoSave    = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
+const IcoEdit2   = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+
 const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const isEditing = !!recipe;
-  
+
   const [formData, setFormData] = useState({
-    nombre: '',
-    desc: '',
-    img: '',
-    cat: 'almuerzo',
-    salud: [],
-    puntos: 0,
-    ingredientes: [''],
-    pasos: [''],
-    nutri: {
-      cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0
-    }
+    nombre: '', desc: '', img: '', cat: 'almuerzo',
+    salud: [], puntos: 0, ingredientes: [''], pasos: [''],
+    nutri: { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 }
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [showAdvancedNutri, setShowAdvancedNutri] = useState(false);
 
@@ -31,11 +33,11 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   ];
 
   const condicionesSalud = [
-    'diabetes', 'hipertension', 'celiaco', 'intolerancia-lactosa',
-    'vegano', 'vegetariano', 'bajo-sodio', 'bajo-carbohidratos',
-    'keto', 'paleo', 'sin-frutos-secos', 'sin-mariscos',
-    'bajo-grasa', 'sin-azucar', 'colesterol-alto', 'enfermedad-renal',
-    'gastritis', 'sindrome-intestino'
+    'diabetes','hipertension','celiaco','intolerancia-lactosa',
+    'vegano','vegetariano','bajo-sodio','bajo-carbohidratos',
+    'keto','paleo','sin-frutos-secos','sin-mariscos',
+    'bajo-grasa','sin-azucar','colesterol-alto','enfermedad-renal',
+    'gastritis','sindrome-intestino'
   ];
 
   useEffect(() => {
@@ -44,205 +46,79 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
         ...recipe,
         ingredientes: recipe.ingredientes || [''],
         pasos: recipe.pasos || [''],
-        nutri: recipe.nutri || {
-          cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0
-        }
+        nutri: recipe.nutri || { cal:0, prot:0, carb:0, gras:0, fiber:0, sodio:0 }
       });
     }
   }, [recipe]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleNutriChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      nutri: {
-        ...prev.nutri,
-        [field]: parseFloat(value) || 0
-      }
-    }));
-  };
-
-  const handleSaludToggle = (condicion) => {
-    setFormData(prev => {
-      const saludArray = prev.salud || [];
-      const exists = saludArray.includes(condicion);
-      
-      return {
-        ...prev,
-        salud: exists
-          ? saludArray.filter(s => s !== condicion)
-          : [...saludArray, condicion]
-      };
-    });
-  };
-
-  const handleIngredienteChange = (index, value) => {
-    const newIngredientes = [...formData.ingredientes];
-    newIngredientes[index] = value;
-    setFormData(prev => ({ ...prev, ingredientes: newIngredientes }));
-  };
-
-  const addIngrediente = () => {
-    setFormData(prev => ({
-      ...prev,
-      ingredientes: [...prev.ingredientes, '']
-    }));
-  };
-
-  const removeIngrediente = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      ingredientes: prev.ingredientes.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handlePasoChange = (index, value) => {
-    const newPasos = [...formData.pasos];
-    newPasos[index] = value;
-    setFormData(prev => ({ ...prev, pasos: newPasos }));
-  };
-
-  const addPaso = () => {
-    setFormData(prev => ({
-      ...prev,
-      pasos: [...prev.pasos, '']
-    }));
-  };
-
-  const removePaso = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      pasos: prev.pasos.filter((_, i) => i !== index)
-    }));
-  };
+  const handleChange       = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleNutriChange  = (field, value) => setFormData(prev => ({ ...prev, nutri: { ...prev.nutri, [field]: parseFloat(value) || 0 } }));
+  const handleSaludToggle  = (c) => setFormData(prev => ({ ...prev, salud: prev.salud?.includes(c) ? prev.salud.filter(s => s !== c) : [...(prev.salud||[]), c] }));
+  const handleIngChange    = (i, v) => { const a = [...formData.ingredientes]; a[i] = v; setFormData(p => ({ ...p, ingredientes: a })); };
+  const handlePasoChange   = (i, v) => { const a = [...formData.pasos]; a[i] = v; setFormData(p => ({ ...p, pasos: a })); };
+  const addIngrediente     = () => setFormData(p => ({ ...p, ingredientes: [...p.ingredientes, ''] }));
+  const removeIngrediente  = (i) => setFormData(p => ({ ...p, ingredientes: p.ingredientes.filter((_,x) => x !== i) }));
+  const addPaso            = () => setFormData(p => ({ ...p, pasos: [...p.pasos, ''] }));
+  const removePaso         = (i) => setFormData(p => ({ ...p, pasos: p.pasos.filter((_,x) => x !== i) }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validación
-    if (!formData.nombre || !formData.desc || !formData.cat) {
-      toast.error('❌ Completa los campos obligatorios');
-      return;
-    }
-
-    // Limpiar arrays vacíos
-    const cleanData = {
-      ...formData,
-      ingredientes: formData.ingredientes.filter(i => i.trim()),
-      pasos: formData.pasos.filter(p => p.trim())
-    };
-
+    if (!formData.nombre || !formData.desc || !formData.cat) { toast.error('Completa los campos obligatorios'); return; }
+    const cleanData = { ...formData, ingredientes: formData.ingredientes.filter(i => i.trim()), pasos: formData.pasos.filter(p => p.trim()) };
     setLoading(true);
-
     try {
-      if (isEditing) {
-        await api.put(`/recipes/${recipe._id}`, cleanData);
-        toast.success('✅ Receta actualizada correctamente');
-      } else {
-        await api.post('/recipes', cleanData);
-        toast.success('✅ Receta creada correctamente');
-      }
-      
+      if (isEditing) { await api.put(`/recipes/${recipe._id}`, cleanData); toast.success('Receta actualizada'); }
+      else           { await api.post('/recipes', cleanData); toast.success('Receta creada'); }
       onSuccess();
     } catch (error) {
-      const errorMsg = error.response?.data?.error || 'Error guardando receta';
-      toast.error(`❌ ${errorMsg}`);
-    } finally {
-      setLoading(false);
-    }
+      toast.error(error.response?.data?.error || 'Error guardando receta');
+    } finally { setLoading(false); }
   };
 
   return (
     <div className="recipe-form">
-      <h2>{isEditing ? '✏️ Editar Receta' : '➕ Crear Nueva Receta'}</h2>
+      <h2>
+        {isEditing ? <><IcoEdit2 />Editar Receta</> : <><IcoPlus />Crear Nueva Receta</>}
+      </h2>
 
       <form onSubmit={handleSubmit}>
+
         {/* Información Básica */}
         <div className="form-section">
-          <h3>📋 Información Básica</h3>
-
+          <h3><IcoInfo />Información Básica</h3>
           <div className="form-group">
             <label>Nombre de la Receta *</label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              placeholder="Ej: Ensalada Mediterránea"
-              required
-            />
+            <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Ej: Ensalada Mediterránea" required />
           </div>
-
           <div className="form-group">
             <label>Descripción *</label>
-            <textarea
-              name="desc"
-              value={formData.desc}
-              onChange={handleChange}
-              placeholder="Describe brevemente la receta..."
-              rows="3"
-              required
-            />
+            <textarea name="desc" value={formData.desc} onChange={handleChange} placeholder="Describe brevemente la receta..." rows="3" required />
           </div>
-
           <div className="form-row">
             <div className="form-group">
               <label>URL de Imagen *</label>
-              <input
-                type="url"
-                name="img"
-                value={formData.img}
-                onChange={handleChange}
-                placeholder="https://..."
-              />
+              <input type="url" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." />
             </div>
-
             <div className="form-group">
               <label>Categoría *</label>
-              <select
-                name="cat"
-                value={formData.cat}
-                onChange={handleChange}
-                required
-              >
-                {categorias.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre}
-                  </option>
-                ))}
+              <select name="cat" value={formData.cat} onChange={handleChange} required>
+                {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nombre}</option>)}
               </select>
             </div>
-
             <div className="form-group">
               <label>Puntuación (0-5)</label>
-              <input
-                type="number"
-                name="puntos"
-                value={formData.puntos}
-                onChange={handleChange}
-                min="0"
-                max="5"
-                step="0.1"
-              />
+              <input type="number" name="puntos" value={formData.puntos} onChange={handleChange} min="0" max="5" step="0.1" />
             </div>
           </div>
         </div>
 
         {/* Condiciones de Salud */}
         <div className="form-section">
-          <h3>🏥 Condiciones de Salud</h3>
+          <h3><IcoSalud />Condiciones de Salud</h3>
           <div className="salud-grid">
             {condicionesSalud.map(condicion => (
               <label key={condicion} className="salud-checkbox">
-                <input
-                  type="checkbox"
-                  checked={formData.salud?.includes(condicion)}
-                  onChange={() => handleSaludToggle(condicion)}
-                />
+                <input type="checkbox" checked={formData.salud?.includes(condicion)} onChange={() => handleSaludToggle(condicion)} />
                 <span>{condicion.replace(/-/g, ' ')}</span>
               </label>
             ))}
@@ -251,309 +127,92 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
 
         {/* Ingredientes */}
         <div className="form-section">
-          <h3>🥗 Ingredientes</h3>
-          {formData.ingredientes.map((ingrediente, index) => (
-            <div key={index} className="dynamic-input">
-              <input
-                type="text"
-                value={ingrediente}
-                onChange={(e) => handleIngredienteChange(index, e.target.value)}
-                placeholder={`Ingrediente ${index + 1}`}
-              />
+          <h3><IcoIng />Ingredientes</h3>
+          {formData.ingredientes.map((ing, i) => (
+            <div key={i} className="dynamic-input">
+              <input type="text" value={ing} onChange={(e) => handleIngChange(i, e.target.value)} placeholder={`Ingrediente ${i + 1}`} />
               {formData.ingredientes.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeIngrediente(index)}
-                  className="btn-remove"
-                >
-                  ✕
-                </button>
+                <button type="button" onClick={() => removeIngrediente(i)} className="btn-remove"><IcoX /></button>
               )}
             </div>
           ))}
-          <button
-            type="button"
-            onClick={addIngrediente}
-            className="btn-add"
-          >
-            ➕ Agregar Ingrediente
-          </button>
+          <button type="button" onClick={addIngrediente} className="btn-add"><IcoPlus />Agregar Ingrediente</button>
         </div>
 
         {/* Pasos */}
         <div className="form-section">
-          <h3>👨‍🍳 Pasos de Preparación</h3>
-          {formData.pasos.map((paso, index) => (
-            <div key={index} className="dynamic-input">
-              <span className="paso-number">{index + 1}.</span>
-              <textarea
-                value={paso}
-                onChange={(e) => handlePasoChange(index, e.target.value)}
-                placeholder={`Paso ${index + 1}`}
-                rows="2"
-              />
+          <h3><IcoPasos />Pasos de Preparación</h3>
+          {formData.pasos.map((paso, i) => (
+            <div key={i} className="dynamic-input">
+              <span className="paso-number">{i + 1}.</span>
+              <textarea value={paso} onChange={(e) => handlePasoChange(i, e.target.value)} placeholder={`Paso ${i + 1}`} rows="2" />
               {formData.pasos.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removePaso(index)}
-                  className="btn-remove"
-                >
-                  ✕
-                </button>
+                <button type="button" onClick={() => removePaso(i)} className="btn-remove"><IcoX /></button>
               )}
             </div>
           ))}
-          <button
-            type="button"
-            onClick={addPaso}
-            className="btn-add"
-          >
-            ➕ Agregar Paso
-          </button>
+          <button type="button" onClick={addPaso} className="btn-add"><IcoPlus />Agregar Paso</button>
         </div>
 
-        {/* Información Nutricional Básica */}
+        {/* Nutrición básica */}
         <div className="form-section">
-          <h3>📊 Información Nutricional Básica</h3>
+          <h3><IcoNutri />Información Nutricional Básica</h3>
           <div className="nutri-grid">
-            <div className="form-group">
-              <label>Calorías</label>
-              <input
-                type="number"
-                value={formData.nutri.cal || 0}
-                onChange={(e) => handleNutriChange('cal', e.target.value)}
-                min="0"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Proteínas (g)</label>
-              <input
-                type="number"
-                value={formData.nutri.prot || 0}
-                onChange={(e) => handleNutriChange('prot', e.target.value)}
-                min="0"
-                step="0.1"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Carbohidratos (g)</label>
-              <input
-                type="number"
-                value={formData.nutri.carb || 0}
-                onChange={(e) => handleNutriChange('carb', e.target.value)}
-                min="0"
-                step="0.1"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Grasas (g)</label>
-              <input
-                type="number"
-                value={formData.nutri.gras || 0}
-                onChange={(e) => handleNutriChange('gras', e.target.value)}
-                min="0"
-                step="0.1"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Fibra (g)</label>
-              <input
-                type="number"
-                value={formData.nutri.fiber || 0}
-                onChange={(e) => handleNutriChange('fiber', e.target.value)}
-                min="0"
-                step="0.1"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Sodio (mg)</label>
-              <input
-                type="number"
-                value={formData.nutri.sodio || 0}
-                onChange={(e) => handleNutriChange('sodio', e.target.value)}
-                min="0"
-              />
-            </div>
+            {[
+              {label:'Calorías',        field:'cal',   step:'1'},
+              {label:'Proteínas (g)',   field:'prot',  step:'0.1'},
+              {label:'Carbohidratos (g)',field:'carb', step:'0.1'},
+              {label:'Grasas (g)',      field:'gras',  step:'0.1'},
+              {label:'Fibra (g)',       field:'fiber', step:'0.1'},
+              {label:'Sodio (mg)',      field:'sodio', step:'1'},
+            ].map(({label, field, step}) => (
+              <div className="form-group" key={field}>
+                <label>{label}</label>
+                <input type="number" value={formData.nutri[field] || 0} onChange={(e) => handleNutriChange(field, e.target.value)} min="0" step={step} />
+              </div>
+            ))}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowAdvancedNutri(!showAdvancedNutri)}
-            className="btn-toggle-advanced"
-          >
-            {showAdvancedNutri ? '▼' : '▶'} Información Nutricional Avanzada
+          <button type="button" onClick={() => setShowAdvancedNutri(!showAdvancedNutri)} className="btn-toggle-advanced">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{verticalAlign:'middle',marginRight:'6px',transform: showAdvancedNutri ? 'rotate(90deg)' : 'none',transition:'transform 0.2s'}}>
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            Información Nutricional Avanzada
           </button>
 
           {showAdvancedNutri && (
             <div className="advanced-nutri">
               <p className="nutri-note">
-                💡 Tip: Deja en 0 los valores que no conozcas. Puedes agregarlos después.
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'5px'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Deja en 0 los valores que no conozcas. Puedes agregarlos después.
               </p>
-              
+
               <h4>Minerales</h4>
               <div className="nutri-grid">
-                <div className="form-group">
-                  <label>Calcio (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.calcio || 0}
-                    onChange={(e) => handleNutriChange('calcio', e.target.value)}
-                    min="0"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Hierro (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.hierro || 0}
-                    onChange={(e) => handleNutriChange('hierro', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Potasio (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.potasio || 0}
-                    onChange={(e) => handleNutriChange('potasio', e.target.value)}
-                    min="0"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Magnesio (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.magnesio || 0}
-                    onChange={(e) => handleNutriChange('magnesio', e.target.value)}
-                    min="0"
-                  />
-                </div>
+                {[{l:'Calcio (mg)',f:'calcio',s:'1'},{l:'Hierro (mg)',f:'hierro',s:'0.1'},{l:'Potasio (mg)',f:'potasio',s:'1'},{l:'Magnesio (mg)',f:'magnesio',s:'1'}].map(({l,f,s}) => (
+                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step={s}/></div>
+                ))}
               </div>
 
               <h4>Vitaminas</h4>
               <div className="nutri-grid">
-                <div className="form-group">
-                  <label>Vitamina A (mcg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.vitA || 0}
-                    onChange={(e) => handleNutriChange('vitA', e.target.value)}
-                    min="0"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Vitamina C (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.vitC || 0}
-                    onChange={(e) => handleNutriChange('vitC', e.target.value)}
-                    min="0"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Vitamina D (mcg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.vitD || 0}
-                    onChange={(e) => handleNutriChange('vitD', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Vitamina E (mg)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.vitE || 0}
-                    onChange={(e) => handleNutriChange('vitE', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
+                {[{l:'Vitamina A (mcg)',f:'vitA',s:'1'},{l:'Vitamina C (mg)',f:'vitC',s:'1'},{l:'Vitamina D (mcg)',f:'vitD',s:'0.1'},{l:'Vitamina E (mg)',f:'vitE',s:'0.1'}].map(({l,f,s}) => (
+                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step={s}/></div>
+                ))}
               </div>
 
               <h4>Azúcares</h4>
               <div className="nutri-grid">
-                <div className="form-group">
-                  <label>Azúcar Total (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.azucar || 0}
-                    onChange={(e) => handleNutriChange('azucar', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Glucosa (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.glucosa || 0}
-                    onChange={(e) => handleNutriChange('glucosa', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Fructosa (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.fructosa || 0}
-                    onChange={(e) => handleNutriChange('fructosa', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
+                {[{l:'Azúcar Total (g)',f:'azucar'},{l:'Glucosa (g)',f:'glucosa'},{l:'Fructosa (g)',f:'fructosa'}].map(({l,f}) => (
+                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step="0.1"/></div>
+                ))}
               </div>
 
               <h4>Grasas Detalladas</h4>
               <div className="nutri-grid">
-                <div className="form-group">
-                  <label>Saturadas (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.grasSat || 0}
-                    onChange={(e) => handleNutriChange('grasSat', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Monoinsaturadas (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.grasMonoins || 0}
-                    onChange={(e) => handleNutriChange('grasMonoins', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Poliinsaturadas (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.grasPoliins || 0}
-                    onChange={(e) => handleNutriChange('grasPoliins', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Omega-3 (g)</label>
-                  <input
-                    type="number"
-                    value={formData.nutri.omega3 || 0}
-                    onChange={(e) => handleNutriChange('omega3', e.target.value)}
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
+                {[{l:'Saturadas (g)',f:'grasSat'},{l:'Monoinsaturadas (g)',f:'grasMonoins'},{l:'Poliinsaturadas (g)',f:'grasPoliins'},{l:'Omega-3 (g)',f:'omega3'}].map(({l,f}) => (
+                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step="0.1"/></div>
+                ))}
               </div>
             </div>
           )}
@@ -561,20 +220,15 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
 
         {/* Botones */}
         <div className="form-actions">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="btn-cancel"
-            disabled={loading}
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="btn-submit"
-            disabled={loading}
-          >
-            {loading ? '⏳ Guardando...' : isEditing ? '💾 Actualizar Receta' : '➕ Crear Receta'}
+          <button type="button" onClick={onCancel} className="btn-cancel" disabled={loading}>Cancelar</button>
+          <button type="submit" className="btn-submit" disabled={loading}>
+            {loading ? (
+              <><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',animation:'spin 1s linear infinite'}}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Guardando...</>
+            ) : isEditing ? (
+              <><IcoSave />Actualizar Receta</>
+            ) : (
+              <><IcoPlus />Crear Receta</>
+            )}
           </button>
         </div>
       </form>
