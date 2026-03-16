@@ -214,3 +214,130 @@
   .recipes-table td { padding: 0.75rem 0.6rem; font-size: 0.88rem; }
   .recipe-thumbnail { width: 44px; height: 44px; }
 }
+
+/* ── Buscador con ícono integrado ── */
+.search-box-list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-box-list svg {
+  position: absolute;
+  left: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.search-box-list .search-input {
+  padding-left: 2.6rem;
+}
+
+/* ── Botón eliminar seleccionadas con SVG ── */
+.btn-bulk-delete {
+  display: flex;
+  align-items: center;
+  padding: 0.7rem 1.1rem;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: #f87171;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+}
+.btn-bulk-delete:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+/* ── Acciones con SVG ── */
+.btn-edit, .btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Placeholder receta sin imagen ── */
+.recipe-thumbnail-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Checkboxes modernos glassmorphism ── */
+.recipes-table input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+}
+
+.recipes-table input[type="checkbox"]:checked {
+  background: rgba(79, 119, 45, 0.55);
+  border-color: rgba(107, 158, 74, 0.8);
+}
+
+.recipes-table input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.recipes-table input[type="checkbox"]:hover {
+  border-color: rgba(107, 158, 74, 0.6);
+  background: rgba(79, 119, 45, 0.15);
+}
+
+/* ── Fix visibilidad SVGs en botones de acción ── */
+.btn-edit {
+  color: rgba(96, 165, 250, 0.85);
+}
+.btn-edit svg {
+  stroke: rgba(96, 165, 250, 0.85);
+}
+.btn-edit:hover {
+  color: #93c5fd;
+}
+.btn-edit:hover svg {
+  stroke: #93c5fd;
+}
+
+.btn-delete {
+  color: rgba(239, 68, 68, 0.75);
+}
+.btn-delete svg {
+  stroke: rgba(239, 68, 68, 0.75);
+}
+.btn-delete:hover {
+  color: #f87171;
+}
+.btn-delete:hover svg {
+  stroke: #f87171;
+}

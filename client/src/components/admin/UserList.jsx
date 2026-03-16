@@ -1,20 +1,52 @@
 import './UserList.css';
+import { useAuth } from '../../hooks/useAuth';
 
 const UserList = ({ users, onDelete, onChangeRole }) => {
+  const { user: currentUser } = useAuth();
+
   if (!users || users.length === 0) {
     return (
       <div className="user-list-empty">
-        <p>📭 No se encontraron usuarios</p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{opacity: 0.3}}>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="23" y1="11" x2="17" y2="11"/>
+        </svg>
+        <p>No se encontraron usuarios</p>
       </div>
     );
   }
 
+  // ── El backend devuelve id (no _id) en el objeto user del contexto ──
+  const currentUserId = currentUser?.id || currentUser?._id;
+  const isSuperAdmin  = currentUser?.isSuperAdmin === true;
+
+  const canModify = (targetUser) => {
+    const targetId = targetUser._id || targetUser.id;
+    // Nadie puede modificarse a sí mismo
+    if (targetId === currentUserId) return false;
+    // Super Admin puede modificar a cualquier otro
+    if (isSuperAdmin) return true;
+    // Admin normal no puede tocar otros admins ni superadmins
+    if (targetUser.isSuperAdmin) return false;
+    if (targetUser.role === 'admin') return false;
+    return true;
+  };
+
   return (
     <div className="user-list-container">
       <div className="user-list-header">
-        <h2>👥 Gestión de Usuarios ({users.length})</h2>
+        <h2>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Gestión de Usuarios ({users.length})
+        </h2>
       </div>
-      
+
       <div className="table-container">
         <table className="user-table">
           <thead>
@@ -23,85 +55,122 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
               <th>Nombre</th>
               <th>Email</th>
               <th>Rol</th>
-              <th>Estado</th>
               <th>Fecha Registro</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id} className={user.role === 'admin' ? 'admin-row' : ''}>
-                <td>
-                  <div className="user-avatar">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} />
+            {users.map((user) => {
+              const targetId     = user._id || user.id;
+              const isCurrentUser = targetId === currentUserId;
+              const canEdit      = canModify(user);
+
+              return (
+                <tr
+                  key={user._id}
+                  className={
+                    user.isSuperAdmin ? 'super-admin-row' :
+                    user.role === 'admin' ? 'admin-row' : ''
+                  }
+                >
+                  <td>
+                    <div className="user-avatar">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} referrerPolicy="no-referrer" />
+                      ) : (
+                        <div className="avatar-placeholder">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+
+                  <td>
+                    <div className="user-name-cell">
+                      <span className="user-name">{user.name}</span>
+                      {user.googleId && (
+                        <span className="google-badge" title="Cuenta de Google">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '2px'}}>
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                          </svg>
+                          Google
+                        </span>
+                      )}
+                      {isCurrentUser && (
+                        <span className="you-badge">(Tú)</span>
+                      )}
+                    </div>
+                  </td>
+
+                  <td>
+                    <span className="user-email">{user.email}</span>
+                  </td>
+
+                  <td>
+                    {canEdit ? (
+                      <select
+                        value={user.role}
+                        onChange={(e) => onChangeRole(user._id, e.target.value)}
+                        className={`role-select role-${user.role}`}
+                      >
+                        <option value="user">Usuario</option>
+                        <option value="admin">Administrador</option>
+                      </select>
                     ) : (
-                      <div className="avatar-placeholder">
-                        {user.name.charAt(0).toUpperCase()}
+                      <div className="role-badge-readonly">
+                        {user.isSuperAdmin ? (
+                          <span className="badge super-admin">
+                            ⭐ Super Admin {isCurrentUser && '(Tú)'}
+                          </span>
+                        ) : user.role === 'admin' ? (
+                          <span className="badge admin">🛡️ Administrador</span>
+                        ) : (
+                          <span className="badge user">👤 Usuario</span>
+                        )}
                       </div>
                     )}
-                  </div>
-                </td>
-                
-                <td>
-                  <div className="user-name-cell">
-                    <span className="user-name">{user.name}</span>
-                    {user.googleId && (
-                      <span className="google-badge" title="Cuenta de Google">
-                        🔗 Google
-                      </span>
-                    )}
-                  </div>
-                </td>
-                
-                <td>
-                  <span className="user-email">{user.email}</span>
-                </td>
-                
-                <td>
-                  <select
-                    value={user.role}
-                    onChange={(e) => onChangeRole(user._id, e.target.value)}
-                    className={`role-select role-${user.role}`}
-                  >
-                    <option value="user">👤 Usuario</option>
-                    <option value="admin">🛡️ Admin</option>
-                  </select>
-                </td>
-                
-                <td>
-                  <div className="status-badges">
-                    {user.isVerified ? (
-                      <span className="badge verified">✓ Verificado</span>
-                    ) : (
-                      <span className="badge unverified">⏳ Sin verificar</span>
-                    )}
-                  </div>
-                </td>
-                
-                <td>
-                  <span className="date-cell">
-                    {new Date(user.createdAt).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </span>
-                </td>
-                
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      onClick={() => onDelete(user._id)}
-                      className="btn-delete"
-                      title="Eliminar usuario"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+
+                  <td>
+                    <span className="date-cell">
+                      {new Date(user.createdAt).toLocaleDateString('es-ES', {
+                        year: 'numeric', month: 'short', day: 'numeric'
+                      })}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="action-buttons">
+                      {canEdit ? (
+                        <button
+                          onClick={() => onDelete(user._id)}
+                          className="btn-delete"
+                          title="Eliminar usuario"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            <line x1="10" y1="11" x2="10" y2="17"/>
+                            <line x1="14" y1="11" x2="14" y2="17"/>
+                          </svg>
+                        </button>
+                      ) : (
+                        <span
+                          className="protected-badge"
+                          title={isCurrentUser ? 'No puedes modificarte a ti mismo' : ''}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

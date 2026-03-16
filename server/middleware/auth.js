@@ -5,72 +5,60 @@ const User = require('../models/User');
 exports.protect = async (req, res, next) => {
   try {
     let token;
-    
-    // Obtener token del header
+
     if (req.headers.authorization?.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
 
     if (!token) {
-      return res.status(401).json({ 
-        error: 'No autorizado - Token no proporcionado' 
-      });
+      return res.status(401).json({ error: 'No autorizado - Token no proporcionado' });
     }
 
-    // Verificar token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // 🛡️ CRÍTICO: Buscar usuario en BD (no confiar solo en el token)
+
+    // Buscar usuario fresco desde BD incluyendo isSuperAdmin
     const user = await User.findById(decoded.id).select('-password');
-    
+
     if (!user) {
-      return res.status(401).json({ 
-        error: 'Usuario no existe o fue eliminado' 
-      });
+      return res.status(401).json({ error: 'Usuario no existe o fue eliminado' });
     }
 
-    // Guardar usuario en request
     req.user = user;
     next();
-    
+
   } catch (error) {
     console.error('Error autenticación:', error.message);
-    return res.status(401).json({ 
-      error: 'Token inválido o expirado' 
-    });
+    return res.status(401).json({ error: 'Token inválido o expirado' });
   }
 };
 
-// 🔒 SOLO ADMIN - Doble validación
+// 🔒 SOLO ADMIN — actualiza req.user con datos frescos incluyendo isSuperAdmin
 exports.admin = async (req, res, next) => {
   try {
-    // 🛡️ CRÍTICO: Verificar rol directamente desde BD
-    const user = await User.findById(req.user._id);
-    
+    // Refrescar usuario desde BD para tener isSuperAdmin actualizado
+    const user = await User.findById(req.user._id).select('-password');
+
     if (!user || user.role !== 'admin') {
-      return res.status(403).json({ 
-        error: 'Acceso denegado - Requiere privilegios de administrador' 
-      });
+      return res.status(403).json({ error: 'Acceso denegado - Requiere privilegios de administrador' });
     }
-    
+
+    // Actualizar req.user con datos frescos (incluye isSuperAdmin)
+    req.user = user;
     next();
+
   } catch (error) {
-    return res.status(403).json({ 
-      error: 'Error verificando permisos' 
-    });
+    return res.status(403).json({ error: 'Error verificando permisos' });
   }
 };
 
-// 🔒 Validar permisos específicos (opcional avanzado)
+// 🔒 Validar permisos específicos
 exports.restrictTo = (...roles) => {
   return async (req, res, next) => {
-    const user = await User.findById(req.user._id);
-    
+    const user = await User.findById(req.user._id).select('-password');
     if (!roles.includes(user.role)) {
-      return res.status(403).json({ 
-        error: 'No tienes permiso para esta acción' 
-      });
+      return res.status(403).json({ error: 'No tienes permiso para esta acción' });
     }
+    req.user = user;
     next();
   };
 };

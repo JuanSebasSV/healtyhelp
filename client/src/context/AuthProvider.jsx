@@ -4,7 +4,7 @@ import { AuthContext } from './authContext';
 import api from '../api/axios';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,11 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     const token = localStorage.getItem('token');
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) { setLoading(false); return; }
 
     try {
       const decoded = jwtDecode(token);
@@ -27,11 +23,9 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         return;
       }
-
       const { data } = await api.get('/auth/me');
       setUser(data.user);
     } catch (error) {
-      // Solo limpiar si el servidor confirma 401, no por errores de red
       if (error.response?.status === 401) {
         localStorage.removeItem('token');
         setUser(null);
@@ -44,11 +38,20 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const { data } = await api.post('/auth/register', userData);
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
-      return { success: true };
+      // El registro ahora requiere verificación — no hay token todavía
+      return {
+        success: true,
+        needsVerification: data.needsVerification,
+        email: data.email
+      };
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Error en registro' };
+      const data = error.response?.data;
+      return {
+        success: false,
+        error: data?.error || 'Error en registro',
+        needsVerification: data?.needsVerification,
+        email: data?.email
+      };
     }
   };
 
@@ -59,13 +62,41 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Error en login' };
+      const data = error.response?.data;
+      const status = error.response?.status;
+
+      // Cuenta bloqueada
+      if (status === 423) {
+        return {
+          success: false,
+          locked: true,
+          lockUntil: data?.lockUntil,
+          error: data?.error
+        };
+      }
+
+      // Necesita verificación
+      if (data?.needsVerification) {
+        return {
+          success: false,
+          needsVerification: true,
+          email: data?.email,
+          error: data?.error
+        };
+      }
+
+      return {
+        success: false,
+        error: data?.error || 'Error en login',
+        attemptsLeft: data?.attemptsLeft
+      };
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('accountLockedUntil');
     setUser(null);
   };
 

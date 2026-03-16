@@ -12,17 +12,17 @@
 }
 
 .footerContenido {
-  max-width: var(--page-max);
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
-  gap: clamp(1rem, 3vw, 2rem);
-  margin-bottom: clamp(1rem, 2.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
-.footerSeccion h3,
-.footerSeccion h4 {
-  margin-bottom: 0.85rem;
+/* ── Títulos ── */
+.footerSeccion h3 {
+  font-size: 1.15rem;
   font-family: 'Georgia', serif;
   color: #ffd750;
 }
@@ -31,8 +31,54 @@
 .footerSeccion li { margin-bottom: 0.5rem; cursor: pointer; transition: var(--transicion); color: rgba(255, 255, 255, 0.8); }
 .footerSeccion li:hover { color: #ffd750; transform: translateX(5px); }
 
+/* ── Párrafos ── */
+.footerSeccion p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Lista de enlaces ── */
+.footerSeccion ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerSeccion li {
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.footerSeccion li:hover {
+  color: var(--naranja);
+  transform: translateX(4px);
+}
+
+.footerSeccion li:hover svg {
+  opacity: 1 !important;
+  stroke: var(--naranja);
+}
+
+/* Candado para rutas protegidas */
+.footer-auth-hint {
+  font-size: 0.72rem;
+  margin-left: 0.4rem;
+  opacity: 0.5;
+}
+
+/* ── Copyright ── */
 .footerCopy {
-  max-width: var(--page-max);
+  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
   padding-top: clamp(1rem, 2vw, 1.5rem);
@@ -41,6 +87,12 @@
   font-size: 0.88rem;
 }
 
+.modo-oscuro .footerCopy {
+  border-top-color: rgba(79, 119, 45, 0.15);
+  color: rgba(180, 210, 160, 0.35);
+}
+
+/* ── Responsive ── */
 @media (max-width: 640px) {
   .footerContenido { grid-template-columns: 1fr; }
 }

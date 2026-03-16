@@ -21,6 +21,7 @@ import Register from './components/auth/Register';
 import GoogleCallback from './components/auth/GoogleCallback';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
+import VerificarEmail from './components/auth/VerificarEmail';
 
 // Vistas principales
 import VistaInicio from './components/inicio/VistaInicio';

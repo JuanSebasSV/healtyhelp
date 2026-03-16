@@ -131,9 +131,22 @@
   align-items: center;
 }
 
-.search-box input,
-.filter-box select {
-  padding: 0.72rem 1rem;
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.search-box input {
+  padding: 0.72rem 1rem 0.72rem 2.6rem;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   border: 1.5px solid rgba(255, 255, 255, 0.2);
@@ -145,13 +158,30 @@
   width: 100%;
 }
 .search-box input::placeholder { color: rgba(255, 255, 255, 0.35); }
-.search-box input:focus,
+.search-box input:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
+}
+
+.filter-box select {
+  padding: 0.72rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transicion);
+  min-width: 190px;
+  cursor: pointer;
+}
 .filter-box select:focus {
   border-color: var(--naranja);
   background: rgba(255, 255, 255, 0.13);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
 }
-.filter-box select { min-width: 190px; cursor: pointer; }
 .filter-box select option { background: #1a4d2e; color: #fff; }
 
 .modo-oscuro .search-box input,
@@ -265,4 +295,45 @@
 
   .admin-main-tabs { width: 100%; }
   .main-tab { flex: 1; text-align: center; }
+}
+
+/* ── Fix alineación SVGs ── */
+.admin-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.main-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.main-tab svg { flex-shrink: 0; }
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Fix visibilidad SVGs en controles ── */
+.search-box svg {
+  color: rgba(255, 255, 255, 0.5);
+  stroke: rgba(255, 255, 255, 0.5);
+}
+
+.btn-export svg {
+  stroke: #ffffff;
+}
+
+.btn-back svg {
+  stroke: rgba(255, 255, 255, 0.88);
+}
+
+.pagination button svg {
+  stroke: #ffffff;
+  vertical-align: middle;
 }

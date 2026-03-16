@@ -76,9 +76,20 @@
 .user-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 .user-table tbody tr.admin-row { background: rgba(129, 140, 248, 0.05); }
 
+/* ── Fila Super Admin ── */
+.user-table tbody tr.super-admin-row {
+  background: rgba(251, 191, 36, 0.08);
+  border-left: 3px solid #fbbf24;
+}
+
 .modo-oscuro .user-table tbody tr { border-bottom-color: rgba(79, 119, 45, 0.1); }
 .modo-oscuro .user-table tbody tr:hover { background: rgba(79, 119, 45, 0.08); }
 .modo-oscuro .user-table tbody tr.admin-row { background: rgba(129, 140, 248, 0.07); }
+
+.modo-oscuro .user-table tbody tr.super-admin-row {
+  background: rgba(251, 191, 36, 0.12);
+  border-left-color: #f59e0b;
+}
 
 .user-table td {
   padding: 0.9rem 1rem;
@@ -164,8 +175,11 @@
 }
 .modo-oscuro .role-select option { background: #0a1a0f; }
 
-/* ── Badges de estado ── */
-.status-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+/* ── Badges de rol (solo lectura) ── */
+.role-badge-readonly {
+  display: flex;
+  justify-content: center;
+}
 
 .badge {
   display: inline-block;
@@ -175,6 +189,29 @@
   font-weight: 700;
   letter-spacing: 0.3px;
 }
+
+.badge.super-admin {
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  font-weight: 800;
+}
+
+.badge.admin {
+  background: rgba(129, 140, 248, 0.15);
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  color: #a5b4fc;
+}
+
+.badge.user {
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  color: #6ee7b7;
+}
+
+/* ── Badges de estado (verificación - eliminados) ── */
+.status-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
 .badge.verified {
   background: rgba(52, 211, 153, 0.15);
   border: 1px solid rgba(52, 211, 153, 0.35);
@@ -213,6 +250,13 @@
   box-shadow: 0 3px 10px rgba(239, 68, 68, 0.2);
 }
 
+/* ── Icono protegido ── */
+.protected-badge {
+  font-size: 1.2rem;
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ── Botón admin en navbar (si lo usas desde aquí) ── */
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
@@ -238,4 +282,91 @@
   .user-table { min-width: 780px; }
   .user-table th,
   .user-table td { padding: 0.72rem 0.6rem; font-size: 0.86rem; }
+}
+/* ── Fix alineación vertical de todas las celdas ── */
+.user-table td {
+  vertical-align: middle;
+}
+
+/* ── Rol: centrar contenido verticalmente ── */
+.role-select,
+.role-badge-readonly {
+  display: flex;
+  align-items: center;
+}
+
+.role-badge-readonly {
+  justify-content: flex-start;
+}
+
+/* ── Badge Super Admin — no debe romper la altura de la fila ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+/* ── Acciones: centrar ícono verticalmente ── */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.protected-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* ── Nombre: no dejar que el badge (Tú) empuje la fila ── */
+.you-badge {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  line-height: 1;
+}
+
+/* ── Avatar: centrado ── */
+.user-table td:first-child {
+  width: 52px;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Fix visibilidad SVGs botones acción ── */
+.btn-delete {
+  color: rgba(239, 68, 68, 0.75);
+}
+.btn-delete svg {
+  stroke: rgba(239, 68, 68, 0.75);
+}
+.btn-delete:hover svg {
+  stroke: #f87171;
+}
+
+.protected-badge svg {
+  stroke: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Fix badges con SVG inline ── */
+.badge svg {
+  vertical-align: middle;
+}
+
+/* ── Fix google badge SVG ── */
+.google-badge svg {
+  stroke: #60a5fa;
 }
