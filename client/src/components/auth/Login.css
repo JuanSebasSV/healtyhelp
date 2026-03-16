@@ -178,3 +178,93 @@
     padding: 2rem 1.5rem;
   }
 }
+
+/* ── Agregar al final de Login.css ── */
+
+.alerta-bloqueo {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: rgba(220, 53, 69, 0.08);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  animation: slideUp 0.3s ease;
+}
+
+.alerta-bloqueo__icono {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: rgba(220, 53, 69, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alerta-bloqueo__icono svg {
+  width: 18px;
+  height: 18px;
+  stroke: #ff8a8a;
+}
+
+.alerta-bloqueo__contenido {
+  flex: 1;
+  text-align: left;
+}
+
+.alerta-bloqueo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ff8a8a;
+  margin: 0 0 0.4rem;
+}
+
+.alerta-bloqueo__desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.alerta-bloqueo__acciones {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.alerta-bloqueo__btn-reset {
+  padding: 0.5rem 1rem;
+  background: rgba(247, 127, 0, 0.15);
+  border: 1px solid rgba(247, 127, 0, 0.4);
+  border-radius: 8px;
+  color: var(--naranja);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.alerta-bloqueo__btn-reset:hover {
+  background: var(--naranja);
+  color: white;
+}
+
+.alerta-bloqueo__btn-cerrar {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alerta-bloqueo__btn-cerrar:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: white;
+}

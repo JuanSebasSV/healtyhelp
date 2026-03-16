@@ -2,29 +2,131 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import api from '../../api/axios';
+import { validatePassword } from '../../utils/validation';
 import './UserProfile.css';
+
+const EyeIcon = ({ open }) => (
+  open ? (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ) : (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  )
+);
 
 const UserProfile = () => {
   const { user, checkAuth, logout } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
   const [editando, setEditando] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [subiendoAvatar, setSubiendoAvatar] = useState(false);
+  const [verFoto, setVerFoto] = useState(false);
   const [mensaje, setMensaje] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [showPass, setShowPass] = useState(false);
+  const [showPassConf, setShowPassConf] = useState(false);
+  const [erroresPassword, setErroresPassword] = useState([]);
+
   const [form, setForm] = useState({
     name: user?.name || '',
-    email: user?.email || '',
     password: '',
     confirmPassword: '',
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const mostrarMensaje = (tipo, texto) => {
+    setMensaje({ tipo, texto });
+    setTimeout(() => setMensaje(null), 3500);
   };
 
-  const handleGuardar = async () => {
-    if (form.password && form.password !== form.confirmPassword) {
-      setMensaje({ tipo: 'error', texto: 'Las contraseñas no coinciden' });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+
+    // Validar contraseña en tiempo real
+    if (name === 'password') {
+      if (value) {
+        const { errors } = validatePassword(value);
+        setErroresPassword(errors);
+      } else {
+        setErroresPassword([]);
+      }
+    }
+  };
+
+  // ── Seleccionar y subir avatar ──
+  const handleAvatarClick = () => {
+    if (!subiendoAvatar) fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      mostrarMensaje('error', 'La imagen no puede superar 2MB');
       return;
+    }
+
+    // Preview inmediato
+    const reader = new FileReader();
+    reader.onload = (ev) => setAvatarPreview(ev.target.result);
+    reader.readAsDataURL(file);
+
+    // Subir a Cloudinary vía backend
+    setSubiendoAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      await api.put('/auth/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await checkAuth();
+      setAvatarPreview(null);
+      mostrarMensaje('exito', '¡Foto de perfil actualizada!');
+    } catch (error) {
+      setAvatarPreview(null);
+      mostrarMensaje('error', error.response?.data?.error || 'Error al subir la imagen');
+    } finally {
+      setSubiendoAvatar(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleEliminarAvatar = async () => {
+    setSubiendoAvatar(true);
+    try {
+      await api.delete('/auth/avatar');
+      await checkAuth();
+      mostrarMensaje('exito', 'Foto de perfil eliminada');
+    } catch {
+      mostrarMensaje('error', 'Error al eliminar la foto');
+    } finally {
+      setSubiendoAvatar(false);
+    }
+  };
+
+  // ── Guardar nombre y/o contraseña ──
+  const handleGuardar = async () => {
+    // Validar contraseña si se quiere cambiar
+    if (form.password) {
+      const { isValid, errors } = validatePassword(form.password);
+      if (!isValid) {
+        setErroresPassword(errors);
+        mostrarMensaje('error', errors[0]);
+        return;
+      }
+      if (form.password !== form.confirmPassword) {
+        mostrarMensaje('error', 'Las contraseñas no coinciden');
+        return;
+      }
     }
 
     setGuardando(true);
@@ -36,19 +138,23 @@ const UserProfile = () => {
       await checkAuth();
       setEditando(false);
       setForm(prev => ({ ...prev, password: '', confirmPassword: '' }));
-      setMensaje({ tipo: 'exito', texto: '¡Perfil actualizado correctamente!' });
-      setTimeout(() => setMensaje(null), 3000);
+      setErroresPassword([]);
+      mostrarMensaje('exito', '¡Perfil actualizado correctamente!');
     } catch (error) {
-      setMensaje({ tipo: 'error', texto: error.response?.data?.error || 'Error al actualizar' });
+      mostrarMensaje('error', error.response?.data?.error || 'Error al actualizar');
     } finally {
       setGuardando(false);
     }
   };
 
-  const handleCerrarSesion = () => {
-    logout();
-    navigate('/');
+  const handleCancelar = () => {
+    setEditando(false);
+    setMensaje(null);
+    setErroresPassword([]);
+    setForm({ name: user?.name || '', password: '', confirmPassword: '' });
   };
+
+  const handleCerrarSesion = () => { logout(); navigate('/'); };
 
   const getInitials = (name) => {
     if (!name) return '?';
@@ -59,9 +165,10 @@ const UserProfile = () => {
     ? new Date(user.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long' })
     : 'Fecha desconocida';
 
+  const avatarSrc = avatarPreview || user?.avatar;
+
   return (
     <div className="perfil-pagina">
-      {/* Partículas decorativas */}
       <div className="perfil-particulas">
         {[...Array(6)].map((_, i) => (
           <div key={i} className={`particula particula-${i + 1}`} />
@@ -70,16 +177,21 @@ const UserProfile = () => {
 
       <div className="perfil-contenedor">
 
-        {/* Columna izquierda — Tarjeta de identidad */}
+        {/* ── Sidebar ── */}
         <div className="perfil-sidebar">
           <div className="perfil-identidad">
-            {/* Avatar */}
-            <div className="avatar-wrapper">
+
+            {/* Avatar — clic abre foto en grande */}
+            <div
+              className={`avatar-wrapper ${avatarSrc ? 'avatar-wrapper--clickable' : ''}`}
+              onClick={() => avatarSrc && setVerFoto(true)}
+              title={avatarSrc ? 'Ver foto de perfil' : ''}
+            >
               <div className="avatar-anillo" />
-              {user?.avatar ? (
+              {avatarSrc ? (
                 <img
-                  src={user.avatar}
-                  alt={user.name}
+                  src={avatarSrc}
+                  alt={user?.name}
                   className="avatar-img"
                   referrerPolicy="no-referrer"
                   crossOrigin="anonymous"
@@ -89,21 +201,56 @@ const UserProfile = () => {
                   }}
                 />
               ) : null}
-              <div className="avatar-iniciales" style={{ display: user?.avatar ? 'none' : 'flex' }}>
+              <div className="avatar-iniciales" style={{ display: avatarSrc ? 'none' : 'flex' }}>
                 <span>{getInitials(user?.name)}</span>
               </div>
-              <div className="avatar-badge">
-                {user?.role === 'admin' ? '🛡️' : '🌿'}
-              </div>
             </div>
+
+            {/* Botón cámara — fuera del avatar-wrapper, debajo */}
+            <button
+              className="avatar-cambiar"
+              onClick={handleAvatarClick}
+              title="Cambiar foto de perfil"
+              disabled={subiendoAvatar}
+            >
+              {subiendoAvatar ? (
+                <span className="spinner" />
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                  <circle cx="12" cy="13" r="3"/>
+                </svg>
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: 'none' }}
+              onChange={handleAvatarChange}
+            />
+
+            {/* Botón quitar foto — solo si tiene avatar */}
+            {user?.avatar && (
+              <button
+                className="btn-quitar-avatar"
+                onClick={handleEliminarAvatar}
+                disabled={subiendoAvatar}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                </svg>
+                Quitar foto
+              </button>
+            )}
 
             <h2 className="perfil-nombre">{user?.name}</h2>
             <p className="perfil-email-display">{user?.email}</p>
 
             {user?.role === 'admin' && (
-              <div className="perfil-rol-badge">
-                <span>Administrador</span>
-              </div>
+              <div className="perfil-rol-badge"><span>Administrador</span></div>
             )}
 
             <div className="perfil-stats">
@@ -134,15 +281,14 @@ const UserProfile = () => {
 
             <button className="btn-cerrar-sesion" onClick={handleCerrarSesion}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
               </svg>
               Cerrar sesión
             </button>
           </div>
 
-          {/* Decoración vegetal */}
           <div className="sidebar-deco">
             <svg viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M100 280 C100 280 100 100 100 80" stroke="rgba(79,119,45,0.4)" strokeWidth="2"/>
@@ -153,10 +299,9 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Columna derecha — Formulario / Info */}
+        {/* ── Contenido principal ── */}
         <div className="perfil-contenido">
 
-          {/* Header */}
           <div className="perfil-header">
             <div>
               <h1 className="perfil-titulo">
@@ -168,22 +313,18 @@ const UserProfile = () => {
             {!editando ? (
               <button className="btn-editar" onClick={() => setEditando(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
                 Editar perfil
               </button>
             ) : (
               <div className="btn-group">
-                <button className="btn-cancelar" onClick={() => { setEditando(false); setMensaje(null); }}>
-                  Cancelar
-                </button>
+                <button className="btn-cancelar" onClick={handleCancelar}>Cancelar</button>
                 <button className="btn-guardar" onClick={handleGuardar} disabled={guardando}>
-                  {guardando ? (
-                    <span className="spinner" />
-                  ) : (
+                  {guardando ? <span className="spinner" /> : (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="20 6 9 17 4 12" />
+                      <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   )}
                   {guardando ? 'Guardando...' : 'Guardar cambios'}
@@ -192,7 +333,6 @@ const UserProfile = () => {
             )}
           </div>
 
-          {/* Mensaje de feedback */}
           {mensaje && (
             <div className={`perfil-mensaje perfil-mensaje--${mensaje.tipo}`}>
               <span>{mensaje.tipo === 'exito' ? '✅' : '⚠️'}</span>
@@ -200,13 +340,12 @@ const UserProfile = () => {
             </div>
           )}
 
-          {/* Sección datos personales */}
+          {/* Datos personales */}
           <div className="perfil-seccion">
             <div className="seccion-titulo">
               <div className="seccion-icono">🌱</div>
               <h3>Datos personales</h3>
             </div>
-
             <div className="campos-grid">
               <div className="campo-grupo">
                 <label className="campo-label">Nombre completo</label>
@@ -223,15 +362,14 @@ const UserProfile = () => {
                   <div className="campo-valor">{user?.name || '—'}</div>
                 )}
               </div>
-
               <div className="campo-grupo">
                 <label className="campo-label">Correo electrónico</label>
                 <div className="campo-valor campo-valor--bloqueado">
                   {user?.email}
                   <span className="campo-lock">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                   </span>
                 </div>
@@ -240,37 +378,64 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Sección contraseña — solo si no es Google */}
+          {/* Seguridad — solo si no es cuenta Google pura */}
           {!user?.googleId && (
             <div className="perfil-seccion">
               <div className="seccion-titulo">
                 <div className="seccion-icono">🔒</div>
                 <h3>Seguridad</h3>
               </div>
-
               {editando ? (
                 <div className="campos-grid">
                   <div className="campo-grupo">
                     <label className="campo-label">Nueva contraseña</label>
-                    <input
-                      className="campo-input"
-                      type="password"
-                      name="password"
-                      value={form.password}
-                      onChange={handleChange}
-                      placeholder="Dejar vacío para no cambiar"
-                    />
+                    <div className="inputWrapper">
+                      <input
+                        className={`campo-input ${erroresPassword.length > 0 && form.password ? 'campo-input--error' : ''}`}
+                        type={showPass ? 'text' : 'password'}
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="Dejar vacío para no cambiar"
+                      />
+                      <button type="button" className="eyeButton" onClick={() => setShowPass(p => !p)} tabIndex={-1}>
+                        <EyeIcon open={showPass} />
+                      </button>
+                    </div>
+                    {/* Indicadores de requisitos */}
+                    {form.password && (
+                      <ul className="password-requisitos">
+                        {[
+                          { ok: form.password.length >= 8,        texto: 'Mínimo 8 caracteres' },
+                          { ok: /[a-z]/.test(form.password),      texto: 'Una letra minúscula' },
+                          { ok: /[A-Z]/.test(form.password),      texto: 'Una letra mayúscula' },
+                          { ok: /\d/.test(form.password),         texto: 'Un número' },
+                        ].map(({ ok, texto }) => (
+                          <li key={texto} className={ok ? 'req-ok' : 'req-falta'}>
+                            {ok ? '✓' : '✗'} {texto}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                   <div className="campo-grupo">
                     <label className="campo-label">Confirmar contraseña</label>
-                    <input
-                      className="campo-input"
-                      type="password"
-                      name="confirmPassword"
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Repetir nueva contraseña"
-                    />
+                    <div className="inputWrapper">
+                      <input
+                        className={`campo-input ${form.confirmPassword && form.password !== form.confirmPassword ? 'campo-input--error' : ''}`}
+                        type={showPassConf ? 'text' : 'password'}
+                        name="confirmPassword"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Repetir nueva contraseña"
+                      />
+                      <button type="button" className="eyeButton" onClick={() => setShowPassConf(p => !p)} tabIndex={-1}>
+                        <EyeIcon open={showPassConf} />
+                      </button>
+                    </div>
+                    {form.confirmPassword && form.password !== form.confirmPassword && (
+                      <p className="campo-hint campo-hint--error">Las contraseñas no coinciden</p>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -282,7 +447,7 @@ const UserProfile = () => {
             </div>
           )}
 
-          {/* Sección cuenta Google */}
+          {/* Cuenta Google */}
           {user?.googleId && (
             <div className="perfil-seccion perfil-seccion--google">
               <div className="google-vinculo">
@@ -303,7 +468,6 @@ const UserProfile = () => {
             </div>
           )}
 
-          {/* Decoración inferior */}
           <div className="perfil-deco-bottom">
             <div className="deco-linea" />
             <span className="deco-hoja">🌿</span>
@@ -312,6 +476,26 @@ const UserProfile = () => {
 
         </div>
       </div>
+      {/* ── Modal ver foto de perfil ── */}
+      {verFoto && avatarSrc && (
+        <div className="foto-modal-overlay" onClick={() => setVerFoto(false)}>
+          <div className="foto-modal" onClick={e => e.stopPropagation()}>
+            <button className="foto-modal-cerrar" onClick={() => setVerFoto(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <img
+              src={avatarSrc}
+              alt={user?.name}
+              className="foto-modal-img"
+              referrerPolicy="no-referrer"
+            />
+            <p className="foto-modal-nombre">{user?.name}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,0 +1,210 @@
+/* VerificarEmail.css */
+
+.verificar-pagina {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.verificar-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.35s ease;
+}
+
+/* Icono */
+.verificar-icono {
+  width: 64px;
+  height: 64px;
+  background: rgba(79, 119, 45, 0.15);
+  border: 1.5px solid rgba(79, 119, 45, 0.35);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.verificar-icono svg {
+  width: 30px;
+  height: 30px;
+  stroke: rgba(167, 213, 136, 0.9);
+}
+
+.verificar-titulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+  font-family: 'Georgia', serif;
+  margin: 0 0 0.75rem;
+}
+
+.verificar-desc {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+}
+
+.verificar-desc strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+/* Campos de código */
+.verificar-campos {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.verificar-digito {
+  width: 52px;
+  height: 60px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  caret-color: var(--naranja);
+}
+
+.verificar-digito:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
+}
+
+.verificar-digito--lleno {
+  border-color: rgba(79, 119, 45, 0.55);
+  background: rgba(79, 119, 45, 0.1);
+}
+
+.verificar-digito--error {
+  border-color: rgba(220, 53, 69, 0.6) !important;
+  background: rgba(220, 53, 69, 0.06) !important;
+  animation: shake 0.35s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}
+
+.verificar-error {
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  margin: 0 0 1.25rem;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Botón verificar */
+.verificar-btn {
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(26, 77, 46, 0.35);
+  margin-bottom: 1.5rem;
+}
+
+.verificar-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(26, 77, 46, 0.45);
+}
+
+.verificar-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.verificar-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: girar 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* Reenviar */
+.verificar-reenviar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.verificar-countdown {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+}
+
+.verificar-btn-reenviar {
+  background: none;
+  border: none;
+  color: var(--naranja);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.verificar-btn-reenviar:hover { opacity: 0.8; }
+.verificar-btn-reenviar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Volver */
+.verificar-volver {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.verificar-volver:hover { color: rgba(255, 255, 255, 0.65); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .verificar-card { padding: 2rem 1.5rem; }
+  .verificar-digito { width: 44px; height: 52px; font-size: 1.4rem; border-radius: 10px; }
+  .verificar-campos { gap: 0.4rem; }
+}

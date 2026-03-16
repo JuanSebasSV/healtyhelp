@@ -21,6 +21,7 @@ import Register from './components/auth/Register';
 import GoogleCallback from './components/auth/GoogleCallback';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
+import VerificarEmail from './components/auth/VerificarEmail';
 
 // Vistas principales
 import VistaInicio from './components/inicio/VistaInicio';
@@ -126,6 +127,7 @@ function AppContent() {
             <Route path="/google-callback"          element={<GoogleCallback />} />
             <Route path="/recuperar"                element={<ForgotPassword />} />
             <Route path="/reset-password/:token"    element={<ResetPassword />} />
+            <Route path="/verificar-email"             element={<VerificarEmail />} />
             <Route path="/contacto"                 element={<VistaContacto />} />
 
             {/* Rutas protegidas */}

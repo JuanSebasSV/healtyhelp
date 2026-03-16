@@ -121,7 +121,7 @@ const VistaSeguimiento = ({ recetas }) => {
     if (ops.length > 0 && !ops.includes(seleccionado)) {
       setSeleccionado(ops[0]);
     }
-  }, [periodo]);
+  }, [periodo, opciones, seleccionado]);
 
   useEffect(() => { cargarConsumos(); }, [cargarConsumos]);
 
