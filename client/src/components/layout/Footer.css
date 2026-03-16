@@ -1,7 +1,7 @@
 /* Footer.css */
 
 .footer {
-  background: linear-gradient(90deg, #020d08 0%, #041a11 20%, #0a3d29 50%, #1a7a4f 75%, #25a860 100%);
+  background: linear-gradient(90deg, #07301e 0%, #083120 20%, #187c54 50%, #2bc27e 75%, #29b668 100%);
   color: var(--blanco);
   padding: clamp(2rem, 4vw, 3rem) var(--page-px) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);

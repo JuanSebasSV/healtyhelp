@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -42,6 +42,15 @@ import api from './api/axios';
 
 // Hook de autenticación
 import useAuth from './hooks/useAuth';
+
+/* ── Wrapper que detecta si estamos en "/" para quitar el padding del hero ── */
+function MainLayout({ children, isHome }) {
+  return (
+    <main className={`contenido-principal${isHome ? ' contenido-home' : ''}`}>
+      {children}
+    </main>
+  );
+}
 
 function AppContent() {
   const { user } = useAuth();
@@ -105,44 +114,65 @@ function AppContent() {
           toggleModoOscuro={toggleModoOscuro}
         />
 
-        <main className="contenido-principal">
-          <Routes>
-            {/* Rutas públicas */}
-            <Route
-              path="/"
-              element={
-                <VistaInicio
-                  recetas={recetas}
-                  cargandoRecetas={cargandoRecetas}
-                  toggleFav={toggleFav}
-                  favoritos={favoritos}
-                  cambiarCategoria={cambiarCategoria}
-                  categoriaActiva={categoriaActiva}
-                />
-              }
-            />
-            <Route path="/login"                    element={<Login />} />
-            <Route path="/registro"                 element={<Register />} />
-            <Route path="/google-callback"          element={<GoogleCallback />} />
-            <Route path="/recuperar"                element={<ForgotPassword />} />
-            <Route path="/reset-password/:token"    element={<ResetPassword />} />
-            <Route path="/contacto"                 element={<VistaContacto />} />
+        <Routes>
+          {/* ── Ruta inicio — sin padding, hero a pantalla completa ── */}
+          <Route
+  path="/"
+  element={
+    <VistaInicio
+      recetas={recetas}
+      cargandoRecetas={cargandoRecetas}
+      toggleFav={toggleFav}
+      favoritos={favoritos}
+      cambiarCategoria={cambiarCategoria}
+      categoriaActiva={categoriaActiva}
+    />
+  }
+/>
 
-            {/* Rutas protegidas */}
-            <Route
-              path="/seguimiento"
-              element={
+          {/* ── Rutas públicas con contenedor normal ── */}
+          <Route
+            path="/login"
+            element={<main className="contenido-principal"><Login /></main>}
+          />
+          <Route
+            path="/registro"
+            element={<main className="contenido-principal"><Register /></main>}
+          />
+          <Route
+            path="/google-callback"
+            element={<main className="contenido-principal"><GoogleCallback /></main>}
+          />
+          <Route
+            path="/recuperar"
+            element={<main className="contenido-principal"><ForgotPassword /></main>}
+          />
+          <Route
+            path="/reset-password/:token"
+            element={<main className="contenido-principal"><ResetPassword /></main>}
+          />
+          <Route
+            path="/contacto"
+            element={<main className="contenido-principal"><VistaContacto /></main>}
+          />
+
+          {/* ── Rutas protegidas ── */}
+          <Route
+            path="/seguimiento"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute>
                   <VistaSeguimiento recetas={recetas} />
                 </PrivateRoute>
-              }
-            />
-            {/* Redirigir /historial a /seguimiento por compatibilidad */}
-            <Route path="/historial" element={<Navigate to="/seguimiento" replace />} />
+              </main>
+            }
+          />
+          <Route path="/historial" element={<Navigate to="/seguimiento" replace />} />
 
-            <Route
-              path="/favoritos"
-              element={
+          <Route
+            path="/favoritos"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute>
                   <VistaFavoritos
                     recetas={recetas}
@@ -150,55 +180,65 @@ function AppContent() {
                     favoritos={favoritos}
                   />
                 </PrivateRoute>
-              }
-            />
+              </main>
+            }
+          />
 
-            {/* Rutas de administrador */}
-            <Route
-              path="/admin"
-              element={
+          {/* ── Rutas de administrador ── */}
+          <Route
+            path="/admin"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute requireAdmin={true}>
                   <Dashboard />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
+              </main>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute requireAdmin={true}>
                   <UserList />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/stats"
-              element={
+              </main>
+            }
+          />
+          <Route
+            path="/admin/stats"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute requireAdmin={true}>
                   <Stats />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/perfil"
-              element={
+              </main>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute>
                   <UserProfile />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/recipes"
-              element={
+              </main>
+            }
+          />
+          <Route
+            path="/admin/recipes"
+            element={
+              <main className="contenido-principal">
                 <PrivateRoute requireAdmin={true}>
                   <RecipeManagement />
                 </PrivateRoute>
-              }
-            />
+              </main>
+            }
+          />
 
-            {/* 404 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
+          {/* 404 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
         <Footer />
 

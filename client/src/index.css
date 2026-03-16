@@ -74,6 +74,7 @@ body {
   padding-left:   var(--page-px);
   padding-right:  var(--page-px);
   min-height: calc(100vh - var(--navbar-h));
+  overflow: visible; 
 }
 
 /* ============ GRID COMPARTIDO ============ */

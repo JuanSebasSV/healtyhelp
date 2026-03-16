@@ -47,25 +47,27 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   });
 
   return (
-    <div className="vistaInicio">
+  <>
+    {/* ── Hero LIBRE — sin contenedor ── */}
+    <div className="hero">
+      <div className="hero-texto">
+        <span className="hero-tag">🌿 Tu dieta, tu salud</span>
+        <h1>
+          Sabemos que llevar una dieta especial puede ser un reto,
+          pero no tienes que hacerlo solo.
+        </h1>
+        <p>
+          Aquí te ofrecemos recetas pensadas para ti, con ingredientes
+          fáciles de conseguir y preparaciones sencillas pero exquisitas.
+        </p>
+        <div className="hero-linea"></div>
+      </div>
+    </div>
 
-      {/* ── Hero ── */}
-      <div className="hero">
-  <div className="hero-texto">
-    <span className="hero-tag">🌿 Tu dieta, tu salud</span>
-    <h1>
-      Sabemos que llevar una dieta especial puede ser un reto,
-      pero no tienes que hacerlo solo.
-    </h1>
-    <p>
-      Aquí te ofrecemos recetas pensadas para ti, con ingredientes
-      fáciles de conseguir y preparaciones sencillas pero exquisitas.
-    </p>
-    <div className="hero-linea"></div>
-  </div>
-</div>
+    {/* ── El resto vuelve al contenedor normal ── */}
+    <div className="contenido-principal">
 
-      {/* ── Categorías ── */}
+      {/* Categorías */}
       <section className="categorias">
         {categorias.map(cat => (
           <button
@@ -79,7 +81,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         ))}
       </section>
 
-      {/* ── Filtro salud ── */}
+      {/* Filtro salud */}
       <section id="filtro-salud" className="filtroSalud">
         <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
           <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
@@ -88,7 +90,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         {filtroAbierto && (
           <div className="filtroContenido">
             <div className="filtroInfo">
-              <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
+              <p>Selecciona todas las condiciones que se apliquen a ti.</p>
               {filtrosActivos.length > 0 && (
                 <button className="btnLimpiar" onClick={limpiarFiltros}>
                   Limpiar filtros ({filtrosActivos.length})
@@ -112,10 +114,9 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         )}
       </section>
 
-      {/* ── Recetas ── */}
+      {/* Recetas */}
       <section className="recetasGrid">
         <h2>Recetas Recomendadas</h2>
-
         {cargandoRecetas ? (
           <div className="recetasCargando">
             <div className="spinner-recetas" />
@@ -133,14 +134,14 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             ))}
           </div>
         )}
-
         {!cargandoRecetas && recetasFiltradas.length === 0 && (
           <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
         )}
       </section>
 
     </div>
-  );
+  </>
+);
 };
 
 export default VistaInicio;

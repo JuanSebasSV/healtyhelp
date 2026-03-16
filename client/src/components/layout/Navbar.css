@@ -1,7 +1,7 @@
 /* Navbar.css */
 
 .nav {
-  background: linear-gradient(90deg, #020d08 0%, #041a11 20%, #0a3d29 50%, #1a7a4f 75%, #25a860 100%);
+  background: linear-gradient(90deg, #041d12 0%, #062518 20%, #17724e 50%, #208a5a 75%, #30b96e 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -12,6 +12,7 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
+
 }
 .modo-oscuro .nav {
   background: linear-gradient(90deg, #010905 0%, #021208 20%, #062b10 50%, #0f4d1e 75%, #1a7a30 100%);
