@@ -50,8 +50,8 @@
 }
 
 .btnConsumo--registrado:hover:not(:disabled) {
-  background: #c0392b;
-  border-color: #c0392b;
+  background: var(--rojo-eliminar);
+  border-color: var(--rojo-eliminar);
 }
 
 /* ── Animación de señalado: pulso + brillo para llamar la atención ── */

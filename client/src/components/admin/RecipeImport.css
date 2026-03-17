@@ -10,7 +10,7 @@
 
 .recipe-import h2 {
   font-family: 'Georgia', serif;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -42,7 +42,7 @@
 .draft-icon { font-size: 1.6rem; }
 .draft-banner-info strong {
   display: block;
-  color: #fcd34d;
+  color: var(--amarillo);
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -63,7 +63,7 @@
   background: rgba(251,191,36,0.2);
   border: 1.5px solid rgba(251,191,36,0.5);
   border-radius: 10px;
-  color: #fcd34d;
+  color: var(--amarillo);
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
@@ -86,7 +86,7 @@
 .btn-draft-descartar:hover {
   background: rgba(255,80,80,0.12);
   border-color: rgba(255,80,80,0.3);
-  color: #fca5a5;
+  color: var(--rojo-rosa);
 }
 
 /* ════════════════════════════════
@@ -209,7 +209,7 @@
   cursor: pointer;
   transition: var(--transicion);
 }
-.btn-back-step:hover { background: rgba(255,255,255,0.13); color: #fff; }
+.btn-back-step:hover { background: rgba(255,255,255,0.13); color: var(--blanco-puro); }
 
 .review-header-info {
   display: flex;
@@ -225,7 +225,7 @@
 .sin-imagen-badge {
   background: rgba(251,191,36,0.15);
   border: 1px solid rgba(251,191,36,0.35);
-  color: #fcd34d;
+  color: var(--amarillo);
   padding: 0.22rem 0.7rem;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -234,7 +234,7 @@
 .draft-auto-badge {
   background: rgba(52,211,153,0.1);
   border: 1px solid rgba(52,211,153,0.28);
-  color: #6ee7b7;
+  color: var(--verde-menta);
   padding: 0.22rem 0.7rem;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -299,7 +299,7 @@
   border: 1.5px solid rgba(255,255,255,0.12);
   border-radius: 8px;
   padding: 0.55rem 0.8rem;
-  color: #fff;
+  color: var(--blanco-puro);
   font-size: 0.95rem;
   font-weight: 700;
   outline: none;
@@ -342,10 +342,10 @@
   font-size: 0.75rem;
   font-weight: 600;
 }
-.badge.cat-desayuno      { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.35); color: #fcd34d; }
-.badge.cat-almuerzo      { background: rgba(79,119,45,0.2);   border: 1px solid rgba(79,119,45,0.45);  color: #a7d588; }
-.badge.cat-cena          { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc; }
-.badge.cat-postres-snacks{ background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); color: #f9a8d4; }
+.badge.cat-desayuno      { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.35); color: var(--amarillo); }
+.badge.cat-almuerzo      { background: rgba(79,119,45,0.2);   border: 1px solid rgba(79,119,45,0.45);  color: var(--verde-btn); }
+.badge.cat-cena          { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: var(--azul-suave); }
+.badge.cat-postres-snacks{ background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); color: var(--rosa); }
 .badge-salud { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
 .badge-mas   { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);  color: rgba(255,255,255,0.4); }
 
@@ -369,7 +369,7 @@
   background: rgba(247,127,0,0.15);
   border: 1.5px solid rgba(247,127,0,0.35);
   border-radius: 8px;
-  color: #fb923c;
+  color: var(--naranja-claro);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -379,7 +379,7 @@
 .btn-editar-nutri:hover {
   background: rgba(247,127,0,0.25);
   border-color: rgba(247,127,0,0.55);
-  color: #fdba74;
+  color: var(--naranja-suave);
 }
 
 /* URL imagen */
@@ -394,7 +394,7 @@
   background: rgba(255,255,255,0.07);
   border: 1.5px solid rgba(255,255,255,0.15);
   border-radius: 8px;
-  color: #fff;
+  color: var(--blanco-puro);
   font-size: 0.82rem;
   outline: none;
   transition: var(--transicion);
@@ -407,7 +407,7 @@
   box-shadow: 0 0 0 2px rgba(247,127,0,0.12);
 }
 .image-status { font-size: 0.78rem; font-weight: 600; }
-.image-status.ok    { color: #6ee7b7; }
+.image-status.ok    { color: var(--verde-menta); }
 .image-status.empty { color: rgba(255,255,255,0.3); }
 
 /* Modo oscuro tarjetas */
@@ -428,7 +428,7 @@
   width: 100%;
   padding: 1rem;
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
-  color: #fff;
+  color: var(--blanco-puro);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -488,7 +488,7 @@
 .nutri-editor-header h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--blanco-puro);
   margin-bottom: 0.2rem;
 }
 .nutri-editor-receta-nombre {
@@ -508,7 +508,7 @@
   transition: var(--transicion);
   flex-shrink: 0;
 }
-.nutri-editor-cerrar:hover { background: rgba(255,80,80,0.2); color: #fca5a5; }
+.nutri-editor-cerrar:hover { background: rgba(255,80,80,0.2); color: var(--rojo-rosa); }
 
 .nutri-editor-body {
   flex: 1;
@@ -543,7 +543,7 @@
 .nutri-seccion-titulo.abierta {
   background: rgba(79,119,45,0.2);
   border-color: rgba(79,119,45,0.45);
-  color: #fff;
+  color: var(--blanco-puro);
 }
 .nutri-seccion-arrow { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
 
@@ -581,7 +581,7 @@
   background: transparent;
   border: none;
   padding: 0.45rem 0.6rem;
-  color: #fff;
+  color: var(--blanco-puro);
   font-size: 0.85rem;
   outline: none;
   width: 0;
@@ -622,7 +622,7 @@
   cursor: pointer;
   transition: var(--transicion);
 }
-.btn-cancelar-nutri:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.btn-cancelar-nutri:hover { background: rgba(255,255,255,0.12); color: var(--blanco-puro); }
 
 .btn-guardar-nutri {
   flex: 2;
@@ -630,7 +630,7 @@
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
   border: none;
   border-radius: 10px;
-  color: #fff;
+  color: var(--blanco-puro);
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;

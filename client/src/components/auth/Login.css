@@ -42,7 +42,7 @@
 }
 
 .login-header h1 {
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 2rem;
   margin-bottom: 0.5rem;
   font-family: 'Georgia', serif;
@@ -54,7 +54,7 @@
 }
 
 .login-header h1 svg {
-  stroke: #ffffff;
+  stroke: var(--blanco-puro);
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
 
@@ -90,7 +90,7 @@
   border-radius: 12px;
   font-size: 1rem;
   transition: var(--transicion);
-  color: #ffffff;
+  color: var(--blanco-puro);
   outline: none;
 }
 
@@ -152,7 +152,7 @@
 
 /* ── Error message ── */
 .error-message {
-  color: #ff8a8a;
+  color: var(--rojo-texto);
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
@@ -163,7 +163,7 @@
   border: 1.5px solid rgba(220, 38, 38, 0.4);
   border-radius: 12px;
   padding: 1rem;
-  color: #ff8a8a;
+  color: var(--rojo-texto);
   font-size: 0.9rem;
   font-weight: 600;
   text-align: center;
@@ -174,17 +174,17 @@
 }
 
 .lock-warning svg {
-  stroke: #ff8a8a;
+  stroke: var(--rojo-texto);
   flex-shrink: 0;
 }
 
 /* ── Buttons ── */
 .btn-primary {
   padding: 1rem;
-  background: linear-gradient(135deg, var(--naranja) 0%, #ff8c42 100%);
+  background: linear-gradient(135deg, var(--naranja) 0%, var(--naranja-medio) 100%);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: var(--blanco-puro);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -194,7 +194,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff8c42 0%, var(--naranja) 100%);
+  background: linear-gradient(135deg, var(--naranja-medio) 0%, var(--naranja) 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(247, 127, 0, 0.45);
 }
@@ -234,7 +234,7 @@
   background: rgba(255, 255, 255, 0.15);
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -278,7 +278,7 @@
 }
 
 .login-footer .link:hover {
-  color: #ffb347;
+  color: var(--naranja-hover);
   text-decoration: underline;
 }
 
@@ -294,7 +294,7 @@
 }
 
 .login-footer a:hover {
-  color: #ffb347;
+  color: var(--naranja-hover);
   text-decoration: underline;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './ResumenNutricional.css';
 
 const SECCIONES = [
@@ -67,13 +67,19 @@ const SECCIONES = [
 
 const PERIODO_LABEL = { dia: 'hoy', semana: 'esta semana', mes: 'este mes' };
 
-const ResumenNutricional = ({ nutri, periodo, seleccionado, totalConsumos }) => {
+const ResumenNutricional = ({ nutri, periodo, totalConsumos }) => {
   const [seccionAbierta, setSeccionAbierta] = useState('Macronutrientes');
 
   if (totalConsumos === 0) {
     return (
       <div className="resumen-nutri-panel resumen-vacio">
-        <div className="resumen-vacio-icono">📊</div>
+        <div className="resumen-vacio-icono">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="20" x2="12" y2="10"/>
+            <line x1="18" y1="20" x2="18" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="16"/>
+          </svg>
+        </div>
         <p>Selecciona un período con registros para ver los aportes nutricionales.</p>
       </div>
     );
@@ -112,8 +118,8 @@ const ResumenNutricional = ({ nutri, periodo, seleccionado, totalConsumos }) => 
         <path d={arco(anguloGras, anguloGras + anguloCarb)} fill="#eab308" />
         <path d={arco(anguloGras + anguloCarb, 360)}        fill="#a855f7" />
         <circle cx="100" cy="100" r="48" fill="rgba(15,35,20,0.75)" />
-        <text x="100" y="95"  textAnchor="middle" fontSize="20" fontWeight="800" fill="rgba(255,255,255,0.9)">{nutri.cal || 0}</text>
-        <text x="100" y="112" textAnchor="middle" fontSize="9"  fill="rgba(255,255,255,0.45)">kcal totales</text>
+        <text x="100" y="95"  textAnchor="middle" fontSize="28" fontWeight="800" fill="rgba(255,255,255,0.95)">{nutri.cal || 0}</text>
+        <text x="100" y="115" textAnchor="middle" fontSize="12" fill="rgba(255,255,255,0.55)">kcal totales</text>
       </svg>
 
       <div className="resumen-leyenda">

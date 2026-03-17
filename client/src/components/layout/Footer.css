@@ -4,7 +4,7 @@
   background: rgba(20, 50, 28, 0.85);
   backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: var(--blanco-puro);
   padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);
   width: 100%;
@@ -28,7 +28,7 @@
 .footerSeccion h3 {
   font-size: 1.15rem;
   font-family: 'Georgia', serif;
-  color: #ffffff;
+  color: var(--blanco-puro);
   margin-bottom: 0.85rem;
   display: flex;
   align-items: center;

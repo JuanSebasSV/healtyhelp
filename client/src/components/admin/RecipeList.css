@@ -20,7 +20,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 0.95rem;
   outline: none;
   transition: var(--transicion);
@@ -37,14 +37,14 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 0.95rem;
   min-width: 185px;
   cursor: pointer;
   outline: none;
   transition: var(--transicion);
 }
-.filter-select option { background: #1a4d2e; color: #fff; }
+.filter-select option { background: var(--verde-bosque); color: var(--blanco-puro); }
 .filter-select:focus {
   border-color: var(--naranja);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
@@ -52,7 +52,7 @@
 
 .selection-count {
   background: var(--naranja);
-  color: #ffffff;
+  color: var(--blanco-puro);
   padding: 0.4rem 1rem;
   border-radius: 20px;
   font-weight: 700;
@@ -66,7 +66,7 @@
   color: rgba(220, 245, 205, 0.95);
 }
 .modo-oscuro .search-input::placeholder { color: rgba(180, 210, 160, 0.38); }
-.modo-oscuro .filter-select option { background: #0a1a0f; }
+.modo-oscuro .filter-select option { background: var(--verde-profundo); }
 
 /* ── Tabla ── */
 .table-container {
@@ -134,7 +134,7 @@
 }
 .recipe-name strong {
   font-size: 0.95rem;
-  color: #ffffff;
+  color: var(--blanco-puro);
 }
 .recipe-desc {
   font-size: 0.82rem;
@@ -153,10 +153,10 @@
   font-weight: 700;
   text-transform: capitalize;
 }
-.badge.cat-desayuno       { background: rgba(255, 193, 7, 0.18);  color: #fcd34d; border: 1px solid rgba(255,193,7,0.3); }
-.badge.cat-almuerzo       { background: rgba(52, 211, 153, 0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
-.badge.cat-cena           { background: rgba(96, 165, 250, 0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.3); }
-.badge.cat-postres-snacks { background: rgba(244, 114, 182, 0.15);color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3); }
+.badge.cat-desayuno       { background: rgba(255, 193, 7, 0.18);  color: var(--amarillo); border: 1px solid rgba(255,193,7,0.3); }
+.badge.cat-almuerzo       { background: rgba(52, 211, 153, 0.15); color: var(--verde-menta); border: 1px solid rgba(52,211,153,0.3); }
+.badge.cat-cena           { background: rgba(96, 165, 250, 0.15); color: var(--azul-claro); border: 1px solid rgba(96,165,250,0.3); }
+.badge.cat-postres-snacks { background: rgba(244, 114, 182, 0.15);color: var(--rosa); border: 1px solid rgba(244,114,182,0.3); }
 
 .health-count {
   font-size: 0.88rem;
@@ -244,7 +244,7 @@
   background: rgba(239, 68, 68, 0.15);
   border: 1.5px solid rgba(239, 68, 68, 0.35);
   border-radius: 10px;
-  color: #f87171;
+  color: var(--rojo-claro);
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
@@ -304,7 +304,7 @@
   top: 1px;
   width: 6px;
   height: 10px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--blanco-puro);
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
@@ -323,10 +323,10 @@
   stroke: rgba(96, 165, 250, 0.85);
 }
 .btn-edit:hover {
-  color: #93c5fd;
+  color: var(--azul-claro);
 }
 .btn-edit:hover svg {
-  stroke: #93c5fd;
+  stroke: var(--azul-claro);
 }
 
 .btn-delete {
@@ -336,8 +336,8 @@
   stroke: rgba(239, 68, 68, 0.75);
 }
 .btn-delete:hover {
-  color: #f87171;
+  color: var(--rojo-claro);
 }
 .btn-delete:hover svg {
-  stroke: #f87171;
+  stroke: var(--rojo-claro);
 }

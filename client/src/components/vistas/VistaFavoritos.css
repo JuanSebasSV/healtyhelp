@@ -9,7 +9,7 @@
 
 .vista-favoritos h1 {
   text-align: center;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 2.5rem;
   margin-bottom: 3rem;
   font-family: 'Georgia', serif;

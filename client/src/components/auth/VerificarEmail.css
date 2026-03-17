@@ -43,7 +43,7 @@
 .verificar-titulo {
   font-size: 1.8rem;
   font-weight: 800;
-  color: white;
+  color: var(--blanco-puro);
   font-family: 'Georgia', serif;
   margin: 0 0 0.75rem;
 }
@@ -74,7 +74,7 @@
   text-align: center;
   font-size: 1.6rem;
   font-weight: 800;
-  color: white;
+  color: var(--blanco-puro);
   background: rgba(255, 255, 255, 0.07);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
@@ -107,7 +107,7 @@
 }
 
 .verificar-error {
-  color: #ff8a8a;
+  color: var(--rojo-texto);
   font-size: 0.85rem;
   margin: 0 0 1.25rem;
   animation: fadeIn 0.2s ease;
@@ -120,7 +120,7 @@
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
   border: none;
   border-radius: 14px;
-  color: white;
+  color: var(--blanco-puro);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -148,7 +148,7 @@
   width: 18px;
   height: 18px;
   border: 2.5px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border-top-color: var(--blanco-puro);
   border-radius: 50%;
   animation: girar 0.6s linear infinite;
   display: inline-block;

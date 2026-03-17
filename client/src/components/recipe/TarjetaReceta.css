@@ -48,7 +48,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, #f77f00 0%, #4f772d 100%);
+  background: linear-gradient(180deg, var(--naranja) 0%, var(--verde-hoja) 100%);
   border-radius: 20px 0 0 20px;
   z-index: 2;
   opacity: 0.85;
@@ -148,9 +148,9 @@
   transform: scale(1.1);
 }
 
-.btnFav:hover svg { stroke: #dc2626; }
+.btnFav:hover svg { stroke: var(--rojo); }
 .btnFav.activo { background: rgba(220, 38, 38, 0.3); border-color: rgba(220, 38, 38, 0.6); }
-.btnFav.activo svg { fill: #dc2626; stroke: #dc2626; }
+.btnFav.activo svg { fill: var(--rojo); stroke: var(--rojo); }
 
 /* ── Bloque info — independiente con su propio border-radius ── */
 .tarjetaInfo {
@@ -169,7 +169,7 @@
 }
 
 .tarjetaInfo h3 {
-  color: #ffffff;
+  color: var(--blanco-puro);
   margin-bottom: 0.5rem;
   font-size: 1.15rem;
   font-weight: 700;
@@ -210,7 +210,7 @@
   transition: transform 0.15s ease, color 0.15s ease;
   user-select: none;
 }
-.estrella-ico.llena { color: #f59e0b; }
+.estrella-ico.llena { color: var(--ambar); }
 .estrella-ico.vacia { color: rgba(255, 255, 255, 0.22); }
 .modo-oscuro .estrella-ico.vacia { color: rgba(255, 255, 255, 0.15); }
 

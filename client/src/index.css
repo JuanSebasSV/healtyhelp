@@ -12,11 +12,46 @@
   --verde-bosque: #1a4d2e;
   --verde-hoja:   #4f772d;
   --naranja:      #f77f00;
+  --naranja-oscuro: #d66e00;
   --blanco:       #ffffff;
+  --blanco-puro:  #ffffff;
   --gris-claro:   #f8f9fa;
   --gris-medio:   #dee2e6;
   --gris-oscuro:  #2d2d2d;
   --negro:        #000000;
+  --ambar:        #f59e0b;
+  --rojo:         #dc2626;
+  --rojo-texto:   #ff8a8a;
+  --naranja-hover: #ffb347;
+  --naranja-medio: #ff8c42;
+  --verde-btn:    #a7d588;
+  --verde-exito:  #6fcf7c;
+  --verde-texto-oscuro: #d2ebc3;
+  --verde-texto-claro:  #b4dca0;
+  --dorado:       #ffd47a;
+  --amarillo:     #fcd34d;
+  --amarillo-intenso: #fbbf24;
+  --verde-menta:  #6ee7b7;
+  --verde-progreso: #34d399;
+  --verde-progreso-oscuro: #059669;
+  --verde-profundo: #0a1a0f;
+  --rojo-claro:   #f87171;
+  --rojo-rosa:    #fca5a5;
+  --naranja-claro: #fb923c;
+  --naranja-suave: #fdba74;
+  --azul-claro:   #93c5fd;
+  --azul-medio:   #60a5fa;
+  --azul-suave:   #a5b4fc;
+  --rosa:         #f9a8d4;
+  --indigo:       #818cf8;
+  --indigo-claro: #c7d2fe;
+  --indigo-medio: #667eea;
+  --purpura:      #764ba2;
+  --rojo-eliminar: #c0392b;
+  --rojo-medio:   #ef4444;
+  --verde-lima:   #4ade80;
+  --verde-exito-texto: #a8e063;
+  --verde-google: #34a853;
   --sombra:       0 4px 6px rgba(0, 0, 0, 0.1);
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
@@ -221,9 +256,9 @@ body {
   font-size: 1rem;
 }
 .btn-primario { background: var(--naranja); color: var(--blanco); box-shadow: var(--sombra); }
-.btn-primario:hover { background: #d66e00; transform: translateY(-2px); box-shadow: var(--sombra-hover); }
-.btn-secundario { background: transparent; color: #ffffff; border: 2px solid white; }
-.btn-secundario:hover { background: #ffffff; color: #d66e00; }
+.btn-primario:hover { background: var(--naranja-oscuro); transform: translateY(-2px); box-shadow: var(--sombra-hover); }
+.btn-secundario { background: transparent; color: var(--blanco-puro); border: 2px solid white; }
+.btn-secundario:hover { background: var(--blanco-puro); color: var(--naranja-oscuro); }
 
 /* ============ OJO EN INPUTS ============ */
 .inputWrapper { position: relative; display: flex; align-items: center; }

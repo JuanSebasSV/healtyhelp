@@ -23,7 +23,7 @@
 }
 
 .modal-agregar-consumo h2 {
-  color: white;
+  color: var(--blanco-puro);
   font-size: 1.4rem;
   font-family: 'Georgia', serif;
   margin-bottom: 1.25rem;
@@ -52,7 +52,7 @@
 }
 .agr-tipo-btn:hover {
   background: rgba(255,255,255,0.12);
-  color: white;
+  color: var(--blanco-puro);
 }
 .agr-tipo-btn.activo {
   background: rgba(247,127,0,0.2);
@@ -84,7 +84,7 @@
   background: none;
   border: none;
   outline: none;
-  color: white;
+  color: var(--blanco-puro);
   font-size: 0.92rem;
   font-family: inherit;
 }
@@ -132,14 +132,14 @@
 .agr-receta-nombre {
   font-size: 0.88rem;
   font-weight: 700;
-  color: white;
+  color: var(--blanco-puro);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .agr-receta-cal {
   font-size: 0.75rem;
-  color: #f59e0b;
+  color: var(--ambar);
   font-weight: 600;
 }
 
@@ -158,7 +158,7 @@
 }
 .agr-btn-añadir:hover:not(:disabled) {
   background: rgba(79,119,45,0.3);
-  color: white;
+  color: var(--blanco-puro);
 }
 .agr-btn-añadir:disabled {
   opacity: 0.4;

@@ -55,7 +55,7 @@
   box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
 }
 .modalNutriWrapper .btn-cerrar-modal:hover svg {
-  stroke: #fff;
+  stroke: var(--blanco-puro);
 }
 
 /* ── Contenido scrollable ── */
@@ -76,7 +76,7 @@
 }
 
 .modalNutriHeader h2 {
-  color: white;
+  color: var(--blanco-puro);
   font-size: 1.6rem;
   text-align: center;
   font-family: 'Georgia', serif;
@@ -109,9 +109,9 @@
 .btn-volver-nutri:hover {
   background: rgba(79, 119, 45, 0.22);
   border-color: rgba(79, 119, 45, 0.5);
-  color: white;
+  color: var(--blanco-puro);
 }
-.btn-volver-nutri:hover svg { stroke: white; }
+.btn-volver-nutri:hover svg { stroke: var(--blanco-puro); }
 
 /* ── Secciones ── */
 .nutriDetalleSeccion {

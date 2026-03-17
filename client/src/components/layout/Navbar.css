@@ -15,7 +15,6 @@
 }
 .modo-oscuro .nav { background: rgba(26, 26, 26, 0.95); }
 
-/* Usa las mismas variables de page que contenido-principal → alineación perfecta */
 .navContenedor {
   width: 100%;
   max-width: var(--page-max);
@@ -33,21 +32,38 @@
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  transition: var(--transicion);
   flex-shrink: 0;
 }
-.navLogo:hover { transform: scale(1.05); }
 
-.logoIcono svg { stroke: #ffffff; transition: var(--transicion); }
-.navLogo:hover .logoIcono svg { stroke: var(--naranja); }
+.logoIcono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+/* MODO CLARO - Logo blanco */
+.logoIcono svg { 
+  stroke: var(--blanco-puro) !important;
+  transition: var(--transicion); 
+}
+
+/* Hover SOLO en el icono */
+.logoIcono:hover svg { 
+  stroke: var(--naranja) !important;
+}
+
+/* Texto SIEMPRE blanco */
 .logoTexto {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--blanco-puro) !important;
   font-family: 'Georgia', serif;
+  pointer-events: none;
 }
-.modo-oscuro .logoTexto { color: #ffffff; }
+
+.modo-oscuro .logoTexto { 
+  color: var(--blanco-puro) !important;
+}
 
 /* ── Hamburguesa ── */
 .navHamburguesa {
@@ -81,7 +97,7 @@
   transition: var(--transicion);
 }
 .navMenu li:not(:has(button)):hover::after { width: 100%; }
-.modo-oscuro .navMenu li { color: #ffffff !important; }
+.modo-oscuro .navMenu li { color: var(--blanco-puro) !important; }
 
 /* ── Botón tema ── */
 .btnTema {
@@ -110,7 +126,7 @@
   backdrop-filter: blur(10px);
   border: 1.5px solid rgba(247, 127, 0, 0.55) !important;
   border-radius: 50px !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
@@ -138,7 +154,7 @@
 .btn-secundario:hover {
   background: rgba(255, 255, 255, 0.16) !important;
   border-color: rgba(247, 127, 0, 0.55) !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   transform: translateY(-2px);
 }
 
@@ -176,7 +192,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 800; color: white;
+  font-size: 0.65rem; font-weight: 800; color: var(--blanco-puro);
   border: 2px solid rgba(255, 255, 255, 0.6);
 }
 .nav-admin-dot {
@@ -185,24 +201,30 @@
   background: var(--naranja); border-radius: 50%;
   border: 1.5px solid rgba(26, 77, 46, 0.9); z-index: 2;
 }
-.nav-nombre { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; }
+.nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
 
-/* ── Admin btn ── */
+/* ── Admin btn (SVG centrado) ── */
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   backdrop-filter: blur(10px);
   border: 1.5px solid rgba(129, 140, 248, 0.4) !important;
   border-radius: 8px !important;
-  color: #c7d2fe !important;
+  color: var(--indigo-claro) !important;
   padding: 0.45rem 1rem !important;
   font-weight: 700 !important;
   transition: var(--transicion) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+.nav-admin-btn svg {
+  flex-shrink: 0;
 }
 .nav-admin-btn:hover {
   background: rgba(129, 140, 248, 0.32) !important;
   border-color: rgba(129, 140, 248, 0.65) !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.3);
 }
@@ -218,7 +240,6 @@
     background: rgba(26, 77, 46, 0.98);
     backdrop-filter: blur(20px);
     flex-direction: column;
-    /* Mismo padding horizontal que la página */
     padding: clamp(1rem, 3vw, 2rem) var(--page-px);
     gap: 1.25rem;
     transform: translateY(-100%);

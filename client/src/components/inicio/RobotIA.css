@@ -59,7 +59,7 @@
 .robotHeader {
   background: rgba(26, 77, 46, 0.7);
   backdrop-filter: blur(10px);
-  color: #ffffff;
+  color: var(--blanco-puro);
   padding: 1rem 1.25rem;
   border-radius: 18px 18px 0 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -76,7 +76,7 @@
 .robotHeader h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--blanco-puro);
   text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
@@ -98,7 +98,7 @@
 .robotHeader button:hover {
   background: rgba(247, 127, 0, 0.3);
   border-color: var(--naranja);
-  color: #ffffff;
+  color: var(--blanco-puro);
   transform: rotate(90deg);
 }
 
@@ -126,7 +126,7 @@
   padding: 1rem;
   border-radius: 12px;
   text-align: center;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 0.9rem;
 }
 
@@ -156,7 +156,7 @@
 .robotMensaje.usuario {
   background: rgba(247, 127, 0, 0.55);
   border: 1px solid rgba(247, 127, 0, 0.7);
-  color: #ffffff;
+  color: var(--blanco-puro);
   margin-left: auto;
   flex-direction: row-reverse;
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -165,7 +165,7 @@
 .robotMensaje.ia {
   background: rgba(255, 255, 255, 0.22);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  color: var(--blanco-puro);
   text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
@@ -204,7 +204,7 @@
   border: 1.5px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   font-size: 0.88rem;
-  color: #ffffff;
+  color: var(--blanco-puro);
   resize: none;
   font-family: inherit;
   min-height: 40px;
@@ -238,7 +238,7 @@
   background: rgba(247, 127, 0, 0.3);
   border: 1.5px solid rgba(247, 127, 0, 0.5);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--blanco-puro);
   cursor: pointer;
   font-weight: 600;
   transition: var(--transicion);

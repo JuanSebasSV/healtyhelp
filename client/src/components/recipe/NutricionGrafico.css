@@ -97,13 +97,13 @@
 .nutriFila:hover { background: rgba(255, 255, 255, 0.04); }
 
 .nutriFila strong {
-  color: white;
+  color: var(--blanco-puro);
   font-weight: 700;
 }
 
 .nutriFilaDestacada { background: rgba(247, 127, 0, 0.08); }
 .nutriFilaDestacada span { color: rgba(255, 185, 60, 0.85); font-weight: 600; }
-.nutriFilaDestacada strong { color: #f59e0b; font-size: 1rem; }
+.nutriFilaDestacada strong { color: var(--ambar); font-size: 1rem; }
 
 .btnNutriDetalle {
   width: 100%;
@@ -120,7 +120,7 @@
 }
 .btnNutriDetalle:hover {
   background: var(--naranja);
-  color: white;
+  color: var(--blanco-puro);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(247, 127, 0, 0.35);
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Navbar.css';
 
@@ -83,7 +83,11 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
               onClick={() => handleNavigate('/admin')}
               className={`nav-admin-btn ${isActive('/admin') ? 'activo' : ''}`}
             >
-              🛡️ Admin Panel
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Admin Panel
             </li>
           )}
 
@@ -119,7 +123,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
               <li
                 className="navUsuario"
                 onClick={() => handleNavigate('/perfil')}
-                style={{ cursor: 'pointer' }}
               >
                 <div className="nav-avatar-mini">
                   {user.avatar ? (
@@ -135,7 +138,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
                       }}
                     />
                   ) : null}
-                  <div className="nav-avatar-iniciales" style={{ display: user.avatar ? 'none' : 'flex' }}>
+                  <div className="nav-avatar-iniciales">
                     {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                   </div>
                   {user.role === 'admin' && <span className="nav-admin-dot" />}

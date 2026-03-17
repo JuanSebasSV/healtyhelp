@@ -6,7 +6,7 @@
 
 .vista-seguimiento h1 {
   text-align: center;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-size: 2.5rem;
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
@@ -41,7 +41,7 @@
 .seg-periodo-btns button.activo {
   background: rgba(247, 127, 0, 0.25);
   border-color: var(--naranja);
-  color: #fff;
+  color: var(--blanco-puro);
   box-shadow: 0 4px 20px rgba(247, 127, 0, 0.3);
 }
 
@@ -99,7 +99,7 @@
 }
 .seg-selector-item:hover {
   background: rgba(255,255,255,0.1);
-  color: white;
+  color: var(--blanco-puro);
 }
 .seg-selector-item.activo {
   background: rgba(247,127,0,0.2);
@@ -164,7 +164,7 @@
   transform: translateX(-50%);
   font-size: 0.58rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--blanco-puro);
   padding: 2px 6px;
   border-radius: 20px;
   white-space: nowrap;
@@ -177,7 +177,7 @@
 .seg-consumo-nombre {
   font-size: 0.88rem;
   font-weight: 700;
-  color: white;
+  color: var(--blanco-puro);
   margin-bottom: 0.2rem;
   white-space: nowrap;
   overflow: hidden;
@@ -189,7 +189,7 @@
 }
 .seg-consumo-cal {
   font-size: 0.78rem;
-  color: #f59e0b;
+  color: var(--ambar);
   font-weight: 700;
 }
 
@@ -292,7 +292,7 @@
 }
 .seg-btn-agregar:hover {
   background: rgba(79,119,45,0.25);
-  color: #fff;
+  color: var(--blanco-puro);
 }
 
 /* ── Estados ── */

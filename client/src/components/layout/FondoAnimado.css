@@ -15,7 +15,7 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg,
-      #1a4d2e 0%,
+      var(--verde-bosque) 0%,
       #2d5a3d 50%,
       #4f772d 100%);
 }

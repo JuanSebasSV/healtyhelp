@@ -47,36 +47,37 @@
 .resumen-subtitulo {
   font-size: 0.78rem;
   color: rgba(255,255,255,0.35);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-/* ── Gráfica dona ── */
+/* ── Gráfica dona (MÁS GRANDE) ── */
 .resumen-chart {
-  width: 160px;
-  height: 160px;
+  width: 240px;
+  height: 240px;
   display: block;
-  margin: 0 auto 0.75rem;
+  margin: 0 auto 1rem;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
 }
 
 .resumen-leyenda {
   display: flex;
   justify-content: center;
-  gap: 0.85rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 1.25rem;
-  font-size: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
   color: rgba(255,255,255,0.65);
+  font-weight: 600;
 }
 .resumen-leyenda span {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 .resumen-leyenda i {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -106,7 +107,7 @@
 }
 .resumen-sec-header:hover {
   background: rgba(255,255,255,0.1);
-  color: white;
+  color: var(--blanco-puro);
 }
 .resumen-sec-header.abierto {
   background: rgba(247,127,0,0.1);
@@ -147,6 +148,14 @@
   font-weight: 600;
 }
 .resumen-fila.destaca strong {
-  color: #f59e0b;
+  color: var(--ambar);
   font-size: 0.9rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 968px) {
+  .resumen-chart {
+    width: 200px;
+    height: 200px;
+  }
 }
