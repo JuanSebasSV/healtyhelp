@@ -12,21 +12,23 @@
   overflow: hidden;
   margin-bottom: 3rem;
   animation: fadeIn 0.6s ease;
-  /* Sin border-radius, sin margin top */
-  margin-top: 0;
-  
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.8s ease;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/image/rustic-winter-corn-stew-food-copy-space.jpg');
   background-size: cover;
   background-position: center;
+  background-image: inherit;  
   z-index: 0;
   filter: brightness(0.65);
-  transition: filter 0.4s ease;
+  transition: background-image 0.8s ease;  
 }
 
 .hero::after {
@@ -49,13 +51,13 @@
   top: 50%;
   left: 4%;
   transform: translateY(-50%);
-  width: 420px;
-  max-width: 90%;
+  width: 860px;        
+  max-width: 55%;      
 
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 2.5rem 2.2rem;
+  padding: 2.5rem 2.8rem;  
 
   background: rgba(5, 25, 12, 0.52);
   backdrop-filter: blur(20px) saturate(160%);
@@ -105,7 +107,7 @@
 }
 
 .hero-texto p {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.7;
   margin: 0;
@@ -116,6 +118,33 @@
   height: 3px;
   background: #ffd750;
   border-radius: 2px;
+}
+
+/* Carrusel dots */
+.hero-dots {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hero-dot.activo {
+  background: #ffd750;
+  width: 24px;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
@@ -173,22 +202,7 @@
   color: #ffffff;
 }
 
-.modo-oscuro .catBtn {
-  background: rgba(2, 13, 5, 0.55);
-  border-color: rgba(37, 168, 62, 0.25);
-  color: #e0e0e0;
-}
 
-.modo-oscuro .catBtn:hover {
-  background: rgba(10, 61, 24, 0.6);
-  border-color: rgba(255, 215, 80, 0.45);
-}
-
-.modo-oscuro .catBtn.activo {
-  background: rgba(255, 215, 80, 0.18);
-  border-color: #ffd750;
-  color: #ffffff;
-}
 
 .catIcono { font-size: 2rem; }
 
@@ -249,7 +263,7 @@
 }
 
 .modo-oscuro .filtroHeader {
-  background: linear-gradient(90deg, rgba(1, 9, 3, 0.95) 0%, rgba(6, 43, 16, 0.95) 50%, rgba(15, 77, 30, 0.9) 100%);
+  background: linear-gradient(90deg, rgba(1, 9, 3, 0.95) 0%, rgba(6, 39, 43, 0.95) 50%, rgba(15, 73, 77, 0.9) 100%);
   border-bottom-color: rgba(37, 168, 62, 0.2);
 }
 

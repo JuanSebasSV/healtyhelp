@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
 
+// Imágenes del carrusel
+const imagenesHero = [
+  '/image/ensalada.jpg',
+  '/image/mani y frutas.jpg',
+  '/image/pechuga.jpg',
+  '/image/ajo.jpg',
+  '/image/variedad de comida.jpg',
+  '/image/verduras.jpg',
+];
+
 const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [filtroAbierto, setFiltroAbierto]   = useState(false);
+  const [imagenActual, setImagenActual]     = useState(0);
   const navigate = useNavigate();
+
+  // Carrusel automático cada 4 segundos
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setImagenActual(prev => (prev + 1) % imagenesHero.length);
+    }, 4000);
+    return () => clearInterval(intervalo);
+  }, []);
 
   const categorias = [
     { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
@@ -37,7 +56,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Zm-160 0v-240q0-17 11.5-28.5T240-360h80q83 0 141.5-58.5T520-560q0-50-35-85t-85-35v-200 200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240Z"/></svg>' }
   ];
 
-  const toggleFiltro  = (id) => setFiltrosActivos(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  const toggleFiltro   = (id) => setFiltrosActivos(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
   const limpiarFiltros = () => setFiltrosActivos([]);
 
   const recetasFiltradas = recetas.filter(r => {
@@ -47,101 +66,115 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   });
 
   return (
-  <>
-    {/* ── Hero LIBRE — sin contenedor ── */}
-    <div className="hero">
-      <div className="hero-texto">
-        <span className="hero-tag">🌿 Tu dieta, tu salud</span>
-        <h1>
-          Sabemos que llevar una dieta especial puede ser un reto,
-          pero no tienes que hacerlo solo.
-        </h1>
-        <p>
-          Aquí te ofrecemos recetas pensadas para ti, con ingredientes
-          fáciles de conseguir y preparaciones sencillas pero exquisitas.
-        </p>
-        <div className="hero-linea"></div>
-      </div>
-    </div>
-
-    {/* ── El resto vuelve al contenedor normal ── */}
-    <div className="contenido-principal">
-
-      {/* Categorías */}
-      <section className="categorias">
-        {categorias.map(cat => (
-          <button
-            key={cat.id}
-            className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
-            onClick={() => cambiarCategoria(cat.id)}
-          >
-            <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
-            <span>{cat.nombre}</span>
-          </button>
-        ))}
-      </section>
-
-      {/* Filtro salud */}
-      <section id="filtro-salud" className="filtroSalud">
-        <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
-          <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
-          <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
+    <>
+      {/* ── Hero LIBRE — sin contenedor, con carrusel ── */}
+      <div
+        className="hero"
+        style={{ backgroundImage: `url('${imagenesHero[imagenActual]}')` }}
+      >
+        <div className="hero-texto">
+          <span className="hero-tag">🌿 Tu dieta, tu salud</span>
+          <h1>
+            Sabemos que llevar una dieta especial puede ser un reto,
+            pero no tienes que hacerlo solo.
+          </h1>
+          <p>
+            Aquí te ofrecemos recetas pensadas para ti, con ingredientes
+            fáciles de conseguir y preparaciones sencillas pero exquisitas.
+          </p>
+          <div className="hero-linea"></div>
         </div>
-        {filtroAbierto && (
-          <div className="filtroContenido">
-            <div className="filtroInfo">
-              <p>Selecciona todas las condiciones que se apliquen a ti.</p>
-              {filtrosActivos.length > 0 && (
-                <button className="btnLimpiar" onClick={limpiarFiltros}>
-                  Limpiar filtros ({filtrosActivos.length})
-                </button>
-              )}
+
+        {/* Dots del carrusel */}
+        <div className="hero-dots">
+          {imagenesHero.map((_, i) => (
+            <button
+              key={i}
+              className={`hero-dot ${i === imagenActual ? 'activo' : ''}`}
+              onClick={() => setImagenActual(i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── El resto vuelve al contenedor normal ── */}
+      <div className="contenido-principal">
+
+        {/* Categorías */}
+        <section className="categorias">
+          {categorias.map(cat => (
+            <button
+              key={cat.id}
+              className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
+              onClick={() => cambiarCategoria(cat.id)}
+            >
+              <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
+              <span>{cat.nombre}</span>
+            </button>
+          ))}
+        </section>
+
+        {/* Filtro salud */}
+        <section id="filtro-salud" className="filtroSalud">
+          <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
+            <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
+            <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
+          </div>
+          {filtroAbierto && (
+            <div className="filtroContenido">
+              <div className="filtroInfo">
+                <p>Selecciona todas las condiciones que se apliquen a ti.</p>
+                {filtrosActivos.length > 0 && (
+                  <button className="btnLimpiar" onClick={limpiarFiltros}>
+                    Limpiar filtros ({filtrosActivos.length})
+                  </button>
+                )}
+              </div>
+              <div className="filtroGrid">
+                {condicionesSalud.map(condicion => (
+                  <button
+                    key={condicion.id}
+                    className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
+                    onClick={() => toggleFiltro(condicion.id)}
+                  >
+                    <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
+                    <span className="filtroNombre">{condicion.nombre}</span>
+                    {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="filtroGrid">
-              {condicionesSalud.map(condicion => (
-                <button
-                  key={condicion.id}
-                  className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
-                  onClick={() => toggleFiltro(condicion.id)}
-                >
-                  <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
-                  <span className="filtroNombre">{condicion.nombre}</span>
-                  {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
-                </button>
+          )}
+        </section>
+
+        {/* Recetas */}
+        <section className="recetasGrid">
+          <h2>Recetas Recomendadas</h2>
+          {cargandoRecetas ? (
+            <div className="recetasCargando">
+              <div className="spinner-recetas" />
+              <p>Cargando recetas...</p>
+            </div>
+          ) : (
+            <div className="grid">
+              {recetasFiltradas.map(receta => (
+                <TarjetaReceta
+                  key={receta._id}
+                  receta={receta}
+                  toggleFav={toggleFav}
+                  esFav={favoritos.includes(receta._id)}
+                />
               ))}
             </div>
-          </div>
-        )}
-      </section>
+          )}
+          {!cargandoRecetas && recetasFiltradas.length === 0 && (
+            <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
+          )}
+        </section>
 
-      {/* Recetas */}
-      <section className="recetasGrid">
-        <h2>Recetas Recomendadas</h2>
-        {cargandoRecetas ? (
-          <div className="recetasCargando">
-            <div className="spinner-recetas" />
-            <p>Cargando recetas...</p>
-          </div>
-        ) : (
-          <div className="grid">
-            {recetasFiltradas.map(receta => (
-              <TarjetaReceta
-                key={receta._id}
-                receta={receta}
-                toggleFav={toggleFav}
-                esFav={favoritos.includes(receta._id)}
-              />
-            ))}
-          </div>
-        )}
-        {!cargandoRecetas && recetasFiltradas.length === 0 && (
-          <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
-        )}
-      </section>
-
-    </div>
-  </>
-);
+      </div>
+    </>
+  );
 };
 
 export default VistaInicio;

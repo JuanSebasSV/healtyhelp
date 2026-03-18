@@ -1,7 +1,7 @@
 /* Navbar.css */
 
 .nav {
-  background: linear-gradient(90deg, #041d12 0%, #062518 20%, #17724e 50%, #208a5a 75%, #30b96e 100%);
+  background: linear-gradient(90deg, #041d12 0%, #062518 10%, #208a60 60%, #062518 75%, #041d12 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -12,10 +12,10 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
-
 }
+
 .modo-oscuro .nav {
-  background: linear-gradient(90deg, #010905 0%, #021208 20%, #062b10 50%, #0f4d1e 75%, #1a7a30 100%);
+  background: linear-gradient(90deg, #020508 0%, #040a12 20%, #071525 50%, #0c2040 75%, #102a52 100%);
 }
 
 .navContenedor {
@@ -100,10 +100,10 @@
   justify-content: center;
 }
 .btnTema svg { stroke: var(--blanco); transition: var(--transicion); }
-.modo-oscuro .btnTema svg { stroke: #ffd750; }
+.modo-oscuro .btnTema svg { stroke: #4ade80; }
 .btnTema:hover { transform: scale(1.1) rotate(20deg); background: rgba(255, 255, 255, 0.2); }
-.modo-oscuro .btnTema { background: rgba(0, 0, 0, 0.2); }
-.modo-oscuro .btnTema:hover { background: rgba(0, 0, 0, 0.3); }
+.modo-oscuro .btnTema { background: rgba(5, 8, 17, 0.5); }
+.modo-oscuro .btnTema:hover { background: rgba(5, 8, 17, 0.7); }
 
 /* ── Botones sesión ── */
 .btn-primario {
@@ -158,6 +158,7 @@
   transition: var(--transicion);
 }
 .navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: #ffd750; }
+.modo-oscuro .navUsuario:hover { border-color: #4ade80; }
 
 .nav-avatar-mini {
   position: relative;
@@ -177,16 +178,16 @@
 .nav-avatar-iniciales {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0a3d18, #25a83e);
+  background: linear-gradient(135deg, #071525, #102a52);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; font-weight: 800; color: white;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(74, 222, 128, 0.5);
 }
 .nav-admin-dot {
   position: absolute; bottom: 0; right: 0;
   width: 9px; height: 9px;
-  background: #ffd750; border-radius: 50%;
-  border: 1.5px solid #0a3d18; z-index: 2;
+  background: #4ade80; border-radius: 50%;
+  border: 1.5px solid #071525; z-index: 2;
 }
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
@@ -229,5 +230,10 @@
     transition: var(--transicion);
     z-index: 999;
   }
+
+  .modo-oscuro .navMenu {
+    background: linear-gradient(180deg, #071525 0%, #050811 100%);
+  }
+
   .navMenu.activo { transform: translateY(0); opacity: 1; pointer-events: all; }
 }

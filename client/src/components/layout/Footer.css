@@ -1,14 +1,16 @@
 /* Footer.css */
 
 .footer {
-  background: linear-gradient(90deg, #07301e 0%, #083120 20%, #187c54 50%, #2bc27e 75%, #29b668 100%);
+  background: linear-gradient(90deg, #07301e 0%, #083120 10%, #187c54 50%, #229963 75%, #16683b 100%);
   color: var(--blanco);
   padding: clamp(2rem, 4vw, 3rem) var(--page-px) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);
   width: 100%;
 }
+
 .modo-oscuro .footer {
-  background: linear-gradient(90deg, #010905 0%, #021208 20%, #062b10 50%, #0f4d1e 75%, #1a7a30 100%);
+  background: linear-gradient(90deg, #020508 0%, #040a12 20%, #071525 50%, #0c2040 75%, #102a52 100%);
+  border-top: 1px solid rgba(74, 222, 128, 0.1);
 }
 
 .footerContenido {
@@ -25,11 +27,20 @@
   font-size: 1.15rem;
   font-family: 'Georgia', serif;
   color: #ffd750;
+  margin-bottom: 0.85rem;
 }
 
-.footerSeccion ul { list-style: none; }
-.footerSeccion li { margin-bottom: 0.5rem; cursor: pointer; transition: var(--transicion); color: rgba(255, 255, 255, 0.8); }
-.footerSeccion li:hover { color: #ffd750; transform: translateX(5px); }
+.footerSeccion h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 1rem;
+}
+
+.modo-oscuro .footerSeccion h3 { color: #4ade80; }
+.modo-oscuro .footerSeccion h4 { color: rgba(74, 222, 128, 0.5); }
 
 /* ── Párrafos ── */
 .footerSeccion p {
@@ -40,6 +51,8 @@
   display: flex;
   align-items: center;
 }
+
+.modo-oscuro .footerSeccion p { color: rgba(160, 210, 255, 0.6); }
 
 /* ── Lista de enlaces ── */
 .footerSeccion ul {
@@ -60,14 +73,18 @@
 }
 
 .footerSeccion li:hover {
-  color: var(--naranja);
+  color: #ffd750;
   transform: translateX(4px);
 }
 
 .footerSeccion li:hover svg {
   opacity: 1 !important;
-  stroke: var(--naranja);
+  stroke: #ffd750;
 }
+
+.modo-oscuro .footerSeccion li { color: rgba(160, 210, 255, 0.65); }
+.modo-oscuro .footerSeccion li:hover { color: #4ade80; }
+.modo-oscuro .footerSeccion li:hover svg { stroke: #4ade80; }
 
 /* Candado para rutas protegidas */
 .footer-auth-hint {
@@ -88,8 +105,8 @@
 }
 
 .modo-oscuro .footerCopy {
-  border-top-color: rgba(79, 119, 45, 0.15);
-  color: rgba(180, 210, 160, 0.35);
+  border-top-color: rgba(74, 222, 128, 0.1);
+  color: rgba(160, 210, 255, 0.35);
 }
 
 /* ── Responsive ── */
