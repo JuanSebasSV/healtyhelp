@@ -428,76 +428,6 @@
   border-radius: 16px;
 }
 
-/* ============ RESPONSIVE ============ */
-@media (max-width: 968px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  .categorias {
-    gap: 0.75rem;
-  }
-
-  .catBtn {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .filtroGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.75rem;
-  }
-
-  .filtroCard {
-    padding: 1rem;
-    min-height: 90px;
-  }
-
-  .filtroIcono {
-    font-size: 1.5rem;
-  }
-
-  .filtroNombre {
-    font-size: 0.85rem;
-  }
-
-  .filtroHeader h2 {
-    font-size: 1.4rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .filtroGrid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.5rem;
-  }
-
-  .filtroCard {
-    padding: 0.75rem;
-    min-height: 80px;
-  }
-
-  .filtroInfo {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filtroInfo p {
-    min-width: 100%;
-  }
-
-  .btnLimpiar {
-    width: 100%;
-  }
-
-  .filtroHeader {
-    padding: 1.5rem;
-  }
-
-  .filtroHeader h2 {
-    font-size: 1.2rem;
-  }
-}
 
 /* ============ PREMIUM BANNER ============ */
 .premiumBanner {
@@ -704,22 +634,119 @@
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 200, 80, 0.2);
 }
 
-/* Responsive */
-@media (max-width: 640px) {
+/* ============================================================
+   RESPONSIVE — Solo teléfonos (320px – 767px)
+   No afecta tablets ni escritorio
+   ============================================================ */
+
+/* ── Rango amplio: cualquier teléfono ── */
+@media (max-width: 767px) {
+
+  /* Hero */
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+
+  /* Categorías */
+  .categorias {
+    gap: 0.6rem;
+  }
+
+  .catBtn {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.85rem;
+  }
+
+  /* Filtro salud — header */
+  .filtroHeader {
+    padding: 1.25rem 1rem;
+  }
+
+  .filtroHeader h2 {
+    font-size: 1.15rem;
+  }
+
+  /* Espacio extra entre el texto y la flechita SVG del toggle */
+  .filtroToggle {
+    right: 1rem;
+    font-size: 1.2rem;
+    margin-left: 0.75rem;
+  }
+
+  /* Filtro salud — grid de condiciones: 3 columnas fijas en teléfonos */
+  .filtroGrid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem;
+  }
+
+  .filtroCard {
+    padding: 0.65rem 0.5rem;
+    min-height: 75px;
+    min-width: 0;        /* evita desbordamiento en grid estrecho */
+    gap: 0.45rem;
+  }
+
+  .filtroNombre {
+    font-size: 0.72rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  /* Filtro — fila info + limpiar */
+  .filtroInfo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtroInfo p {
+    min-width: 100%;
+    font-size: 0.88rem;
+  }
+
+  .btnLimpiar {
+    width: 100%;
+  }
+
+  .filtroContenido {
+    padding: 1rem;
+  }
+
+  /* Grid de recetas: gestionado por index.css */
+
+  /* Título sección recetas */
+  .recetasGrid h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Premium banner */
   .premiumBanner {
-    padding: 1.2rem 1.25rem;
+    padding: 1rem 1rem;
   }
 
   .premiumBanner__titulo {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .premiumBanner__desc {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
   }
 
   .premiumBanner__cta {
-    padding: 0.6rem 1.1rem;
-    font-size: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* ── Teléfonos muy pequeños (≤ 360px) ── */
+@media (max-width: 360px) {
+
+  /* Filtro: 2 columnas en lugar de 3 en pantallas muy estrechas */
+  .filtroGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtroHeader h2 {
+    font-size: 1rem;
   }
 }

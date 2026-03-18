@@ -33,6 +33,12 @@
   gap: 0.75rem;
   cursor: pointer;
   flex-shrink: 0;
+  transition: var(--transicion);
+}
+
+/* Hover en el logo completo — escala ambos y pone naranja */
+.navLogo:hover {
+  transform: scale(1.07);
 }
 
 .logoIcono {
@@ -47,18 +53,23 @@
   transition: var(--transicion); 
 }
 
-/* Hover SOLO en el icono */
-.logoIcono:hover svg { 
+/* Al hover del logo completo, el ícono se pone naranja */
+.navLogo:hover .logoIcono svg { 
   stroke: var(--naranja) !important;
 }
 
-/* Texto SIEMPRE blanco */
+/* Texto SIEMPRE blanco, se pone naranja en hover del logo */
 .logoTexto {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
   color: var(--blanco-puro) !important;
   font-family: 'Georgia', serif;
   pointer-events: none;
+  transition: var(--transicion);
+}
+
+.navLogo:hover .logoTexto {
+  color: var(--naranja) !important;
 }
 
 .modo-oscuro .logoTexto { 

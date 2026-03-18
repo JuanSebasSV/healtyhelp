@@ -692,26 +692,64 @@
 .resenas-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
 .resenas-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
 
-/* ── Responsive ── */
-@media (max-width: 968px) {
+/* ============================================================
+   RESPONSIVE — Solo teléfonos (320px – 767px)
+   No afecta tablets ni escritorio
+   ============================================================ */
+
+@media (max-width: 767px) {
+
+  /* Columnas → apiladas en teléfono */
   .modalContenedorReceta {
     flex-direction: column;
     height: auto;
     overflow-y: visible;
+    width: 100%;
   }
+
   .modalCol {
     height: auto;
     overflow-y: visible;
+    padding: 1.25rem;
   }
-  .modalIzq, .modalDer { flex: 1; }
-  .modalImg { height: 200px; }
+
+  .modalIzq,
+  .modalDer {
+    flex: 1;
+  }
+
+  .modalImg {
+    height: 180px;
+  }
+
+  /* Título del modal — reducir tamaño en teléfono */
+  .modalContenedorReceta h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Quitar padding-left en reseñas para ganar espacio */
   .resena-texto  { padding-left: 0; }
   .resena-votos  { padding-left: 0; }
   .resp-seccion  { padding-left: 0; }
+
+  /* Filtros de reseñas en columna */
+  .resenas-filtro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Votos — más compactos */
+  .votos-label { display: none; }
+  .btn-voto    { padding: 0.25rem 0.55rem; font-size: 0.78rem; }
 }
 
-@media (max-width: 480px) {
-  .resenas-filtro { flex-direction: column; align-items: flex-start; }
-  .votos-label    { display: none; }
-  .btn-voto       { padding: 0.25rem 0.55rem; font-size: 0.78rem; }
+@media (max-width: 400px) {
+  .modalContenedorReceta h2 {
+    font-size: 1.1rem;
+  }
+
+  .modalCol {
+    padding: 1rem;
+  }
 }

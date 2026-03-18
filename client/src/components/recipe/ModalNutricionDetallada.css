@@ -165,12 +165,84 @@
   white-space: nowrap;
 }
 
-@media (max-width: 968px) {
-  .nutriGridDetalle { grid-template-columns: 1fr; }
-  .modalNutriDetalle { padding: 1.25rem; }
-  .modalNutriHeader h2 { font-size: 1.2rem; }
+/* ============================================================
+   RESPONSIVE — Solo teléfonos (320px – 767px)
+   No afecta tablets ni escritorio
+   ============================================================ */
+
+@media (max-width: 767px) {
+
+  /* El wrapper ocupa todo el ancho con márgenes laterales */
+  .modalNutriWrapper {
+    width: calc(100% - 2rem);
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 18px;
+  }
+
+  .modalNutriDetalle {
+    padding: 1.1rem;
+  }
+
+  /* Título principal — reducir drásticamente */
+  .modalNutriHeader h2 {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .modalNutriHeader {
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  /* Botón volver — más compacto */
+  .btn-volver-nutri {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  /* Grid de nutrientes: 1 columna en móvil */
+  .nutriGridDetalle {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  /* Secciones */
+  .nutriDetalleSeccion h3 {
+    font-size: 1rem;
+  }
+
+  .nutriDetalleSeccion {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
+  /* Items individuales más compactos */
+  .nutriItemDetalle {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .nutriNombre {
+    font-size: 0.8rem;
+  }
+
+  .nutriValor {
+    font-size: 0.82rem;
+  }
 }
-@media (max-width: 640px) {
-  .modalNutriDetalle { padding: 1rem; }
-  .modalNutriHeader h2 { font-size: 1rem; }
+
+@media (max-width: 400px) {
+  .modalNutriWrapper {
+    width: calc(100% - 1rem);
+    border-radius: 14px;
+  }
+
+  .modalNutriDetalle {
+    padding: 0.85rem;
+  }
+
+  .modalNutriHeader h2 {
+    font-size: 0.9rem;
+  }
 }

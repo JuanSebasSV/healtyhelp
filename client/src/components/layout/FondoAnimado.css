@@ -52,6 +52,7 @@
 
 .ondaLinea2 {
   top: 50%;
+  /* Va en dirección contraria usando translateX positivo desde -50% a 0 */
   animation: ondaScroll2 25s linear infinite;
 }
 
@@ -60,31 +61,21 @@
   animation: ondaScroll3 30s linear infinite;
 }
 
+/* Todas usan -50% como punto de loop — garantiza continuidad infinita */
 @keyframes ondaScroll1 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
+/* Dirección contraria: de -50% a 0 — el SVG que mide 200% hace loop igual */
 @keyframes ondaScroll2 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(50%);
-  }
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes ondaScroll3 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-33.33%);
-  }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .modo-oscuro .ondaLinea1 path {

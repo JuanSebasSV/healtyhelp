@@ -54,3 +54,23 @@
 .modo-oscuro .vacio p {
   color: rgba(210, 235, 195, 0.8);
 }
+/* ============================================================
+   RESPONSIVE — Solo teléfonos (320px – 767px)
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .vista-favoritos {
+    padding: 1rem;
+  }
+
+  .vista-favoritos h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .vista-favoritos h1 {
+    font-size: 1.4rem;
+  }
+}

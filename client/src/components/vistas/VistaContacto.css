@@ -1,124 +1,167 @@
 /* VistaContacto.css */
 
+/* ============ CONTENEDOR PÁGINA ============ */
 .vista-contacto {
   animation: fadeIn 0.6s ease;
   max-width: 100%;
   padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--navbar-h) - var(--page-py) * 3);
+}
+
+/* ============ HEADER ============ */
+.contacto-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  flex-shrink: 0;
 }
 
 .vista-contacto h1 {
-  text-align: center;
   color: var(--blanco-puro);
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-family: 'Georgia', serif;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .contacto-subtitulo {
-  text-align: center;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 1.1rem;
-  margin-bottom: 3rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .modo-oscuro .contacto-subtitulo {
   color: rgba(210, 235, 195, 0.85);
 }
 
+/* ============ TARJETA PRINCIPAL ============ */
 .contacto-contenedor {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 100%;
+  max-width: 1100px;
+  width: 100%;
   margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  height: 75vh;
+  min-height: 600px;
 }
 
+/* ============ PANEL IZQUIERDO — foto + info items centrados ============ */
 .contacto-info {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 2.5rem 2rem;
+  background-image: url('/contacto-bg.jpg');
+  background-size: cover;
+  background-position: center center;
+  isolation: isolate;
 }
 
+/* Gradiente suave — foto visible arriba, oscuro en la zona de items */
+.contacto-info::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.18) 40%,
+    rgba(0, 0, 0, 0.42) 70%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+  z-index: 0;
+}
+
+.contacto-info > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Info items — translúcidos con blur, igual a la imagen objetivo ── */
 .info-item {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
-  padding: 1.5rem;
-  border-radius: 15px;
+  background: rgba(180, 165, 165, 0.2);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
   display: flex;
-  gap: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  align-items: center;
+  gap: 0.85rem;
   transition: var(--transicion);
 }
 
-.modo-oscuro .info-item {
-  background: rgba(15, 35, 20, 0.55);
-  border-color: rgba(79, 119, 45, 0.3);
-}
-
 .info-item:hover {
-  transform: translateX(-5px);
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.26);
   border-color: rgba(247, 127, 0, 0.45);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
-}
-
-.modo-oscuro .info-item:hover {
-  background: rgba(25, 55, 30, 0.65);
-  border-color: rgba(247, 127, 0, 0.4);
+  transform: translateX(4px);
 }
 
 .info-icono {
-  font-size: 2rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
 }
 
 .info-icono svg {
-  stroke: rgba(255, 255, 255, 0.9);
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
-}
-
-.modo-oscuro .info-icono svg {
-  stroke: rgba(180, 220, 160, 0.9);
+  stroke: var(--blanco-puro);
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+  width: 20px;
+  height: 20px;
 }
 
 .info-item h3 {
   color: var(--blanco-puro);
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .info-item p {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.83rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  margin: 0;
 }
 
-.modo-oscuro .info-item p {
-  color: rgba(210, 235, 195, 0.8);
-}
-
+/* ============ PANEL DERECHO — formulario ============ */
 .contacto-form {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background: rgba(45, 90, 50, 0.75);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2.5rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
 }
 
 .modo-oscuro .contacto-form {
-  background: rgba(10, 25, 15, 0.55);
-  border-color: rgba(79, 119, 45, 0.3);
+  background: rgba(10, 30, 15, 0.82);
+  border-left-color: rgba(79, 119, 45, 0.25);
 }
 
 .contacto-form h2 {
   color: var(--blanco-puro);
   margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  font-size: 1.65rem;
+  font-family: 'Georgia', serif;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .modo-oscuro .contacto-form h2 {
@@ -128,49 +171,102 @@
 .contacto-form input,
 .contacto-form textarea {
   width: 100%;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.08);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(60, 110, 65, 0.35);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-family: inherit;
   transition: var(--transicion);
   color: var(--blanco-puro);
+  box-sizing: border-box;
 }
 
 .contacto-form input::placeholder,
 .contacto-form textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .modo-oscuro .contacto-form input,
 .modo-oscuro .contacto-form textarea {
-  background: rgba(15, 35, 20, 0.4);
-  border-color: rgba(79, 119, 45, 0.3);
+  background: rgba(15, 40, 20, 0.45);
+  border-color: rgba(79, 119, 45, 0.35);
   color: rgba(210, 235, 195, 0.9);
 }
 
 .modo-oscuro .contacto-form input::placeholder,
 .modo-oscuro .contacto-form textarea::placeholder {
-  color: rgba(180, 210, 160, 0.35);
+  color: rgba(180, 210, 160, 0.4);
 }
 
 .contacto-form input:focus,
 .contacto-form textarea:focus {
   outline: none;
   border-color: var(--naranja);
-  background: rgba(255, 255, 255, 0.13);
+  background: rgba(70, 120, 75, 0.4);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
 }
 
 .contacto-form textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 110px;
+  margin-bottom: 1.1rem;
 }
 
-@media (max-width: 968px) {
+.contacto-form .btn-primario {
+  width: auto;
+  align-self: flex-start;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.92rem;
+}
+
+/* ============================================================
+   RESPONSIVE — Solo teléfonos (320px – 767px)
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .vista-contacto {
+    padding: 0 1rem;
+    min-height: unset;
+  }
+
+  .vista-contacto h1 { font-size: 1.9rem; }
+  .contacto-subtitulo { font-size: 0.95rem; }
+
   .contacto-contenedor {
     grid-template-columns: 1fr;
+    flex: unset;
+    min-height: unset;
   }
+
+  .contacto-info {
+    min-height: 320px;
+    justify-content: flex-end;
+    padding: 1.5rem;
+  }
+
+  .info-item h3 { font-size: 0.85rem; }
+  .info-item p  { font-size: 0.76rem; }
+
+  .contacto-form {
+    padding: 2rem 1.5rem;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .contacto-form h2 {
+    font-size: 1.35rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .contacto-form .btn-primario {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .contacto-info     { min-height: 260px; }
+  .vista-contacto h1 { font-size: 1.6rem; }
 }

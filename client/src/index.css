@@ -104,7 +104,7 @@ body {
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding-top:    calc(var(--navbar-h) + var(--page-py));
+  padding-top:    calc(var(--navbar-h) + 0.5rem);
   padding-bottom: calc(var(--page-py) * 2);
   padding-left:   var(--page-px);
   padding-right:  var(--page-px);
@@ -291,10 +291,18 @@ body {
 }
 
 /* ============ RESPONSIVE ============ */
-@media (max-width: 968px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
-}
-@media (max-width: 640px) {
-  .grid { grid-template-columns: 1fr; }
+
+/* Teléfonos grandes y medianos: 2 columnas */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
   .auth-card { padding: 1.5rem 1.25rem; }
+}
+
+/* Teléfonos muy pequeños (≤ 360px): 1 columna.
+   Se pone con min-width para NO afectar 375px+ */
+@media (max-width: 360px) {
+  .grid { grid-template-columns: 1fr !important; }
 }
