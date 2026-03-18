@@ -1,12 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
 
+// Imágenes del carrusel — carpeta /public/image/
+const imagenesHero = [
+  '/ensalada.jpg',
+  '/mani y frutas.jpg',
+  '/pechuga.jpg',
+  '/ajo.jpg',
+  '/variedad de comida.jpg',
+  '/verduras.jpg',
+];
+
 const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [filtroAbierto, setFiltroAbierto]   = useState(false);
+  const [imagenActual, setImagenActual]     = useState(0);
+  const transitandoRef = React.useRef(false);
   const navigate = useNavigate();
+
+  const cambiarImagen = (indice) => {
+    if (transitandoRef.current) return;
+    const nuevo = (indice + imagenesHero.length) % imagenesHero.length;
+    if (nuevo === imagenActual) return;
+    transitandoRef.current = true;
+    setImagenActual(nuevo);
+    setTimeout(() => { transitandoRef.current = false; }, 900);
+  };
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      cambiarImagen(imagenActual + 1);
+    }, 5000);
+    return () => clearInterval(intervalo);
+  }, [imagenActual]);
+
+  useEffect(() => {
+    const manejarTeclado = (e) => {
+      if (e.key === 'ArrowLeft')  cambiarImagen(imagenActual - 1);
+      if (e.key === 'ArrowRight') cambiarImagen(imagenActual + 1);
+    };
+    window.addEventListener('keydown', manejarTeclado);
+    return () => window.removeEventListener('keydown', manejarTeclado);
+  }, [imagenActual]);
 
   const categorias = [
     { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
@@ -49,11 +86,45 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   return (
     <div className="vistaInicio">
 
-      {/* ── Hero ── */}
-      <section className="hero">
-        <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
-        <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas. Cuida tu salud y disfruta de cada comida con confianza y sabor.</p>
-      </section>
+      {/* ── Hero con carrusel — sin padding lateral, borde a borde ── */}
+      <div className="hero">
+
+        {/* Todas las imágenes siempre montadas — solo la activa tiene opacity 1 */}
+        {imagenesHero.map((img, i) => (
+          <div
+            key={i}
+            className={`hero-capa ${i === imagenActual ? 'hero-capa--activa' : ''}`}
+            style={{ backgroundImage: `url('${img}')` }}
+          />
+        ))}
+
+        {/* Gradiente lateral */}
+        <div className="hero-gradiente" />
+
+        {/* Contenido */}
+        <div className="hero-texto">
+          <span className="hero-tag">🌿 Tu dieta, tu salud</span>
+          <h1>
+            Sabemos que llevar una dieta especial puede ser un reto,
+            pero no tienes que hacerlo solo.
+          </h1>
+          <p>
+            Aquí te ofrecemos recetas pensadas para ti, con ingredientes
+            fáciles de conseguir y preparaciones sencillas pero exquisitas.
+          </p>
+          <div className="hero-linea"></div>
+        </div>
+
+        <div className="hero-dots">
+          {imagenesHero.map((_, i) => (
+            <button
+              key={i}
+              className={`hero-dot ${i === imagenActual ? 'activo' : ''}`}
+              onClick={() => cambiarImagen(i)}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* ── Categorías ── */}
       <section className="categorias">

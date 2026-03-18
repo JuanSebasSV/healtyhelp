@@ -2,78 +2,167 @@
 
 .vistaInicio {
   animation: fadeIn 0.6s ease;
+  /* Cancelar solo el padding-top para pegar hero al navbar */
+  margin-top: calc(-1 * (var(--navbar-h) + 0.5rem));
 }
 
 /* ============ HERO ============ */
 .hero {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  margin-bottom: 3rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.6s ease;
   position: relative;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 580px;
   overflow: hidden;
-  isolation: isolate;
+  margin-bottom: 3rem;
+  animation: fadeIn 0.6s ease;
 }
 
-.hero::before {
-  content: '';
+/* Todas las capas apiladas — inactivas invisibles */
+.hero-capa {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80');
+  inset: 0;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
-  opacity: 1;
-  filter: brightness(0.5);
-}
-
-.modo-oscuro .hero {
-  background: rgba(20, 20, 20, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-.modo-oscuro .hero::before {
-  filter: brightness(0.5) contrast(1.1);
-}
-
-.hero h1,
-.hero p {
-  position: relative;
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  color: var(--blanco-puro) !important;
-  margin-bottom: 1.5rem;
+/* Solo la activa es visible */
+.hero-capa--activa {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Gradiente lateral — encima de las capas de imagen */
+.hero-gradiente {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    to right,
+    rgba(2, 13, 5, 0.55) 0%,
+    rgba(2, 13, 5, 0.2)  45%,
+    transparent          70%
+  );
+  pointer-events: none;
+}
+
+/* Panel glassmorphism con el texto */
+.hero-texto {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 4%;
+  transform: translateY(-50%);
+  width: 860px;
+  max-width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.5rem 2.8rem;
+  background: rgba(5, 25, 12, 0.52);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: background 0.35s ease, border-color 0.35s ease,
+              box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+.hero-texto:hover {
+  background: rgba(5, 25, 12, 0.72);
+  border-color: rgba(255, 215, 80, 0.45);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 215, 80, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(calc(-50% - 4px));
+}
+
+/* Tag dorado superior */
+.hero-tag {
+  display: inline-block;
+  background: rgba(255, 215, 80, 0.18);
+  border: 1px solid rgba(255, 215, 80, 0.5);
+  color: var(--dorado);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 50px;
+  width: fit-content;
+  letter-spacing: 0.05em;
+}
+
+.hero-texto h1 {
   font-family: 'Georgia', serif;
-  line-height: 1.3;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  color: var(--blanco-puro);
+  line-height: 1.35;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  margin: 0;
 }
 
-.modo-oscuro .hero h1 {
-  color: var(--naranja) !important;
-  text-shadow: none;
+.hero-texto p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  margin: 0;
 }
 
-.hero p {
-  font-size: 1.2rem;
-  color: var(--blanco-puro) !important;
-  margin-bottom: 2rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+/* Línea dorada decorativa */
+.hero-linea {
+  width: 40px;
+  height: 3px;
+  background: var(--dorado);
+  border-radius: 2px;
+}
+
+/* Dots del carrusel */
+.hero-dots {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  z-index: 4;
+  display: flex;
+  gap: 8px;
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hero-dot.activo {
+  background: var(--dorado);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Responsive hero */
+@media (max-width: 767px) {
+  .hero { height: 420px; }
+  .hero-texto {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 88%;
+    max-width: 88%;
+    padding: 1.75rem;
+  }
+  .hero-texto:hover {
+    transform: translate(-50%, calc(-50% - 4px));
+  }
 }
 
 /* ============ CATEGORÍAS — glassmorphism ============ */
