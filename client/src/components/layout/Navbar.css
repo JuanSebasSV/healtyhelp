@@ -1,7 +1,10 @@
-/* Navbar.css */
-
 .nav {
-  background: linear-gradient(90deg, #041d12 0%, #062518 10%, #208a60 60%, #062518 75%, #041d12 100%);
+  background: linear-gradient(90deg,
+    var(--nav-bg-inicio) 0%,
+    var(--nav-bg-intermedio) 10%,
+    var(--nav-bg-medio) 60%,
+    var(--nav-bg-intermedio) 75%,
+    var(--nav-bg-inicio) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -12,10 +15,6 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
-}
-
-.modo-oscuro .nav {
-  background: linear-gradient(90deg, #020508 0%, #040a12 20%, #071525 50%, #0c2040 75%, #102a52 100%);
 }
 
 .navContenedor {
@@ -29,7 +28,6 @@
   gap: 1rem;
 }
 
-/* ── Logo ── */
 .navLogo {
   display: flex;
   align-items: center;
@@ -40,18 +38,16 @@
 }
 .navLogo:hover { transform: scale(1.05); }
 
-.logoIcono svg { stroke: #ffffff; transition: var(--transicion); }
-.navLogo:hover .logoIcono svg { stroke: #ffd750; }
+.logoIcono svg { stroke: var(--blanco-puro); transition: var(--transicion); }
+.navLogo:hover .logoIcono svg { stroke: var(--color-acento); }
 
 .logoTexto {
   font-size: clamp(1.3rem, 2vw, 1.7rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--blanco-puro);
   font-family: 'Georgia', serif;
 }
-.modo-oscuro .logoTexto { color: #ffffff; }
 
-/* ── Hamburguesa ── */
 .navHamburguesa {
   display: none;
   flex-direction: column;
@@ -62,9 +58,13 @@
   padding: 0.5rem;
   flex-shrink: 0;
 }
-.navHamburguesa span { width: 25px; height: 3px; background: var(--blanco); border-radius: 3px; transition: var(--transicion); }
+.navHamburguesa span {
+  width: 25px; height: 3px;
+  background: var(--blanco-puro);
+  border-radius: 3px;
+  transition: var(--transicion);
+}
 
-/* ── Menú ── */
 .navMenu {
   display: flex;
   list-style: none;
@@ -72,20 +72,25 @@
   align-items: center;
   flex-wrap: nowrap;
 }
-.navMenu li { color: var(--blanco); cursor: pointer; font-weight: 500; transition: var(--transicion); position: relative; white-space: nowrap; }
-.navMenu li:not(:has(button)):hover { color: #ffd750; }
+.navMenu li {
+  color: var(--blanco-puro);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transicion);
+  position: relative;
+  white-space: nowrap;
+}
+.navMenu li:not(:has(button)):hover { color: var(--color-acento); }
 .navMenu li:not(:has(button))::after {
   content: '';
   position: absolute;
   bottom: -5px; left: 0;
   width: 0; height: 2px;
-  background: #ffd750;
+  background: var(--color-acento);
   transition: var(--transicion);
 }
 .navMenu li:not(:has(button)):hover::after { width: 100%; }
-.modo-oscuro .navMenu li { color: #ffffff !important; }
 
-/* ── Botón tema ── */
 .btnTema {
   padding: 0.5rem;
   border: none;
@@ -99,20 +104,19 @@
   align-items: center;
   justify-content: center;
 }
-.btnTema svg { stroke: var(--blanco); transition: var(--transicion); }
-.modo-oscuro .btnTema svg { stroke: #4ade80; }
+.btnTema svg { stroke: var(--blanco-puro); transition: var(--transicion); }
+.modo-oscuro .btnTema svg { stroke: var(--color-acento-secundario); }
 .btnTema:hover { transform: scale(1.1) rotate(20deg); background: rgba(255, 255, 255, 0.2); }
 .modo-oscuro .btnTema { background: rgba(5, 8, 17, 0.5); }
 .modo-oscuro .btnTema:hover { background: rgba(5, 8, 17, 0.7); }
 
-/* ── Botones sesión ── */
 .btn-primario {
   padding: 0.6rem 1.3rem;
   background: rgba(255, 215, 80, 0.2) !important;
   backdrop-filter: blur(10px);
   border: 1.5px solid rgba(255, 215, 80, 0.55) !important;
   border-radius: 50px !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
@@ -120,12 +124,13 @@
   box-shadow: 0 2px 12px rgba(255, 215, 80, 0.2);
 }
 .btn-primario:hover {
-  background: #ffd750 !important;
-  border-color: #ffd750 !important;
-  color: #1a1a00 !important;
+  background: var(--color-acento) !important;
+  border-color: var(--color-acento) !important;
+  color: var(--color-acento-texto) !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 215, 80, 0.4) !important;
 }
+
 .btn-secundario {
   padding: 0.6rem 1.3rem;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -141,11 +146,10 @@
 .btn-secundario:hover {
   background: rgba(255, 255, 255, 0.16) !important;
   border-color: rgba(255, 215, 80, 0.55) !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   transform: translateY(-2px);
 }
 
-/* ── Usuario / Avatar ── */
 .navUsuario {
   display: flex;
   align-items: center;
@@ -157,8 +161,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: var(--transicion);
 }
-.navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: #ffd750; }
-.modo-oscuro .navUsuario:hover { border-color: #4ade80; }
+.navUsuario:hover { background: rgba(255, 255, 255, 0.18); border-color: var(--color-acento); }
+.modo-oscuro .navUsuario:hover { border-color: var(--color-acento-secundario); }
 
 .nav-avatar-mini {
   position: relative;
@@ -178,7 +182,7 @@
 .nav-avatar-iniciales {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #071525, #102a52);
+  background: linear-gradient(135deg, var(--oscuro-avatar-inicio), var(--oscuro-avatar-fin));
   display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; font-weight: 800; color: white;
   border: 2px solid rgba(74, 222, 128, 0.5);
@@ -186,19 +190,18 @@
 .nav-admin-dot {
   position: absolute; bottom: 0; right: 0;
   width: 9px; height: 9px;
-  background: #4ade80; border-radius: 50%;
-  border: 1.5px solid #071525; z-index: 2;
+  background: var(--color-acento-secundario); border-radius: 50%;
+  border: 1.5px solid var(--oscuro-avatar-inicio); z-index: 2;
 }
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
 
-/* ── Admin btn ── */
 .nav-admin-btn {
   background: rgba(255, 215, 80, 0.15) !important;
   backdrop-filter: blur(10px);
   border: 1.5px solid rgba(255, 215, 80, 0.4) !important;
   border-radius: 8px !important;
-  color: #ffd750 !important;
+  color: var(--color-acento) !important;
   padding: 0.45rem 1rem !important;
   font-weight: 700 !important;
   transition: var(--transicion) !important;
@@ -206,20 +209,18 @@
 .nav-admin-btn:hover {
   background: rgba(255, 215, 80, 0.28) !important;
   border-color: rgba(255, 215, 80, 0.65) !important;
-  color: #ffffff !important;
+  color: var(--blanco-puro) !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(255, 215, 80, 0.3);
 }
 .nav-admin-btn::after { display: none !important; }
 
-/* ============ RESPONSIVE ============ */
 @media (max-width: 968px) {
   .navHamburguesa { display: flex; }
-
   .navMenu {
     position: absolute;
     top: 100%; left: 0; right: 0;
-    background: linear-gradient(180deg, #0a3d18 0%, #020d05 100%);
+    background: linear-gradient(180deg, var(--menu-mobile-inicio) 0%, var(--menu-mobile-fin) 100%);
     backdrop-filter: blur(20px);
     flex-direction: column;
     padding: clamp(1rem, 3vw, 2rem) var(--page-px);
@@ -230,10 +231,5 @@
     transition: var(--transicion);
     z-index: 999;
   }
-
-  .modo-oscuro .navMenu {
-    background: linear-gradient(180deg, #071525 0%, #050811 100%);
-  }
-
   .navMenu.activo { transform: translateY(0); opacity: 1; pointer-events: all; }
 }

@@ -9,26 +9,121 @@
 
 /* ============ VARIABLES CSS ============ */
 :root {
+  /* ── Variables del proyecto compartido ── */
   --verde-bosque: #1a4d2e;
   --verde-hoja:   #4f772d;
   --naranja:      #f77f00;
+  --naranja-oscuro: #d66e00;
   --blanco:       #ffffff;
+  --blanco-puro:  #ffffff;
   --gris-claro:   #f8f9fa;
   --gris-medio:   #dee2e6;
   --gris-oscuro:  #2d2d2d;
   --negro:        #000000;
+  --ambar:        #f59e0b;
+  --rojo:         #dc2626;
+  --rojo-texto:   #ff8a8a;
+  --naranja-hover: #ffb347;
+  --naranja-medio: #ff8c42;
+  --verde-btn:    #a7d588;
+  --verde-exito:  #6fcf7c;
+  --verde-texto-oscuro: #d2ebc3;
+  --verde-texto-claro:  #b4dca0;
+  --dorado:       #ffd47a;
+  --amarillo:     #fcd34d;
+  --amarillo-intenso: #fbbf24;
+  --verde-menta:  #6ee7b7;
+  --verde-progreso: #34d399;
+  --verde-progreso-oscuro: #059669;
+  --verde-profundo: #0a1a0f;
+  --rojo-claro:   #f87171;
+  --rojo-rosa:    #fca5a5;
+  --naranja-claro: #fb923c;
+  --naranja-suave: #fdba74;
+  --azul-claro:   #93c5fd;
+  --azul-medio:   #60a5fa;
+  --azul-suave:   #a5b4fc;
+  --rosa:         #f9a8d4;
+  --indigo:       #818cf8;
+  --indigo-claro: #c7d2fe;
+  --indigo-medio: #667eea;
+  --purpura:      #764ba2;
+  --rojo-eliminar: #c0392b;
+  --rojo-medio:   #ef4444;
+  --verde-lima:   #4ade80;
+  --verde-exito-texto: #a8e063;
+  --verde-google: #34a853;
   --sombra:       0 4px 6px rgba(0, 0, 0, 0.1);
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
-
   --page-px:  clamp(1rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
   --page-max: 1400px;
-  --navbar-h: 94px;
+  --navbar-h: 64px;
+
+  /* ── Navbar ── */
+  --nav-bg-inicio:          #041d12;
+  --nav-bg-intermedio:      #062518;
+  --nav-bg-medio:           #208a60;
+  --nav-bg-fin:             #041d12;
+
+  /* ── Fondo principal ── */
+  --fondo-inicio:           #0c4b28;
+  --fondo-medio:            #0f5e32;
+  --fondo-fin:              #209961;
+
+  /* ── Filtro de salud ── */
+  --filtro-bg-inicio:       #07301e;
+  --filtro-bg-intermedio:   #083120;
+  --filtro-bg-medio:        #187c54;
+  --filtro-bg-acento:       #2bc27e;
+  --filtro-bg-fin:          #29b96a;
+
+  /* ── Footer ── */
+  --footer-bg-inicio:       #07301e;
+  --footer-bg-intermedio:   #083120;
+  --footer-bg-medio:        #187c54;
+  --footer-bg-acento:       #229963;
+  --footer-bg-fin:          #16683b;
+
+  /* ── Menú mobile ── */
+  --menu-mobile-inicio:     #0a3d18;
+  --menu-mobile-fin:        #020d05;
+
+  /* ── Modo oscuro (azul noche) ── */
+  --oscuro-nav-inicio:      #020508;
+  --oscuro-nav-medio:       #071525;
+  --oscuro-nav-fin:         #102a52;
+  --oscuro-fondo-inicio:    #050811;
+  --oscuro-fondo-medio:     #080f1a;
+  --oscuro-fondo-fin:       #0c1628;
+  --oscuro-avatar-inicio:   #071525;
+  --oscuro-avatar-fin:      #102a52;
+
+  /* ── Acentos ── */
+  --color-acento:           #ffd750;
+  --color-acento-texto:     #1a1a00;
+  --color-acento-secundario: #4ade80;
+
+  /* ── Hero ── */
+  --hero-overlay-inicio:    rgba(2, 13, 5, 0.55);
+  --hero-overlay-medio:     rgba(2, 13, 5, 0.2);
+  --hero-glass-bg:          rgba(5, 25, 12, 0.52);
+  --hero-glass-bg-hover:    rgba(5, 25, 12, 0.72);
+
+  /* ── Ondas ── */
+  --onda-primaria:          rgba(37, 168, 62, 0.4);
+  --onda-secundaria:        rgba(10, 61, 24, 0.5);
+  --onda-terciaria:         rgba(249, 168, 37, 0.2);
+
+  /* ── Robot ── */
+  --robot-header-bg:        rgba(26, 77, 46, 0.7);
+  --robot-boton-bg:         rgba(247, 127, 0, 0.85);
 }
 
 /* ============ VARIABLES MODO OSCURO ============ */
 .modo-oscuro {
+  /* ── Overrides generales ── */
   --verde-bosque: #2d5a3d;
   --verde-hoja:   #6b9e4a;
   --naranja:      #ff9a3c;
@@ -39,6 +134,52 @@
   --negro:        #ffffff;
   --sombra:       0 4px 6px rgba(0, 0, 0, 0.4);
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
+
+  /* ── Navbar ── */
+  --nav-bg-inicio:          #020508;
+  --nav-bg-intermedio:      #071525;
+  --nav-bg-medio:           #071525;
+  --nav-bg-fin:             #102a52;
+
+  /* ── Fondo principal ── */
+  --fondo-inicio:           #050811;
+  --fondo-medio:            #080f1a;
+  --fondo-fin:              #0c1628;
+
+  /* ── Filtro de salud ── */
+  --filtro-bg-inicio:       rgba(1, 9, 3, 0.95);
+  --filtro-bg-intermedio:   rgba(4, 16, 8, 0.95);
+  --filtro-bg-medio:        rgba(6, 39, 43, 0.95);
+  --filtro-bg-acento:       rgba(20, 80, 85, 0.9);
+  --filtro-bg-fin:          rgba(15, 73, 77, 0.9);
+
+  /* ── Footer ── */
+  --footer-bg-inicio:       #020508;
+  --footer-bg-intermedio:   #040a12;
+  --footer-bg-medio:        #071525;
+  --footer-bg-acento:       #0c2040;
+  --footer-bg-fin:          #102a52;
+
+  /* ── Menú mobile ── */
+  --menu-mobile-inicio:     #071525;
+  --menu-mobile-fin:        #050811;
+
+  /* ── Acentos ── */
+  --color-acento-secundario: #4ade80;
+
+  /* ── Hero ── */
+  --hero-overlay-inicio:    rgba(2, 8, 18, 0.65);
+  --hero-overlay-medio:     rgba(2, 8, 18, 0.25);
+  --hero-glass-bg:          rgba(5, 15, 30, 0.55);
+  --hero-glass-bg-hover:    rgba(5, 15, 30, 0.75);
+
+  /* ── Ondas ── */
+  --onda-primaria:          rgba(74, 222, 128, 0.3);
+  --onda-secundaria:        rgba(56, 189, 248, 0.2);
+  --onda-terciaria:         rgba(79, 130, 220, 0.15);
+
+  /* ── Robot ── */
+  --robot-header-bg:        rgba(5, 8, 17, 0.9);
 }
 
 /* ============ BASE ============ */
@@ -69,12 +210,11 @@ body {
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding-top:    calc(var(--navbar-h) + var(--page-py));
+  padding-top:    calc(var(--navbar-h) + 0.5rem);
   padding-bottom: calc(var(--page-py) * 2);
   padding-left:   var(--page-px);
   padding-right:  var(--page-px);
   min-height: calc(100vh - var(--navbar-h));
-  overflow: visible; 
 }
 
 /* ============ GRID COMPARTIDO ============ */
@@ -102,18 +242,14 @@ body {
 .modo-oscuro .modal-overlay { background: rgba(0, 0, 0, 0.9); }
 
 @media (max-width: 968px) {
-  .modal-overlay {
-    align-items: flex-start;
-    overflow-y: auto;
-  }
+  .modal-overlay { align-items: flex-start; overflow-y: auto; }
 }
 
 .modal-cerrar {
   position: fixed;
   top:   clamp(0.75rem, 2vw, 2rem);
   right: clamp(0.75rem, 2vw, 2rem);
-  width: 46px;
-  height: 46px;
+  width: 46px; height: 46px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.18);
@@ -124,26 +260,14 @@ body {
   transition: var(--transicion);
   z-index: 2001;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
 .modal-cerrar--izq {
-  right: unset;
-  left: clamp(0.25rem, 1vw, 0.75rem);
-  width: 36px;
-  height: 36px;
+  right: unset; left: clamp(0.25rem, 1vw, 0.75rem);
+  width: 36px; height: 36px;
 }
-.modal-cerrar--izq svg {
-  width: 14px;
-  height: 14px;
-}
-.modal-cerrar svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--blanco);
-  transition: stroke 0.3s ease;
-}
+.modal-cerrar--izq svg { width: 14px; height: 14px; }
+.modal-cerrar svg { width: 18px; height: 18px; stroke: var(--blanco); transition: stroke 0.3s ease; }
 .modal-cerrar:hover {
   background: rgba(247, 127, 0, 0.85);
   border-color: rgba(247, 127, 0, 0.5);
@@ -151,10 +275,7 @@ body {
   box-shadow: 0 6px 24px rgba(247, 127, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 .modal-cerrar:hover svg { stroke: var(--blanco); }
-.modo-oscuro .modal-cerrar {
-  background: rgba(20, 40, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.35);
-}
+.modo-oscuro .modal-cerrar { background: rgba(20, 40, 25, 0.55); border-color: rgba(79, 119, 45, 0.35); }
 .modo-oscuro .modal-cerrar svg { stroke: rgba(255, 255, 255, 0.85); }
 .modo-oscuro .modal-cerrar:hover { background: rgba(247, 127, 0, 0.85); }
 .modo-oscuro .modal-cerrar:hover svg { stroke: var(--blanco); }
@@ -162,9 +283,7 @@ body {
 /* ============ AUTH ============ */
 .vista-auth {
   min-height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   padding: clamp(1rem, 3vw, 2rem);
 }
 
@@ -172,8 +291,7 @@ body {
   background: var(--blanco);
   padding: clamp(1.5rem, 4vw, 3rem);
   border-radius: 20px;
-  max-width: 450px;
-  width: 100%;
+  max-width: 450px; width: 100%;
   box-shadow: var(--sombra-hover);
   animation: fadeIn 0.6s ease;
 }
@@ -214,17 +332,14 @@ body {
 .btn-primario,
 .btn-secundario {
   padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transicion);
-  font-size: 1rem;
+  border: none; border-radius: 50px;
+  font-weight: 600; cursor: pointer;
+  transition: var(--transicion); font-size: 1rem;
 }
 .btn-primario { background: var(--naranja); color: var(--blanco); box-shadow: var(--sombra); }
-.btn-primario:hover { background: #d66e00; transform: translateY(-2px); box-shadow: var(--sombra-hover); }
-.btn-secundario { background: transparent; color: #ffffff; border: 2px solid white; }
-.btn-secundario:hover { background: #ffffff; color: #d66e00; }
+.btn-primario:hover { background: var(--naranja-oscuro); transform: translateY(-2px); box-shadow: var(--sombra-hover); }
+.btn-secundario { background: transparent; color: var(--blanco-puro); border: 2px solid white; }
+.btn-secundario:hover { background: var(--blanco-puro); color: var(--naranja-oscuro); }
 
 /* ============ OJO EN INPUTS ============ */
 .inputWrapper { position: relative; display: flex; align-items: center; }
@@ -257,10 +372,14 @@ body {
 }
 
 /* ============ RESPONSIVE ============ */
-@media (max-width: 968px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
-}
-@media (max-width: 640px) {
-  .grid { grid-template-columns: 1fr; }
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
   .auth-card { padding: 1.5rem 1.25rem; }
+}
+
+@media (max-width: 360px) {
+  .grid { grid-template-columns: 1fr !important; }
 }

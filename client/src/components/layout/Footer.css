@@ -1,15 +1,17 @@
-/* Footer.css */
-
 .footer {
-  background: linear-gradient(90deg, #07301e 0%, #083120 10%, #187c54 50%, #229963 75%, #16683b 100%);
-  color: var(--blanco);
+  background: linear-gradient(90deg,
+    var(--footer-bg-inicio) 0%,
+    var(--footer-bg-intermedio) 10%,
+    var(--footer-bg-medio) 50%,
+    var(--footer-bg-acento) 75%,
+    var(--footer-bg-fin) 100%);
+  color: var(--blanco-puro);
   padding: clamp(2rem, 4vw, 3rem) var(--page-px) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);
   width: 100%;
 }
 
 .modo-oscuro .footer {
-  background: linear-gradient(90deg, #020508 0%, #040a12 20%, #071525 50%, #0c2040 75%, #102a52 100%);
   border-top: 1px solid rgba(74, 222, 128, 0.1);
 }
 
@@ -22,11 +24,10 @@
   margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
-/* ── Títulos ── */
 .footerSeccion h3 {
   font-size: 1.15rem;
   font-family: 'Georgia', serif;
-  color: #ffd750;
+  color: var(--color-acento);
   margin-bottom: 0.85rem;
 }
 
@@ -39,10 +40,9 @@
   margin-bottom: 1rem;
 }
 
-.modo-oscuro .footerSeccion h3 { color: #4ade80; }
+.modo-oscuro .footerSeccion h3 { color: var(--color-acento-secundario); }
 .modo-oscuro .footerSeccion h4 { color: rgba(74, 222, 128, 0.5); }
 
-/* ── Párrafos ── */
 .footerSeccion p {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.9rem;
@@ -54,12 +54,7 @@
 
 .modo-oscuro .footerSeccion p { color: rgba(160, 210, 255, 0.6); }
 
-/* ── Lista de enlaces ── */
-.footerSeccion ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.footerSeccion ul { list-style: none; padding: 0; margin: 0; }
 
 .footerSeccion li {
   margin-bottom: 0.65rem;
@@ -72,28 +67,15 @@
   gap: 0.1rem;
 }
 
-.footerSeccion li:hover {
-  color: #ffd750;
-  transform: translateX(4px);
-}
-
-.footerSeccion li:hover svg {
-  opacity: 1 !important;
-  stroke: #ffd750;
-}
+.footerSeccion li:hover { color: var(--color-acento); transform: translateX(4px); }
+.footerSeccion li:hover svg { opacity: 1 !important; stroke: var(--color-acento); }
 
 .modo-oscuro .footerSeccion li { color: rgba(160, 210, 255, 0.65); }
-.modo-oscuro .footerSeccion li:hover { color: #4ade80; }
-.modo-oscuro .footerSeccion li:hover svg { stroke: #4ade80; }
+.modo-oscuro .footerSeccion li:hover { color: var(--color-acento-secundario); }
+.modo-oscuro .footerSeccion li:hover svg { stroke: var(--color-acento-secundario); }
 
-/* Candado para rutas protegidas */
-.footer-auth-hint {
-  font-size: 0.72rem;
-  margin-left: 0.4rem;
-  opacity: 0.5;
-}
+.footer-auth-hint { font-size: 0.72rem; margin-left: 0.4rem; opacity: 0.5; }
 
-/* ── Copyright ── */
 .footerCopy {
   max-width: 1200px;
   margin: 0 auto;
@@ -109,7 +91,6 @@
   color: rgba(160, 210, 255, 0.35);
 }
 
-/* ── Responsive ── */
 @media (max-width: 640px) {
   .footerContenido { grid-template-columns: 1fr; }
 }
