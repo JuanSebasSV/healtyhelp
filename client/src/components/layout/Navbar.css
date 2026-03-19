@@ -206,12 +206,7 @@
   font-size: 0.65rem; font-weight: 800; color: var(--blanco-puro);
   border: 2px solid rgba(255, 255, 255, 0.6);
 }
-.nav-admin-dot {
-  position: absolute; bottom: 0; right: 0;
-  width: 9px; height: 9px;
-  background: var(--naranja); border-radius: 50%;
-  border: 1.5px solid rgba(26, 77, 46, 0.9); z-index: 2;
-}
+
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
 

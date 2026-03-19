@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
 
-// Imágenes del carrusel — carpeta /public/image/
+// Imágenes del carrusel — carpeta /public/
 const imagenesHero = [
   '/ensalada.jpg',
   '/mani y frutas.jpg',
@@ -12,6 +12,14 @@ const imagenesHero = [
   '/variedad de comida.jpg',
   '/verduras.jpg',
 ];
+
+// Precargar TODAS las imágenes inmediatamente al importar el módulo
+// Esto ocurre antes de que el componente monte por primera vez
+const _preloaded = imagenesHero.map(src => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
 
 const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
@@ -86,7 +94,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   return (
     <div className="vistaInicio">
 
-      {/* ── Hero con carrusel — sin padding lateral, borde a borde ── */}
+      {/* ── Hero con carrusel — borde a borde ── */}
       <div className="hero">
 
         {/* Todas las imágenes siempre montadas — solo la activa tiene opacity 1 */}
@@ -126,7 +134,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         </div>
       </div>
 
-      {/* ── Categorías ── */}
       <section className="categorias">
         {categorias.map(cat => (
           <button

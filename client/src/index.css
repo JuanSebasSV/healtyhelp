@@ -81,6 +81,10 @@ html, body {
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* Suavizado de fuentes — evita texto pixelado */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar { display: none; }
@@ -90,6 +94,15 @@ body {
   color: var(--gris-oscuro);
   background: transparent;
   line-height: 1.6;
+  /* Evitar pixelado por composición GPU */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* SVGs nítidos en todos los monitores */
+svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
 }
 
 /* ============ ESTRUCTURA APP ============ */
@@ -109,6 +122,15 @@ body {
   padding-left:   var(--page-px);
   padding-right:  var(--page-px);
   min-height: calc(100vh - var(--navbar-h));
+}
+
+/* Sin padding-top cuando es la página de inicio — el hero ocupa ese espacio */
+/* Cuando el contenido principal tiene la vista de inicio,
+   cancelar su padding-top para que el hero toque el navbar */
+.contenido-principal:has(.vistaInicio) {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* ============ GRID COMPARTIDO ============ */
@@ -305,4 +327,67 @@ body {
    Se pone con min-width para NO afectar 375px+ */
 @media (max-width: 360px) {
   .grid { grid-template-columns: 1fr !important; }
+}
+
+
+/* ============================================================
+   RENDERIZADO GLOBAL — aplica a todos los componentes
+   Cualquier archivo nuevo hereda estas mejoras automáticamente
+   ============================================================ */
+
+/* Fuentes suaves en todos los elementos */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* En pantallas estándar (1x) el subpixel es más nítido */
+@media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 96dpi) {
+  * {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+  }
+}
+
+/* SVGs nítidos globalmente */
+svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
+}
+
+/* Cualquier elemento con transform animado — capa GPU propia */
+*[class*="animado"],
+*[class*="hero"],
+*[class*="fondo"],
+*[class*="onda"] {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Elementos con will-change declarado — preparar capa antes del evento */
+[style*="transform"],
+[class*="tarjeta"],
+[class*="card"],
+[class*="modal"],
+[class*="btn"] {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Elementos con backdrop-filter — aislar para no pixelar vecinos */
+[class*="glass"],
+[class*="blur"],
+[class*="navbar"],
+[class*="nav-"],
+[class*="modal"] {
+  isolation: isolate;
+}
+
+/* will-change en elementos que sabemos que se animan */
+[class*="tarjeta"]:not(:has(*)):hover,
+[class*="btn"]:hover,
+[class*="catBtn"]:hover,
+[class*="filtroCard"]:hover {
+  will-change: transform;
 }

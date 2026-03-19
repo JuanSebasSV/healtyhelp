@@ -1,9 +1,7 @@
 /* VistaInicio.css */
 
 .vistaInicio {
-  animation: fadeIn 0.6s ease;
-  /* Cancelar solo el padding-top para pegar hero al navbar */
-  margin-top: calc(-1 * (var(--navbar-h) + 0.5rem));
+  /* Sin animation aquí — causaba layout shift en el hero durante el fadeIn */
 }
 
 /* ============ HERO ============ */
@@ -15,8 +13,9 @@
   height: 580px;
   overflow: hidden;
   margin-bottom: 3rem;
-  animation: fadeIn 0.6s ease;
 }
+
+/* Hero siempre visible — el fadeIn del padre causaba el layout shift */
 
 /* Todas las capas apiladas — inactivas invisibles */
 .hero-capa {
@@ -441,14 +440,31 @@
 
 .filtroCard.activo .filtroIcono svg {
   stroke: var(--blanco-puro);
+  fill: var(--blanco-puro);
+  color: var(--blanco-puro);
 }
 
+/* Modo oscuro — forzar verde en TODOS los SVGs del filtro
+   tanto los que usan stroke como los que usan fill */
 .modo-oscuro .filtroIcono svg {
-  stroke: rgba(180, 220, 160, 0.85);
+  stroke: rgba(180, 220, 160, 0.85) !important;
+  fill: rgba(180, 220, 160, 0.85) !important;
+  color: rgba(180, 220, 160, 0.85) !important;
+}
+
+/* Excepción: los que tienen fill="none" no deben rellenarse */
+.modo-oscuro .filtroIcono svg[fill="none"] {
+  fill: none !important;
 }
 
 .modo-oscuro .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco-puro);
+  stroke: var(--blanco-puro) !important;
+  fill: var(--blanco-puro) !important;
+  color: var(--blanco-puro) !important;
+}
+
+.modo-oscuro .filtroCard.activo .filtroIcono svg[fill="none"] {
+  fill: none !important;
 }
 
 .filtroNombre {
