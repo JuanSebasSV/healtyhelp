@@ -2,28 +2,36 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  timeout: 15000
+  headers: { 'Content-Type': 'application/json' }
 });
 
-// Agregar token automáticamente
+// Interceptor: agregar token automáticamente
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ✅ Sin redirección automática — AuthContext maneja los 401
+// Interceptor: manejar errores de autenticación globalmente
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Solo redirigir si no estamos ya en login/register/recuperar
+      const ruta = window.location.pathname;
+      const rutasPublicas = ['/login', '/registro', '/recuperar', '/reset-password', '/verificar-email', '/'];
+      const esPublica = rutasPublicas.some(r => ruta.startsWith(r));
+      if (!esPublica) {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default api;

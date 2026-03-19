@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { AuthContext } from './authContext';
 import api from '../api/axios';
@@ -7,50 +7,95 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuth();
+  const limpiarSesion = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
   }, []);
 
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const token = localStorage.getItem('token');
-    if (!token) { setLoading(false); return; }
 
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    // Verificar expiración del token localmente
     try {
       const decoded = jwtDecode(token);
       if (decoded.exp * 1000 < Date.now()) {
-        localStorage.removeItem('token');
-        setUser(null);
+        limpiarSesion();
         setLoading(false);
         return;
       }
+    } catch {
+      limpiarSesion();
+      setLoading(false);
+      return;
+    }
+
+    // Verificar con el servidor que el usuario aún existe
+    try {
       const { data } = await api.get('/auth/me');
       setUser(data.user);
     } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        setUser(null);
+      // 401 = usuario no existe o token inválido → cerrar sesión
+      if (error.response?.status === 401 || error.response?.status === 404) {
+        limpiarSesion();
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [limpiarSesion]);
+
+  // Verificar al montar
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Verificar cada 2 minutos que el usuario sigue existiendo
+  // Esto detecta cuando la cuenta fue eliminada desde otra ventana
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      const token = localStorage.getItem('token');
+      if (token && user) checkAuth();
+    }, 2 * 60 * 1000);
+    return () => clearInterval(intervalo);
+  }, [user, checkAuth]);
+
+  // Detectar cambios en localStorage desde otras pestañas
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === 'token' && !e.newValue) {
+        // Token fue eliminado desde otra pestaña → cerrar sesión
+        setUser(null);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const register = async (userData) => {
     try {
       const { data } = await api.post('/auth/register', userData);
-      // El registro ahora requiere verificación — no hay token todavía
-      return {
-        success: true,
-        needsVerification: data.needsVerification,
-        email: data.email
-      };
+      // No guardar token — requiere verificación de email primero
+      if (data.needsVerification) {
+        return { success: true, needsVerification: true, email: data.email };
+      }
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        setUser(data.user);
+      }
+      return { success: true };
     } catch (error) {
-      const data = error.response?.data;
+      const err = error.response?.data;
       return {
         success: false,
-        error: data?.error || 'Error en registro',
-        needsVerification: data?.needsVerification,
-        email: data?.email
+        error: err?.error || 'Error en registro',
+        needsVerification: err?.needsVerification,
+        email: err?.email
       };
     }
   };
@@ -62,43 +107,20 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return { success: true };
     } catch (error) {
-      const data = error.response?.data;
-      const status = error.response?.status;
-
-      // Cuenta bloqueada
-      if (status === 423) {
-        return {
-          success: false,
-          locked: true,
-          lockUntil: data?.lockUntil,
-          error: data?.error
-        };
-      }
-
-      // Necesita verificación
-      if (data?.needsVerification) {
-        return {
-          success: false,
-          needsVerification: true,
-          email: data?.email,
-          error: data?.error
-        };
-      }
-
+      const err = error.response?.data;
       return {
         success: false,
-        error: data?.error || 'Error en login',
-        attemptsLeft: data?.attemptsLeft
+        error: err?.error || 'Error en login',
+        locked: err?.locked,
+        lockUntil: err?.lockUntil,
+        needsVerification: err?.needsVerification,
+        email: err?.email,
+        attemptsLeft: err?.attemptsLeft
       };
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('accountLockedUntil');
-    setUser(null);
-  };
+  const logout = () => limpiarSesion();
 
   const forgotPassword = async (email) => {
     try {

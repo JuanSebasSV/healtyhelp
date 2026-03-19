@@ -42,7 +42,9 @@ router.get('/me', protect, async (req, res) => {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
-        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
+        isSuperAdmin: user.isSuperAdmin || false,
+        age: user.age, weight: user.weight, height: user.height,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -68,10 +70,13 @@ router.get('/google/callback',
 // ===== ACTUALIZAR PERFIL =====
 router.put('/profile', protect, async (req, res) => {
   try {
-    const { name, password } = req.body;
+    const { name, password, age, weight, height } = req.body;
     const user = await User.findById(req.user._id).select('+password');
 
-    if (name) user.name = name.trim();
+    if (name)   user.name   = name.trim();
+    if (age)    user.age    = parseInt(age, 10);
+    if (weight) user.weight = parseFloat(weight);
+    if (height) user.height = parseFloat(height);
 
     if (password) {
       if (user.googleId && !user.password) {
@@ -88,7 +93,9 @@ router.put('/profile', protect, async (req, res) => {
       user: {
         id: updatedUser._id, name: updatedUser.name, email: updatedUser.email,
         role: updatedUser.role, avatar: updatedUser.avatar,
-        googleId: updatedUser.googleId, isVerified: updatedUser.isVerified, createdAt: updatedUser.createdAt
+        googleId: updatedUser.googleId, isVerified: updatedUser.isVerified,
+        age: updatedUser.age, weight: updatedUser.weight, height: updatedUser.height,
+        isSuperAdmin: updatedUser.isSuperAdmin || false, createdAt: updatedUser.createdAt
       },
       message: 'Perfil actualizado'
     });
@@ -116,7 +123,9 @@ router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) =
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
-        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
+        isSuperAdmin: user.isSuperAdmin || false,
+        age: user.age, weight: user.weight, height: user.height,
+        createdAt: user.createdAt
       },
       message: 'Avatar actualizado'
     });
@@ -138,6 +147,56 @@ router.delete('/avatar', protect, async (req, res) => {
     res.json({ message: 'Avatar eliminado', user: { ...user.toObject(), avatar: null } });
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar avatar' });
+  }
+});
+
+// ===== ELIMINAR CUENTA =====
+router.delete('/account', protect, async (req, res) => {
+  try {
+    const { confirmacion } = req.body;
+    if (confirmacion !== 'ELIMINAR') {
+      return res.status(400).json({ error: 'Confirmación incorrecta' });
+    }
+
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Proteger superadmin
+    if (user.isSuperAdmin) {
+      return res.status(403).json({ error: 'La cuenta Super Administrador no puede eliminarse' });
+    }
+
+    // Eliminar avatar de Cloudinary si existe
+    if (user.avatar && user.avatar.includes('cloudinary.com')) {
+      const publicId = user.avatar.split('/').slice(-2).join('/').split('.')[0];
+      await cloudinary.uploader.destroy(publicId).catch(() => {});
+    }
+
+    // Eliminar todos los consumos del usuario
+    const Consumo = require('../models/Consumo');
+    await Consumo.deleteMany({ userId });
+
+    // Eliminar todas las reseñas del usuario de las recetas
+    const Recipe = require('../models/Recipe');
+    await Recipe.updateMany(
+      { 'resenas.userId': userId },
+      { $pull: { resenas: { userId } } }
+    );
+    // Recalcular promedios de recetas afectadas
+    const recetasAfectadas = await Recipe.find({ 'resenas': { $exists: true } });
+    for (const receta of recetasAfectadas) {
+      receta.recalcularPuntos();
+      await receta.save();
+    }
+
+    // Eliminar el usuario
+    await user.deleteOne();
+
+    res.json({ success: true, message: 'Cuenta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error eliminando cuenta:', error);
+    res.status(500).json({ error: 'Error al eliminar la cuenta' });
   }
 });
 

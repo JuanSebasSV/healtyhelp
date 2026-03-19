@@ -9,7 +9,19 @@ const Login = () => {
   const navigate  = useNavigate();
   const { login } = useAuth();
 
-  const [formData, setFormData]       = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState(() => {
+    try {
+      const savedEmail = localStorage.getItem('login_email_draft');
+      return { email: savedEmail || '', password: '' };
+    } catch {}
+    return { email: '', password: '' };
+  });
+
+  // Guardar solo el email
+  useEffect(() => {
+    if (formData.email) localStorage.setItem('login_email_draft', formData.email);
+    else localStorage.removeItem('login_email_draft');
+  }, [formData.email]);
   const [loading, setLoading]         = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors]           = useState({});
@@ -59,6 +71,7 @@ const Login = () => {
 
     if (result.success) {
       localStorage.removeItem('accountLockedUntil');
+      localStorage.removeItem('login_email_draft');
       setLockUntil(null);
       toast.success('¡Bienvenido!');
       navigate('/');

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&display=swap');
+
 /* index.css — Variables globales y estilos base */
 
 /* ============ RESET ============ */
@@ -5,6 +7,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Forzar fuente global en TODOS los elementos incluyendo inputs y botones */
+*, *::before, *::after {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* ============ VARIABLES CSS ============ */
@@ -90,7 +97,7 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar { display: none; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--gris-oscuro);
   background: transparent;
   line-height: 1.6;
@@ -240,7 +247,7 @@ svg {
   color: var(--verde-bosque);
   font-size: clamp(1.4rem, 3vw, 2rem);
   margin-bottom: clamp(1rem, 3vw, 2rem);
-  font-family: 'Georgia', serif;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 .modo-oscuro .auth-card h2 { color: var(--verde-hoja); }
 
@@ -390,4 +397,68 @@ svg {
 [class*="catBtn"]:hover,
 [class*="filtroCard"]:hover {
   will-change: transform;
+}
+/* ============ INPUT NUMBER — FLECHAS CUSTOM GLOBALES ============ */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+.numero-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.numero-wrapper input {
+  padding-right: 2.2rem !important;
+  width: 100%;
+}
+.numero-flechas {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 28px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 10px 10px 0;
+  overflow: hidden;
+}
+.numero-flechas button {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.45);
+  transition: all 0.15s ease;
+  padding: 0;
+}
+.numero-flechas button:first-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.numero-flechas button:hover {
+  background: rgba(79, 119, 45, 0.3);
+  color: rgba(167, 213, 136, 0.95);
+}
+.numero-flechas button:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+.numero-flechas button svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+/* Ocultar flechas en móvil — en pantallas pequeñas se ve raro */
+@media (max-width: 640px) {
+  .numero-flechas { display: none; }
+  .numero-wrapper input { padding-right: 1rem !important; }
 }

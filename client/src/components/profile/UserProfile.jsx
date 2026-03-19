@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import api from '../../api/axios';
-import { validatePassword } from '../../utils/validation';
+import { validatePassword, validateName } from '../../utils/validation';
 import './UserProfile.css';
 
 const EyeIcon = ({ open }) => (
@@ -21,6 +21,37 @@ const EyeIcon = ({ open }) => (
   )
 );
 
+
+const NumeroInput = ({ name, value, onChange, placeholder, min, max, step }) => {
+  const s = parseFloat(step) || 1;
+  const increment = () => {
+    const v = parseFloat(value) || (min ?? 0);
+    if (max !== undefined && v >= max) return;
+    onChange({ target: { name, value: String(parseFloat((v + s).toFixed(4))) } });
+  };
+  const decrement = () => {
+    const v = parseFloat(value) || (min ?? 0);
+    if (min !== undefined && v <= min) return;
+    onChange({ target: { name, value: String(parseFloat((v - s).toFixed(4))) } });
+  };
+  return (
+    <div className="numero-wrapper">
+      <input className="campo-input" type="number" name={name}
+        value={value} onChange={onChange} placeholder={placeholder}
+        min={min} max={max} step={step}
+      />
+      <div className="numero-flechas">
+        <button type="button" onClick={increment}>
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button type="button" onClick={decrement}>
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const UserProfile = () => {
   const { user, checkAuth, logout } = useAuth();
   const navigate = useNavigate();
@@ -29,6 +60,9 @@ const UserProfile = () => {
   const [editando, setEditando] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [subiendoAvatar, setSubiendoAvatar] = useState(false);
+  const [eliminandoCuenta, setEliminandoCuenta] = useState(false);
+  const [modalEliminar, setModalEliminar] = useState(false);
+  const [confirmTexto, setConfirmTexto] = useState('');
   const [verFoto, setVerFoto] = useState(false);
   const [mensaje, setMensaje] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -38,6 +72,9 @@ const UserProfile = () => {
 
   const [form, setForm] = useState({
     name: user?.name || '',
+    age: user?.age || '',
+    weight: user?.weight || '',
+    height: user?.height || '',
     password: '',
     confirmPassword: '',
   });
@@ -123,9 +160,21 @@ const UserProfile = () => {
       }
     }
 
+    // Validar nombre
+    const nameValidation = validateName(form.name);
+    if (!nameValidation.isValid) {
+      mostrarMensaje('error', nameValidation.error);
+      return;
+    }
+
     setGuardando(true);
     try {
-      const payload = { name: form.name };
+      const payload = {
+        name: form.name,
+        ...(form.age    && { age:    parseInt(form.age, 10) }),
+        ...(form.weight && { weight: parseFloat(form.weight) }),
+        ...(form.height && { height: parseFloat(form.height) }),
+      };
       if (form.password) payload.password = form.password;
       await api.put('/auth/profile', payload);
       await checkAuth();
@@ -144,7 +193,30 @@ const UserProfile = () => {
     setEditando(false);
     setMensaje(null);
     setErroresPassword([]);
-    setForm({ name: user?.name || '', password: '', confirmPassword: '' });
+    setForm({
+      name: user?.name || '',
+      age: user?.age || '',
+      weight: user?.weight || '',
+      height: user?.height || '',
+      password: '',
+      confirmPassword: ''
+    });
+  };
+
+  const handleEliminarCuenta = async () => {
+    if (confirmTexto !== 'ELIMINAR') {
+      mostrarMensaje('error', 'Escribe ELIMINAR para confirmar');
+      return;
+    }
+    setEliminandoCuenta(true);
+    try {
+      await api.delete('/auth/account', { data: { confirmacion: 'ELIMINAR' } });
+      logout();
+      navigate('/');
+    } catch (error) {
+      mostrarMensaje('error', error.response?.data?.error || 'Error al eliminar la cuenta');
+      setEliminandoCuenta(false);
+    }
   };
 
   const handleCerrarSesion = () => { logout(); navigate('/'); };
@@ -364,6 +436,37 @@ const UserProfile = () => {
                 </div>
                 <p className="campo-hint">El email no se puede modificar</p>
               </div>
+
+              <div className="campo-grupo">
+                <label className="campo-label">Edad</label>
+                {editando ? (
+                  <NumeroInput name="age" value={form.age} onChange={handleChange}
+                    placeholder="Tu edad" min={18} max={100} step={1} />
+                ) : (
+                  <div className="campo-valor">{user?.age ? `${user.age} años` : '—'}</div>
+                )}
+              </div>
+
+              <div className="campo-grupo">
+                <label className="campo-label">Peso (kg)</label>
+                {editando ? (
+                  <NumeroInput name="weight" value={form.weight} onChange={handleChange}
+                    placeholder="Ej: 70" min={40} max={150} step={0.1} />
+                ) : (
+                  <div className="campo-valor">{user?.weight ? `${user.weight} kg` : '—'}</div>
+                )}
+              </div>
+
+              <div className="campo-grupo">
+                <label className="campo-label">Altura (cm)</label>
+                {editando ? (
+                  <NumeroInput name="height" value={form.height} onChange={handleChange}
+                    placeholder="Ej: 170" min={50} max={210} step={1} />
+                ) : (
+                  <div className="campo-valor">{user?.height ? `${user.height} cm` : '—'}</div>
+                )}
+              </div>
+
             </div>
           </div>
 
@@ -454,6 +557,27 @@ const UserProfile = () => {
             </div>
           )}
 
+          {/* Zona peligrosa — Eliminar cuenta */}
+          {!user?.isSuperAdmin && (
+            <div className="perfil-seccion perfil-seccion--peligro">
+              <div className="seccion-titulo">
+                <div className="seccion-icono seccion-icono--peligro">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </div>
+                <h3>Zona de peligro</h3>
+              </div>
+              <p className="peligro-desc">
+                Eliminar tu cuenta borrará permanentemente todos tus datos: consumos, reseñas y configuraciones. Esta acción no se puede deshacer.
+              </p>
+              <button className="btn-eliminar-cuenta" onClick={() => setModalEliminar(true)}>
+                Eliminar mi cuenta
+              </button>
+            </div>
+          )}
+
           <div className="perfil-deco-bottom">
             <div className="deco-linea" />
             <span className="deco-hoja">🌿</span>
@@ -479,6 +603,55 @@ const UserProfile = () => {
               referrerPolicy="no-referrer"
             />
             <p className="foto-modal-nombre">{user?.name}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal confirmar eliminación */}
+      {modalEliminar && (
+        <div className="modal-overlay" onClick={() => { setModalEliminar(false); setConfirmTexto(''); }}>
+          <div className="modal-eliminar-cuenta" onClick={e => e.stopPropagation()}>
+            <div className="modal-eliminar__icono">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <h3>¿Eliminar tu cuenta?</h3>
+            <p>Esta acción es <strong>permanente e irreversible</strong>. Se eliminarán:</p>
+            <ul>
+              <li>Todos tus consumos registrados</li>
+              <li>Todas tus reseñas en recetas</li>
+              <li>Tu perfil y configuraciones</li>
+            </ul>
+            <p className="modal-eliminar__instruccion">
+              Escribe <strong>ELIMINAR</strong> para confirmar:
+            </p>
+            <input
+              className="modal-eliminar__input"
+              type="text"
+              value={confirmTexto}
+              onChange={e => setConfirmTexto(e.target.value)}
+              placeholder="ELIMINAR"
+              autoFocus
+            />
+            <div className="modal-eliminar__acciones">
+              <button
+                className="modal-eliminar__btn-cancelar"
+                onClick={() => { setModalEliminar(false); setConfirmTexto(''); }}
+                disabled={eliminandoCuenta}
+              >
+                Cancelar
+              </button>
+              <button
+                className="modal-eliminar__btn-confirmar"
+                onClick={handleEliminarCuenta}
+                disabled={eliminandoCuenta || confirmTexto !== 'ELIMINAR'}
+              >
+                {eliminandoCuenta ? 'Eliminando...' : 'Eliminar cuenta'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 /* VistaInicio.css */
 
 .vistaInicio {
-  /* Sin animation aquí — causaba layout shift en el hero durante el fadeIn */
+  display: block;
 }
 
 /* ============ HERO ============ */

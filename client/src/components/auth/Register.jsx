@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { validateRegisterForm } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
@@ -19,35 +19,125 @@ const EyeIcon = ({ open }) => (
   )
 );
 
+// Modal aviso menores
+const ModalMenor = ({ onCerrar }) => (
+  <div className="modal-overlay" onClick={onCerrar}>
+    <div className="modal-menor" onClick={e => e.stopPropagation()}>
+      <div className="modal-menor__icono">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h3>Acceso restringido</h3>
+      <p>
+        Healthy Help está diseñado para adultos mayores de 18 años.
+        El contenido nutricional y los planes de alimentación requieren
+        supervisión de un adulto o profesional de la salud para menores de edad.
+      </p>
+      <p className="modal-menor__sugerencia">
+        Si eres menor de edad, consulta a un médico o nutricionista de confianza.
+      </p>
+      <button className="modal-menor__btn" onClick={onCerrar}>Entendido</button>
+    </div>
+  </div>
+);
+
+
+const NumeroInput = ({ name, value, onChange, placeholder, min, max, step, disabled }) => {
+  const s = parseFloat(step) || 1;
+  const increment = () => {
+    const v = parseFloat(value) || (min ?? 0);
+    if (max !== undefined && v >= max) return;
+    onChange({ target: { name, value: String(parseFloat((v + s).toFixed(4))) } });
+  };
+  const decrement = () => {
+    const v = parseFloat(value) || (min ?? 0);
+    if (min !== undefined && v <= min) return;
+    onChange({ target: { name, value: String(parseFloat((v - s).toFixed(4))) } });
+  };
+  return (
+    <div className="numero-wrapper">
+      <input className={''} type="number" name={name} value={value}
+        onChange={onChange} placeholder={placeholder}
+        min={min} max={max} step={step} disabled={disabled}
+        style={{width:'100%', paddingRight:'2.2rem'}}
+      />
+      <div className="numero-flechas">
+        <button type="button" onClick={increment} disabled={disabled}>
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button type="button" onClick={decrement} disabled={disabled}>
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const [datos, setDatos] = useState({ nombre: '', email: '', pass: '', passConf: '' });
-  const [errors, setErrors]       = useState({});
-  const [loading, setLoading]     = useState(false);
-  const [showPass, setShowPass]   = useState(false);
+  const STORAGE_KEY = 'register_form_draft';
+
+  const [datos, setDatos] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Nunca recuperar contraseñas
+        return { ...parsed, pass: '', passConf: '' };
+      }
+    } catch {}
+    return { nombre: '', email: '', pass: '', passConf: '', edad: '18', peso: '', altura: '' };
+  });
+
+  // Guardar borrador en localStorage (excepto contraseñas)
+  useEffect(() => {
+    const { pass, passConf, ...sinPass } = datos;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sinPass));
+  }, [datos]);
+  const [errors, setErrors]           = useState({});
+  const [loading, setLoading]         = useState(false);
+  const [showPass, setShowPass]       = useState(false);
   const [showPassConf, setShowPassConf] = useState(false);
+  const [mostrarModalMenor, setMostrarModalMenor] = useState(false);
 
   const manejarRegistro = async () => {
-    const validationErrors = validateRegisterForm(datos.nombre, datos.email, datos.pass, datos.passConf);
+    const validationErrors = validateRegisterForm(
+      datos.nombre, datos.email, datos.pass, datos.passConf, datos.edad
+    );
+
+    // Detectar menores
+    if (validationErrors.edad === 'MINOR') {
+      setMostrarModalMenor(true);
+      setErrors({ ...validationErrors, edad: 'Debes ser mayor de 18 años' });
+      return;
+    }
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     setLoading(true);
-    const result = await register({ name: datos.nombre, email: datos.email, password: datos.pass });
+    const result = await register({
+      name: datos.nombre,
+      email: datos.email,
+      password: datos.pass,
+      age: parseInt(datos.edad, 10),
+      ...(datos.peso   && { weight: parseFloat(datos.peso) }),
+      ...(datos.altura && { height: parseFloat(datos.altura) }),
+    });
 
     if (result.success || result.needsVerification) {
+      localStorage.removeItem(STORAGE_KEY);
       toast.success('¡Cuenta creada! Revisa tu correo para verificar.');
       navigate('/verificar-email', { state: { email: datos.email } });
     } else {
-      if (result.needsVerification) {
-        navigate('/verificar-email', { state: { email: datos.email } });
-      } else {
-        toast.error(result.error || 'Error al crear la cuenta');
-        setErrors({ general: result.error });
-      }
+      toast.error(result.error || 'Error al crear la cuenta');
+      setErrors({ general: result.error });
     }
 
     setLoading(false);
@@ -60,15 +150,37 @@ const Register = () => {
 
   return (
     <div className="vistaAuth">
+      {mostrarModalMenor && <ModalMenor onCerrar={() => setMostrarModalMenor(false)} />}
+
       <div className="authCard">
         <h2>Crear Cuenta</h2>
         <div className="authForm">
+
           <div className="formGroup">
             <input type="text" placeholder="Nombre completo" value={datos.nombre}
               onChange={(e) => handleChange('nombre', e.target.value)}
               className={errors.nombre ? 'inputError' : ''} disabled={loading}
             />
             {errors.nombre && <span className="errorMessage">{errors.nombre}</span>}
+          </div>
+
+          <div className="formGroup">
+            <NumeroInput name="edad" value={datos.edad} placeholder="Edad"
+              onChange={(e) => handleChange('edad', e.target.value)}
+              min={18} max={100} step={1} disabled={loading} />
+            {errors.edad && <span className="errorMessage">{errors.edad}</span>}
+          </div>
+
+          <div className="formGroup">
+            <NumeroInput name="peso" value={datos.peso} placeholder="Peso (kg) — opcional"
+              onChange={(e) => handleChange('peso', e.target.value)}
+              min={40} max={150} step={0.1} disabled={loading} />
+          </div>
+
+          <div className="formGroup">
+            <NumeroInput name="altura" value={datos.altura} placeholder="Altura (cm) — opcional"
+              onChange={(e) => handleChange('altura', e.target.value)}
+              min={50} max={210} step={1} disabled={loading} />
           </div>
 
           <div className="formGroup">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RecipeForm.css';
@@ -13,6 +13,33 @@ const IcoPlus    = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" heig
 const IcoSave    = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
 const IcoEdit2   = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
 
+
+const NumeroInput = ({ value, onChange, min, max, step, name, placeholder }) => {
+  const s = parseFloat(step) || 1;
+  const increment = () => {
+    const v = parseFloat(value) ?? (min ?? 0);
+    if (max !== undefined && v >= max) return;
+    onChange({ target: { name, value: String(parseFloat((v + s).toFixed(4))) } });
+  };
+  const decrement = () => {
+    const v = parseFloat(value) ?? (min ?? 0);
+    if (min !== undefined && v <= min) return;
+    onChange({ target: { name, value: String(parseFloat((v - s).toFixed(4))) } });
+  };
+  return (
+    <div className="numero-wrapper">
+      <input type="number" name={name} value={value} onChange={onChange}
+        placeholder={placeholder} min={min} max={max} step={step}
+        style={{width:'100%', paddingRight:'2.2rem'}}
+      />
+      <div className="numero-flechas">
+        <button type="button" onClick={increment}><svg viewBox="0 0 24 24" fill="none"><polyline points="18 15 12 9 6 15"/></svg></button>
+        <button type="button" onClick={decrement}><svg viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+    </div>
+  );
+};
+
 const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const isEditing = !!recipe;
 
@@ -24,6 +51,24 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
 
   const [loading, setLoading] = useState(false);
   const [showAdvancedNutri, setShowAdvancedNutri] = useState(false);
+  const DRAFT_KEY = 'recipe_form_draft';
+
+  // Recuperar borrador solo al crear (no al editar)
+  useEffect(() => {
+    if (!isEditing) {
+      try {
+        const saved = localStorage.getItem(DRAFT_KEY);
+        if (saved) setFormData(JSON.parse(saved));
+      } catch {}
+    }
+  }, [isEditing]);
+
+  // Guardar borrador mientras escribe (solo al crear)
+  useEffect(() => {
+    if (!isEditing) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    }
+  }, [formData, isEditing]);
 
   const categorias = [
     { id: 'desayuno', nombre: 'Desayuno' },
@@ -68,7 +113,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     setLoading(true);
     try {
       if (isEditing) { await api.put(`/recipes/${recipe._id}`, cleanData); toast.success('Receta actualizada'); }
-      else           { await api.post('/recipes', cleanData); toast.success('Receta creada'); }
+      else           { await api.post('/recipes', cleanData); localStorage.removeItem(DRAFT_KEY); toast.success('Receta creada'); }
       onSuccess();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error guardando receta');
@@ -107,7 +152,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
             </div>
             <div className="form-group">
               <label>Puntuación (0-5)</label>
-              <input type="number" name="puntos" value={formData.puntos} onChange={handleChange} min="0" max="5" step="0.1" />
+              <NumeroInput name="puntos" value={formData.puntos} onChange={handleChange} min={0} max={5} step={0.1} />
             </div>
           </div>
         </div>
@@ -168,7 +213,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
             ].map(({label, field, step}) => (
               <div className="form-group" key={field}>
                 <label>{label}</label>
-                <input type="number" value={formData.nutri[field] || 0} onChange={(e) => handleNutriChange(field, e.target.value)} min="0" step={step} />
+                <NumeroInput value={formData.nutri[field] || 0} onChange={(e) => handleNutriChange(field, e.target.value)} min={0} step={step} />
               </div>
             ))}
           </div>
@@ -190,28 +235,28 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
               <h4>Minerales</h4>
               <div className="nutri-grid">
                 {[{l:'Calcio (mg)',f:'calcio',s:'1'},{l:'Hierro (mg)',f:'hierro',s:'0.1'},{l:'Potasio (mg)',f:'potasio',s:'1'},{l:'Magnesio (mg)',f:'magnesio',s:'1'}].map(({l,f,s}) => (
-                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step={s}/></div>
+                  <div className="form-group" key={f}><label>{l}</label><NumeroInput value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min={0} step={s}/></div>
                 ))}
               </div>
 
               <h4>Vitaminas</h4>
               <div className="nutri-grid">
                 {[{l:'Vitamina A (mcg)',f:'vitA',s:'1'},{l:'Vitamina C (mg)',f:'vitC',s:'1'},{l:'Vitamina D (mcg)',f:'vitD',s:'0.1'},{l:'Vitamina E (mg)',f:'vitE',s:'0.1'}].map(({l,f,s}) => (
-                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step={s}/></div>
+                  <div className="form-group" key={f}><label>{l}</label><NumeroInput value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min={0} step={s}/></div>
                 ))}
               </div>
 
               <h4>Azúcares</h4>
               <div className="nutri-grid">
                 {[{l:'Azúcar Total (g)',f:'azucar'},{l:'Glucosa (g)',f:'glucosa'},{l:'Fructosa (g)',f:'fructosa'}].map(({l,f}) => (
-                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step="0.1"/></div>
+                  <div className="form-group" key={f}><label>{l}</label><NumeroInput value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min={0} step={0.1}/></div>
                 ))}
               </div>
 
               <h4>Grasas Detalladas</h4>
               <div className="nutri-grid">
                 {[{l:'Saturadas (g)',f:'grasSat'},{l:'Monoinsaturadas (g)',f:'grasMonoins'},{l:'Poliinsaturadas (g)',f:'grasPoliins'},{l:'Omega-3 (g)',f:'omega3'}].map(({l,f}) => (
-                  <div className="form-group" key={f}><label>{l}</label><input type="number" value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min="0" step="0.1"/></div>
+                  <div className="form-group" key={f}><label>{l}</label><NumeroInput value={formData.nutri[f]||0} onChange={(e)=>handleNutriChange(f,e.target.value)} min={0} step={0.1}/></div>
                 ))}
               </div>
             </div>

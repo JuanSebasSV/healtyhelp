@@ -18,6 +18,13 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Mínimo 6 caracteres'],
     select: false
   },
+  age: {
+    type: Number,
+    min: [18, 'Debes ser mayor de 18 años'],
+    max: [100, 'La edad máxima permitida es 100 años']
+  },
+  weight: { type: Number, min: 40, max: 150 }, // kg
+  height: { type: Number, min: 50, max: 210 }, // cm
   role: {
     type: String,
     enum: ['user', 'admin'],
@@ -25,60 +32,37 @@ const userSchema = new mongoose.Schema({
   },
   googleId: String,
   avatar: String,
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
-
-  // ── Verificación de email al registro ──
+  isVerified: { type: Boolean, default: false },
   verificationCode:   String,
   verificationExpire: Date,
-
-  // ── Bloqueo por intentos fallidos ──
-  loginAttempts: {
-    type: Number,
-    default: 0
-  },
+  loginAttempts: { type: Number, default: 0 },
   lockUntil: Date,
-
-  isSuperAdmin: {
-    type: Boolean,
-    default: false
-  },
-  twoFactorEnabled: {
-    type: Boolean,
-    default: false
-  },
+  isSuperAdmin: { type: Boolean, default: false },
+  twoFactorEnabled: { type: Boolean, default: false },
   twoFactorSecret:    String,
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, { timestamps: true });
 
-// ── Encriptar contraseña ──
 userSchema.pre('save', async function() {
   if (!this.isModified('password') || !this.password) return;
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-// ── Comparar contraseña ──
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// ── Cuenta bloqueada? ──
 userSchema.virtual('isLocked').get(function() {
   return this.lockUntil && this.lockUntil > Date.now();
 });
 
-// ── Incrementar intentos fallidos ──
 userSchema.methods.incLoginAttempts = async function() {
-  // Si el bloqueo anterior ya expiró, resetear
   if (this.lockUntil && this.lockUntil < Date.now()) {
     this.loginAttempts = 1;
     this.lockUntil = undefined;
   } else {
     this.loginAttempts += 1;
-    // Bloquear tras 5 intentos por 15 minutos
     if (this.loginAttempts >= 5) {
       this.lockUntil = Date.now() + 15 * 60 * 1000;
     }
@@ -86,7 +70,6 @@ userSchema.methods.incLoginAttempts = async function() {
   return this.save({ validateBeforeSave: false });
 };
 
-// ── Resetear intentos ──
 userSchema.methods.resetLoginAttempts = async function() {
   this.loginAttempts = 0;
   this.lockUntil = undefined;

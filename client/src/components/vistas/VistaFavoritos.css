@@ -74,3 +74,22 @@
     font-size: 1.4rem;
   }
 }
+
+.btn-explorar {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border: none;
+  border-radius: 50px;
+  color: var(--blanco-puro);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
+}
+.btn-explorar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(79, 119, 45, 0.4);
+  filter: brightness(1.1);
+}

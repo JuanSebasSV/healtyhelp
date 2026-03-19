@@ -219,6 +219,7 @@
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.85rem;
   margin-bottom: 0.85rem;
+  align-items: end;
 }
 
 .btn-toggle-advanced {
@@ -429,4 +430,34 @@
 .salud-checkbox input[type="checkbox"]:hover {
   border-color: rgba(107, 158, 74, 0.6);
   background: rgba(79, 119, 45, 0.15);
+}
+/* ── NumeroInput dentro de form-group ── */
+.form-group .numero-wrapper {
+  width: 100%;
+}
+
+.form-group .numero-wrapper input {
+  width: 100%;
+  padding: 0.72rem 2.4rem 0.72rem 1rem !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px;
+  color: var(--blanco-puro) !important;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transicion);
+  font-family: inherit;
+  box-sizing: border-box;
+  -webkit-text-fill-color: var(--blanco-puro);
+}
+
+.form-group .numero-wrapper input:focus {
+  border-color: var(--naranja) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12) !important;
+}
+
+.form-group .numero-flechas {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 10px 10px 0;
 }

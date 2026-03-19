@@ -54,9 +54,28 @@ const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizas
 // ============================================================
 // REGISTRO — genera código de verificación y envía email
 // ============================================================
+// Validar nombre en backend
+const validarNombre = (name) => {
+  if (!name || name.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
+  if (name.trim().length > 50) return 'El nombre es muy largo';
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) return 'El nombre solo puede contener letras';
+  if (/(.){3,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
+  return null;
+};
+
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, age, weight, height } = req.body;
+
+    // Validar nombre
+    const nameError = validarNombre(name);
+    if (nameError) return res.status(400).json({ error: nameError });
+
+    // Validar edad
+    const edadNum = parseInt(age, 10);
+    if (!age || isNaN(edadNum)) return res.status(400).json({ error: 'La edad es requerida' });
+    if (edadNum < 18) return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
+    if (edadNum > 100) return res.status(400).json({ error: 'La edad máxima permitida es 100 años' });
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -88,6 +107,9 @@ exports.register = async (req, res) => {
       name,
       email,
       password,
+      age: edadNum,
+      ...(weight && { weight: parseFloat(weight) }),
+      ...(height && { height: parseFloat(height) }),
       isVerified: false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),
       verificationExpire: Date.now() + 15 * 60 * 1000
@@ -165,7 +187,9 @@ exports.verifyEmail = async (req, res) => {
       user: {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: true, createdAt: user.createdAt
+        googleId: user.googleId, isVerified: true,
+        age: user.age, weight: user.weight, height: user.height,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -222,8 +246,9 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Cuenta sin verificar?
-    if (!user.isVerified) {
+    // Cuenta sin verificar — solo bloquear si tiene código pendiente
+    // Usuarios anteriores al sistema de verificación no tienen código y deben poder entrar
+    if (!user.isVerified && user.verificationCode) {
       return res.status(401).json({
         error: 'Debes verificar tu correo antes de iniciar sesión.',
         needsVerification: true,
@@ -262,7 +287,9 @@ exports.login = async (req, res) => {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
-        isSuperAdmin: user.isSuperAdmin || false, createdAt: user.createdAt
+        isSuperAdmin: user.isSuperAdmin || false,
+        age: user.age, weight: user.weight, height: user.height,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -320,7 +347,7 @@ exports.forgotPassword = async (req, res) => {
 
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken  = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutos
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
@@ -375,20 +402,30 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    console.log('🔑 Token hasheado:', resetPasswordToken);
+
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }
     });
 
+    console.log('👤 Usuario encontrado:', user ? user.email : 'NO ENCONTRADO');
+    console.log('🕐 Fecha actual:', new Date(Date.now()));
+    if (user) console.log('⏰ Token expira:', new Date(user.resetPasswordExpire));
+
     if (!user) return res.status(400).json({ error: 'Token inválido o expirado. Solicita un nuevo enlace.' });
-    if (!req.body.password || req.body.password.length < 8) {
+    const pwd = req.body.password || '';
+    if (!pwd || pwd.length < 8) {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
-    user.password            = req.body.password;
+    // Actualizar todos los campos antes de guardar una sola vez
+    user.password            = pwd;
     user.resetPasswordToken  = undefined;
     user.resetPasswordExpire = undefined;
-    await user.resetLoginAttempts(); // desbloquear si estaba bloqueado
+    user.loginAttempts       = 0;
+    user.lockUntil           = undefined;
+    await user.save();
 
     const token = generateToken(user._id);
     res.json({ success: true, token });
