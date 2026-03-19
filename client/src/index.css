@@ -63,7 +63,7 @@
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
 
-  --page-px:  clamp(1rem, 4vw, 4rem);
+  --page-px:  clamp(0.75rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
   --page-max: 1400px;
   --navbar-h: 64px;
@@ -138,6 +138,14 @@ svg {
   padding-top: 0;
   padding-left: 0;
   padding-right: 0;
+}
+
+/* En móvil añadir padding lateral al vistaInicio para que el contenido no toque los bordes */
+@media (max-width: 900px) {
+  .contenido-principal:has(.vistaInicio) {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
 }
 
 /* ============ GRID COMPARTIDO ============ */
@@ -321,8 +329,8 @@ svg {
 
 /* ============ RESPONSIVE ============ */
 
-/* Teléfonos grandes y medianos: 2 columnas */
-@media (max-width: 767px) {
+/* Teléfonos — ampliar rango para cubrir todos los tamaños */
+@media (max-width: 900px) {
   .grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
@@ -330,8 +338,7 @@ svg {
   .auth-card { padding: 1.5rem 1.25rem; }
 }
 
-/* Teléfonos muy pequeños (≤ 360px): 1 columna.
-   Se pone con min-width para NO afectar 375px+ */
+/* Teléfonos muy pequeños (≤ 360px): 1 columna */
 @media (max-width: 360px) {
   .grid { grid-template-columns: 1fr !important; }
 }

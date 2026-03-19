@@ -190,7 +190,7 @@
    No afecta tablets ni escritorio
    ============================================================ */
 
-@media (max-width: 767px) {
+@media (max-width: 900px) {
   /* Con 2 columnas cada tarjeta mide ~170px de ancho:
      reducir imagen y texto para que quepan bien */
   .tarjetaImg {
@@ -239,7 +239,7 @@
 }
 
 @media (max-width: 360px) {
-  /* 1 columna: la imagen puede ser más alta de nuevo */
+  /* 1 columna: la imagen puede ser más alta */
   .tarjetaImg {
     height: 180px;
   }
