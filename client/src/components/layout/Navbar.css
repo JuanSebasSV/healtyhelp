@@ -89,12 +89,8 @@
 }
 .navHamburguesa span {
   width: 25px;
-  height: 2.5px;
-  /* Forzar blanco con todas las propiedades posibles — algunos browsers móviles ignoran background sin !important */
-  background: #ffffff !important;
-  background-color: #ffffff !important;
-  -webkit-background-color: #ffffff !important;
-  color: #ffffff !important;
+  height: 2px;
+  background-color: var(--blanco-puro) !important;
   border-radius: 3px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
@@ -292,7 +288,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     padding: 0.72rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     width: 55%;
     max-width: 200px;
     margin-left: auto;
@@ -317,22 +313,71 @@
     opacity: 0.85;
   }
 
-  /* navUsuario en móvil — compacto y centrado */
+  /* Admin Panel en móvil — igual que los demás items */
+  .navMenu li.nav-admin-btn {
+    all: unset !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 55% !important;
+    max-width: 200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0.72rem 0 !important;
+    padding-left: 14% !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    gap: 0.65rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: var(--blanco-puro) !important;
+    cursor: pointer !important;
+    transition: var(--transicion) !important;
+    box-sizing: border-box !important;
+    background: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-radius: 0 !important;
+  }
+
+  .navMenu li.nav-admin-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    opacity: 0.85 !important;
+    stroke: var(--blanco-puro) !important;
+  }
+
+  /* navUsuario en móvil — centrado igual que modo noche */
   .navMenu li.navUsuario {
     all: unset !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 0.5rem 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    padding: 0.6rem 0 !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
     box-sizing: border-box !important;
     cursor: pointer !important;
   }
 
-  .navMenu li.navUsuario .navUsuario {
+  /* El contenedor interno navUsuario — solo lo necesario */
+  .navMenu .navUsuario {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    padding: 0.35rem 0.9rem !important;
     width: auto !important;
-    padding: 0.4rem 1rem !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50px !important;
+  }
+
+  .navMenu .nav-nombre {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: var(--blanco-puro) !important;
+    white-space: nowrap !important;
   }
 
   /* Tema e items centrados — override total, independientes del flujo */
@@ -344,7 +389,7 @@
     justify-content: center !important;
     width: 100% !important;
     padding: 0.6rem 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
     cursor: pointer !important;
     transition: var(--transicion) !important;
     box-sizing: border-box !important;
@@ -594,4 +639,11 @@
 
 .modo-oscuro .navMenu-tema {
   color: rgba(200, 230, 180, 0.8) !important;
+}
+
+/* Garantizar visibilidad de las rayas del hamburguesa en todos los modos */
+nav .navHamburguesa span,
+.nav .navHamburguesa span {
+  background-color: var(--blanco-puro) !important;
+  opacity: 1 !important;
 }
