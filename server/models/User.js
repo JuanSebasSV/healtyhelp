@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema({
     default: false
   },
   twoFactorSecret:    String,
+  // ── Perfil de salud ──
+  healthProfile: {
+    condiciones: { type: [String], default: [] },
+    alergias:    { type: [String], default: [] },
+    preferencias:{ type: [String], default: [] }
+  },
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, { timestamps: true });

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RobotIA.css';
 
@@ -20,20 +21,22 @@ const RobotIA = ({ activo, toggleIA }) => {
     setCargando(true);
 
     try {
-      // 🔒 TODO: Integrar con Anthropic API
-      // const response = await api.post('/ai/chat', { mensaje });
-      
-      // Por ahora respuesta simulada
-      setTimeout(() => {
-        setChat(prev => [...prev, { 
-          tipo: 'ia', 
-          texto: '¡Hola! Soy tu asistente culinario. Estoy aquí para ayudarte con recetas, ingredientes y consejos nutricionales. ¿En qué puedo ayudarte hoy?' 
-        }]);
-        setCargando(false);
-      }, 800);
+      const response = await api.post('/chat', {
+        message: mensaje,
+        history: chat.slice(-10).map(msg => ({
+          role: msg.tipo === 'usuario' ? 'user' : 'model',
+          text: msg.texto
+        }))
+      });
+
+      setChat(prev => [...prev, {
+        tipo: 'ia',
+        texto: response.data.reply
+      }]);
 
     } catch (error) {
       toast.error('Error al comunicarse con el asistente');
+    } finally {
       setCargando(false);
     }
   };
