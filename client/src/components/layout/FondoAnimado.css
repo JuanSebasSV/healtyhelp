@@ -16,15 +16,15 @@
   height: 100%;
   background: linear-gradient(135deg,
       var(--verde-bosque) 0%,
-      #2d5a3d 50%,
-      #4f772d 100%);
+      var(--fondo-grad-claro-medio) 50%,
+      var(--verde-hoja) 100%);
 }
 
 .modo-oscuro .gradientMesh {
   background: linear-gradient(135deg,
-      #0f1a14 0%,
-      #1a2820 50%,
-      #2d3d2f 100%);
+      var(--fondo-oscuro-0) 0%,
+      var(--fondo-oscuro-50) 50%,
+      var(--fondo-oscuro-100) 100%);
 }
 
 .ondaLinea {

@@ -42,6 +42,11 @@
   --verde-progreso: #34d399;
   --verde-progreso-oscuro: #059669;
   --verde-profundo: #0a1a0f;
+  /* Gradientes del fondo animado */
+  --fondo-grad-claro-medio: #2d5a3d;
+  --fondo-oscuro-0: #0f1a14;
+  --fondo-oscuro-50: #1a2820;
+  --fondo-oscuro-100: #2d3d2f;
   --rojo-claro:   #f87171;
   --rojo-rosa:    #fca5a5;
   --naranja-claro: #fb923c;
@@ -63,7 +68,7 @@
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
 
-  --page-px:  clamp(0.75rem, 4vw, 4rem);
+  --page-px:  clamp(0.6rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
   --page-max: 1400px;
   --navbar-h: 64px;
@@ -143,8 +148,8 @@ svg {
 /* En móvil añadir padding lateral al vistaInicio para que el contenido no toque los bordes */
 @media (max-width: 900px) {
   .contenido-principal:has(.vistaInicio) {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
   }
 }
 
@@ -272,7 +277,7 @@ svg {
 }
 .modo-oscuro .auth-form input {
   background: rgba(64, 64, 64, 0.8);
-  border-color: #505050;
+  border-color: var(--gris-medio);
   color: var(--gris-oscuro);
 }
 .auth-form input:focus { outline: none; border-color: var(--verde-hoja); }
@@ -304,9 +309,9 @@ svg {
   position: absolute; right: 0.75rem;
   background: none; border: none; cursor: pointer;
   padding: 0; display: flex; align-items: center;
-  color: #999; transition: color 0.2s;
+  color: var(--gris-medio); transition: color 0.2s;
 }
-.eyeButton:hover { color: #555; }
+.eyeButton:hover { color: var(--gris-oscuro); }
 .eyeButton:focus { outline: none; }
 
 /* ============ ANIMACIONES ============ */
@@ -329,17 +334,17 @@ svg {
 
 /* ============ RESPONSIVE ============ */
 
-/* Teléfonos — ampliar rango para cubrir todos los tamaños */
+/* Todos los teléfonos incluyendo 360px — forzar 2 columnas siempre */
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.75rem !important;
+    gap: 0.6rem !important;
   }
   .auth-card { padding: 1.5rem 1.25rem; }
 }
 
-/* Teléfonos muy pequeños (≤ 360px): 1 columna */
-@media (max-width: 360px) {
+/* Solo pantallas muy pequeñas (menos de 320px): 1 columna */
+@media (max-width: 319px) {
   .grid { grid-template-columns: 1fr !important; }
 }
 

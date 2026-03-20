@@ -1,11 +1,74 @@
 /* VerificarEmail.css */
 
-.verificar-pagina {
-  min-height: 70vh;
+/* ── Header Healthy Help — igual que Login ── */
+.auth-brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.auth-brand svg {
+  stroke: var(--blanco-puro);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.auth-brand-nombre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modo-oscuro .auth-brand svg {
+  stroke: rgba(210, 245, 185, 0.97);
+}
+
+.modo-oscuro .auth-brand-nombre {
+  color: rgba(210, 245, 185, 0.97);
+}
+
+/* ── Header con logo Healthy Help ── */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-brand svg {
+  width: 36px;
+  height: 36px;
+  stroke: var(--blanco-puro);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.auth-brand-nombre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modo-oscuro .auth-brand svg {
+  stroke: rgba(210, 245, 185, 0.97);
+}
+
+.modo-oscuro .auth-brand-nombre {
+  color: rgba(210, 245, 185, 0.97);
+}
+
+
+.verificar-pagina {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
 }
 
 .verificar-card {
@@ -43,8 +106,8 @@
 .verificar-titulo {
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--blanco-puro);
-  font-family: 'Georgia', serif;
+  color: white;
+  font-family: 'Playfair Display', Georgia, serif;
   margin: 0 0 0.75rem;
 }
 
@@ -63,28 +126,24 @@
 /* Campos de código */
 .verificar-campos {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.6rem;
   justify-content: center;
   margin-bottom: 1.25rem;
-  width: 100%;
 }
 
 .verificar-digito {
-  flex: 1;
-  min-width: 0;
-  max-width: 52px;
+  width: 52px;
   height: 60px;
   text-align: center;
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--blanco-puro);
+  color: white;
   background: rgba(255, 255, 255, 0.07);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   caret-color: var(--naranja);
-  box-sizing: border-box;
 }
 
 .verificar-digito:focus {
@@ -124,7 +183,7 @@
   background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
   border: none;
   border-radius: 14px;
-  color: var(--blanco-puro);
+  color: white;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -152,7 +211,7 @@
   width: 18px;
   height: 18px;
   border: 2.5px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--blanco-puro);
+  border-top-color: white;
   border-radius: 50%;
   animation: girar 0.6s linear infinite;
   display: inline-block;
@@ -208,29 +267,11 @@
 
 /* Responsive */
 @media (max-width: 480px) {
-  .verificar-card {
-    padding: 2rem 1.25rem;
+  .verificar-pagina {
+    padding: 1rem 0.5rem;
   }
-  .verificar-digito {
-    height: 52px;
-    font-size: 1.3rem;
-    border-radius: 10px;
-  }
-  .verificar-campos {
-    gap: 0.35rem;
-  }
-}
 
-@media (max-width: 360px) {
-  .verificar-card {
-    padding: 1.75rem 1rem;
-  }
-  .verificar-digito {
-    height: 48px;
-    font-size: 1.2rem;
-    border-radius: 8px;
-  }
-  .verificar-campos {
-    gap: 0.25rem;
-  }
+  .verificar-card { padding: 2rem 1.25rem; }
+  .verificar-digito { width: 44px; height: 52px; font-size: 1.4rem; border-radius: 10px; }
+  .verificar-campos { gap: 0.4rem; }
 }

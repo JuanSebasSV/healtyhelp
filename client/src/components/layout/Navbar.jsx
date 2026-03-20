@@ -37,7 +37,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
         </div>
         
         <button 
-          className="navHamburguesa" 
+          className={`navHamburguesa ${menuAbierto ? 'abierto' : ''}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
           aria-label="Menú"
         >
@@ -51,6 +51,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
             onClick={() => handleNavigate('/')}
             className={isActive('/') ? 'activo' : ''}
           >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Inicio
           </li>
           
@@ -60,12 +61,14 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
                 onClick={() => handleNavigate('/seguimiento')}
                 className={isActive('/seguimiento') ? 'activo' : ''}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                 Seguimiento
               </li>
               <li 
                 onClick={() => handleNavigate('/favoritos')}
                 className={isActive('/favoritos') ? 'activo' : ''}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 Favoritos
               </li>
             </>
@@ -75,6 +78,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
             onClick={() => handleNavigate('/contacto')}
             className={isActive('/contacto') ? 'activo' : ''}
           >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             Contáctanos
           </li>
 
@@ -91,7 +95,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
             </li>
           )}
 
-          <li>
+          <li className="navMenu-tema">
             <button 
               className="btnTema" 
               onClick={toggleModoOscuro} 
@@ -145,14 +149,14 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
                 </div>
                 <span className="nav-nombre">{user.name?.split(' ')[0]}</span>
               </li>
-              <li>
+              <li className="navMenu-centrado">
                 <button className="btn-secundario" onClick={handleCerrarSesion}>
                   Cerrar Sesión
                 </button>
               </li>
             </>
           ) : (
-            <li>
+            <li className="navMenu-centrado">
               <button className="btn-primario" onClick={() => handleNavigate('/login')}>
                 Inicio de sesión
               </button>

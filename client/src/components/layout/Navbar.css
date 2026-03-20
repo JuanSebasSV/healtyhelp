@@ -63,7 +63,7 @@
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
   color: var(--blanco-puro) !important;
-  font-family: 'Georgia', serif;
+  font-family: 'Playfair Display', Georgia, serif;
   pointer-events: none;
   transition: var(--transicion);
 }
@@ -87,7 +87,15 @@
   padding: 0.5rem;
   flex-shrink: 0;
 }
-.navHamburguesa span { width: 25px; height: 3px; background: var(--blanco); border-radius: 3px; transition: var(--transicion); }
+.navHamburguesa span {
+  width: 25px;
+  height: 2.5px;
+  background: var(--blanco-puro);
+  border-radius: 3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  display: block;
+}
 
 /* ── Menú ── */
 .navMenu {
@@ -243,16 +251,339 @@
   .navMenu {
     position: absolute;
     top: 100%; left: 0; right: 0;
-    background: rgba(26, 77, 46, 0.98);
-    backdrop-filter: blur(20px);
+    background: linear-gradient(
+      160deg,
+      rgba(26, 77, 46, 0.97) 0%,
+      rgba(20, 58, 35, 0.99) 60%,
+      rgba(15, 45, 28, 1) 100%
+    );
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
     flex-direction: column;
-    padding: clamp(1rem, 3vw, 2rem) var(--page-px);
-    gap: 1.25rem;
+    align-items: center;
+    padding: 1rem 0 1.25rem;
+    gap: 0;
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
-    transition: var(--transicion);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     z-index: 999;
   }
-  .navMenu.activo { transform: translateY(0); opacity: 1; pointer-events: all; }
+
+  /* Wrapper centrado que contiene todos los items */
+  .navMenu {
+    align-items: center;
+  }
+
+  /* Items con SVG — desplazados a la derecha del centro */
+  .navMenu li {
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.72rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    width: 55%;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 14%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    color: var(--blanco-puro);
+    cursor: pointer;
+    transition: var(--transicion);
+  }
+
+  /* SVG fijo 20x20 */
+  .navMenu li > svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px;
+    max-width: 20px;
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+
+  /* navUsuario en móvil — compacto y centrado */
+  .navMenu li.navUsuario {
+    all: unset !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 0.5rem 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+  }
+
+  .navMenu li.navUsuario .navUsuario {
+    width: auto !important;
+    padding: 0.4rem 1rem !important;
+  }
+
+  /* Tema e items centrados — override total, independientes del flujo */
+  .navMenu li.navMenu-tema,
+  .navMenu li.navMenu-centrado {
+    all: unset !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 0.6rem 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    cursor: pointer !important;
+    transition: var(--transicion) !important;
+    box-sizing: border-box !important;
+  }
+
+  .navMenu-header {
+    width: 55% !important;
+    max-width: 200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 14% !important;
+    justify-content: flex-start !important;
+  }
+
+  .navMenu li:last-child {
+    border-bottom: none;
+  }
+
+  .navMenu li:not(:has(button)):not(.navMenu-header):not(.navMenu-divider):not(.navMenu-tema):not(.navMenu-cerrar):hover {
+    color: var(--naranja) !important;
+    transform: scale(1.03);
+  }
+
+  .navMenu.activo {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modo-oscuro .navMenu {
+    background: linear-gradient(
+      160deg,
+      rgba(5, 15, 8, 0.99) 0%,
+      rgba(8, 22, 12, 1) 60%,
+      rgba(3, 10, 6, 1) 100%
+    );
+    border-bottom-color: rgba(79, 119, 45, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(79, 119, 45, 0.15);
+  }
+
+  .modo-oscuro .navMenu li {
+    border-bottom-color: rgba(79, 119, 45, 0.15);
+  }
+}
+
+/* ============================================================
+   MENÚ MÓVIL — elementos nuevos
+   ============================================================ */
+
+/* Overlay oscuro detrás del menú */
+.navOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Hamburguesa → X al abrir */
+.navHamburguesa {
+  gap: 6px;
+}
+.navHamburguesa.abierto span:nth-child(1) {
+  transform: translateY(8.5px) rotate(45deg);
+}
+.navHamburguesa.abierto span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.navHamburguesa.abierto span:nth-child(3) {
+  transform: translateY(-8.5px) rotate(-45deg);
+}
+
+/* ── Header del menú ── */
+.navMenu-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0.75rem !important;
+  padding-top: 0.25rem !important;
+}
+
+/* Ocultar header cuando no tiene contenido */
+.navMenu-header:empty {
+  display: none !important;
+}
+
+.navMenu-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  width: 100%;
+}
+
+.navMenu-brand svg {
+  stroke: var(--naranja);
+}
+
+/* Usuario en el header */
+.navMenu-usuario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.nav-avatar-mini--grande {
+  width: 38px !important;
+  height: 38px !important;
+  font-size: 0.85rem !important;
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.navMenu-usuario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.navMenu-usuario-nombre {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+}
+
+.navMenu-usuario-email {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Items con icono ── */
+.navMenu li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navMenu li svg {
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: var(--transicion);
+}
+
+.navMenu li:hover svg,
+.navMenu li.activo svg {
+  opacity: 1;
+  stroke: var(--naranja);
+}
+
+.navMenu li.activo {
+  color: var(--naranja) !important;
+}
+
+/* ── Divider ── */
+.navMenu-divider {
+  height: 1px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-bottom: none !important;
+  pointer-events: none;
+}
+
+/* ── Fila de modo tema ── */
+.navMenu-tema {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.95rem !important;
+  cursor: default !important;
+}
+
+.navMenu-tema:hover {
+  transform: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ── Perfil ── */
+.navMenu-perfil {
+  cursor: pointer;
+}
+
+/* ── Botón cerrar sesión ── */
+.navMenu-cerrar {
+  border-bottom: none !important;
+  padding-top: 0.5rem !important;
+  margin-top: 0 !important;
+}
+
+.navMenu-btn-cerrar {
+  width: 80%;
+  max-width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.7rem;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1.5px solid rgba(220, 38, 38, 0.3);
+  border-radius: 14px;
+  color: var(--rojo-claro);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicion);
+}
+
+.navMenu-btn-cerrar svg {
+  stroke: var(--rojo-claro);
+  opacity: 1 !important;
+}
+
+.navMenu-btn-cerrar:hover {
+  background: rgba(220, 38, 38, 0.28);
+  border-color: rgba(220, 38, 38, 0.55);
+  transform: translateY(-2px);
+}
+
+.navMenu-cerrar .btn-primario {
+  width: 80%;
+  max-width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 14px;
+  padding: 0.85rem;
+}
+
+/* Modo oscuro ajustes */
+.modo-oscuro .navMenu-usuario-email {
+  color: rgba(180, 220, 160, 0.45);
+}
+
+.modo-oscuro .navMenu-usuario-nombre {
+  color: rgba(210, 245, 185, 0.95);
+}
+
+.modo-oscuro .navMenu-tema {
+  color: rgba(200, 230, 180, 0.8) !important;
 }
