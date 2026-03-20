@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&family=DM+Sans:wght@300&display=swap');
+
 .vistaChatbot {
     /* Neutraliza el padding del layout */
     margin: 0 -24px; /* ajusta este valor al padding de tu layout */

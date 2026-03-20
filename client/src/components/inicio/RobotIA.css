@@ -49,10 +49,24 @@
   flex-direction: column;
   animation: slideUp 0.3s ease;
 }
-
+.robotSaludo{
+  color: aliceblue;
+  text-align: center;
+  padding-bottom: 1rem;
+}
+.hola{
+  font-family: 'Cormorant Garamond', serif;
+  font-size: larger;
+}
 .modo-oscuro .robotChat {
   background: rgba(10, 25, 15, 0.65);
   border-color: rgba(79, 119, 45, 0.3);
+}
+
+/* Oculta el botón flotante cuando está en la página del chatbot */
+body:has(> #root > * .vistaChatbot) .robotBoton,
+body:has(> #root > * .vistaChatbot) .robotChat {
+  display: none;
 }
 
 /* ============ HEADER ============ */

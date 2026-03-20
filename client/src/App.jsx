@@ -28,6 +28,7 @@ import VistaInicio from './components/inicio/VistaInicio';
 import VistaSeguimiento from './components/vistas/VistaSeguimiento';
 import VistaFavoritos from './components/vistas/VistaFavoritos';
 import VistaContacto from './components/vistas/VistaContacto';
+import VistaChatbot from './components/vistas/VistaChatbot';
 
 // Admin
 import Dashboard from './components/admin/Dashboard';
@@ -127,8 +128,14 @@ function AppContent() {
             <Route path="/google-callback"          element={<GoogleCallback />} />
             <Route path="/recuperar"                element={<ForgotPassword />} />
             <Route path="/reset-password/:token"    element={<ResetPassword />} />
-            <Route path="/verificar-email"             element={<VerificarEmail />} />
+            <Route path="/verificar-email"          element={<VerificarEmail />} />
             <Route path="/contacto"                 element={<VistaContacto />} />
+            <Route 
+            path="/chatbot" 
+            element={
+              <VistaChatbot abrirFlotante={() => setRobotIAActivo(true)} />
+            } 
+/>
 
             {/* Rutas protegidas */}
             <Route
@@ -196,6 +203,7 @@ function AppContent() {
                 </PrivateRoute>
               }
             />
+            
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />

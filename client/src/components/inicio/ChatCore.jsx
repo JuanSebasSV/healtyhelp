@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar }) => {
+const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar, onMinimizar}) => {
   const [mensaje, setMensaje] = useState('');
   const [chat, setChat] = useState([]);
   const [cargando, setCargando] = useState(false);
@@ -47,11 +47,24 @@ const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar }) => {
     <div className={`chatCore ${modoExpandido ? 'chatCore--expandido' : ''}`}>
       {/* Header */}
       <div className="robotHeader">
-        {/* Botón expandir: solo en modo flotante */}
+        {/* Botón minimizar: solo en modo expandido */}
+      {modoExpandido && (
+        <button onClick={onMinimizar} title="Minimizar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3v3a2 2 0 0 1-2 2H3"/>
+            <path d="M21 8h-3a2 2 0 0 1-2-2V3"/>
+            <path d="M3 16h3a2 2 0 0 1 2 2v3"/>
+            <path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+          </svg>
+        </button>
+      )}
+  
+        {/* Botón expandir: solo en modo flotante */}     
         {!modoExpandido && onExpandir && (
           <button onClick={onExpandir} title="Abrir en pantalla completa">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              fill="none" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 15 6 6"/><path d="m15 9 6-6"/>
               <path d="M21 16v5h-5"/><path d="M21 8V3h-5"/>
               <path d="M3 16v5h5"/><path d="m3 21 6-6"/>
@@ -61,6 +74,7 @@ const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar }) => {
         )}
         <h3>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot-message-square-icon lucide-bot-message-square"><path d="M12 6V2H8"/><path d="M15 11v2"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M20 16a2 2 0 0 1-2 2H8.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 4 20.286V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9 11v2"/></svg>Asistente IA</h3>
+
         {/* Botón cerrar: solo en modo flotante */}
         {!modoExpandido && (
           <button onClick={onCerrar} aria-label="Cerrar">✕</button>
@@ -75,8 +89,8 @@ const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar }) => {
             <p>Pregúntame sobre:</p>
           </div>
           {chat.length === 0 && (
-            <div className="robotBienvenida">
-              
+
+            <div className="robotBienvenida">         
               <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem' }}>
                 <li>🥗 Recetas saludables</li>
                 <li>🎃 Ingredientes y nutrición</li>
