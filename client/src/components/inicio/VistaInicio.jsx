@@ -5,12 +5,12 @@ import './VistaInicio.css';
 
 // Imágenes del carrusel — carpeta /public/
 const imagenesHero = [
-  '/ensalada.jpg',
-  '/mani y frutas.jpg',
-  '/pechuga.jpg',
-  '/ajo.jpg',
-  '/variedad de comida.jpg',
-  '/verduras.jpg',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/pechuga_tfpvfm.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031326/ajo_e0n3fy.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/variedad_de_comida_ecokui.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp',
 ];
 
 // Precargar TODAS las imágenes inmediatamente al importar el módulo

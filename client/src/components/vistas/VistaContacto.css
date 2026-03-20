@@ -60,7 +60,7 @@
   justify-content: center;
   gap: 0.9rem;
   padding: 2.5rem 2rem;
-  background-image: url('/contacto-bg.jpg');
+  background-image: url('https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/contacto-bg_f1s3vs.webp');
   background-size: cover;
   background-position: center center;
   isolation: isolate;
