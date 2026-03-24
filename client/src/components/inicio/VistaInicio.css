@@ -228,8 +228,6 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 3rem;
-  padding-left: var(--page-px);
-  padding-right: var(--page-px);
 }
 
 .catBtn {
@@ -246,7 +244,7 @@
   cursor: pointer;
   transition: var(--transicion);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .catBtn:hover {
@@ -260,13 +258,13 @@
   background: rgba(247, 127, 0, 0.35);
   border-color: var(--naranja);
   box-shadow: 0 4px 20px rgba(247, 127, 0, 0.3);
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .modo-oscuro .catBtn {
   background: rgba(15, 35, 20, 0.55);
   border-color: rgba(79, 119, 45, 0.35);
-  color: var(--gris-oscuro);
+  color: #e0e0e0;
 }
 
 .modo-oscuro .catBtn:hover {
@@ -277,7 +275,7 @@
 .modo-oscuro .catBtn.activo {
   background: rgba(247, 127, 0, 0.3);
   border-color: var(--naranja);
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .catIcono {
@@ -290,7 +288,7 @@
 }
 
 .catBtn.activo .catIcono svg {
-  stroke: var(--blanco-puro);
+  stroke: #ffffff;
 }
 
 .modo-oscuro .catIcono svg {
@@ -298,26 +296,26 @@
 }
 
 .modo-oscuro .catBtn.activo .catIcono svg {
-  stroke: var(--blanco-puro);
+  stroke: #ffffff;
 }
 
 .catBtn span:not(.catIcono) {
-  color: var(--blanco-puro);
+  color: #ffffff;
   font-weight: 600;
   font-size: 0.9rem;
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .catBtn.activo span:not(.catIcono) {
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .modo-oscuro .catBtn span:not(.catIcono) {
-  color: var(--gris-oscuro);
+  color: #e0e0e0;
 }
 
 .modo-oscuro .catBtn.activo span:not(.catIcono) {
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 /* ============ FILTRO SALUD — glassmorphism ============ */
@@ -365,7 +363,7 @@
 }
 
 .filtroHeader h2 {
-  color: var(--blanco-puro);
+  color: #ffffff;
   margin: 0;
   font-size: 1.8rem;
   text-shadow: 0 1px 4px rgba(0,0,0,0.3);
@@ -413,7 +411,7 @@
   padding: 0.75rem 1.5rem;
   background: rgba(247, 127, 0, 0.25);
   border: 1.5px solid rgba(247, 127, 0, 0.5);
-  color: var(--naranja-hover);
+  color: #ffb347;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
@@ -425,7 +423,7 @@
 .btnLimpiar:hover {
   background: var(--naranja);
   border-color: var(--naranja);
-  color: var(--blanco-puro);
+  color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(247, 127, 0, 0.35);
 }
@@ -498,32 +496,15 @@
 }
 
 .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco-puro);
-  fill: var(--blanco-puro);
-  color: var(--blanco-puro);
+  stroke: #ffffff;
 }
 
-/* Modo oscuro — forzar verde en TODOS los SVGs del filtro
-   tanto los que usan stroke como los que usan fill */
 .modo-oscuro .filtroIcono svg {
-  stroke: rgba(180, 220, 160, 0.85) !important;
-  fill: rgba(180, 220, 160, 0.85) !important;
-  color: rgba(180, 220, 160, 0.85) !important;
-}
-
-/* Excepción: los que tienen fill="none" no deben rellenarse */
-.modo-oscuro .filtroIcono svg[fill="none"] {
-  fill: none !important;
+  stroke: rgba(180, 220, 160, 0.85);
 }
 
 .modo-oscuro .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco-puro) !important;
-  fill: var(--blanco-puro) !important;
-  color: var(--blanco-puro) !important;
-}
-
-.modo-oscuro .filtroCard.activo .filtroIcono svg[fill="none"] {
-  fill: none !important;
+  stroke: #ffffff;
 }
 
 .filtroNombre {
@@ -535,7 +516,7 @@
 }
 
 .filtroCard.activo .filtroNombre {
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .modo-oscuro .filtroCard .filtroNombre {
@@ -543,7 +524,7 @@
 }
 
 .modo-oscuro .filtroCard.activo .filtroNombre {
-  color: var(--blanco-puro);
+  color: #ffffff;
 }
 
 .filtroCheck {
@@ -551,7 +532,7 @@
   top: 0.5rem;
   right: 0.5rem;
   background: var(--naranja);
-  color: var(--blanco-puro);
+  color: #ffffff;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -570,7 +551,7 @@
 
 .recetasGrid h2 {
   text-align: center;
-  color: var(--blanco-puro);
+  color: #ffffff;
   font-size: 2.5rem;
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
@@ -592,6 +573,76 @@
   border-radius: 16px;
 }
 
+/* ============ RESPONSIVE ============ */
+@media (max-width: 968px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .categorias {
+    gap: 0.75rem;
+  }
+
+  .catBtn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .filtroGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .filtroCard {
+    padding: 1rem;
+    min-height: 90px;
+  }
+
+  .filtroIcono {
+    font-size: 1.5rem;
+  }
+
+  .filtroNombre {
+    font-size: 0.85rem;
+  }
+
+  .filtroHeader h2 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .filtroGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .filtroCard {
+    padding: 0.75rem;
+    min-height: 80px;
+  }
+
+  .filtroInfo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtroInfo p {
+    min-width: 100%;
+  }
+
+  .btnLimpiar {
+    width: 100%;
+  }
+
+  .filtroHeader {
+    padding: 1.5rem;
+  }
+
+  .filtroHeader h2 {
+    font-size: 1.2rem;
+  }
+}
 
 /* ============ PREMIUM BANNER ============ */
 .premiumBanner {
@@ -700,7 +751,7 @@
   display: inline-block;
   background: rgba(255, 185, 60, 0.25);
   border: 1px solid rgba(255, 185, 60, 0.55);
-  color: var(--dorado);
+  color: #ffd47a;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 1.5px;
@@ -719,7 +770,7 @@
 .premiumBanner__titulo {
   font-size: 1.35rem;
   font-weight: 800;
-  color: var(--blanco-puro);
+  color: #ffffff;
   font-family: 'Georgia', serif;
   margin: 0;
   line-height: 1.2;
@@ -727,7 +778,7 @@
 }
 
 .premiumBanner__titulo span {
-  background: linear-gradient(90deg, var(--dorado), var(--naranja), var(--dorado));
+  background: linear-gradient(90deg, #ffd47a, #f77f00, #ffd47a);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -756,7 +807,7 @@
   background: linear-gradient(135deg, rgba(247,127,0,0.5), rgba(255,160,30,0.4));
   border: 1.5px solid rgba(255, 185, 60, 0.65);
   border-radius: 50px;
-  color: var(--blanco-puro);
+  color: #ffffff;
   font-weight: 700;
   font-size: 0.92rem;
   cursor: pointer;
@@ -798,119 +849,22 @@
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 200, 80, 0.2);
 }
 
-/* ============================================================
-   RESPONSIVE — Solo teléfonos (320px – 767px)
-   No afecta tablets ni escritorio
-   ============================================================ */
-
-/* ── Rango amplio: cualquier teléfono ── */
-@media (max-width: 767px) {
-
-  /* Hero */
-  .hero h1 {
-    font-size: 1.75rem;
-  }
-
-  /* Categorías */
-  .categorias {
-    gap: 0.6rem;
-  }
-
-  .catBtn {
-    padding: 0.65rem 0.85rem;
-    font-size: 0.85rem;
-  }
-
-  /* Filtro salud — header */
-  .filtroHeader {
-    padding: 1.25rem 1rem;
-  }
-
-  .filtroHeader h2 {
-    font-size: 1.15rem;
-  }
-
-  /* Espacio extra entre el texto y la flechita SVG del toggle */
-  .filtroToggle {
-    right: 1rem;
-    font-size: 1.2rem;
-    margin-left: 0.75rem;
-  }
-
-  /* Filtro salud — grid de condiciones: 3 columnas fijas en teléfonos */
-  .filtroGrid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem;
-  }
-
-  .filtroCard {
-    padding: 0.65rem 0.5rem;
-    min-height: 75px;
-    min-width: 0;        /* evita desbordamiento en grid estrecho */
-    gap: 0.45rem;
-  }
-
-  .filtroNombre {
-    font-size: 0.72rem;
-    line-height: 1.2;
-    word-break: break-word;
-  }
-
-  /* Filtro — fila info + limpiar */
-  .filtroInfo {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filtroInfo p {
-    min-width: 100%;
-    font-size: 0.88rem;
-  }
-
-  .btnLimpiar {
-    width: 100%;
-  }
-
-  .filtroContenido {
-    padding: 1rem;
-  }
-
-  /* Grid de recetas: gestionado por index.css */
-
-  /* Título sección recetas */
-  .recetasGrid h2 {
-    font-size: 1.6rem;
-    margin-bottom: 1.25rem;
-  }
-
-  /* Premium banner */
+/* Responsive */
+@media (max-width: 640px) {
   .premiumBanner {
-    padding: 1rem 1rem;
+    padding: 1.2rem 1.25rem;
   }
 
   .premiumBanner__titulo {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .premiumBanner__desc {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
   }
 
   .premiumBanner__cta {
-    padding: 0.55rem 0.9rem;
-    font-size: 0.82rem;
-  }
-}
-
-/* ── Teléfonos muy pequeños (≤ 360px) ── */
-@media (max-width: 360px) {
-
-  /* Filtro: 2 columnas en lugar de 3 en pantallas muy estrechas */
-  .filtroGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .filtroHeader h2 {
-    font-size: 1rem;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.85rem;
   }
 }
