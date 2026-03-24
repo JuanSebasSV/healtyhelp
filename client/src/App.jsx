@@ -130,10 +130,7 @@ function AppContent() {
             <Route path="/reset-password/:token"    element={<ResetPassword />} />
             <Route path="/verificar-email"          element={<VerificarEmail />} />
             <Route path="/contacto"                 element={<VistaContacto />} />
-            <Route 
-            path="/chatbot" 
-            element={
-              <VistaChatbot abrirFlotante={() => setRobotIAActivo(true)} />
+            <Route path="/chatbot"  element={<VistaChatbot abrirFlotante={() => setRobotIAActivo(true)} />
             } 
 />
 

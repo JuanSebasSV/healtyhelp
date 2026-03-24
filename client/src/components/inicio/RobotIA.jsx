@@ -27,7 +27,8 @@ const RobotIA = ({ activo, toggleIA }) => {
       {/* Panel flotante */}
       {activo && (
         <div className="robotChat">
-          <ChatCore onExpandir={irAChatCompleto} />
+          <ChatCore onExpandir={irAChatCompleto} 
+          onCerrar={toggleIA}/>
         </div>
       )}
     </>
