@@ -90,7 +90,7 @@
 .navHamburguesa span {
   width: 25px;
   height: 2px;
-  background-color: var(--blanco-puro) !important;
+  background-color: #ffffff !important;
   border-radius: 3px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
@@ -644,6 +644,6 @@
 /* Garantizar visibilidad de las rayas del hamburguesa en todos los modos */
 nav .navHamburguesa span,
 .nav .navHamburguesa span {
-  background-color: var(--blanco-puro) !important;
+  background-color: #ffffff !important;
   opacity: 1 !important;
 }
