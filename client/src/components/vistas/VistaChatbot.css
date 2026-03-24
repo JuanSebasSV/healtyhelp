@@ -6,6 +6,8 @@
     min-height: calc(100vh - 64px);
     display: flex;
     flex-direction: column;
+    background-color: rgb(132, 132, 132);
+    border-radius: 20px;
   }
   
   /* El ChatCore en modo expandido ocupa todo */

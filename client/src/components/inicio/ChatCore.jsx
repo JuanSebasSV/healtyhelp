@@ -139,7 +139,7 @@ const ChatCore = ({ modoExpandido = false, onExpandir, onCerrar, onMinimizar}) =
       </div>
 
       <div className="robotFooter">
-        <small style={{ opacity: 0.6 }}>💡 Próximamente: Integración con Claude AI</small>
+        <small style={{ opacity: 0.6 }}>💡¡Integración con Gemini! </small>
       </div>
     </div>
   );
