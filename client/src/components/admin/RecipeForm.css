@@ -10,14 +10,16 @@
 }
 
 .recipe-form h2 {
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
   color: #ffffff;
   font-size: 1.5rem;
   margin-bottom: 1.75rem;
   text-align: center;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-.modo-oscuro .recipe-form h2 { color: rgba(210, 245, 185, 0.97); }
+.modo-oscuro .recipe-form h2 {
+  color: rgba(210, 245, 185, 0.97);
+}
 
 /* ── Secciones ── */
 .form-section {
@@ -46,8 +48,12 @@
   background: rgba(0, 0, 0, 0.25);
   border-color: rgba(79, 119, 45, 0.18);
 }
-.modo-oscuro .form-section h3 { color: rgba(210, 245, 185, 0.8); }
-.modo-oscuro .form-section h4 { color: rgba(180, 210, 160, 0.5); }
+.modo-oscuro .form-section h3 {
+  color: rgba(210, 245, 185, 0.8);
+}
+.modo-oscuro .form-section h4 {
+  color: rgba(180, 210, 160, 0.5);
+}
 
 /* ── Grupos ── */
 .form-group {
@@ -76,7 +82,9 @@
   font-family: inherit;
 }
 .form-group input::placeholder,
-.form-group textarea::placeholder { color: rgba(255, 255, 255, 0.28); }
+.form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -84,10 +92,19 @@
   background: rgba(255, 255, 255, 0.11);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
 }
-.form-group select option { background: #1a4d2e; color: #fff; }
-.form-group textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.form-group select option {
+  background: #1a4d2e;
+  color: #fff;
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
 
-.modo-oscuro .form-group label { color: rgba(180, 210, 160, 0.65); }
+.modo-oscuro .form-group label {
+  color: rgba(180, 210, 160, 0.65);
+}
 .modo-oscuro .form-group input,
 .modo-oscuro .form-group textarea,
 .modo-oscuro .form-group select {
@@ -96,8 +113,12 @@
   color: rgba(220, 245, 205, 0.95);
 }
 .modo-oscuro .form-group input::placeholder,
-.modo-oscuro .form-group textarea::placeholder { color: rgba(180, 210, 160, 0.3); }
-.modo-oscuro .form-group select option { background: #0a1a0f; }
+.modo-oscuro .form-group textarea::placeholder {
+  color: rgba(180, 210, 160, 0.3);
+}
+.modo-oscuro .form-group select option {
+  background: #0a1a0f;
+}
 
 /* ── Grid de filas ── */
 .form-row {
@@ -151,7 +172,9 @@
   border-color: rgba(79, 119, 45, 0.2);
   color: rgba(180, 210, 160, 0.65);
 }
-.modo-oscuro .salud-checkbox:hover { color: rgba(210, 245, 185, 0.9); }
+.modo-oscuro .salud-checkbox:hover {
+  color: rgba(210, 245, 185, 0.9);
+}
 
 /* ── Inputs dinámicos (ingredientes / pasos) ── */
 .dynamic-input {
@@ -161,7 +184,9 @@
   align-items: flex-start;
 }
 .dynamic-input input,
-.dynamic-input textarea { flex: 1; }
+.dynamic-input textarea {
+  flex: 1;
+}
 
 .paso-number {
   background: rgba(79, 119, 45, 0.35);
@@ -251,7 +276,9 @@
   padding-top: 1.25rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-.modo-oscuro .advanced-nutri { border-top-color: rgba(79, 119, 45, 0.15); }
+.modo-oscuro .advanced-nutri {
+  border-top-color: rgba(79, 119, 45, 0.15);
+}
 
 .nutri-note {
   background: rgba(247, 127, 0, 0.1);
@@ -313,15 +340,31 @@
 
 /* ── Responsive ── */
 @media (max-width: 968px) {
-  .form-row { grid-template-columns: 1fr; }
-  .nutri-grid { grid-template-columns: 1fr 1fr; }
-  .salud-grid { grid-template-columns: 1fr 1fr; }
-  .form-actions { flex-direction: column; }
-  .btn-cancel, .btn-submit { width: 100%; text-align: center; }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .nutri-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .salud-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-actions {
+    flex-direction: column;
+  }
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+    text-align: center;
+  }
 }
 @media (max-width: 480px) {
-  .salud-grid { grid-template-columns: 1fr; }
-  .nutri-grid { grid-template-columns: 1fr; }
+  .salud-grid {
+    grid-template-columns: 1fr;
+  }
+  .nutri-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Títulos de sección con SVG alineado ── */
@@ -344,7 +387,9 @@
 
 /* ── Spinner en botón submit ── */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Fix inputs dentro de dynamic-input (ingredientes y pasos) ── */
@@ -414,7 +459,7 @@
 }
 
 .salud-checkbox input[type="checkbox"]:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 4px;
   top: 1px;

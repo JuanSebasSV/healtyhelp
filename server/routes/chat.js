@@ -3,6 +3,7 @@ const router = express.Router();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { protect } = require('../middleware/auth');
 const User = require('../models/User');
+const AIConfig = require('../models/AIConfig');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -28,21 +29,19 @@ router.post('/', protect, async (req, res) => {
       ? user.healthProfile.preferencias.join(', ')
       : 'ninguna indicada';
 
+    let config = await AIConfig.findOne();
+    if (!config) config = await AIConfig.create({});
+
     const systemPrompt = `
-      Eres NutriBot, el asistente nutricional de la plataforma HealtyHelp.
-      Tu única función es responder preguntas sobre nutrición, recetas saludables
-      y alimentación. Si el usuario pregunta algo fuera de estos temas, responde
-      amablemente que solo puedes ayudar con temas nutricionales.
+      ${config.prompt}
 
       Perfil del usuario "${user.name}":
       - Condiciones médicas: ${condiciones}
       - Alergias: ${alergias}
       - Preferencias alimenticias: ${preferencias}
 
-      IMPORTANTE:
-      - Adapta SIEMPRE tus respuestas a las condiciones y alergias del usuario.
-      - Nunca sugieras alimentos que puedan perjudicarle.
-      - Responde en español, de forma clara, amigable y concisa.
+      IMPORTANTE: Adapta SIEMPRE tus respuestas a las condiciones del usuario.
+      Nunca sugieras alimentos que puedan perjudicarle.
     `;
 
     const model = genAI.getGenerativeModel({
@@ -96,6 +95,28 @@ router.put('/health-profile', protect, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Error al actualizar perfil de salud' });
+  }
+});
+
+router.get('/prompt', protect, async (req, res) => {
+  try {
+    let config = await AIConfig.findOne();
+    if (!config) config = await AIConfig.create({});
+    res.json({ prompt: config.prompt });
+  } catch {
+    res.status(500).json({ error: 'Error obteniendo prompt' });
+  }
+});
+
+router.put('/prompt', protect, async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    let config = await AIConfig.findOne();
+    if (!config) config = await AIConfig.create({ prompt });
+    else { config.prompt = prompt; await config.save(); }
+    res.json({ message: 'Prompt actualizado', prompt: config.prompt });
+  } catch {
+    res.status(500).json({ error: 'Error guardando prompt' });
   }
 });
 
