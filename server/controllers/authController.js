@@ -59,7 +59,7 @@ const validarNombre = (name) => {
   if (!name || name.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
   if (name.trim().length > 50) return 'El nombre es muy largo';
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) return 'El nombre solo puede contener letras';
-  if (/(.){3,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
+  if (/(.){3,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
   return null;
 };
 
@@ -189,6 +189,9 @@ exports.verifyEmail = async (req, res) => {
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: true,
         age: user.age, weight: user.weight, height: user.height,
+        isSuperAdmin: user.isSuperAdmin || false,
+        termsAccepted:   user.termsAccepted   || false,
+        profileComplete: user.profileComplete  || false,
         createdAt: user.createdAt
       }
     });
@@ -289,6 +292,8 @@ exports.login = async (req, res) => {
         googleId: user.googleId, isVerified: user.isVerified,
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
+        termsAccepted:   user.termsAccepted   || false,
+        profileComplete: user.profileComplete  || false,
         createdAt: user.createdAt
       }
     });

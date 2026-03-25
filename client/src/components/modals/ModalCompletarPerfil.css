@@ -1,0 +1,123 @@
+.completar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.completar-modal {
+  background: rgba(10, 28, 15, 0.97);
+  border: 1px solid rgba(79, 119, 45, 0.4);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  padding: 2rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.completar-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.completar-icono {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.completar-icono svg { stroke: #fff; }
+
+.completar-header h2 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-family: 'Georgia', serif;
+  margin-bottom: 0.3rem;
+}
+.completar-header p {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.completar-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.completar-grupo label {
+  display: block;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.completar-grupo .numero-wrapper input {
+  width: 100%;
+  padding: 0.75rem 2.4rem 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transicion);
+  box-sizing: border-box;
+}
+.completar-grupo .numero-wrapper input:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+}
+
+.completar-error {
+  display: block;
+  color: var(--rojo-claro);
+  font-size: 0.78rem;
+  margin-top: 0.3rem;
+}
+
+.completar-nota {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+
+.completar-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
+}
+.completar-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(79, 119, 45, 0.4);
+  filter: brightness(1.1);
+}
+.completar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

@@ -38,14 +38,21 @@ import RecipeManagement from './components/admin/RecipeManagement';
 // Otros
 import RobotIA from './components/inicio/RobotIA';
 
+// Modales bloqueantes
+import ModalTerminos, { TERMS_VERSION, TERMS_KEY } from './components/modals/ModalTerminos';
+import ModalCompletarPerfil from './components/modals/ModalCompletarPerfil';
+
 // API
 import api from './api/axios';
 
 // Hook de autenticación
 import useAuth from './hooks/useAuth';
 
+// Rutas donde NO mostramos los modales bloqueantes
+const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '/verificar-email'];
+
 function AppContent() {
-  const { user } = useAuth();
+  const { user, checkAuth } = useAuth();
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
     return saved ? JSON.parse(saved) : false;
@@ -58,6 +65,12 @@ function AppContent() {
   const [robotIAActivo, setRobotIAActivo]       = useState(false);
   const [recetas, setRecetas]                   = useState([]);
   const [cargandoRecetas, setCargandoRecetas]   = useState(true);
+
+  // ── Estado modales ──
+  const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
+  const [esActualizacion,        setEsActualizacion]        = useState(false);
+  const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
+  const [terminosResueltos,      setTerminosResueltos]      = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
@@ -83,6 +96,64 @@ function AppContent() {
     } finally {
       setCargandoRecetas(false);
     }
+  };
+
+  // ── Lógica de términos y perfil ──
+  useEffect(() => {
+    const ruta = window.location.pathname;
+    const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
+    if (esRutaLibre) { setTerminosResueltos(true); return; }
+
+    // Visitante sin cuenta
+    if (!user) {
+      const aceptadoLocal = localStorage.getItem(TERMS_KEY);
+      if (!aceptadoLocal) {
+        setMostrarTerminos(true);
+        setEsActualizacion(false);
+      } else {
+        setTerminosResueltos(true);
+      }
+      return;
+    }
+
+    // Usuario registrado
+    if (!user.termsAccepted || user.termsVersion !== TERMS_VERSION) {
+      setMostrarTerminos(true);
+      setEsActualizacion(!!user.termsAccepted); // ya aceptó antes pero versión distinta
+      return;
+    }
+
+    // Términos OK — verificar perfil completo
+    if (!user.profileComplete) {
+      setMostrarCompletarPerfil(true);
+      return;
+    }
+
+    setTerminosResueltos(true);
+  }, [user]);
+
+  const handleAceptarTerminos = async () => {
+    if (user) {
+      try {
+        await api.post('/auth/accept-terms');
+        await checkAuth(); // refrescar user en contexto
+      } catch { return; }
+    } else {
+      localStorage.setItem(TERMS_KEY, 'true');
+    }
+    setMostrarTerminos(false);
+
+    if (user && !user.profileComplete) {
+      setMostrarCompletarPerfil(true);
+    } else {
+      setTerminosResueltos(true);
+    }
+  };
+
+  const handlePerfilCompletado = () => {
+    setMostrarCompletarPerfil(false);
+    setTerminosResueltos(true);
+    checkAuth();
   };
 
   const toggleModoOscuro = () => setModoOscuro(!modoOscuro);
@@ -127,7 +198,7 @@ function AppContent() {
             <Route path="/google-callback"          element={<GoogleCallback />} />
             <Route path="/recuperar"                element={<ForgotPassword />} />
             <Route path="/reset-password/:token"    element={<ResetPassword />} />
-            <Route path="/verificar-email"             element={<VerificarEmail />} />
+            <Route path="/verificar-email"          element={<VerificarEmail />} />
             <Route path="/contacto"                 element={<VistaContacto />} />
 
             {/* Rutas protegidas */}
@@ -208,6 +279,20 @@ function AppContent() {
           <RobotIA
             activo={robotIAActivo}
             toggleIA={toggleRobotIA}
+          />
+        )}
+
+        {/* ── Modales bloqueantes ── */}
+        {mostrarTerminos && (
+          <ModalTerminos
+            onAceptar={handleAceptarTerminos}
+            esActualizacion={esActualizacion}
+          />
+        )}
+        {!mostrarTerminos && mostrarCompletarPerfil && (
+          <ModalCompletarPerfil
+            onCompletado={handlePerfilCompletado}
+            user={user}
           />
         )}
 

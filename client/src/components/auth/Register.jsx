@@ -98,9 +98,10 @@ const Register = () => {
     const { pass, passConf, ...sinPass } = datos;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sinPass));
   }, [datos]);
-  const [errors, setErrors]           = useState({});
-  const [loading, setLoading]         = useState(false);
-  const [showPass, setShowPass]       = useState(false);
+
+  const [errors, setErrors]             = useState({});
+  const [loading, setLoading]           = useState(false);
+  const [showPass, setShowPass]         = useState(false);
   const [showPassConf, setShowPassConf] = useState(false);
   const [mostrarModalMenor, setMostrarModalMenor] = useState(false);
 
@@ -199,6 +200,28 @@ const Register = () => {
           </div>
 
           <div className="formGroup">
+            {/* Requisitos de contraseña — visibles antes de escribir */}
+            <div className="password-requisitos-previos">
+              <p className="req-titulo">La contraseña debe tener:</p>
+              <ul>
+                <li className={datos.pass.length >= 8 ? 'req-ok' : ''}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Mínimo 8 caracteres
+                </li>
+                <li className={/[a-z]/.test(datos.pass) ? 'req-ok' : ''}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Una letra minúscula
+                </li>
+                <li className={/[A-Z]/.test(datos.pass) ? 'req-ok' : ''}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Una letra mayúscula
+                </li>
+                <li className={/\d/.test(datos.pass) ? 'req-ok' : ''}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Un número
+                </li>
+              </ul>
+            </div>
             <div className="inputWrapper">
               <input type={showPass ? 'text' : 'password'} placeholder="Contraseña" value={datos.pass}
                 onChange={(e) => handleChange('pass', e.target.value)}
