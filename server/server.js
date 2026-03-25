@@ -70,14 +70,16 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('❌ Error MongoDB:', err);
     process.exit(1);
   });
+
 //imagenes de perfil
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Rutas
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/admin', require('./routes/admin'));
-app.use('/api/recipes', require('./routes/recipes'));
+app.use('/api/auth',     require('./routes/auth'));
+app.use('/api/admin',    require('./routes/admin'));
+app.use('/api/recipes',  require('./routes/recipes'));
 app.use('/api/consumos', require('./routes/consumos'));
+app.use('/api/chat',     require('./routes/chat'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

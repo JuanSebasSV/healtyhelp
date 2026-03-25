@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
+import api from '../../api/axios';
 
-// Imágenes del carrusel — carpeta /public/
+// Imágenes del carrusel — Cloudinary CDN con optimización automática
 const imagenesHero = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp',
@@ -38,6 +39,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     setTimeout(() => { transitandoRef.current = false; }, 900);
   };
 
+  // Carrusel automático cada 5 segundos
   useEffect(() => {
     const intervalo = setInterval(() => {
       cambiarImagen(imagenActual + 1);
@@ -45,6 +47,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     return () => clearInterval(intervalo);
   }, [imagenActual]);
 
+  // Navegación con teclado
   useEffect(() => {
     const manejarTeclado = (e) => {
       if (e.key === 'ArrowLeft')  cambiarImagen(imagenActual - 1);
@@ -83,7 +86,25 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Zm-160 0v-240q0-17 11.5-28.5T240-360h80q83 0 141.5-58.5T520-560q0-50-35-85t-85-35v-200 200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240Z"/></svg>' }
   ];
 
-  const toggleFiltro  = (id) => setFiltrosActivos(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  // Persiste el perfil de salud en el backend al cambiar filtros
+  const toggleFiltro = async (id) => {
+    const nuevos = filtrosActivos.includes(id)
+      ? filtrosActivos.filter(f => f !== id)
+      : [...filtrosActivos, id];
+
+    setFiltrosActivos(nuevos);
+
+    try {
+      await api.put('/chat/health-profile', {
+        condiciones: nuevos,
+        alergias: [],
+        preferencias: []
+      });
+    } catch (error) {
+      console.error('Error guardando perfil de salud:', error);
+    }
+  };
+
   const limpiarFiltros = () => setFiltrosActivos([]);
 
   const recetasFiltradas = recetas.filter(r => {
@@ -135,6 +156,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         </div>
       </div>
 
+      {/* Categorías */}
       <section className="categorias">
         {categorias.map(cat => (
           <button

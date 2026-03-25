@@ -48,6 +48,13 @@ const userSchema = new mongoose.Schema({
   termsAcceptedAt: { type: Date },
   termsVersion:    { type: String, default: '' },
 
+  // ── Perfil de salud ──
+  healthProfile: {
+    condiciones:  { type: [String], default: [] },
+    alergias:     { type: [String], default: [] },
+    preferencias: { type: [String], default: [] }
+  },
+
   // ── Perfil completo ──
   profileComplete: { type: Boolean, default: false }
 }, { timestamps: true });

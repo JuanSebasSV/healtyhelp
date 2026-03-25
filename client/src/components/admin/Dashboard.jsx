@@ -7,6 +7,8 @@ import { useAuth } from '../../hooks/useAuth';
 import UserList from './UserList';
 import Stats from './Stats';
 import RecipeManagement from './RecipeManagement';
+import TermsManager from './TermsManager';
+import PanelIA from './PanelIA';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -151,7 +153,7 @@ const Dashboard = () => {
           className={`main-tab ${activeTab === 'users' ? 'active' : ''}`}
           onClick={() => setActiveTab('users')}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
           Usuarios
@@ -160,10 +162,37 @@ const Dashboard = () => {
           className={`main-tab ${activeTab === 'recipes' ? 'active' : ''}`}
           onClick={() => setActiveTab('recipes')}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
           </svg>
           Recetas
+        </button>
+        <button
+          className={`main-tab ${activeTab === 'terms' ? 'active' : ''}`}
+          onClick={() => setActiveTab('terms')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Términos
+        </button>
+        <button
+          className={`main-tab ${activeTab === 'ia' ? 'active' : ''}`}
+          onClick={() => setActiveTab('ia')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
+            <path d="M12 8V4H8"/>
+            <rect width="16" height="12" x="4" y="8" rx="2"/>
+            <path d="M2 14h2"/>
+            <path d="M20 14h2"/>
+            <path d="M15 13v2"/>
+            <path d="M9 13v2"/>
+          </svg>
+          Asistente IA
         </button>
       </div>
 
@@ -242,6 +271,14 @@ const Dashboard = () => {
 
       {activeTab === 'recipes' && (
         <RecipeManagement />
+      )}
+
+      {activeTab === 'terms' && (
+        <TermsManager />
+      )}
+
+      {activeTab === 'ia' && (
+        <PanelIA />
       )}
     </div>
   );

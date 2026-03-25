@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -38,9 +38,9 @@ import RecipeManagement from './components/admin/RecipeManagement';
 // Otros
 import RobotIA from './components/inicio/RobotIA';
 
-// Modales bloqueantes
-import ModalTerminos, { TERMS_VERSION, TERMS_KEY } from './components/modals/ModalTerminos';
-import ModalCompletarPerfil from './components/modals/ModalCompletarPerfil';
+// Modales bloqueantes — viven en /admin
+import ModalTerminos, { TERMS_KEY } from './components/admin/ModalTerminos';
+import ModalCompletarPerfil from './components/admin/ModalCompletarPerfil';
 
 // API
 import api from './api/axios';
@@ -53,6 +53,7 @@ const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '
 
 function AppContent() {
   const { user, checkAuth } = useAuth();
+
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
     return saved ? JSON.parse(saved) : false;
@@ -71,6 +72,11 @@ function AppContent() {
   const [esActualizacion,        setEsActualizacion]        = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
   const [terminosResueltos,      setTerminosResueltos]      = useState(false);
+
+  // ── BUG FIX: bandera de sesión para evitar que el useEffect reabra el modal
+  //    después de que checkAuth() actualiza el user en el contexto.
+  //    useRef porque NO queremos que cambiarla dispare un re-render.
+  const terminosAceptadosEnSesion = useRef(false);
 
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
@@ -100,6 +106,9 @@ function AppContent() {
 
   // ── Lógica de términos y perfil ──
   useEffect(() => {
+    // Si ya aceptó en esta sesión, ignorar el re-render causado por checkAuth()
+    if (terminosAceptadosEnSesion.current) return;
+
     const ruta = window.location.pathname;
     const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
     if (esRutaLibre) { setTerminosResueltos(true); return; }
@@ -117,9 +126,14 @@ function AppContent() {
     }
 
     // Usuario registrado
-    if (!user.termsAccepted || user.termsVersion !== TERMS_VERSION) {
+    // activeTermsVersion viene del servidor (/me) para no depender de constantes frontend.
+    const activeVersion  = user.activeTermsVersion || '1.0.0';
+    const necesitaAceptar = !user.termsAccepted || user.termsVersion !== activeVersion;
+
+    if (necesitaAceptar) {
       setMostrarTerminos(true);
-      setEsActualizacion(!!user.termsAccepted); // ya aceptó antes pero versión distinta
+      // Es "actualización" si ya había aceptado antes pero la versión cambió
+      setEsActualizacion(user.termsAccepted === true && user.termsVersion !== activeVersion);
       return;
     }
 
@@ -130,17 +144,25 @@ function AppContent() {
     }
 
     setTerminosResueltos(true);
-  }, [user]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAceptarTerminos = async () => {
+    // Marcar bandera ANTES de llamar a checkAuth() para que cuando
+    // el useEffect se re-ejecute con el user actualizado, salga inmediatamente.
+    terminosAceptadosEnSesion.current = true;
+
     if (user) {
       try {
         await api.post('/auth/accept-terms');
-        await checkAuth(); // refrescar user en contexto
-      } catch { return; }
+        await checkAuth();
+      } catch {
+        terminosAceptadosEnSesion.current = false;
+        return;
+      }
     } else {
       localStorage.setItem(TERMS_KEY, 'true');
     }
+
     setMostrarTerminos(false);
 
     if (user && !user.profileComplete) {
@@ -210,7 +232,6 @@ function AppContent() {
                 </PrivateRoute>
               }
             />
-            {/* Redirigir /historial a /seguimiento por compatibilidad */}
             <Route path="/historial" element={<Navigate to="/seguimiento" replace />} />
 
             <Route

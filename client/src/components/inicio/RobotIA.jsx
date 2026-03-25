@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RobotIA.css';
 
-// 🤖 Robot IA - Preparado para integración con Claude API
-// 🔒 TODO: Integrar con Anthropic API cuando esté listo
+// 🤖 Robot IA — Integrado con backend /chat
+// Envía historial de los últimos 10 mensajes para contexto
 
 const RobotIA = ({ activo, toggleIA }) => {
   const [mensaje, setMensaje] = useState('');
@@ -13,27 +14,28 @@ const RobotIA = ({ activo, toggleIA }) => {
   const enviarMensaje = async () => {
     if (!mensaje.trim()) return;
 
-    // Agregar mensaje del usuario
     const nuevoMensaje = { tipo: 'usuario', texto: mensaje };
     setChat(prev => [...prev, nuevoMensaje]);
     setMensaje('');
     setCargando(true);
 
     try {
-      // 🔒 TODO: Integrar con Anthropic API
-      // const response = await api.post('/ai/chat', { mensaje });
-      
-      // Por ahora respuesta simulada
-      setTimeout(() => {
-        setChat(prev => [...prev, { 
-          tipo: 'ia', 
-          texto: '¡Hola! Soy tu asistente culinario. Estoy aquí para ayudarte con recetas, ingredientes y consejos nutricionales. ¿En qué puedo ayudarte hoy?' 
-        }]);
-        setCargando(false);
-      }, 800);
+      const response = await api.post('/chat', {
+        message: mensaje,
+        history: chat.slice(-10).map(msg => ({
+          role: msg.tipo === 'usuario' ? 'user' : 'model',
+          text: msg.texto
+        }))
+      });
+
+      setChat(prev => [...prev, {
+        tipo: 'ia',
+        texto: response.data.reply
+      }]);
 
     } catch (error) {
       toast.error('Error al comunicarse con el asistente');
+    } finally {
       setCargando(false);
     }
   };
@@ -58,7 +60,7 @@ const RobotIA = ({ activo, toggleIA }) => {
           <path d="M9 13v2" />
         </svg>
       </button>
-      
+
       {/* Panel de chat */}
       {activo && (
         <div className="robotChat">
@@ -108,14 +110,14 @@ const RobotIA = ({ activo, toggleIA }) => {
 
           <div className="robotInput">
             <textarea
-              placeholder="Escribe tu pregunta..."  
+              placeholder="Escribe tu pregunta..."
               value={mensaje}
               onChange={(e) => setMensaje(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={cargando}
               rows="1"
             />
-            <button 
+            <button
               onClick={enviarMensaje}
               disabled={cargando || !mensaje.trim()}
               title="Enviar mensaje"
@@ -127,10 +129,9 @@ const RobotIA = ({ activo, toggleIA }) => {
             </button>
           </div>
 
-          {/* 📝 Nota de desarrollo */}
           <div className="robotFooter">
             <small style={{ opacity: 0.6 }}>
-              💡 Próximamente: Integración con Claude AI
+              🤖 Asistente culinario IA
             </small>
           </div>
         </div>

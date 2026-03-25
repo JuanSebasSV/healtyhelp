@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const TermsDocument = require('../models/TermsDocument');
 require('../config/passport');
 
 const {
@@ -37,6 +38,10 @@ router.get('/me', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(401).json({ error: 'Usuario no encontrado' });
+
+    const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
+    const activeVersion = activeTerms?.version || '1.0.0';
+
     res.json({
       user: {
         id: user._id, name: user.name, email: user.email,
@@ -44,8 +49,10 @@ router.get('/me', protect, async (req, res) => {
         googleId: user.googleId, isVerified: user.isVerified,
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
-        termsAccepted:   user.termsAccepted   || false,
-        profileComplete: user.profileComplete  || false,
+        termsAccepted:      user.termsAccepted      || false,
+        termsVersion:       user.termsVersion       || '',
+        profileComplete:    user.profileComplete     || false,
+        activeTermsVersion: activeVersion,
         createdAt: user.createdAt
       }
     });
@@ -99,6 +106,7 @@ router.put('/profile', protect, async (req, res) => {
         age: updatedUser.age, weight: updatedUser.weight, height: updatedUser.height,
         isSuperAdmin: updatedUser.isSuperAdmin || false,
         termsAccepted:   updatedUser.termsAccepted   || false,
+        termsVersion:    updatedUser.termsVersion    || '',
         profileComplete: updatedUser.profileComplete  || false,
         createdAt: updatedUser.createdAt
       },
@@ -131,6 +139,7 @@ router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) =
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
         termsAccepted:   user.termsAccepted   || false,
+        termsVersion:    user.termsVersion    || '',
         profileComplete: user.profileComplete  || false,
         createdAt: user.createdAt
       },
@@ -169,37 +178,30 @@ router.delete('/account', protect, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    // Proteger superadmin
     if (user.isSuperAdmin) {
       return res.status(403).json({ error: 'La cuenta Super Administrador no puede eliminarse' });
     }
 
-    // Eliminar avatar de Cloudinary si existe
     if (user.avatar && user.avatar.includes('cloudinary.com')) {
       const publicId = user.avatar.split('/').slice(-2).join('/').split('.')[0];
       await cloudinary.uploader.destroy(publicId).catch(() => {});
     }
 
-    // Eliminar todos los consumos del usuario
     const Consumo = require('../models/Consumo');
     await Consumo.deleteMany({ userId });
 
-    // Eliminar todas las reseñas del usuario de las recetas
     const Recipe = require('../models/Recipe');
     await Recipe.updateMany(
       { 'resenas.userId': userId },
       { $pull: { resenas: { userId } } }
     );
-    // Recalcular promedios de recetas afectadas
     const recetasAfectadas = await Recipe.find({ 'resenas': { $exists: true } });
     for (const receta of recetasAfectadas) {
       receta.recalcularPuntos();
       await receta.save();
     }
 
-    // Eliminar el usuario
     await user.deleteOne();
-
     res.json({ success: true, message: 'Cuenta eliminada correctamente' });
   } catch (error) {
     console.error('Error eliminando cuenta:', error);
@@ -212,11 +214,16 @@ router.post('/accept-terms', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
+    const activeVersion = activeTerms?.version || '1.0.0';
+
     user.termsAccepted   = true;
     user.termsAcceptedAt = new Date();
-    user.termsVersion    = '1.0.0';
+    user.termsVersion    = activeVersion;
     await user.save({ validateBeforeSave: false });
-    res.json({ success: true });
+
+    res.json({ success: true, version: activeVersion });
   } catch (error) {
     res.status(500).json({ error: 'Error al guardar aceptación' });
   }
@@ -255,6 +262,7 @@ router.post('/complete-profile', protect, async (req, res) => {
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
         termsAccepted:   user.termsAccepted   || false,
+        termsVersion:    user.termsVersion    || '',
         profileComplete: user.profileComplete  || false,
         createdAt: user.createdAt
       }
