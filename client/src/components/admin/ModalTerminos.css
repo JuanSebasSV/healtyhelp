@@ -1,10 +1,12 @@
-/* ModalTerminos.css */
+/* ModalTerminos.css — Modo CLARO, alto contraste, legible */
 
+/* ── Overlay ── */
 .terminos-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(10, 26, 15, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -13,220 +15,368 @@
   animation: fadeIn 0.3s ease;
 }
 
+/* ── Modal ── */
 .terminos-modal {
-  background: rgba(10, 28, 15, 0.97);
-  border: 1px solid rgba(79, 119, 45, 0.4);
+  background: #ffffff;
+  border: 1.5px solid rgba(26, 77, 46, 0.18);
   border-radius: 20px;
   width: 100%;
   max-width: 720px;
   max-height: 92vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(26, 77, 46, 0.1);
   overflow: hidden;
 }
 
-/* Header */
+/* ── Header ── */
 .terminos-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.5rem 2rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem 2rem 1.1rem;
+  background: #ffffff;
+  border-bottom: 2px solid #f0f4f0;
   flex-shrink: 0;
 }
 
 .terminos-logo {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  background: linear-gradient(135deg, #1a4d2e, #4f772d);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.25);
 }
 .terminos-logo svg { stroke: #ffffff; }
 
 .terminos-header h2 {
-  color: #ffffff;
+  color: #1a4d2e;
   font-size: 1.25rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-weight: 700;
   margin-bottom: 0.2rem;
+  line-height: 1.3;
 }
 
 .terminos-version {
-  color: rgba(255, 255, 255, 0.4);
+  color: #6b7280;
   font-size: 0.78rem;
+  font-weight: 500;
 }
 
-/* Aviso actualización */
+/* ── Aviso actualización ── */
 .terminos-aviso-actualizacion {
   display: flex;
   align-items: flex-start;
-  margin: 0 2rem;
-  margin-top: 1rem;
+  gap: 0.6rem;
+  margin: 0.75rem 2rem 0;
   padding: 0.85rem 1rem;
-  background: rgba(247, 127, 0, 0.12);
-  border: 1px solid rgba(247, 127, 0, 0.35);
+  background: #fff7ed;
+  border: 1.5px solid #f77f00;
   border-radius: 10px;
-  color: rgba(255, 200, 100, 0.9);
+  color: #92400e;
   font-size: 0.88rem;
+  font-weight: 500;
   line-height: 1.5;
   flex-shrink: 0;
 }
+.terminos-aviso-actualizacion svg { stroke: #f77f00; flex-shrink: 0; margin-top: 1px; }
 
+/* ── Instrucción ── */
 .terminos-instruccion {
   padding: 0.75rem 2rem 0;
-  color: rgba(255, 255, 255, 0.45);
+  color: #4b5563;
   font-size: 0.82rem;
+  font-weight: 500;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.terminos-instruccion::before {
+  content: '↓';
+  color: #4f772d;
+  font-weight: 700;
 }
 
-/* Contenido scrollable */
+/* ── Contenido scrollable ── */
 .terminos-contenido {
   flex: 1;
   overflow-y: auto;
-  padding: 1.25rem 2rem;
+  padding: 1.5rem 2rem;
+  background: #fafcfa;
   scrollbar-width: thin;
-  scrollbar-color: rgba(79, 119, 45, 0.4) transparent;
+  scrollbar-color: #4f772d #e0ece0;
 }
-.terminos-contenido::-webkit-scrollbar { width: 6px; }
-.terminos-contenido::-webkit-scrollbar-track { background: transparent; }
-.terminos-contenido::-webkit-scrollbar-thumb { background: rgba(79, 119, 45, 0.4); border-radius: 3px; }
+.terminos-contenido::-webkit-scrollbar { width: 7px; }
+.terminos-contenido::-webkit-scrollbar-track { background: #e0ece0; border-radius: 4px; }
+.terminos-contenido::-webkit-scrollbar-thumb {
+  background: #4f772d;
+  border-radius: 4px;
+}
+.terminos-contenido::-webkit-scrollbar-thumb:hover { background: #1a4d2e; }
 
+/* Tipografía del contenido */
 .terminos-contenido h3 {
-  color: rgba(167, 213, 136, 0.9);
+  color: #1a4d2e;
   font-size: 0.95rem;
   font-weight: 700;
-  margin: 1.5rem 0 0.5rem;
+  margin: 1.75rem 0 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1.5px solid #d8ecd8;
 }
 .terminos-contenido h3:first-child { margin-top: 0; }
 
 .terminos-contenido p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.88rem;
-  line-height: 1.7;
-  margin-bottom: 0.75rem;
+  color: #1f2937;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-bottom: 0.85rem;
 }
 
 .terminos-contenido ul {
-  padding-left: 1.25rem;
-  margin-bottom: 0.75rem;
+  padding-left: 1.4rem;
+  margin-bottom: 0.85rem;
 }
 .terminos-contenido ul li {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.88rem;
-  line-height: 1.7;
-  margin-bottom: 0.3rem;
+  color: #1f2937;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-bottom: 0.35rem;
+}
+.terminos-contenido ul li::marker { color: #4f772d; }
+
+.terminos-contenido strong {
+  color: #111827;
+  font-weight: 700;
 }
 
-.terminos-contenido strong { color: rgba(255, 255, 255, 0.9); }
-
+/* Marcador "fin del documento" */
 .terminos-fin {
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   padding: 0.75rem 1rem;
-  background: rgba(79, 119, 45, 0.15);
-  border: 1px solid rgba(79, 119, 45, 0.3);
+  background: #f0f7ec;
+  border: 1.5px solid #4f772d;
   border-radius: 8px;
-  color: rgba(167, 213, 136, 0.8);
-  font-size: 0.85rem;
+  color: #1a4d2e;
+  font-size: 0.88rem;
+  font-weight: 600;
   text-align: center;
 }
 
-/* Footer */
+/* ── Footer ── */
 .terminos-footer {
   padding: 1.25rem 2rem 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border-top: 2px solid #f0f4f0;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
+/* ── Checkbox — borde sólido oscuro, visible en cualquier pantalla ── */
 .terminos-checkbox-label {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   cursor: pointer;
+  padding: 0.75rem 1rem;
+  background: #f0f7ec;
+  border: 1.5px solid #a8d490;
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.terminos-checkbox-label:hover:not(:has(input:disabled)) {
+  background: #e4f3d8;
+  border-color: #4f772d;
 }
 
 .terminos-checkbox-label input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  /* Borde sólido verde oscuro — máximo contraste, nunca se difumina */
+  border: 2.5px solid #1a4d2e;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #ffffff;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
-  margin-top: 2px;
+  transition: all 0.18s ease;
+  margin-top: 1px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 .terminos-checkbox-label input[type="checkbox"]:checked {
-  background: rgba(79, 119, 45, 0.6);
-  border-color: rgba(107, 158, 74, 0.9);
+  background: #1a4d2e;
+  border-color: #1a4d2e;
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.4);
 }
 .terminos-checkbox-label input[type="checkbox"]:checked::after {
   content: '';
   position: absolute;
   left: 5px;
-  top: 2px;
-  width: 7px;
-  height: 11px;
-  border: 2px solid #fff;
+  top: 1px;
+  width: 8px;
+  height: 12px;
+  border: 2.5px solid #ffffff;
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
 }
+/* Deshabilitado — gris claro, aún visible */
 .terminos-checkbox-label input[type="checkbox"]:disabled {
-  opacity: 0.35;
+  border-color: #9ca3af;
+  background: #e5e7eb;
   cursor: not-allowed;
+  box-shadow: none;
+}
+.terminos-checkbox-label:has(input:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+.terminos-checkbox-label:has(input:disabled) span {
+  color: #6b7280;
 }
 
 .terminos-checkbox-label span {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.55;
 }
 
+/* Aviso "debes llegar al final" */
 .terminos-hint {
-  color: rgba(247, 127, 0, 0.75);
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #92400e;
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
   margin: 0;
 }
+.terminos-hint::before {
+  content: '↑';
+  font-weight: 800;
+  color: #f77f00;
+  flex-shrink: 0;
+}
 
+/* Botón aceptar — naranja sólido, máximo contraste */
 .terminos-btn-aceptar {
-  padding: 0.9rem;
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  padding: 0.95rem;
+  background: #f77f00;
   border: none;
   border-radius: 12px;
   color: #ffffff;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  transition: var(--transicion);
-  box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
+  letter-spacing: 0.01em;
 }
 .terminos-btn-aceptar:hover:not(:disabled) {
+  background: #d66e00;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(79, 119, 45, 0.4);
-  filter: brightness(1.1);
+  box-shadow: 0 8px 22px rgba(247, 127, 0, 0.4);
+}
+.terminos-btn-aceptar:active:not(:disabled) {
+  transform: translateY(0);
 }
 .terminos-btn-aceptar:disabled {
-  opacity: 0.35;
+  background: #e5e7eb;
+  color: #9ca3af;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* Responsive */
+/* ── Responsive móvil ── */
 @media (max-width: 640px) {
-  .terminos-header { padding: 1.25rem 1.25rem 0.75rem; }
-  .terminos-contenido { padding: 1rem 1.25rem; }
-  .terminos-footer { padding: 1rem 1.25rem 1.25rem; }
-  .terminos-aviso-actualizacion { margin: 0 1.25rem; margin-top: 0.75rem; }
-  .terminos-instruccion { padding: 0.5rem 1.25rem 0; }
+  /* En móvil el modal aparece desde abajo como sheet */
+  .terminos-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .terminos-modal {
+    max-height: 96vh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+  }
+
+  .terminos-header {
+    padding: 1.1rem 1.1rem 0.85rem;
+    gap: 0.75rem;
+  }
+  .terminos-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+  }
+  .terminos-logo svg { width: 22px; height: 22px; }
+  .terminos-header h2 { font-size: 1.05rem; }
+
+  .terminos-aviso-actualizacion {
+    margin: 0.6rem 1.1rem 0;
+    font-size: 0.84rem;
+  }
+  .terminos-instruccion { padding: 0.6rem 1.1rem 0; }
+
+  .terminos-contenido {
+    padding: 1.1rem 1.1rem;
+  }
+  .terminos-contenido h3 { font-size: 0.9rem; }
+  .terminos-contenido p,
+  .terminos-contenido ul li { font-size: 0.875rem; line-height: 1.7; }
+
+  .terminos-footer {
+    padding: 1rem 1.1rem 1.5rem;
+    gap: 0.75rem;
+  }
+
+  /* Checkbox más grande en móvil — zona táctil cómoda */
+  .terminos-checkbox-label {
+    padding: 0.85rem;
+    gap: 0.85rem;
+  }
+  .terminos-checkbox-label input[type="checkbox"] {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+  }
+  .terminos-checkbox-label input[type="checkbox"]:checked::after {
+    left: 7px;
+    top: 2px;
+    width: 9px;
+    height: 13px;
+    border-width: 3px;
+  }
+  .terminos-checkbox-label span {
+    font-size: 0.9rem;
+  }
+
+  .terminos-btn-aceptar {
+    padding: 1rem;
+    font-size: 1.05rem;
+  }
+
+  .terminos-hint {
+    font-size: 0.84rem;
+    padding: 0.65rem 0.9rem;
+  }
 }
