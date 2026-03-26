@@ -51,15 +51,34 @@ const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizas
 </body>
 </html>`;
 
+// ── Helper: objeto user seguro para devolver al cliente ──
+// ✅ FIX: incluye termsVersion en TODAS las respuestas
+const buildUserResponse = (user) => ({
+  id:              user._id,
+  name:            user.name,
+  email:           user.email,
+  role:            user.role,
+  avatar:          user.avatar,
+  googleId:        user.googleId,
+  isVerified:      user.isVerified || false,
+  isSuperAdmin:    user.isSuperAdmin || false,
+  age:             user.age,
+  weight:          user.weight,
+  height:          user.height,
+  termsAccepted:   user.termsAccepted  || false,
+  termsVersion:    user.termsVersion   || '',   // ✅ antes faltaba en login y verifyEmail
+  profileComplete: user.profileComplete || false,
+  createdAt:       user.createdAt
+});
+
 // ============================================================
 // REGISTRO — genera código de verificación y envía email
 // ============================================================
-// Validar nombre en backend
 const validarNombre = (name) => {
   if (!name || name.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
   if (name.trim().length > 50) return 'El nombre es muy largo';
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) return 'El nombre solo puede contener letras';
-  if (/(.){3,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
+  if (/(.)\1{2,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
   return null;
 };
 
@@ -67,11 +86,9 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, age, weight, height } = req.body;
 
-    // Validar nombre
     const nameError = validarNombre(name);
     if (nameError) return res.status(400).json({ error: nameError });
 
-    // Validar edad
     const edadNum = parseInt(age, 10);
     if (!age || isNaN(edadNum)) return res.status(400).json({ error: 'La edad es requerida' });
     if (edadNum < 18) return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
@@ -84,7 +101,6 @@ exports.register = async (req, res) => {
           error: 'Este correo ya está registrado con Google. Usa el botón "Continuar con Google".'
         });
       }
-      // Si existe pero no verificó, reenviar código
       if (!userExists.isVerified) {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         userExists.verificationCode   = crypto.createHash('sha256').update(code).digest('hex');
@@ -100,10 +116,9 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Este correo ya está registrado. Intenta iniciar sesión.' });
     }
 
-    // Generar código de 6 dígitos
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password,
@@ -184,15 +199,31 @@ exports.verifyEmail = async (req, res) => {
     res.json({
       success: true,
       token,
+      user: buildUserResponse(user) // ✅ FIX: antes no incluía termsVersion
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ============================================================
+// GET ME — perfil del usuario autenticado
+// ============================================================
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // ✅ Incluir la versión activa de términos para que el frontend pueda comparar
+    const TermsDocument = require('../models/TermsDocument');
+    const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 }).select('version');
+    const activeTermsVersion = activeTerms?.version || '1.0.0';
+
+    res.json({
+      success: true,
       user: {
-        id: user._id, name: user.name, email: user.email,
-        role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: true,
-        age: user.age, weight: user.weight, height: user.height,
-        isSuperAdmin: user.isSuperAdmin || false,
-        termsAccepted:   user.termsAccepted   || false,
-        profileComplete: user.profileComplete  || false,
-        createdAt: user.createdAt
+        ...buildUserResponse(user),
+        activeTermsVersion // ✅ el frontend lo usa en App.jsx para la comparación
       }
     });
   } catch (error) {
@@ -201,25 +232,56 @@ exports.verifyEmail = async (req, res) => {
 };
 
 // ============================================================
-// REENVIAR CÓDIGO
+// ACCEPT TERMS — marca en BD que el usuario aceptó la versión activa
 // ============================================================
-exports.resendCode = async (req, res) => {
+exports.acceptTerms = async (req, res) => {
   try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+    const { version } = req.body;
+    if (!version) return res.status(400).json({ error: 'Versión requerida' });
 
-    if (!user)            return res.status(404).json({ error: 'Usuario no encontrado' });
-    if (user.isVerified)  return res.status(400).json({ error: 'Esta cuenta ya está verificada' });
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        termsAccepted:   true,
+        termsVersion:    version,
+        termsAcceptedAt: new Date()
+      },
+      { new: true }
+    );
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    user.verificationCode   = crypto.createHash('sha256').update(code).digest('hex');
-    user.verificationExpire = Date.now() + 15 * 60 * 1000;
-    await user.save({ validateBeforeSave: false });
-
-    await enviarCodigoVerificacion(email, user.name, code);
-    res.json({ success: true, message: 'Código reenviado' });
+    res.json({ success: true, user: buildUserResponse(user) });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error guardando la aceptación de términos' });
+  }
+};
+
+// ============================================================
+// COMPLETE PROFILE
+// ============================================================
+exports.completeProfile = async (req, res) => {
+  try {
+    const { age, weight, height } = req.body;
+
+    const edadNum = parseInt(age, 10);
+    const pesoNum = parseFloat(weight);
+    const altNum  = parseFloat(height);
+
+    if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
+      return res.status(400).json({ error: 'Edad válida entre 18 y 100' });
+    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 150)
+      return res.status(400).json({ error: 'Peso válido entre 40 y 150 kg' });
+    if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
+      return res.status(400).json({ error: 'Altura válida entre 50 y 210 cm' });
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { age: edadNum, weight: pesoNum, height: altNum, profileComplete: true },
+      { new: true, runValidators: true }
+    );
+
+    res.json({ success: true, user: buildUserResponse(user) });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -233,7 +295,6 @@ exports.login = async (req, res) => {
 
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-    // Cuenta bloqueada?
     if (user.isLocked) {
       const minutosRestantes = Math.ceil((user.lockUntil - Date.now()) / 60000);
       return res.status(423).json({
@@ -249,8 +310,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Cuenta sin verificar — solo bloquear si tiene código pendiente
-    // Usuarios anteriores al sistema de verificación no tienen código y deben poder entrar
     if (!user.isVerified && user.verificationCode) {
       return res.status(401).json({
         error: 'Debes verificar tu correo antes de iniciar sesión.',
@@ -263,7 +322,6 @@ exports.login = async (req, res) => {
     if (!esValida) {
       await user.incLoginAttempts();
 
-      // Si acaba de bloquearse, enviar email de alerta
       if (user.loginAttempts + 1 >= 5) {
         await enviarAlertaBloqueo(user.email, user.name);
         return res.status(423).json({
@@ -280,23 +338,11 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Login exitoso — resetear intentos
     await user.resetLoginAttempts();
     const token = generateToken(user._id);
 
-    res.json({
-      success: true, token,
-      user: {
-        id: user._id, name: user.name, email: user.email,
-        role: user.role, avatar: user.avatar,
-        googleId: user.googleId, isVerified: user.isVerified,
-        isSuperAdmin: user.isSuperAdmin || false,
-        age: user.age, weight: user.weight, height: user.height,
-        termsAccepted:   user.termsAccepted   || false,
-        profileComplete: user.profileComplete  || false,
-        createdAt: user.createdAt
-      }
-    });
+    // ✅ FIX: buildUserResponse incluye termsVersion (antes faltaba)
+    res.json({ success: true, token, user: buildUserResponse(user) });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -352,7 +398,7 @@ exports.forgotPassword = async (req, res) => {
 
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken  = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutos
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
@@ -407,24 +453,19 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-    console.log('🔑 Token hasheado:', resetPasswordToken);
 
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }
     });
 
-    console.log('👤 Usuario encontrado:', user ? user.email : 'NO ENCONTRADO');
-    console.log('🕐 Fecha actual:', new Date(Date.now()));
-    if (user) console.log('⏰ Token expira:', new Date(user.resetPasswordExpire));
-
     if (!user) return res.status(400).json({ error: 'Token inválido o expirado. Solicita un nuevo enlace.' });
+
     const pwd = req.body.password || '';
     if (!pwd || pwd.length < 8) {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
-    // Actualizar todos los campos antes de guardar una sola vez
     user.password            = pwd;
     user.resetPasswordToken  = undefined;
     user.resetPasswordExpire = undefined;
@@ -436,5 +477,28 @@ exports.resetPassword = async (req, res) => {
     res.json({ success: true, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+// ============================================================
+// REENVIAR CÓDIGO
+// ============================================================
+exports.resendCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user)            return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (user.isVerified)  return res.status(400).json({ error: 'Esta cuenta ya está verificada' });
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    user.verificationCode   = crypto.createHash('sha256').update(code).digest('hex');
+    user.verificationExpire = Date.now() + 15 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    await enviarCodigoVerificacion(email, user.name, code);
+    res.json({ success: true, message: 'Código reenviado' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

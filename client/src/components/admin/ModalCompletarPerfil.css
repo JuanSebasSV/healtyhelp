@@ -1,8 +1,11 @@
+/* ModalCompletarPerfil.css — Modo CLARO, alto contraste */
+
 .completar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(12px);
+  background: rgba(10, 26, 15, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 9998;
   display: flex;
   align-items: center;
@@ -12,112 +15,174 @@
 }
 
 .completar-modal {
-  background: rgba(10, 28, 15, 0.97);
-  border: 1px solid rgba(79, 119, 45, 0.4);
+  background: #ffffff;
+  border: 1.5px solid rgba(26, 77, 46, 0.18);
   border-radius: 20px;
   width: 100%;
   max-width: 440px;
   padding: 2rem;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(26, 77, 46, 0.1);
 }
 
+/* ── Header ── */
 .completar-header {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #f0f4f0;
 }
 
 .completar-icono {
   width: 52px;
   height: 52px;
   min-width: 52px;
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  background: linear-gradient(135deg, #1a4d2e, #4f772d);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.25);
 }
-.completar-icono svg { stroke: #fff; }
+.completar-icono svg { stroke: #ffffff; }
 
 .completar-header h2 {
-  color: #fff;
+  color: #1a4d2e;
   font-size: 1.2rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-weight: 700;
   margin-bottom: 0.3rem;
+  line-height: 1.3;
 }
 .completar-header p {
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.85rem;
+  color: #4b5563;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
+/* ── Cuerpo ── */
 .completar-body {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
   margin-bottom: 1.5rem;
 }
 
 .completar-grupo label {
   display: block;
-  color: rgba(255, 255, 255, 0.65);
+  color: #374151;
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
 }
 
+/* Inputs numéricos — fondo blanco con borde verde oscuro */
 .completar-grupo .numero-wrapper input {
   width: 100%;
   padding: 0.75rem 2.4rem 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 2px solid #c8d8c8;
   border-radius: 10px;
-  color: #fff;
+  color: #111827;
   font-size: 0.95rem;
+  font-weight: 500;
   outline: none;
-  transition: var(--transicion);
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
+.completar-grupo .numero-wrapper input::placeholder {
+  color: #9ca3af;
+}
 .completar-grupo .numero-wrapper input:focus {
-  border-color: var(--naranja);
-  background: rgba(255, 255, 255, 0.11);
-  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+  border-color: #1a4d2e;
+  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.12);
+  background: #f9fcf9;
 }
 
+/* Flechas del NumeroInput sobre fondo claro */
+.completar-grupo .numero-flechas {
+  border-left: 1px solid #d1d5db;
+}
+.completar-grupo .numero-flechas button {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.completar-grupo .numero-flechas button:first-child {
+  border-bottom: 1px solid #d1d5db;
+}
+.completar-grupo .numero-flechas button:hover {
+  background: #e4f3d8;
+  color: #1a4d2e;
+}
+
+/* Error */
 .completar-error {
   display: block;
-  color: var(--rojo-claro);
-  font-size: 0.78rem;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 500;
   margin-top: 0.3rem;
 }
 
+/* Nota informativa */
 .completar-nota {
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.78rem;
-  line-height: 1.5;
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.55;
   margin-top: 0.25rem;
+  padding: 0.7rem 0.85rem;
+  background: #f0f7ec;
+  border: 1px solid #c8e0b8;
+  border-radius: 8px;
 }
 
+/* ── Botón guardar — naranja sólido ── */
 .completar-btn {
   width: 100%;
-  padding: 0.9rem;
-  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  padding: 0.95rem;
+  background: #f77f00;
   border: none;
   border-radius: 12px;
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  transition: var(--transicion);
-  box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
+  letter-spacing: 0.01em;
 }
 .completar-btn:hover:not(:disabled) {
+  background: #d66e00;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(79, 119, 45, 0.4);
-  filter: brightness(1.1);
+  box-shadow: 0 8px 22px rgba(247, 127, 0, 0.4);
+}
+.completar-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 .completar-btn:disabled {
-  opacity: 0.4;
+  background: #e5e7eb;
+  color: #9ca3af;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Responsive móvil ── */
+@media (max-width: 640px) {
+  .completar-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .completar-modal {
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    padding: 1.5rem 1.25rem 1.75rem;
+  }
+  .completar-header { margin-bottom: 1.25rem; padding-bottom: 1rem; }
+  .completar-icono { width: 44px; height: 44px; min-width: 44px; border-radius: 11px; }
+  .completar-header h2 { font-size: 1.05rem; }
+  .completar-grupo .numero-wrapper input { font-size: 1rem; padding: 0.85rem 2.6rem 0.85rem 1rem; }
 }

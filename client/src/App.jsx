@@ -38,9 +38,10 @@ import RecipeManagement from './components/admin/RecipeManagement';
 // Otros
 import RobotIA from './components/inicio/RobotIA';
 
-// Modales bloqueantes — viven en /admin
-import ModalTerminos, { TERMS_KEY } from './components/admin/ModalTerminos';
+// Modales bloqueantes
+import ModalTerminos from './components/admin/ModalTerminos';
 import ModalCompletarPerfil from './components/admin/ModalCompletarPerfil';
+import ModalCookies from './components/admin/ModalCookies';
 
 // API
 import api from './api/axios';
@@ -48,9 +49,62 @@ import api from './api/axios';
 // Hook de autenticación
 import useAuth from './hooks/useAuth';
 
-// Rutas donde NO mostramos los modales bloqueantes
+// ─── Helpers de persistencia ──────────────────────────────────────────────────
+const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
+const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
+const TERMS_VERSION_KEY  = 'hh_terms_version';
+const COOKIE_MAX_AGE     = 60 * 60 * 24 * 365; // 1 año
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : null;
+};
+
+const setCookie = (name, value, maxAge = COOKIE_MAX_AGE) => {
+  document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
+};
+
+// ¿El usuario ya autorizó cookies persistentes?
+const cookiesConsentidas = () =>
+  getCookie(COOKIE_CONSENT_KEY) === 'accepted' ||
+  localStorage.getItem(COOKIE_CONSENT_KEY) === 'accepted';
+
+// Lee según nivel de consentimiento:
+// con consentimiento → cookie/localStorage | sin consentimiento → sessionStorage
+const getPersisted = (key) => {
+  if (cookiesConsentidas()) return getCookie(key) || localStorage.getItem(key) || null;
+  return sessionStorage.getItem(key) || null;
+};
+
+// Escribe según nivel de consentimiento
+const setPersisted = (key, value) => {
+  if (cookiesConsentidas()) {
+    setCookie(key, value);
+    localStorage.setItem(key, value);
+  } else {
+    sessionStorage.setItem(key, value);
+  }
+};
+
+// Al aceptar cookies: migra sessionStorage → cookies/localStorage permanentes
+const migrarSessionACookies = () => {
+  [TERMS_ACCEPTED_KEY, TERMS_VERSION_KEY].forEach(key => {
+    const val = sessionStorage.getItem(key);
+    if (val) {
+      setCookie(key, val);
+      localStorage.setItem(key, val);
+      sessionStorage.removeItem(key);
+    }
+  });
+  setCookie(COOKIE_CONSENT_KEY, 'accepted');
+  localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
+  sessionStorage.removeItem(COOKIE_CONSENT_KEY);
+};
+
+// Rutas donde no mostramos modales bloqueantes
 const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '/verificar-email'];
 
+// ─── AppContent ───────────────────────────────────────────────────────────────
 function AppContent() {
   const { user, checkAuth } = useAuth();
 
@@ -58,26 +112,31 @@ function AppContent() {
     const saved = localStorage.getItem('modoOscuro');
     return saved ? JSON.parse(saved) : false;
   });
-  const [categoriaActiva, setCategoriaActiva]   = useState('todas');
-  const [favoritos, setFavoritos]               = useState(() => {
+  const [categoriaActiva, setCategoriaActiva] = useState('todas');
+  const [favoritos, setFavoritos] = useState(() => {
     const saved = localStorage.getItem('favoritos');
     return saved ? JSON.parse(saved) : [];
   });
-  const [robotIAActivo, setRobotIAActivo]       = useState(false);
-  const [recetas, setRecetas]                   = useState([]);
-  const [cargandoRecetas, setCargandoRecetas]   = useState(true);
+  const [robotIAActivo, setRobotIAActivo] = useState(false);
+  const [recetas, setRecetas]             = useState([]);
+  const [cargandoRecetas, setCargandoRecetas] = useState(true);
 
-  // ── Estado modales ──
+  // ── Estado de modales ──
+  const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
   const [terminosResueltos,      setTerminosResueltos]      = useState(false);
 
-  // ── BUG FIX: bandera de sesión para evitar que el useEffect reabra el modal
-  //    después de que checkAuth() actualiza el user en el contexto.
-  //    useRef porque NO queremos que cambiarla dispare un re-render.
+  // Versión activa de los términos (cargada desde el servidor al arrancar)
+  const [activeTermsVersion, setActiveTermsVersion] = useState(null);
+
+  // Bandera de sesión: evita que el useEffect reabra el modal
+  // después de que checkAuth() actualiza el user en el contexto.
+  // useRef porque NO queremos que cambiarla dispare un re-render.
   const terminosAceptadosEnSesion = useRef(false);
 
+  // ── Efectos de utilidad ──
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
     localStorage.setItem('modoOscuro', JSON.stringify(modoOscuro));
@@ -91,85 +150,123 @@ function AppContent() {
     cargarRecetas();
   }, []);
 
+  // ── Cargar versión activa de términos UNA sola vez al montar ──
+  useEffect(() => {
+    api.get('/terms')
+      .then(({ data }) => setActiveTermsVersion(data.terms?.version ?? '1.0.0'))
+      .catch(() => setActiveTermsVersion('1.0.0'));
+  }, []);
+
   const cargarRecetas = async () => {
     setCargandoRecetas(true);
     try {
       const { data } = await api.get('/recipes?limit=200');
       setRecetas(data.recipes || []);
-    } catch (error) {
-      console.error('Error al cargar recetas:', error);
+    } catch {
       setRecetas([]);
     } finally {
       setCargandoRecetas(false);
     }
   };
 
-  // ── Lógica de términos y perfil ──
+  // ── Lógica de cookies y términos ────────────────────────────────────────────
   useEffect(() => {
-    // Si ya aceptó en esta sesión, ignorar el re-render causado por checkAuth()
+    if (!activeTermsVersion) return;
     if (terminosAceptadosEnSesion.current) return;
 
     const ruta = window.location.pathname;
     const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
     if (esRutaLibre) { setTerminosResueltos(true); return; }
 
-    // Visitante sin cuenta
+    // Banner de cookies: SOLO para usuarios anónimos
+    // Usuarios con cuenta usan la BD — no necesitan cookies locales
     if (!user) {
-      const aceptadoLocal = localStorage.getItem(TERMS_KEY);
-      if (!aceptadoLocal) {
-        setMostrarTerminos(true);
-        setEsActualizacion(false);
-      } else {
-        setTerminosResueltos(true);
-      }
-      return;
+      const yaDecidio = cookiesConsentidas() ||
+                        sessionStorage.getItem(COOKIE_CONSENT_KEY) === 'dismissed';
+      if (!yaDecidio) setMostrarCookies(true);
     }
 
-    // Usuario registrado
-    // activeTermsVersion viene del servidor (/me) para no depender de constantes frontend.
-    const activeVersion  = user.activeTermsVersion || '1.0.0';
-    const necesitaAceptar = !user.termsAccepted || user.termsVersion !== activeVersion;
+    // Términos: siempre se evalúan independientemente de las cookies
+    evaluarTerminos(activeTermsVersion);
 
-    if (necesitaAceptar) {
-      setMostrarTerminos(true);
-      // Es "actualización" si ya había aceptado antes pero la versión cambió
-      setEsActualizacion(user.termsAccepted === true && user.termsVersion !== activeVersion);
-      return;
-    }
+  }, [user, activeTermsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Términos OK — verificar perfil completo
-    if (!user.profileComplete) {
-      setMostrarCompletarPerfil(true);
-      return;
-    }
-
-    setTerminosResueltos(true);
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleAceptarTerminos = async () => {
-    // Marcar bandera ANTES de llamar a checkAuth() para que cuando
-    // el useEffect se re-ejecute con el user actualizado, salga inmediatamente.
-    terminosAceptadosEnSesion.current = true;
-
+  const evaluarTerminos = (version) => {
     if (user) {
-      try {
-        await api.post('/auth/accept-terms');
-        await checkAuth();
-      } catch {
-        terminosAceptadosEnSesion.current = false;
-        return;
+      // Usuario con cuenta: fuente de verdad = BD
+      // user.activeTermsVersion viene de getMe() y es la versión activa del servidor
+      const serverVersion = user.activeTermsVersion || version;
+      const necesita = !user.termsAccepted || user.termsVersion !== serverVersion;
+
+      if (necesita) {
+        setEsActualizacion(user.termsAccepted === true && user.termsVersion !== serverVersion);
+        setMostrarTerminos(true);
+      } else {
+        // Sincronizar local como caché
+        setPersisted(TERMS_ACCEPTED_KEY, 'true');
+        setPersisted(TERMS_VERSION_KEY, serverVersion);
+        resolverTerminos();
       }
     } else {
-      localStorage.setItem(TERMS_KEY, 'true');
+      // Usuario anónimo: fuente de verdad = cookie + localStorage
+      const localVersion  = getPersisted(TERMS_VERSION_KEY);
+      const localAccepted = getPersisted(TERMS_ACCEPTED_KEY);
+
+      if (localAccepted !== 'true' || localVersion !== version) {
+        setEsActualizacion(localAccepted === 'true' && localVersion !== version);
+        setMostrarTerminos(true);
+      } else {
+        resolverTerminos();
+      }
     }
+  };
 
-    setMostrarTerminos(false);
-
+  const resolverTerminos = () => {
+    // Términos OK — verificar si necesita completar perfil (solo usuarios con cuenta)
     if (user && !user.profileComplete) {
       setMostrarCompletarPerfil(true);
     } else {
       setTerminosResueltos(true);
     }
+  };
+
+  // ── Handlers ──
+  const handleCookiesAceptadas = () => {
+    migrarSessionACookies();   // persiste términos ya aceptados + marca cookies ok
+    setMostrarCookies(false);
+  };
+
+  const handleCookiesRechazadas = () => {
+    // Solo marca en sessionStorage para no repetir el banner esta sesión
+    // No escribe ninguna cookie — respeta la decisión del usuario
+    sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed');
+    setMostrarCookies(false);
+  };
+
+  const handleAceptarTerminos = async () => {
+    // Marcar bandera ANTES de checkAuth() para que el useEffect no reabra el modal
+    terminosAceptadosEnSesion.current = true;
+
+    const version = activeTermsVersion || '1.0.0';
+
+    // Persistir localmente siempre (caché + usuarios anónimos)
+    setPersisted(TERMS_ACCEPTED_KEY, 'true');
+    setPersisted(TERMS_VERSION_KEY, version);
+
+    if (user) {
+      try {
+        // ✅ FIX: pasar la versión en el body (antes se llamaba sin body)
+        await api.post('/auth/accept-terms', { version });
+        await checkAuth();
+      } catch {
+        // Si falla la BD, la cookie ya lo persiste — no bloqueamos al usuario
+        terminosAceptadosEnSesion.current = false;
+        return;
+      }
+    }
+
+    setMostrarTerminos(false);
+    resolverTerminos();
   };
 
   const handlePerfilCompletado = () => {
@@ -178,8 +275,8 @@ function AppContent() {
     checkAuth();
   };
 
-  const toggleModoOscuro = () => setModoOscuro(!modoOscuro);
-  const toggleRobotIA    = () => setRobotIAActivo(!robotIAActivo);
+  const toggleModoOscuro = () => setModoOscuro(prev => !prev);
+  const toggleRobotIA    = () => setRobotIAActivo(prev => !prev);
   const cambiarCategoria = (cat) => setCategoriaActiva(cat);
 
   const toggleFav = (recetaId) => {
@@ -194,10 +291,7 @@ function AppContent() {
     <Router>
       <div className="App">
         <FondoAnimado />
-        <Navbar
-          modoOscuro={modoOscuro}
-          toggleModoOscuro={toggleModoOscuro}
-        />
+        <Navbar modoOscuro={modoOscuro} toggleModoOscuro={toggleModoOscuro} />
 
         <main className="contenido-principal">
           <Routes>
@@ -215,79 +309,29 @@ function AppContent() {
                 />
               }
             />
-            <Route path="/login"                    element={<Login />} />
-            <Route path="/registro"                 element={<Register />} />
-            <Route path="/google-callback"          element={<GoogleCallback />} />
-            <Route path="/recuperar"                element={<ForgotPassword />} />
-            <Route path="/reset-password/:token"    element={<ResetPassword />} />
-            <Route path="/verificar-email"          element={<VerificarEmail />} />
-            <Route path="/contacto"                 element={<VistaContacto />} />
+            <Route path="/login"                 element={<Login />} />
+            <Route path="/registro"              element={<Register />} />
+            <Route path="/google-callback"       element={<GoogleCallback />} />
+            <Route path="/recuperar"             element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/verificar-email"       element={<VerificarEmail />} />
+            <Route path="/contacto"              element={<VistaContacto />} />
 
             {/* Rutas protegidas */}
-            <Route
-              path="/seguimiento"
-              element={
-                <PrivateRoute>
-                  <VistaSeguimiento recetas={recetas} />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/historial" element={<Navigate to="/seguimiento" replace />} />
+            <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
+            <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
+            <Route path="/favoritos"   element={
+              <PrivateRoute>
+                <VistaFavoritos recetas={recetas} toggleFav={toggleFav} favoritos={favoritos} />
+              </PrivateRoute>
+            } />
 
-            <Route
-              path="/favoritos"
-              element={
-                <PrivateRoute>
-                  <VistaFavoritos
-                    recetas={recetas}
-                    toggleFav={toggleFav}
-                    favoritos={favoritos}
-                  />
-                </PrivateRoute>
-              }
-            />
-
-            {/* Rutas de administrador */}
-            <Route
-              path="/admin"
-              element={
-                <PrivateRoute requireAdmin={true}>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
-                <PrivateRoute requireAdmin={true}>
-                  <UserList />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/stats"
-              element={
-                <PrivateRoute requireAdmin={true}>
-                  <Stats />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/perfil"
-              element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/recipes"
-              element={
-                <PrivateRoute requireAdmin={true}>
-                  <RecipeManagement />
-                </PrivateRoute>
-              }
-            />
+            {/* Rutas admin */}
+            <Route path="/admin"          element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
+            <Route path="/admin/users"    element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
+            <Route path="/admin/stats"    element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
+            <Route path="/admin/recipes"  element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
+            <Route path="/perfil"         element={<PrivateRoute><UserProfile /></PrivateRoute>} />
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -296,35 +340,37 @@ function AppContent() {
 
         <Footer />
 
-        {user && (
-          <RobotIA
-            activo={robotIAActivo}
-            toggleIA={toggleRobotIA}
-          />
-        )}
+        {user && <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />}
 
-        {/* ── Modales bloqueantes ── */}
+        {/* ── Modales ── */}
+
+        {/* 1. Términos — bloquea navegación, corre independiente de cookies */}
         {mostrarTerminos && (
           <ModalTerminos
             onAceptar={handleAceptarTerminos}
             esActualizacion={esActualizacion}
           />
         )}
-        {!mostrarTerminos && mostrarCompletarPerfil && (
-          <ModalCompletarPerfil
-            onCompletado={handlePerfilCompletado}
-            user={user}
+
+        {/* 2. Cookies — informativo, esquina inferior, solo usuarios anónimos */}
+        {mostrarCookies && (
+          <ModalCookies
+            onAceptar={handleCookiesAceptadas}
+            onRechazar={handleCookiesRechazadas}
           />
+        )}
+
+        {/* 3. Completar perfil (solo después de que los términos estén ok) */}
+        {!mostrarTerminos && mostrarCompletarPerfil && (
+          <ModalCompletarPerfil onCompletado={handlePerfilCompletado} user={user} />
         )}
 
         <ToastContainer
           position="top-right"
           autoClose={3000}
           hideProgressBar={false}
-          newestOnTop={true}
+          newestOnTop
           closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
           draggable
           pauseOnHover
           theme={modoOscuro ? 'dark' : 'light'}

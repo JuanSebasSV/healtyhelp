@@ -26,12 +26,12 @@ const validatePassword = (password) => {
 };
 
 // ===== RUTAS AUTH =====
-router.post('/register',               register);
-router.post('/login',                  login);
-router.post('/verify-email',           verifyEmail);
-router.post('/resend-code',            resendCode);
-router.post('/forgot-password',        forgotPassword);
-router.put('/reset-password/:token',   resetPassword);
+router.post('/register',             register);
+router.post('/login',                login);
+router.post('/verify-email',         verifyEmail);
+router.post('/resend-code',          resendCode);
+router.post('/forgot-password',      forgotPassword);
+router.put('/reset-password/:token', resetPassword);
 
 // ===== USUARIO ACTUAL =====
 router.get('/me', protect, async (req, res) => {
@@ -49,9 +49,9 @@ router.get('/me', protect, async (req, res) => {
         googleId: user.googleId, isVerified: user.isVerified,
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
-        termsAccepted:      user.termsAccepted      || false,
-        termsVersion:       user.termsVersion       || '',
-        profileComplete:    user.profileComplete     || false,
+        termsAccepted:      user.termsAccepted   || false,
+        termsVersion:       user.termsVersion    || '',
+        profileComplete:    user.profileComplete  || false,
         activeTermsVersion: activeVersion,
         createdAt: user.createdAt
       }
@@ -195,7 +195,7 @@ router.delete('/account', protect, async (req, res) => {
       { 'resenas.userId': userId },
       { $pull: { resenas: { userId } } }
     );
-    const recetasAfectadas = await Recipe.find({ 'resenas': { $exists: true } });
+    const recetasAfectadas = await Recipe.find({ resenas: { $exists: true } });
     for (const receta of recetasAfectadas) {
       receta.recalcularPuntos();
       await receta.save();
@@ -210,6 +210,7 @@ router.delete('/account', protect, async (req, res) => {
 });
 
 // ===== ACEPTAR TÉRMINOS =====
+// Obtiene la versión activa directamente del servidor — no depende del cliente
 router.post('/accept-terms', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -225,7 +226,7 @@ router.post('/accept-terms', protect, async (req, res) => {
 
     res.json({ success: true, version: activeVersion });
   } catch (error) {
-    res.status(500).json({ error: 'Error al guardar aceptación' });
+    res.status(500).json({ error: 'Error al guardar aceptación de términos' });
   }
 });
 
@@ -240,11 +241,11 @@ router.post('/complete-profile', protect, async (req, res) => {
     const pesoNum = parseFloat(weight);
     const altNum  = parseFloat(height);
 
-    if (!age || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
+    if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
       return res.status(400).json({ error: 'Edad inválida (18-100)' });
     if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 150)
       return res.status(400).json({ error: 'Peso inválido (40-150 kg)' });
-    if (!height || isNaN(altNum) || altNum < 50 || altNum > 210)
+    if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
       return res.status(400).json({ error: 'Altura inválida (50-210 cm)' });
 
     user.age             = edadNum;

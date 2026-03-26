@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import './TermsManager.css';
 
 const TermsManager = () => {
-  const [termsCurrent, setTermsCurrent] = useState(null);   // versión activa en BD
+  const [termsCurrent, setTermsCurrent] = useState(null);
   const [version,      setVersion]      = useState('');
   const [content,      setContent]      = useState('');
   const [loading,      setLoading]      = useState(true);
@@ -23,13 +23,11 @@ const TermsManager = () => {
         setTermsCurrent(data.terms);
         setVersion(data.terms.version);
         setContent(data.terms.content);
-      } else {
-        // Primera vez — sugerir versión inicial
-        setVersion('1.0.0');
-        setContent('');
       }
+      // Si no hay términos en BD el editor queda vacío.
+      // Esto no debería ocurrir porque seedTerms.js inserta v1.0.0 al arrancar el servidor.
     } catch {
-      toast.error('Error cargando los términos actuales');
+      toast.error('Error cargando los términos. Verifica la conexión con el servidor.');
     } finally {
       setLoading(false);
     }
@@ -61,7 +59,7 @@ const TermsManager = () => {
   if (loading) {
     return (
       <div className="terms-manager-loading">
-        <div className="spinner"></div>
+        <div className="spinner-small"></div>
         <p>Cargando términos...</p>
       </div>
     );
@@ -70,7 +68,6 @@ const TermsManager = () => {
   return (
     <div className="terms-manager">
 
-      {/* ── Cabecera ── */}
       <div className="terms-manager-header">
         <div className="terms-manager-title">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -85,7 +82,9 @@ const TermsManager = () => {
               <p className="terms-manager-meta">
                 Versión activa: <strong>{termsCurrent.version}</strong>
                 {termsCurrent.publishedAt && (
-                  <> — publicada el {new Date(termsCurrent.publishedAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</>
+                  <> — publicada el {new Date(termsCurrent.publishedAt).toLocaleDateString('es-ES', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                  })}</>
                 )}
               </p>
             ) : (
@@ -120,19 +119,17 @@ const TermsManager = () => {
         </div>
       </div>
 
-      {/* ── Aviso importante ── */}
       <div className="terms-manager-aviso">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{flexShrink:0}}>
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <span>
-          Al publicar una nueva versión, <strong>todos los usuarios</strong> deberán aceptar los términos 
-          la próxima vez que accedan a la aplicación. El contenido soporta HTML básico 
-          (<code>&lt;h3&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;strong&gt;</code>).
+          Al publicar una nueva versión, <strong>todos los usuarios</strong> deberán aceptar los términos
+          la próxima vez que accedan. El contenido soporta HTML básico:
+          <code>&lt;h3&gt;</code> <code>&lt;p&gt;</code> <code>&lt;ul&gt;</code> <code>&lt;li&gt;</code> <code>&lt;strong&gt;</code>.
         </span>
       </div>
 
-      {/* ── Versión ── */}
       <div className="terms-manager-version-row">
         <label>Número de versión</label>
         <input
@@ -143,11 +140,12 @@ const TermsManager = () => {
           className="terms-version-input"
         />
         {termsCurrent && version === termsCurrent.version && (
-          <span className="terms-version-hint">Cambia la versión para poder publicar una actualización</span>
+          <span className="terms-version-hint">
+            Cambia la versión para poder publicar una actualización
+          </span>
         )}
       </div>
 
-      {/* ── Editor / Preview ── */}
       {preview ? (
         <div className="terms-preview-container">
           <div className="terms-preview-label">Vista previa del documento</div>
@@ -166,18 +164,22 @@ const TermsManager = () => {
             className="terms-editor"
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder="<h3>1. Identificación y Objeto</h3>&#10;<p>...</p>"
+            placeholder="El contenido se carga desde la base de datos..."
             spellCheck={false}
           />
         </div>
       )}
 
-      {/* ── Botón publicar ── */}
       <div className="terms-manager-footer">
         <button
           className="btn-publicar"
           onClick={handlePublicar}
-          disabled={publicando || !content.trim() || !version.trim() || (termsCurrent && version === termsCurrent.version)}
+          disabled={
+            publicando ||
+            !content.trim() ||
+            !version.trim() ||
+            (termsCurrent && version === termsCurrent.version)
+          }
         >
           {publicando ? (
             <>
