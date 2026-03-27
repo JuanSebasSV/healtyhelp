@@ -11,8 +11,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  /* Desktop: padding simétrico — el modal nunca toca los bordes */
+  padding: 1.5rem;
   animation: fadeIn 0.3s ease;
+  box-sizing: border-box;
 }
 
 /* ── Modal ── */
@@ -22,13 +24,14 @@
   border-radius: 20px;
   width: 100%;
   max-width: 720px;
-  max-height: 92vh;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
   box-shadow:
     0 24px 64px rgba(0, 0, 0, 0.22),
     0 4px 16px rgba(26, 77, 46, 0.1);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ── Header ── */
@@ -108,7 +111,10 @@
 /* ── Contenido scrollable ── */
 .terminos-contenido {
   flex: 1;
+  min-height: 0; /* CRÍTICO: sin esto el scroll no funciona en flex */
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   padding: 1.5rem 2rem;
   background: #fafcfa;
   scrollbar-width: thin;
@@ -116,13 +122,9 @@
 }
 .terminos-contenido::-webkit-scrollbar { width: 7px; }
 .terminos-contenido::-webkit-scrollbar-track { background: #e0ece0; border-radius: 4px; }
-.terminos-contenido::-webkit-scrollbar-thumb {
-  background: #4f772d;
-  border-radius: 4px;
-}
+.terminos-contenido::-webkit-scrollbar-thumb { background: #4f772d; border-radius: 4px; }
 .terminos-contenido::-webkit-scrollbar-thumb:hover { background: #1a4d2e; }
 
-/* Tipografía del contenido */
 .terminos-contenido h3 {
   color: #1a4d2e;
   font-size: 0.95rem;
@@ -151,13 +153,8 @@
   margin-bottom: 0.35rem;
 }
 .terminos-contenido ul li::marker { color: #4f772d; }
+.terminos-contenido strong { color: #111827; font-weight: 700; }
 
-.terminos-contenido strong {
-  color: #111827;
-  font-weight: 700;
-}
-
-/* Marcador "fin del documento" */
 .terminos-fin {
   margin-top: 1.75rem;
   padding: 0.75rem 1rem;
@@ -181,7 +178,7 @@
   gap: 0.85rem;
 }
 
-/* ── Checkbox — borde sólido oscuro, visible en cualquier pantalla ── */
+/* ── Checkbox ── */
 .terminos-checkbox-label {
   display: flex;
   align-items: flex-start;
@@ -204,7 +201,6 @@
   width: 22px;
   height: 22px;
   min-width: 22px;
-  /* Borde sólido verde oscuro — máximo contraste, nunca se difumina */
   border: 2.5px solid #1a4d2e;
   border-radius: 5px;
   background: #ffffff;
@@ -232,7 +228,6 @@
   border-left: none;
   transform: rotate(45deg);
 }
-/* Deshabilitado — gris claro, aún visible */
 .terminos-checkbox-label input[type="checkbox"]:disabled {
   border-color: #9ca3af;
   background: #e5e7eb;
@@ -244,9 +239,7 @@
   border-color: #d1d5db;
   cursor: not-allowed;
 }
-.terminos-checkbox-label:has(input:disabled) span {
-  color: #6b7280;
-}
+.terminos-checkbox-label:has(input:disabled) span { color: #6b7280; }
 
 .terminos-checkbox-label span {
   color: #111827;
@@ -255,7 +248,6 @@
   line-height: 1.55;
 }
 
-/* Aviso "debes llegar al final" */
 .terminos-hint {
   display: flex;
   align-items: center;
@@ -276,7 +268,6 @@
   flex-shrink: 0;
 }
 
-/* Botón aceptar — naranja sólido, máximo contraste */
 .terminos-btn-aceptar {
   padding: 0.95rem;
   background: #f77f00;
@@ -295,9 +286,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(247, 127, 0, 0.4);
 }
-.terminos-btn-aceptar:active:not(:disabled) {
-  transform: translateY(0);
-}
+.terminos-btn-aceptar:active:not(:disabled) { transform: translateY(0); }
 .terminos-btn-aceptar:disabled {
   background: #e5e7eb;
   color: #9ca3af;
@@ -306,77 +295,97 @@
   box-shadow: none;
 }
 
-/* ── Responsive móvil ── */
-@media (max-width: 640px) {
-  /* En móvil el modal aparece desde abajo como sheet */
+/* ═══════════════════════════════════════════════════════════
+   TODOS LOS TELÉFONOS — cualquier pantalla ≤ 768px
+   Se usa hover-media para detectar touch vs mouse.
+   El modal aparece como sheet desde abajo pero con
+   margen lateral de 0.75rem en cada lado para que
+   NO quede pegado a los bordes en Android Chrome.
+   ═══════════════════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
   .terminos-overlay {
-    padding: 0;
+    /* Margen inferior cero para el efecto sheet,
+       pero margen lateral para que no quede pegado */
+    padding: 0.75rem 0.75rem 0;
     align-items: flex-end;
   }
+
   .terminos-modal {
-    max-height: 96vh;
+    /* El margen lateral del overlay ya genera espacio,
+       así que el modal puede ir al 100% del área disponible */
+    width: 100%;
+    max-width: 100%;
+    /* Bordes redondeados SOLO arriba — se ve flotando */
     border-radius: 20px 20px 0 0;
     border-bottom: none;
+    /* Máximo 93% de la pantalla — siempre queda visible
+       un poco del overlay oscuro arriba */
+    max-height: 93vh;
+    /* Safe area para barra de navegación de Android/iPhone */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Header compacto */
   .terminos-header {
-    padding: 1.1rem 1.1rem 0.85rem;
+    padding: 1rem 1rem 0.8rem;
     gap: 0.75rem;
   }
-  .terminos-logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 11px;
-  }
-  .terminos-logo svg { width: 22px; height: 22px; }
-  .terminos-header h2 { font-size: 1.05rem; }
+  .terminos-logo { width: 40px; height: 40px; border-radius: 10px; }
+  .terminos-logo svg { width: 20px; height: 20px; }
+  .terminos-header h2 { font-size: 1rem; }
+  .terminos-version { font-size: 0.72rem; }
 
   .terminos-aviso-actualizacion {
-    margin: 0.6rem 1.1rem 0;
-    font-size: 0.84rem;
+    margin: 0.5rem 1rem 0;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.82rem;
+    border-radius: 8px;
   }
-  .terminos-instruccion { padding: 0.6rem 1.1rem 0; }
+  .terminos-instruccion { padding: 0.5rem 1rem 0; font-size: 0.79rem; }
 
+  /* Área de scroll */
   .terminos-contenido {
-    padding: 1.1rem 1.1rem;
+    padding: 1rem;
+    flex: 1;
+    min-height: 0;
   }
-  .terminos-contenido h3 { font-size: 0.9rem; }
+  .terminos-contenido h3 { font-size: 0.88rem; }
   .terminos-contenido p,
-  .terminos-contenido ul li { font-size: 0.875rem; line-height: 1.7; }
+  .terminos-contenido ul li { font-size: 0.84rem; line-height: 1.65; }
+  .terminos-fin { font-size: 0.82rem; padding: 0.6rem 0.85rem; }
 
+  /* Footer: padding inferior con safe area */
   .terminos-footer {
-    padding: 1rem 1.1rem 1.5rem;
-    gap: 0.75rem;
+    padding: 0.9rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.7rem;
   }
 
-  /* Checkbox más grande en móvil — zona táctil cómoda */
-  .terminos-checkbox-label {
-    padding: 0.85rem;
-    gap: 0.85rem;
-  }
+  /* Checkbox táctil */
+  .terminos-checkbox-label { padding: 0.85rem; gap: 0.85rem; }
   .terminos-checkbox-label input[type="checkbox"] {
-    width: 26px;
-    height: 26px;
-    min-width: 26px;
+    width: 26px; height: 26px; min-width: 26px;
   }
   .terminos-checkbox-label input[type="checkbox"]:checked::after {
-    left: 7px;
-    top: 2px;
-    width: 9px;
-    height: 13px;
-    border-width: 3px;
+    left: 7px; top: 2px; width: 9px; height: 13px; border-width: 3px;
   }
-  .terminos-checkbox-label span {
-    font-size: 0.9rem;
-  }
+  .terminos-checkbox-label span { font-size: 0.88rem; }
 
-  .terminos-btn-aceptar {
-    padding: 1rem;
-    font-size: 1.05rem;
-  }
+  .terminos-btn-aceptar { padding: 1rem; font-size: 1rem; }
+  .terminos-hint { font-size: 0.8rem; padding: 0.6rem 0.85rem; }
+}
 
-  .terminos-hint {
-    font-size: 0.84rem;
-    padding: 0.65rem 0.9rem;
+/* ═══════════════════════════════════════════════
+   MÓVILES PEQUEÑOS — 360px (Galaxy A, Moto G, etc.)
+   ═══════════════════════════════════════════════ */
+@media screen and (max-width: 360px) {
+  .terminos-overlay {
+    padding: 0.5rem 0.5rem 0;
   }
+  .terminos-header h2 { font-size: 0.92rem; }
+  .terminos-logo { width: 34px; height: 34px; }
+  .terminos-aviso-actualizacion { font-size: 0.78rem; }
+  .terminos-contenido p,
+  .terminos-contenido ul li { font-size: 0.8rem; }
+  .terminos-checkbox-label span { font-size: 0.82rem; }
+  .terminos-btn-aceptar { font-size: 0.95rem; padding: 0.9rem; }
 }
