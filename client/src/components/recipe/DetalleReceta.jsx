@@ -320,7 +320,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={cerrar}>
+    <div className="modal-overlay modal-overlay--receta" onClick={cerrar}>
       <div className="modalContenedorReceta" onClick={e => e.stopPropagation()}>
 
         <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
