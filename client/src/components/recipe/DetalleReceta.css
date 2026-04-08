@@ -753,3 +753,12 @@
     padding: 1rem;
   }
 }
+
+.modalImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+  object-fit: cover;
+  margin: 0;
+}

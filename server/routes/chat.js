@@ -5,6 +5,8 @@ const { protect } = require('../middleware/auth');
 const User = require('../models/User');
 const AIConfig = require('../models/AIConfig');
 const Recipe = require('../models/Recipe.js');
+const Precio = require('../models/Precios.js');
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -31,21 +33,27 @@ router.post('/', protect, async (req, res) => {
       : 'ninguna indicada';
 
     // Obtener recetas de la BD
-    const recetas = await Recipe.find(
-      {},
-      'nombre desc cat salud ingredientes nutri.cal nutri.prot nutri.carb nutri.gras'
-    ).lean();
+    // Obtener recetas y precios de la BD
+const recetas = await Recipe.find(
+  {},
+  'nombre desc cat salud ingredientes nutri.cal nutri.prot nutri.carb nutri.gras costoPorcion costoTotal porciones moneda ingredientesCosto'
+).lean();
 
-    const recetasTexto = recetas.map(r => {
-      const saludTags = r.salud?.length ? r.salud.join(', ') : 'todos';
-      const ingredientesList = r.ingredientes?.slice(0, 6).join(', ') || 'no especificados';
-      const cal = r.nutri?.cal ?? 0;
-      const prot = r.nutri?.prot ?? 0;
-      const carb = r.nutri?.carb ?? 0;
-      const gras = r.nutri?.gras ?? 0;
+const recetasTexto = recetas.map(r => {
+  const saludTags        = r.salud?.length ? r.salud.join(', ') : 'todos';
+  const ingredientesList = r.ingredientes?.slice(0, 6).join(', ') || 'no especificados';
+  const cal  = r.nutri?.cal  ?? 0;
+  const prot = r.nutri?.prot ?? 0;
+  const carb = r.nutri?.carb ?? 0;
+  const gras = r.nutri?.gras ?? 0;
 
-      return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes principales: ${ingredientesList} | Nutrición: ${cal} kcal, ${prot}g proteína, ${carb}g carbs, ${gras}g grasas | Descripción: ${r.desc}`;
-    }).join('\n');
+  // Costo
+  const moneda       = r.moneda || 'COP';
+  const costoPorcion = r.costoPorcion > 0 ? `${r.costoPorcion.toLocaleString('es-CO')} ${moneda}` : 'no disponible';
+  const costoTotal   = r.costoTotal   > 0 ? `${r.costoTotal.toLocaleString('es-CO')} ${moneda}`   : 'no disponible';
+
+  return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes principales: ${ingredientesList} | Nutrición: ${cal} kcal, ${prot}g proteína, ${carb}g carbs, ${gras}g grasas | Costo por porción: ${costoPorcion} | Costo total receta: ${costoTotal} (${r.porciones || 1} porciones) | Descripción: ${r.desc}`;
+}).join('\n');
 
     let config = await AIConfig.findOne();
     if (!config) config = await AIConfig.create({});
@@ -67,6 +75,10 @@ router.post('/', protect, async (req, res) => {
       - Filtra las recetas según las condiciones médicas y alergias del usuario.
       - Cuando recomiendes una receta, menciona su nombre exacto, categoría y por qué es adecuada para el usuario.
       - Si no hay recetas adecuadas para el usuario, indícalo amablemente.
+      - Cuando el usuario pregunte por el costo de una receta, usa los campos "Costo por porción" y "Costo total receta".
+      - Si el usuario menciona un presupuesto (ej: "tengo $20.000"), filtra y recomienda recetas cuyo costo por porción esté dentro de ese presupuesto.
+      - Si una receta tiene costo "no disponible", indícalo amablemente sin inventar precios.
+      - Los precios están en la moneda indicada entre paréntesis (COP, USD, EUR, MXN).
     `;
 
     const model = genAI.getGenerativeModel({
