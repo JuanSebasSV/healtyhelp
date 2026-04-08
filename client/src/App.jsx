@@ -28,6 +28,7 @@ import VistaInicio from './components/inicio/VistaInicio';
 import VistaSeguimiento from './components/vistas/VistaSeguimiento';
 import VistaFavoritos from './components/vistas/VistaFavoritos';
 import VistaContacto from './components/vistas/VistaContacto';
+import VistaChatbot from './components/vistas/VistaChatbot';
 
 // Admin
 import Dashboard from './components/admin/Dashboard';
@@ -133,7 +134,6 @@ function AppContent() {
 
   // Bandera de sesión: evita que el useEffect reabra el modal
   // después de que checkAuth() actualiza el user en el contexto.
-  // useRef porque NO queremos que cambiarla dispare un re-render.
   const terminosAceptadosEnSesion = useRef(false);
 
   // ── Efectos de utilidad ──
@@ -179,22 +179,18 @@ function AppContent() {
     if (esRutaLibre) { setTerminosResueltos(true); return; }
 
     // Banner de cookies: SOLO para usuarios anónimos
-    // Usuarios con cuenta usan la BD — no necesitan cookies locales
     if (!user) {
       const yaDecidio = cookiesConsentidas() ||
                         sessionStorage.getItem(COOKIE_CONSENT_KEY) === 'dismissed';
       if (!yaDecidio) setMostrarCookies(true);
     }
 
-    // Términos: siempre se evalúan independientemente de las cookies
     evaluarTerminos(activeTermsVersion);
 
   }, [user, activeTermsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const evaluarTerminos = (version) => {
     if (user) {
-      // Usuario con cuenta: fuente de verdad = BD
-      // user.activeTermsVersion viene de getMe() y es la versión activa del servidor
       const serverVersion = user.activeTermsVersion || version;
       const necesita = !user.termsAccepted || user.termsVersion !== serverVersion;
 
@@ -202,13 +198,11 @@ function AppContent() {
         setEsActualizacion(user.termsAccepted === true && user.termsVersion !== serverVersion);
         setMostrarTerminos(true);
       } else {
-        // Sincronizar local como caché
         setPersisted(TERMS_ACCEPTED_KEY, 'true');
         setPersisted(TERMS_VERSION_KEY, serverVersion);
         resolverTerminos();
       }
     } else {
-      // Usuario anónimo: fuente de verdad = cookie + localStorage
       const localVersion  = getPersisted(TERMS_VERSION_KEY);
       const localAccepted = getPersisted(TERMS_ACCEPTED_KEY);
 
@@ -222,7 +216,6 @@ function AppContent() {
   };
 
   const resolverTerminos = () => {
-    // Términos OK — verificar si necesita completar perfil (solo usuarios con cuenta)
     if (user && !user.profileComplete) {
       setMostrarCompletarPerfil(true);
     } else {
@@ -232,34 +225,28 @@ function AppContent() {
 
   // ── Handlers ──
   const handleCookiesAceptadas = () => {
-    migrarSessionACookies();   // persiste términos ya aceptados + marca cookies ok
+    migrarSessionACookies();
     setMostrarCookies(false);
   };
 
   const handleCookiesRechazadas = () => {
-    // Solo marca en sessionStorage para no repetir el banner esta sesión
-    // No escribe ninguna cookie — respeta la decisión del usuario
     sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed');
     setMostrarCookies(false);
   };
 
   const handleAceptarTerminos = async () => {
-    // Marcar bandera ANTES de checkAuth() para que el useEffect no reabra el modal
     terminosAceptadosEnSesion.current = true;
 
     const version = activeTermsVersion || '1.0.0';
 
-    // Persistir localmente siempre (caché + usuarios anónimos)
     setPersisted(TERMS_ACCEPTED_KEY, 'true');
     setPersisted(TERMS_VERSION_KEY, version);
 
     if (user) {
       try {
-        // ✅ FIX: pasar la versión en el body (antes se llamaba sin body)
         await api.post('/auth/accept-terms', { version });
         await checkAuth();
       } catch {
-        // Si falla la BD, la cookie ya lo persiste — no bloqueamos al usuario
         terminosAceptadosEnSesion.current = false;
         return;
       }
@@ -316,6 +303,10 @@ function AppContent() {
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/verificar-email"       element={<VerificarEmail />} />
             <Route path="/contacto"              element={<VistaContacto />} />
+            <Route
+              path="/chatbot"
+              element={<VistaChatbot abrirFlotante={() => setRobotIAActivo(true)} />}
+            />
 
             {/* Rutas protegidas */}
             <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
@@ -327,11 +318,11 @@ function AppContent() {
             } />
 
             {/* Rutas admin */}
-            <Route path="/admin"          element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
-            <Route path="/admin/users"    element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
-            <Route path="/admin/stats"    element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
-            <Route path="/admin/recipes"  element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
-            <Route path="/perfil"         element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+            <Route path="/admin"         element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
+            <Route path="/admin/users"   element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
+            <Route path="/admin/stats"   element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
+            <Route path="/admin/recipes" element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
+            <Route path="/perfil"        element={<PrivateRoute><UserProfile /></PrivateRoute>} />
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
