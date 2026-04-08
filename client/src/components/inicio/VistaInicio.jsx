@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import './VistaInicio.css';
 
+
 // Imágenes del carrusel — carpeta /public/
 const imagenesHero = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
@@ -109,106 +110,176 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
 
         {/* Gradiente lateral */}
         <div className="hero-gradiente" />
+        
 
-        {/* Contenido */}
-        <div className="hero-texto">
-          <span className="hero-tag">🌿 Tu dieta, tu salud</span>
-          <h1>
-            Sabemos que llevar una dieta especial puede ser un reto,
-            pero no tienes que hacerlo solo.
-          </h1>
-          <p>
-            Aquí te ofrecemos recetas pensadas para ti, con ingredientes
-            fáciles de conseguir y preparaciones sencillas pero exquisitas.
-          </p>
-          <div className="hero-linea"></div>
-        </div>
+            {/* Contenido */}
+          
 
-        <div className="hero-dots">
-          {imagenesHero.map((_, i) => (
-            <button
-              key={i}
-              className={`hero-dot ${i === imagenActual ? 'activo' : ''}`}
-              onClick={() => cambiarImagen(i)}
-            />
-          ))}
-        </div>
-      </div>
-
-      <section className="categorias">
-        {categorias.map(cat => (
-          <button
-            key={cat.id}
-            className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
-            onClick={() => cambiarCategoria(cat.id)}
-          >
-            <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
-            <span>{cat.nombre}</span>
-          </button>
-        ))}
-      </section>
-
-      {/* ── Filtro salud ── */}
-      <section id="filtro-salud" className="filtroSalud">
-        <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
-          <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
-          <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
-        </div>
-        {filtroAbierto && (
-          <div className="filtroContenido">
-            <div className="filtroInfo">
-              <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
-              {filtrosActivos.length > 0 && (
-                <button className="btnLimpiar" onClick={limpiarFiltros}>
-                  Limpiar filtros ({filtrosActivos.length})
-                </button>
-              )}
+            <div className="hero-texto">
+              <span className="hero-tag">🌿 Tu dieta, tu salud</span>
+              <h1>
+                Sabemos que llevar una dieta especial puede ser un reto,
+                pero no tienes que hacerlo solo.
+              </h1>
+              <p>
+                Aquí te ofrecemos recetas pensadas para ti, con ingredientes
+                fáciles de conseguir y preparaciones sencillas pero exquisitas.
+              </p>
+              <div className="hero-linea"></div>
             </div>
-            <div className="filtroGrid">
-              {condicionesSalud.map(condicion => (
+            
+
+            <div className="hero-dots">
+              {imagenesHero.map((_, i) => (
                 <button
-                  key={condicion.id}
-                  className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
-                  onClick={() => toggleFiltro(condicion.id)}
-                >
-                  <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
-                  <span className="filtroNombre">{condicion.nombre}</span>
-                  {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
-                </button>
+                  key={i}
+                  className={`hero-dot ${i === imagenActual ? 'activo' : ''}`}
+                  onClick={() => cambiarImagen(i)}
+                />
               ))}
             </div>
-          </div>
-        )}
-      </section>
+      </div>
+       
+      <div className="contenedor-grid">    
+          {/* Stats flotantes */}
+          <aside className="columna-stats">
+              <div className="hero-stats">
+                   <div className="hero-stat">
+                      <span className="hero-stat__num">+120</span>
+                      <span className="hero-stat__label">Recetas</span>
+                    </div>
+                    <div className="hero-stat-div"></div>
+                    <div className="hero-stat">
+                      <span className="hero-stat__num">16</span>
+                      <span className="hero-stat__label">Dietas</span>
+                    </div>
+                    <div className="hero-stat-div"></div>
+                    <div className="hero-stat">
+                      <span className="hero-stat__num">100%</span>
+                      <span className="hero-stat__label">Saludable</span>
+                    </div>
+              </div>
+            </aside>
+                   
+            <main className="columna-cuerpo">  
+              <div className='filtros-recetas'>
+        
+                {/* ── Filtro salud ── */}
+                <section id="filtro-salud" className="filtroSalud">
+                  <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
+                    <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
+                    <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
+                  </div>
+                  {filtroAbierto && (
+                    <div className="filtroContenido">
+                      <div className="filtroInfo">
+                        <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
+                        {filtrosActivos.length > 0 && (
+                          <button className="btnLimpiar" onClick={limpiarFiltros}>
+                            Limpiar filtros ({filtrosActivos.length})
+                          </button>
+                        )}
+                      </div>
+                      <div className="filtroGrid">
+                        {condicionesSalud.map(condicion => (
+                          <button
+                            key={condicion.id}
+                            className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`}
+                            onClick={() => toggleFiltro(condicion.id)}
+                          >
+                            <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
+                            <span className="filtroNombre">{condicion.nombre}</span>
+                            {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+            </div>  
 
-      {/* ── Recetas ── */}
-      <section className="recetasGrid">
-        <h2>Recetas Recomendadas</h2>
 
-        {cargandoRecetas ? (
-          <div className="recetasCargando">
-            <div className="spinner-recetas" />
-            <p>Cargando recetas...</p>
-          </div>
-        ) : (
-          <div className="grid">
-            {recetasFiltradas.map(receta => (
-              <TarjetaReceta
-                key={receta._id}
-                receta={receta}
-                toggleFav={toggleFav}
-                esFav={favoritos.includes(receta._id)}
-              />
+          <section className="categorias">
+            {categorias.map(cat => (
+              <button
+                key={cat.id}
+                className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
+                onClick={() => cambiarCategoria(cat.id)}
+              >
+                <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
+                <span>{cat.nombre}</span>
+              </button>
             ))}
-          </div>
-        )}
+          </section>
 
-        {!cargandoRecetas && recetasFiltradas.length === 0 && (
-          <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
-        )}
-      </section>
 
+          {/* ── Recetas ── */}
+          <section className="recetasGrid">
+            <h2>Recetas Recomendadas</h2>
+            <div className='recetas-linea'></div>
+
+            {cargandoRecetas ? (
+              <div className="recetasCargando">
+                <div className="spinner-recetas" />
+                <p>Cargando recetas...</p>
+              </div>
+            ) : (
+              <div className="grid">
+                {recetasFiltradas.map(receta => (
+                  <TarjetaReceta
+                    key={receta._id}
+                    receta={receta}
+                    toggleFav={toggleFav}
+                    esFav={favoritos.includes(receta._id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {!cargandoRecetas && recetasFiltradas.length === 0 && (
+              <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
+            )}
+          </section>
+          </main> 
+          <aside className="columna-right">
+            <div className="panel-lateral widget-precio">
+              <div className="widget-header">
+                <span className="material-symbols-outlined">payments</span>
+                <h3>Presupuesto</h3>
+              </div>
+              
+              <p className="widget-desc">Filtra recetas según tu bolsillo:</p>
+              
+              <div className="precio-opciones">
+                {/* Económico */}
+                <div className="tooltip-wrapper" data-tooltip="Recetas con ingredientes básicos y muy baratos">
+                  <button className="btn-precio">
+                    <span className="precio-tag">$</span>
+                    <span className="precio-label">Económico</span>
+                  </button>
+                </div>
+
+              {/* Medio */}
+              <div className="tooltip-wrapper" data-tooltip="Costo moderado con ingredientes frescos">
+                <button className="btn-precio activo">
+                  <span className="precio-tag">$$</span>
+                  <span className="precio-label">Medio</span>
+                </button>
+              </div>
+              
+              {/* Premium */}
+              <div className="tooltip-wrapper" data-tooltip="Ingredientes especiales o de mayor costo">
+                <button className="btn-precio">
+                  <span className="precio-tag">$$$</span>
+                  <span className="precio-label">Premium</span>
+                </button>
+              </div>
+              </div>
+            </div>
+          </aside>
+      </div>
     </div>
+    
   );
 };
 

@@ -1,7 +1,7 @@
 /* Navbar.css */
 
 .nav {
-  background: rgba(26, 77, 46, 0.95);
+  background: #146356;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: sticky;
@@ -12,6 +12,10 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
+}
+.nav-icon {
+  display: none;
+ 
 }
 .modo-oscuro .nav { background: rgba(26, 26, 26, 0.95); }
 
@@ -108,9 +112,21 @@
   gap: clamp(0.75rem, 1.5vw, 2rem);
   align-items: center;
   flex-wrap: nowrap;
+  
 }
-.navMenu li { color: var(--blanco); cursor: pointer; font-weight: 500; transition: var(--transicion); position: relative; white-space: nowrap; }
-.navMenu li:not(:has(button)):hover { color: var(--naranja); }
+.navMenu li {
+   color: var(--blanco); 
+   cursor: pointer; 
+   font-weight: 500; 
+   transition: var(--transicion); 
+   position: relative; 
+   white-space: nowrap; 
+   
+   
+  }
+   
+.navMenu li:not(:has(button)):hover { 
+  color: var(--naranja); }
 .navMenu li:not(:has(button))::after {
   content: '';
   position: absolute;
@@ -219,7 +235,7 @@
   border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
-.nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; }
+.nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; padding-left: 0.5rem; }
 .navMenu li.navUsuario::after { display: none; }
 
 /* ── Admin btn (SVG centrado) ── */
@@ -250,6 +266,11 @@
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 968px) {
+  
+    .nav-icon {
+      display: inline-block;
+    }
+  
   .navHamburguesa { display: flex; }
 
   .navMenu {
@@ -281,6 +302,8 @@
   /* Wrapper centrado que contiene todos los items */
   .navMenu {
     align-items: center;
+    background-color: rgb(255, 51, 0);
+   
   }
 
   /* Items con SVG — desplazados a la derecha del centro */
@@ -293,14 +316,14 @@
     max-width: 200px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 14%;
+    padding-left: 5%;
     display: flex;
-    align-items: center;
     justify-content: flex-start;
     gap: 0.65rem;
     color: var(--blanco-puro);
     cursor: pointer;
     transition: var(--transicion);
+   
   }
 
   /* SVG fijo 20x20 */
@@ -311,6 +334,7 @@
     max-width: 20px;
     flex-shrink: 0;
     opacity: 0.85;
+    
   }
 
   /* Admin Panel en móvil — igual que los demás items */
@@ -324,7 +348,7 @@
     margin-left: auto !important;
     margin-right: auto !important;
     padding: 0.72rem 0 !important;
-    padding-left: 14% !important;
+    padding-left: 5% !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
     gap: 0.65rem !important;
     font-size: 0.95rem !important;

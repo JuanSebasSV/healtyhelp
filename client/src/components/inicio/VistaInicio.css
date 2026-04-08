@@ -2,7 +2,14 @@
 
 .vistaInicio {
   display: block;
+  max-width: 100%;
+  background: #e3e9e8;
+  
 }
+.modo-oscuro .VistaInicio{
+  background: #061311;
+}
+
 
 /* ============ HERO ============ */
 .hero {
@@ -125,6 +132,63 @@
   background: var(--dorado);
   border-radius: 2px;
 }
+/* Columna Izquierda (Stats) */
+.columna-stats {
+  position: sticky; /* Opcional: para que las stats te sigan al bajar */
+  top: 20px;
+  margin-top: 5rem;
+  margin-left: 5rem;
+  width: 100%;
+}
+
+
+
+
+
+.hero-stats {
+  display: flex;
+  flex-direction: column;   /* apilados verticalmente uno sobre otro */
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(136, 207, 194, 0.184);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(168, 177, 176, 0.18);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  flex-shrink: 0;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+ 
+.hero-stat__num {
+  font-family: 'Georgia', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #e37201;
+  line-height: 1;
+}
+ 
+.hero-stat__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(225, 156, 83, 0.6);
+}
+
+.hero-stat-div {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 195, 31, 0.782);
+}
+
+
 
 /* Dots del carrusel */
 .hero-dots {
@@ -221,17 +285,44 @@
   }
 }
 
+.contenedor-grid {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  gap: 10px;
+  width: 100%;
+  align-items: start;
+}
+.modo-oscuro .contenedor-grid {
+  background: #061311;
+}
+/*=========div de la seccion abajo del hero=========*/
+
+.filtros-recetas{
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important; /* Fuerza a que no ocupe más espacio del necesario */
+  height: fit-content;
+}
+
+.columna-cuerpo {
+  display: block; /* Cambia de flex a block para que el flujo sea natural */
+  height: auto;
+  margin: 3rem 12rem;
+}
+
 /* ============ CATEGORÍAS — glassmorphism ============ */
 .categorias {
   display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem; 
+  
 }
 
 .catBtn {
-  background: rgba(255, 255, 255, 0.12);
+  background: #146356a6;
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -245,17 +336,18 @@
   transition: var(--transicion);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   color: #ffffff;
+  
 }
 
 .catBtn:hover {
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(245, 131, 0);
   border-color: rgba(247, 127, 0, 0.6);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(247,127,0,0.2);
 }
 
 .catBtn.activo {
-  background: rgba(247, 127, 0, 0.35);
+  background: rgb(247, 156, 0);
   border-color: var(--naranja);
   box-shadow: 0 4px 20px rgba(247, 127, 0, 0.3);
   color: #ffffff;
@@ -318,244 +410,253 @@
   color: #ffffff;
 }
 
-/* ============ FILTRO SALUD — glassmorphism ============ */
+/* ============ FILTRO SALUD ============ */
 .filtroSalud {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 20px;
-  margin-bottom: 3rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  border: 1.5px solid #c8d4cf;
+  border-radius: 16px;
+  margin-bottom: 1rem;
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  
 }
-
+ 
 .modo-oscuro .filtroSalud {
-  background: rgba(10, 25, 15, 0.5);
+  background: rgba(18, 32, 22, 0.85);
   border-color: rgba(79, 119, 45, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
-
+ 
 .filtroHeader {
-  padding: 2rem;
+  padding: 1.1rem 1.5rem;
   cursor: pointer;
   display: flex;
   justify-content: center;
-  align-items: center;
-  transition: var(--transicion);
-  background: rgba(26, 77, 46, 0.6);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+  background: linear-gradient(90deg, #006050 0%, #69D7A7 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: filter 0.2s ease;
   position: relative;
 }
-
-.filtroHeader:hover {
-  background: rgba(26, 77, 46, 0.75);
-}
-
-.modo-oscuro .filtroHeader {
-  background: rgba(10, 25, 15, 0.7);
-  border-bottom-color: rgba(79, 119, 45, 0.25);
-}
-
-.modo-oscuro .filtroHeader:hover {
-  background: rgba(20, 45, 25, 0.8);
-}
-
 .filtroHeader h2 {
-  color: #ffffff;
-  margin: 0;
-  font-size: 1.8rem;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  color: #e1ede7;
+  
 }
+ 
+.filtroHeader:hover { filter: brightness(1.08); }
+ 
 
 .filtroToggle {
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
   position: absolute;
-  right: 2rem;
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.85);
-  transition: var(--transicion);
+  right: 15px;
 }
-
+.filtroToggle.abierto { transform: rotate(180deg); }
+ 
+/* Contenido desplegable */
 .filtroContenido {
-  padding: 2rem;
-  animation: slideDown 0.3s ease;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  animation: slideDown 0.28s ease;
+  background: linear-gradient(180deg, #f0f8f4 0%, #e8f4ef 100%);
 }
-
+ 
 .modo-oscuro .filtroContenido {
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, rgba(14, 30, 18, 0.9) 0%, rgba(10, 22, 14, 0.95) 100%);
 }
-
+ 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
 .filtroInfo {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
-
+ 
 .filtroInfo p {
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  color: #4a6558;
   margin: 0;
   flex: 1;
-  min-width: 250px;
+  min-width: 240px;
+  line-height: 1.6;
 }
-
-.modo-oscuro .filtroInfo p {
-  color: rgba(220, 240, 210, 0.85) !important;
+ 
+.filtroInfo p strong {
+  color: var(--verde-bosque);
+  font-weight: 700;
 }
-
+ 
+.modo-oscuro .filtroInfo p { color: rgba(180, 220, 160, 0.8); }
+ 
 .btnLimpiar {
-  padding: 0.75rem 1.5rem;
-  background: rgba(247, 127, 0, 0.25);
-  border: 1.5px solid rgba(247, 127, 0, 0.5);
-  color: #ffb347;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  background: transparent;
+  border: 1.5px solid var(--naranja);
+  color: var(--naranja);
   border-radius: 50px;
   cursor: pointer;
+  font-size: 0.8rem;
   font-weight: 600;
   transition: var(--transicion);
   white-space: nowrap;
-  backdrop-filter: blur(8px);
 }
-
+ 
 .btnLimpiar:hover {
   background: var(--naranja);
-  border-color: var(--naranja);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(247, 127, 0, 0.3);
 }
-
-/* ============ FILTRO CARDS — glassmorphism ============ */
+ 
+/* Grid de cards de dieta */
 .filtroGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  color: rgba(255,255,255,0.9);
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.65rem;
 }
-
+ 
 .filtroCard {
   position: relative;
-  padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
+  padding: 0.9rem 0.7rem;
+  background: #ffffff;
+  border: 1.5px solid #c8d4cf;
+  border-radius: 12px;
   cursor: pointer;
   transition: var(--transicion);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   text-align: center;
-  min-height: 100px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  min-height: 88px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
-
+ 
 .filtroCard:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(247, 127, 0, 0.5);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  border-color: var(--verde-progreso);
+  background: #f0faf5;
+  box-shadow: 0 6px 18px rgba(52, 211, 153, 0.15);
 }
-
+ 
 .filtroCard.activo {
-  background: rgba(26, 77, 46, 0.5);
-  border-color: rgba(79, 119, 45, 0.8);
-  box-shadow: 0 4px 20px rgba(26, 77, 46, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: #e6f7ef;
+  border-color: var(--verde-bosque);
+  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.15);
 }
-
+ 
 .modo-oscuro .filtroCard {
-  background: rgba(15, 35, 20, 0.5);
-  border-color: rgba(79, 119, 45, 0.25);
+  background: rgba(20, 38, 26, 0.7);
+  border-color: rgba(79, 119, 45, 0.3);
 }
-
 .modo-oscuro .filtroCard:hover {
-  background: rgba(25, 55, 30, 0.65);
-  border-color: rgba(247, 127, 0, 0.45);
+  background: rgba(30, 58, 38, 0.85);
+  border-color: var(--verde-progreso);
 }
-
 .modo-oscuro .filtroCard.activo {
-  background: rgba(79, 119, 45, 0.3);
-  border-color: rgba(107, 158, 74, 0.6);
+  background: rgba(52, 120, 72, 0.25);
+  border-color: var(--verde-progreso-oscuro);
 }
-
+ 
 .filtroIcono {
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #e6f7ef;
+  border: 1px solid #c0dece;
+  flex-shrink: 0;
 }
-
+ 
+.filtroCard.activo .filtroIcono {
+  background: var(--verde-bosque);
+  border-color: var(--verde-bosque);
+}
+ 
 .filtroIcono svg {
-    width: 30px;
-    height: 30px;
-    color: rgba(255,255,255,0.9);
-    stroke-width: 2;
-    stroke: currentColor;
+  width: 20px;
+  height: 20px;
+  stroke: var(--verde-bosque);
+  color: var(--verde-bosque);
 }
-
+ 
 .filtroCard.activo .filtroIcono svg {
   stroke: #ffffff;
+  color: #ffffff;
 }
-
-.modo-oscuro .filtroIcono svg {
-  stroke: rgba(180, 220, 160, 0.85);
+ 
+.modo-oscuro .filtroIcono {
+  background: rgba(30, 58, 38, 0.8);
+  border-color: rgba(79, 119, 45, 0.4);
 }
-
-.modo-oscuro .filtroCard.activo .filtroIcono svg {
-  stroke: #ffffff;
-}
-
+.modo-oscuro .filtroIcono svg { stroke: var(--verde-menta); color: var(--verde-menta); }
+.modo-oscuro .filtroCard.activo .filtroIcono svg { stroke: #ffffff; color: #ffffff; }
+ 
 .filtroNombre {
+  font-size: 0.76rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: #3d5a4a;
   line-height: 1.3;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
-
-.filtroCard.activo .filtroNombre {
-  color: #ffffff;
-}
-
-.modo-oscuro .filtroCard .filtroNombre {
-  color: rgba(210, 235, 195, 0.9);
-}
-
-.modo-oscuro .filtroCard.activo .filtroNombre {
-  color: #ffffff;
-}
-
+ 
+.filtroCard.activo .filtroNombre { color: var(--verde-bosque); }
+ 
+.modo-oscuro .filtroNombre { color: rgba(180, 220, 160, 0.9); }
+.modo-oscuro .filtroCard.activo .filtroNombre { color: var(--verde-menta); }
+ 
 .filtroCheck {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: var(--naranja);
+  top: 0.35rem;
+  right: 0.35rem;
+  background: var(--verde-bosque);
   color: #ffffff;
-  width: 26px;
-  height: 26px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(247,127,0,0.4);
+  box-shadow: 0 2px 6px rgba(26, 77, 46, 0.35);
 }
 
 /* ============ RECETAS GRID ============ */
 .recetasGrid {
+  margin-top: 1.5rem; /* Cámbialo de 6rem a algo más pequeño */
   animation: fadeIn 0.6s ease;
+  border-radius: 20px;
+  
 }
 
 .recetasGrid h2 {
   text-align: center;
-  color: #ffffff;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  font-family: 'Georgia', serif;
+  color: #5b5851;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  padding-top: 2rem;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-family: 'Playfair Display', serif;
+   
+}
+.recetas-linea{
+  width: 300px;
+  height: 3px;
+  background: var(--dorado);
+  border-radius: 2px;
+  margin: auto;
+  
 }
 
 .modo-oscuro .recetasGrid h2 {
@@ -572,6 +673,159 @@
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px;
 }
+
+
+/* ============ COLUMNA DERECHA ============ */
+.columna-right{
+  margin-top: 5rem;
+  margin-right: 5rem;
+}
+
+
+.widget-precio {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #146356; /* Verde de tu nav */
+  margin-bottom: 15px;
+}
+
+.widget-header h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.widget-desc {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.precio-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-precio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-precio:hover {
+  border-color: var(--naranja);
+  background: rgba(247, 127, 0, 0.05);
+  transform: translateX(5px);
+}
+
+.btn-precio.activo {
+  background: var(--naranja);
+  border-color: var(--naranja);
+  color: white;
+  box-shadow: 0 4px 12px rgba(247, 127, 0, 0.3);
+}
+
+.precio-tag {
+  font-weight: 800;
+  font-family: 'Georgia', serif;
+}
+
+.precio-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 1. Asegurar visibilidad en los contenedores padres */
+.columna-right, 
+.widget-precio, 
+.precio-opciones {
+  overflow: visible !important;
+ 
+}
+
+/* 2. Contenedor relativo */
+.tooltip-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 3. La Burbuja (Aparecerá a la IZQUIERDA del botón) */
+.tooltip-wrapper::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 110%; /* Lo lanza hacia el centro de la web */
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: normal; /* Permite saltos de línea si el texto es largo */
+  width: 150px;
+  text-align: center;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* 4. La Flechita */
+.tooltip-wrapper::before {
+  content: '';
+  position: absolute;
+  right: 102%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #333; /* Flecha apuntando al botón */
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  z-index: 9999;
+}
+
+/* 5. Activación al pasar el mouse */
+.tooltip-wrapper:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) scale(1);
+}
+
+.tooltip-wrapper:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+
+
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 968px) {

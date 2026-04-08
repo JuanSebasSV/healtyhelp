@@ -292,7 +292,7 @@ const VistaSeguimiento = ({ recetas }) => {
                     : mesLegible(op)}
                 </button>
               ))}
-            </div>
+            </div> 
 
             {/* Contenido */}
             {cargando ? (

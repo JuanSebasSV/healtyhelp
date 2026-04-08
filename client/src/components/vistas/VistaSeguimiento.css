@@ -2,8 +2,19 @@
 
 .vista-seguimiento {
   animation: fadeIn 0.6s ease;
+ background-image:url(../../../../public/imgg/seguimiento.jpg); 
+ background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 2rem 15rem;
+  box-sizing: border-box;
 }
 
+ 
 .vista-seguimiento h1 {
   text-align: center;
   color: var(--blanco-puro);
@@ -12,6 +23,7 @@
   font-family: 'Georgia', serif;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
+
 
 /* ── Botones período ── */
 .seg-periodo-btns {
@@ -24,9 +36,9 @@
 
 .seg-periodo-btns button {
   padding: 0.75rem 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(65, 83, 83, 0.232);
   backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(38, 77, 74, 0.22);
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
@@ -51,12 +63,14 @@
   grid-template-columns: 1.1fr 0.9fr;
   gap: 1.5rem;
   align-items: start;
+  max-width: 100%;
+ 
 }
 
 .seg-col {
   border-radius: 22px;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(63, 68, 67, 0.45);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -68,7 +82,7 @@
 .seg-col { scrollbar-width: none; }
 
 .modo-oscuro .seg-col {
-  background: rgba(15, 35, 20, 0.55);
+  background: rgb(31, 33, 33);
   border-color: rgba(79, 119, 45, 0.25);
 }
 
@@ -88,7 +102,7 @@
   padding: 0.55rem 1rem;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.326);
   color: rgba(255,255,255,0.65);
   font-size: 0.83rem;
   font-weight: 600;
@@ -96,6 +110,7 @@
   transition: all 0.18s ease;
   text-align: left;
   text-transform: capitalize;
+  
 }
 .seg-selector-item:hover {
   background: rgba(255,255,255,0.1);
@@ -136,7 +151,7 @@
   padding: 0.75rem;
   border-radius: 14px;
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.262);
   cursor: pointer;
   transition: all 0.2s ease;
   flex-wrap: wrap;
@@ -272,12 +287,12 @@
   justify-content: space-between;
   padding: 0.65rem 1rem;
   border-radius: 12px;
-  border: 1px dashed rgba(255,255,255,0.12);
+  border: 1px dashed rgba(255, 255, 255, 0.502);
   background: rgba(255,255,255,0.02);
 }
 .seg-vacio-label {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.785);
 }
 .seg-btn-agregar {
   padding: 0.3rem 0.85rem;
@@ -298,7 +313,7 @@
 /* ── Estados ── */
 .seg-estado {
   text-align: center;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.247);
   font-size: 0.9rem;
   padding: 2rem 0;
 }
