@@ -57,6 +57,8 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     return () => window.removeEventListener('keydown', manejarTeclado);
   }, [imagenActual]);
 
+  
+
   const categorias = [
     { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
     { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
@@ -155,21 +157,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
           ))}
         </div>
       </div>
-
-      {/* Categorías */}
-      <section className="categorias">
-        {categorias.map(cat => (
-          <button
-            key={cat.id}
-            className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
-            onClick={() => cambiarCategoria(cat.id)}
-          >
-            <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
-            <span>{cat.nombre}</span>
-          </button>
-        ))}
-      </section>
-
       {/* ── Filtro salud ── */}
       <section id="filtro-salud" className="filtroSalud">
         <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
@@ -201,6 +188,20 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             </div>
           </div>
         )}
+      </section>
+
+      {/* Categorías */}
+      <section className="categorias">
+        {categorias.map(cat => (
+          <button
+            key={cat.id}
+            className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`}
+            onClick={() => cambiarCategoria(cat.id)}
+          >
+            <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
+            <span>{cat.nombre}</span>
+          </button>
+        ))}
       </section>
 
       {/* ── Recetas ── */}
