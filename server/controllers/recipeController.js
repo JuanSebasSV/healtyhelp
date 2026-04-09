@@ -1,356 +1,415 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// recipeController.js
-// ─────────────────────────────────────────────────────────────────────────────
 const Recipe = require('../models/Recipe');
+const AdminLog = require('../models/AdminLog');
+const fs = require('fs').promises;
+const path = require('path');
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const calcularCostos = (ingredientesCosto = [], porciones = 1) => {
-  const total = ingredientesCosto.reduce(
-    (acc, ing) => acc + (parseFloat(ing.costo) || 0), 0
-  );
-  const costoTotal   = Math.round(total * 100) / 100;
-  const costoPorcion = porciones > 0
-    ? Math.round((total / porciones) * 100) / 100
-    : costoTotal;
-  return { costoTotal, costoPorcion };
-};
-
-// ── CRUD estándar ─────────────────────────────────────────────────────────────
-
-exports.getRecipes = async (req, res) => {
+// ─────────────────────────────────────────────
+// 📊 Obtener todas las recetas
+// ─────────────────────────────────────────────
+exports.getAllRecipes = async (req, res) => {
   try {
-    const { cat, salud, search, page = 1, limit = 20 } = req.query;
-    const filter = {};
-    if (cat)    filter.cat   = cat;
-    if (salud)  filter.salud = { $in: salud.split(',') };
-    if (search) filter.$text = { $search: search };
+    const { page = 1, limit = 10, search = '', cat = '', salud = '' } = req.query;
+    const filters = {};
+    if (search) {
+      filters.$or = [
+        { nombre: { $regex: search, $options: 'i' } },
+        { desc:   { $regex: search, $options: 'i' } }
+      ];
+    }
+    if (cat)   filters.cat   = cat;
+    if (salud) filters.salud = salud;
 
-    const skip  = (parseInt(page) - 1) * parseInt(limit);
-    const total = await Recipe.countDocuments(filter);
-    const data  = await Recipe.find(filter)
+    const total   = await Recipe.countDocuments(filters);
+    const recipes = await Recipe.find(filters)
+      .select('-resenas')
       .sort({ createdAt: -1 })
-      .skip(skip)
       .limit(parseInt(limit))
-      .select('-resenas');
+      .skip((parseInt(page) - 1) * parseInt(limit));
 
-    res.json({ ok: true, total, page: parseInt(page), data });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ success: true, recipes, pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) } });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo recetas' });
   }
 };
 
-exports.getRecipe = async (req, res) => {
+exports.getRecipeById = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
-    res.json({ ok: true, data: recipe });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+    res.json({ success: true, recipe });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo receta' });
   }
 };
 
 exports.createRecipe = async (req, res) => {
   try {
-    const body = { ...req.body, createdBy: req.user?.id };
-    if (body.ingredientesCosto?.length) {
-      const { costoTotal, costoPorcion } = calcularCostos(body.ingredientesCosto, body.porciones);
-      body.costoTotal   = costoTotal;
-      body.costoPorcion = costoPorcion;
-    }
-    const recipe = await Recipe.create(body);
-    res.status(201).json({ ok: true, data: recipe });
-  } catch (err) {
-    res.status(400).json({ ok: false, error: err.message });
+    const recipeData = { ...req.body, createdBy: req.user._id };
+    delete recipeData.resenas; delete recipeData.puntosProm; delete recipeData.totalResenas;
+    const recipe = await Recipe.create(recipeData);
+    await AdminLog.create({ adminId: req.user._id, action: 'CREATE_RECIPE', metadata: { recipeName: recipe.nombre, recipeId: recipe._id } });
+    res.status(201).json({ success: true, message: 'Receta creada correctamente', recipe });
+  } catch (error) {
+    res.status(500).json({ error: 'Error creando receta', details: error.message });
   }
 };
 
 exports.updateRecipe = async (req, res) => {
   try {
-    const body = { ...req.body };
-    if (body.ingredientesCosto?.length !== undefined) {
-      const { costoTotal, costoPorcion } = calcularCostos(body.ingredientesCosto, body.porciones);
-      body.costoTotal   = costoTotal;
-      body.costoPorcion = costoPorcion;
-    }
-    const recipe = await Recipe.findByIdAndUpdate(req.params.id, body, { new: true, runValidators: true });
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
-    res.json({ ok: true, data: recipe });
-  } catch (err) {
-    res.status(400).json({ ok: false, error: err.message });
+    const updates = { ...req.body };
+    delete updates.resenas; delete updates.puntosProm; delete updates.totalResenas;
+    const recipe = await Recipe.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+    await AdminLog.create({ adminId: req.user._id, action: 'UPDATE_RECIPE', metadata: { recipeName: recipe.nombre, recipeId: recipe._id } });
+    res.json({ success: true, message: 'Receta actualizada correctamente', recipe });
+  } catch (error) {
+    res.status(500).json({ error: 'Error actualizando receta', details: error.message });
   }
 };
 
 exports.deleteRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findByIdAndDelete(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
-    res.json({ ok: true, message: 'Receta eliminada' });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+    if (recipe.img && recipe.img.includes('/uploads/')) {
+      try { await fs.unlink(path.join(__dirname, '..', recipe.img)); } catch {}
+    }
+    await AdminLog.create({ adminId: req.user._id, action: 'DELETE_RECIPE', metadata: { recipeName: recipe.nombre } });
+    res.json({ success: true, message: 'Receta eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error eliminando receta' });
   }
 };
 
-// ── Costos (REW006) ───────────────────────────────────────────────────────────
-
-exports.updateCostos = async (req, res) => {
+exports.deleteMultipleRecipes = async (req, res) => {
   try {
-    const { ingredientesCosto = [], porciones = 1, moneda } = req.body;
-    if (!Array.isArray(ingredientesCosto))
-      return res.status(400).json({ ok: false, error: 'ingredientesCosto debe ser un array' });
-    if (porciones < 1)
-      return res.status(400).json({ ok: false, error: 'Las porciones deben ser al menos 1' });
-
-    const { costoTotal, costoPorcion } = calcularCostos(ingredientesCosto, porciones);
-    const update = { ingredientesCosto, porciones, costoTotal, costoPorcion, ...(moneda && { moneda }) };
-    const recipe = await Recipe.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
-
-    res.json({ ok: true, message: 'Costos actualizados', resumen: { costoTotal, costoPorcion, porciones, moneda: recipe.moneda }, data: recipe });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ error: 'IDs inválidos' });
+    const result = await Recipe.deleteMany({ _id: { $in: ids } });
+    await AdminLog.create({ adminId: req.user._id, action: 'DELETE_MULTIPLE_RECIPES', metadata: { count: result.deletedCount } });
+    res.json({ success: true, message: `${result.deletedCount} recetas eliminadas`, deleted: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ error: 'Error eliminando recetas' });
   }
 };
 
-exports.getCostos = async (req, res) => {
+exports.importRecipes = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id)
-      .select('nombre porciones ingredientesCosto costoTotal costoPorcion moneda');
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
-    res.json({ ok: true, data: { ...recipe.toObject(), tieneCosto: recipe.costoTotal > 0 } });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    const { recipes, mode } = req.body;
+    if (!Array.isArray(recipes)) return res.status(400).json({ error: 'Formato inválido' });
+    const validRecipes = []; const errors = [];
+    recipes.forEach((recipe, index) => {
+      if (!recipe.nombre || !recipe.desc || !recipe.cat) {
+        errors.push(`Receta ${index + 1}: Faltan campos obligatorios`);
+      } else {
+        const clean = { ...recipe };
+        delete clean.resenas; delete clean.puntosProm; delete clean.totalResenas;
+        validRecipes.push(clean);
+      }
+    });
+    if (errors.length > 0) return res.status(400).json({ error: 'Errores en recetas', details: errors });
+    let result = {};
+    if (mode === 'replace') {
+      const count = await Recipe.countDocuments();
+      await Recipe.deleteMany({});
+      const created = await Recipe.insertMany(validRecipes);
+      result = { deleted: count, created: created.length };
+    } else {
+      const created = await Recipe.insertMany(validRecipes);
+      result = { created: created.length };
+    }
+    await AdminLog.create({ adminId: req.user._id, action: 'IMPORT_RECIPES', metadata: result });
+    res.json({ success: true, message: `${result.created} recetas importadas`, result });
+  } catch (error) {
+    res.status(500).json({ error: 'Error importando recetas', details: error.message });
   }
 };
 
-exports.getStatsSummary = async (req, res) => {
+exports.exportRecipes = async (req, res) => {
   try {
-    const total = await Recipe.countDocuments();
-    const byCategory = await Recipe.aggregate([
-      { $group: { _id: '$cat', count: { $sum: 1 } } },
+    const recipes = await Recipe.find().select('-__v -resenas').lean();
+    res.json({ success: true, count: recipes.length, recipes });
+  } catch (error) {
+    res.status(500).json({ error: 'Error exportando recetas' });
+  }
+};
+
+exports.getRecipeStats = async (req, res) => {
+  try {
+    const total      = await Recipe.countDocuments();
+    const byCategory = await Recipe.aggregate([{ $group: { _id: '$cat', count: { $sum: 1 } } }]);
+    const byHealth   = await Recipe.aggregate([
+      { $unwind: '$salud' },
+      { $group: { _id: '$salud', count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);
-    res.json({ ok: true, stats: { total, byCategory } });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ success: true, stats: { total, byCategory, byHealth } });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo estadísticas' });
   }
 };
 
-// ── Reseñas ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// ⭐ SISTEMA DE RESEÑAS
+// ═══════════════════════════════════════════════════════════════
 
-// GET /api/recipes/:id/resenas?page=1&limit=5&orden=reciente|relevancia
+// Utilidad: serializar reseña con conteos para el cliente
+const serializarResena = (r, userId) => ({
+  _id:        r._id,
+  userId:     r.userId,
+  userName:   r.userName,
+  estrellas:  r.estrellas,
+  texto:      r.texto,
+  createdAt:  r.createdAt,
+  updatedAt:  r.updatedAt,
+  likes:      r.likes.length,
+  dislikes:   r.dislikes.length,
+  miVoto:     userId
+    ? r.likes.some(id => id.toString() === userId.toString())    ? 'like'
+    : r.dislikes.some(id => id.toString() === userId.toString()) ? 'dislike'
+    : null
+    : null,
+  respuestas: r.respuestas.map(rp => ({
+    _id:       rp._id,
+    userId:    rp.userId,
+    userName:  rp.userName,
+    texto:     rp.texto,
+    createdAt: rp.createdAt,
+  })),
+});
+
+// ─────────────────────────────────────────────
+// GET /recipes/:id/resenas?page=1&limit=5&orden=reciente|relevancia
+// ─────────────────────────────────────────────
 exports.getResenas = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).select('resenas puntosProm totalResenas');
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    const { page = 1, limit = 5, orden = 'reciente' } = req.query;
+    const skip    = (parseInt(page) - 1) * parseInt(limit);
+    const userId  = req.user?._id;
 
-    const page  = Math.max(1, parseInt(req.query.page)  || 1);
-    const limit = Math.max(1, parseInt(req.query.limit) || 5);
-    const orden = req.query.orden || 'reciente';
+    const recipe  = await Recipe.findById(req.params.id).select('resenas puntosProm totalResenas');
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    let resenas = [...recipe.resenas];
-    if (orden === 'reciente') {
-      resenas.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (orden === 'relevancia') {
-      resenas.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+    let ordenadas = [...recipe.resenas];
+
+    if (orden === 'relevancia') {
+      // Ordenar por (likes - dislikes) descendente, luego por fecha
+      ordenadas.sort((a, b) => {
+        const scoreA = a.likes.length - a.dislikes.length;
+        const scoreB = b.likes.length - b.dislikes.length;
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+    } else {
+      // Más recientes primero
+      ordenadas.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
-    const total    = resenas.length;
-    const pages    = Math.ceil(total / limit) || 1;
-    const start    = (page - 1) * limit;
-    const paginadas = resenas.slice(start, start + limit);
-
-    const userId = req.user?._id?.toString() || req.user?.id?.toString();
-    const enriquecidas = paginadas.map(r => {
-      const obj     = r.toObject ? r.toObject() : { ...r };
-      obj.likes     = r.likes?.length    || 0;
-      obj.dislikes  = r.dislikes?.length || 0;
-      if (userId) {
-        const likeIds    = (r.likes    || []).map(id => id.toString());
-        const dislikeIds = (r.dislikes || []).map(id => id.toString());
-        obj.miVoto = likeIds.includes(userId) ? 'like'
-                   : dislikeIds.includes(userId) ? 'dislike'
-                   : null;
-      }
-      return obj;
-    });
+    const paginated = ordenadas.slice(skip, skip + parseInt(limit));
 
     res.json({
-      ok:           true,
-      resenas:      enriquecidas,
+      success:      true,
+      resenas:      paginated.map(r => serializarResena(r, userId)),
       puntosProm:   recipe.puntosProm,
       totalResenas: recipe.totalResenas,
-      pagination:   { page, limit, total, pages },
+      pagination: {
+        total: recipe.resenas.length,
+        page:  parseInt(page),
+        pages: Math.ceil(recipe.resenas.length / parseInt(limit)),
+      },
     });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error obteniendo reseñas' });
   }
 };
 
-// POST /api/recipes/:id/resenas
-exports.createResena = async (req, res) => {
+// ─────────────────────────────────────────────
+// POST /recipes/:id/resenas — Crear reseña
+// ─────────────────────────────────────────────
+exports.crearResena = async (req, res) => {
   try {
-    const { estrellas, texto } = req.body;
-    const userId   = req.user._id || req.user.id;
-    const userName = req.user.name || req.user.nombre || 'Usuario';
-
+    const { estrellas, texto = '' } = req.body;
     if (!estrellas || estrellas < 1 || estrellas > 5)
-      return res.status(400).json({ ok: false, error: 'Estrellas debe ser entre 1 y 5' });
+      return res.status(400).json({ error: 'La puntuación debe ser entre 1 y 5' });
 
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    const yaExiste = recipe.resenas.find(r => r.userId.toString() === userId.toString());
-    if (yaExiste)
-      return res.status(400).json({ ok: false, error: 'Ya tienes una reseña para esta receta' });
+    const yaReseno = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
+    if (yaReseno) return res.status(400).json({ error: 'Ya tienes una reseña en esta receta. Puedes editarla.' });
 
-    recipe.resenas.push({ userId, userName, estrellas, texto: texto?.trim() || '' });
+    recipe.resenas.push({ userId: req.user._id, userName: req.user.name, estrellas: parseInt(estrellas), texto: texto.trim() });
     recipe.recalcularPuntos();
     await recipe.save();
 
     const nueva = recipe.resenas[recipe.resenas.length - 1];
-    res.status(201).json({ ok: true, resena: nueva, puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.status(201).json({
+      success:      true,
+      message:      '¡Reseña publicada!',
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+      resena:       serializarResena(nueva, req.user._id),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al publicar la reseña' });
   }
 };
 
-// PUT /api/recipes/:id/resenas
-exports.updateResena = async (req, res) => {
+// ─────────────────────────────────────────────
+// PUT /recipes/:id/resenas — Editar propia reseña
+// ─────────────────────────────────────────────
+exports.editarResena = async (req, res) => {
   try {
-    const { estrellas, texto } = req.body;
-    const userId = (req.user._id || req.user.id).toString();
-
+    const { estrellas, texto = '' } = req.body;
     if (!estrellas || estrellas < 1 || estrellas > 5)
-      return res.status(400).json({ ok: false, error: 'Estrellas debe ser entre 1 y 5' });
+      return res.status(400).json({ error: 'La puntuación debe ser entre 1 y 5' });
 
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    const resena = recipe.resenas.find(r => r.userId.toString() === userId);
-    if (!resena) return res.status(404).json({ ok: false, error: 'No tienes una reseña para editar' });
+    const resena = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
+    if (!resena) return res.status(404).json({ error: 'No tienes una reseña en esta receta' });
 
-    resena.estrellas = estrellas;
-    resena.texto     = texto?.trim() || '';
+    resena.estrellas = parseInt(estrellas);
+    resena.texto     = texto.trim();
     recipe.recalcularPuntos();
     await recipe.save();
 
-    res.json({ ok: true, resena, puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ success: true, message: 'Reseña actualizada', puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas, resena: serializarResena(resena, req.user._id) });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al editar la reseña' });
   }
 };
 
-// DELETE /api/recipes/:id/resenas/:resenaId
-exports.deleteResena = async (req, res) => {
+// ─────────────────────────────────────────────
+// DELETE /recipes/:id/resenas/:resenaId — Borrar propia reseña (o admin borra cualquiera)
+// ─────────────────────────────────────────────
+exports.borrarResena = async (req, res) => {
   try {
-    const userId  = (req.user._id || req.user.id).toString();
-    const esAdmin = req.user.role === 'admin';
-
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const resena = recipe.resenas.id(req.params.resenaId);
-    if (!resena) return res.status(404).json({ ok: false, error: 'Reseña no encontrada' });
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    if (!esAdmin && resena.userId.toString() !== userId)
-      return res.status(403).json({ ok: false, error: 'No puedes borrar esta reseña' });
+    const esAdmin = req.user.role === 'admin';
+    const esAutor = resena.userId.toString() === req.user._id.toString();
+    if (!esAutor && !esAdmin) return res.status(403).json({ error: 'No puedes borrar esta reseña' });
 
     resena.deleteOne();
     recipe.recalcularPuntos();
     await recipe.save();
 
-    res.json({ ok: true, message: 'Reseña eliminada', puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ success: true, message: 'Reseña eliminada', puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al borrar la reseña' });
   }
 };
 
-// POST /api/recipes/:id/resenas/:resenaId/voto
+// ─────────────────────────────────────────────
+// POST /recipes/:id/resenas/:resenaId/voto
+// body: { tipo: 'like' | 'dislike' }
+// ─────────────────────────────────────────────
 exports.votarResena = async (req, res) => {
   try {
-    const { tipo } = req.body;
+    const { tipo } = req.body; // 'like' | 'dislike'
     if (!['like', 'dislike'].includes(tipo))
-      return res.status(400).json({ ok: false, error: 'tipo debe ser like o dislike' });
+      return res.status(400).json({ error: 'Tipo de voto inválido' });
 
-    const userId = req.user._id || req.user.id;
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const resena = recipe.resenas.id(req.params.resenaId);
-    if (!resena) return res.status(404).json({ ok: false, error: 'Reseña no encontrada' });
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    const likeIdx    = resena.likes.findIndex(id => id.toString() === userId.toString());
-    const dislikeIdx = resena.dislikes.findIndex(id => id.toString() === userId.toString());
+    const uid       = req.user._id;
+    const enLikes   = resena.likes.some(id => id.toString() === uid.toString());
+    const enDislikes = resena.dislikes.some(id => id.toString() === uid.toString());
 
     if (tipo === 'like') {
-      if (likeIdx >= 0) { resena.likes.splice(likeIdx, 1); }
-      else { resena.likes.push(userId); if (dislikeIdx >= 0) resena.dislikes.splice(dislikeIdx, 1); }
+      if (enLikes) {
+        // Toggle off
+        resena.likes = resena.likes.filter(id => id.toString() !== uid.toString());
+      } else {
+        resena.likes.push(uid);
+        resena.dislikes = resena.dislikes.filter(id => id.toString() !== uid.toString());
+      }
     } else {
-      if (dislikeIdx >= 0) { resena.dislikes.splice(dislikeIdx, 1); }
-      else { resena.dislikes.push(userId); if (likeIdx >= 0) resena.likes.splice(likeIdx, 1); }
+      if (enDislikes) {
+        resena.dislikes = resena.dislikes.filter(id => id.toString() !== uid.toString());
+      } else {
+        resena.dislikes.push(uid);
+        resena.likes = resena.likes.filter(id => id.toString() !== uid.toString());
+      }
     }
 
     await recipe.save();
 
-    const nuevoLikeIdx = resena.likes.findIndex(id => id.toString() === userId.toString());
-    const nuevoDisIdx  = resena.dislikes.findIndex(id => id.toString() === userId.toString());
-    const miVoto = nuevoLikeIdx >= 0 ? 'like' : nuevoDisIdx >= 0 ? 'dislike' : null;
-
-    res.json({ ok: true, likes: resena.likes.length, dislikes: resena.dislikes.length, miVoto });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({
+      success:  true,
+      likes:    resena.likes.length,
+      dislikes: resena.dislikes.length,
+      miVoto:   resena.likes.some(id => id.toString() === uid.toString())    ? 'like'
+               : resena.dislikes.some(id => id.toString() === uid.toString()) ? 'dislike'
+               : null,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al votar' });
   }
 };
 
-// POST /api/recipes/:id/resenas/:resenaId/respuestas
-exports.createRespuesta = async (req, res) => {
+// ─────────────────────────────────────────────
+// POST /recipes/:id/resenas/:resenaId/respuestas — Responder una reseña
+// ─────────────────────────────────────────────
+exports.responderResena = async (req, res) => {
   try {
     const { texto } = req.body;
-    if (!texto?.trim()) return res.status(400).json({ ok: false, error: 'El texto es obligatorio' });
-
-    const userId   = req.user._id || req.user.id;
-    const userName = req.user.name || req.user.nombre || 'Usuario';
+    if (!texto || !texto.trim()) return res.status(400).json({ error: 'El texto es obligatorio' });
 
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const resena = recipe.resenas.id(req.params.resenaId);
-    if (!resena) return res.status(404).json({ ok: false, error: 'Reseña no encontrada' });
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    resena.respuestas.push({ userId, userName, texto: texto.trim() });
+    resena.respuestas.push({ userId: req.user._id, userName: req.user.name, texto: texto.trim() });
     await recipe.save();
 
     const nueva = resena.respuestas[resena.respuestas.length - 1];
-    res.status(201).json({ ok: true, respuesta: nueva });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.status(201).json({ success: true, respuesta: { _id: nueva._id, userId: nueva.userId, userName: nueva.userName, texto: nueva.texto, createdAt: nueva.createdAt } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al responder' });
   }
 };
 
-// DELETE /api/recipes/:id/resenas/:resenaId/respuestas/:respId
-exports.deleteRespuesta = async (req, res) => {
+// ─────────────────────────────────────────────
+// DELETE /recipes/:id/resenas/:resenaId/respuestas/:respId — Borrar respuesta
+// ─────────────────────────────────────────────
+exports.borrarRespuesta = async (req, res) => {
   try {
-    const userId  = (req.user._id || req.user.id).toString();
-    const esAdmin = req.user.role === 'admin';
-
     const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ ok: false, error: 'Receta no encontrada' });
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const resena = recipe.resenas.id(req.params.resenaId);
-    if (!resena) return res.status(404).json({ ok: false, error: 'Reseña no encontrada' });
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
     const respuesta = resena.respuestas.id(req.params.respId);
-    if (!respuesta) return res.status(404).json({ ok: false, error: 'Respuesta no encontrada' });
+    if (!respuesta) return res.status(404).json({ error: 'Respuesta no encontrada' });
 
-    if (!esAdmin && respuesta.userId.toString() !== userId)
-      return res.status(403).json({ ok: false, error: 'No puedes borrar esta respuesta' });
+    const esAdmin = req.user.role === 'admin';
+    const esAutor = respuesta.userId.toString() === req.user._id.toString();
+    if (!esAutor && !esAdmin) return res.status(403).json({ error: 'No puedes borrar esta respuesta' });
 
     respuesta.deleteOne();
     await recipe.save();
 
-    res.json({ ok: true, message: 'Respuesta eliminada' });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ success: true, message: 'Respuesta eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al borrar la respuesta' });
   }
 };

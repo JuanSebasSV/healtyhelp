@@ -98,6 +98,9 @@ const respuestaSchema = new mongoose.Schema(
 
 // ─────────────────────────────────────────────
 // Sub-esquema de reseña
+// likes    = array de userIds que marcaron "Es útil"
+// dislikes = array de userIds que marcaron "No es útil"
+// respuestas = comentarios anidados (estilo YouTube)
 // ─────────────────────────────────────────────
 const resenaSchema = new mongoose.Schema(
   {
@@ -105,24 +108,13 @@ const resenaSchema = new mongoose.Schema(
     userName:   { type: String, required: true },
     estrellas:  { type: Number, required: true, min: 1, max: 5 },
     texto:      { type: String, trim: true, maxlength: [500, 'Máximo 500 caracteres'], default: '' },
-    likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },
-    dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },
+    // Votos de utilidad
+    likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
+    dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
+    // Respuestas anidadas
     respuestas: { type: [respuestaSchema], default: [] },
   },
   { timestamps: true }
-);
-
-// ─────────────────────────────────────────────
-// Sub-esquema de ingrediente con costo (NUEVO)
-// Paralelo a `ingredientes: [String]`, no lo reemplaza
-// ─────────────────────────────────────────────
-const ingredienteCostoSchema = new mongoose.Schema(
-  {
-    nombre:   { type: String, required: true, trim: true },
-    cantidad: { type: String, default: '', trim: true }, // ej: "200g", "1 taza"
-    costo:    { type: Number, default: 0, min: 0 },      // costo en la moneda elegida
-  },
-  { _id: false }
 );
 
 // ─────────────────────────────────────────────
@@ -150,7 +142,6 @@ const recipeSchema = new mongoose.Schema(
         values: ['desayuno', 'almuerzo', 'cena', 'postres-snacks'],
         message: 'Categoría inválida: {VALUE}',
       },
-      
     },
     salud:        { type: [String], default: [] },
     ingredientes: { type: [String], default: [] },
@@ -162,21 +153,11 @@ const recipeSchema = new mongoose.Schema(
 
     nutri:     { type: nutriSchema, default: () => ({}) },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-
-    // ── Campos de costo (NUEVOS) ──────────────────────────────────────────
-    // ingredientesCosto: lista paralela a `ingredientes`, con nombre + cantidad + costo
-    // El admin los gestiona desde el panel; el usuario ve el resumen calculado
-    ingredientesCosto: { type: [ingredienteCostoSchema], default: [] },
-    porciones:         { type: Number, default: 1, min: 1 },
-    costoTotal:        { type: Number, default: 0 },    // suma de todos los costos
-    costoPorcion:      { type: Number, default: 0 },    // costoTotal / porciones
-    moneda:            { type: String, default: 'COP', enum: ['COP', 'USD', 'EUR', 'MXN'] },
-    // ─────────────────────────────────────────────────────────────────────
   },
   { timestamps: true, versionKey: false }
 );
 
-// ── Recalcular promedio de reseñas ──
+// ── Recalcular promedio ──
 recipeSchema.methods.recalcularPuntos = function () {
   const total = this.resenas.length;
   if (total === 0) {
@@ -187,17 +168,6 @@ recipeSchema.methods.recalcularPuntos = function () {
     this.puntosProm   = Math.round((suma / total) * 10) / 10;
     this.totalResenas = total;
   }
-};
-
-// ── Recalcular costos automáticamente ──
-recipeSchema.methods.recalcularCostos = function () {
-  const total = this.ingredientesCosto.reduce(
-    (acc, ing) => acc + (parseFloat(ing.costo) || 0), 0
-  );
-  this.costoTotal   = Math.round(total * 100) / 100;
-  this.costoPorcion = this.porciones > 0
-    ? Math.round((total / this.porciones) * 100) / 100
-    : total;
 };
 
 recipeSchema.index({ nombre: 'text', desc: 'text' });

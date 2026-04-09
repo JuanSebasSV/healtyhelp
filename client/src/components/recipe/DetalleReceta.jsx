@@ -6,21 +6,6 @@ import { toast } from 'react-toastify';
 import useAuth from '../../hooks/useAuth';
 import './DetalleReceta.css';
 
-/* ─── Helper costo ──────────────────────────────────────── */
-const formatearCosto = (costo, moneda = 'COP') => {
-  if (!costo || costo <= 0) return null;
-  try {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: moneda,
-      minimumFractionDigits: moneda === 'COP' ? 0 : 2,
-      maximumFractionDigits: moneda === 'COP' ? 0 : 2,
-    }).format(costo);
-  } catch {
-    return `${moneda} ${costo.toFixed(2)}`;
-  }
-};
-
 /* ─── Estrellas ─────────────────────────────────────────── */
 const Estrellas = ({ valor, onChange, readonly = false }) => {
   const [hover, setHover] = useState(0);
@@ -176,9 +161,6 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   const [formTexto,     setFormTexto]     = useState('');
   const [enviando,      setEnviando]      = useState(false);
 
-  // Costo
-  const costoFormato = formatearCosto(receta.costoPorcion, receta.moneda || 'COP');
-
   // ── Bloquear scroll del body ──
   useEffect(() => {
     const scrollY = window.scrollY;
@@ -197,10 +179,11 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
     };
   }, []);
 
-  // ── Cargar reseñas ──
+  // ── Cargar reseñas — SIEMPRE busca la propia en TODAS las páginas ──
   const cargarResenas = useCallback(async (pag = 1, ord = orden) => {
     setCargandoRes(true);
     try {
+      // Petición principal para la página actual
       const { data } = await api.get(
         `/recipes/${receta._id}/resenas?page=${pag}&limit=5&orden=${ord}`
       );
@@ -209,6 +192,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       setTotalResenas(data.totalResenas);
       setTotalPags(data.pagination.pages);
 
+      // Buscar la reseña propia en la página actual
       if (user) {
         const mia = data.resenas.find(
           r => r.userId?.toString() === user._id?.toString() ||
@@ -219,6 +203,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
           setFormEstrellas(mia.estrellas);
           setFormTexto(mia.texto || '');
         } else if (pag === 1) {
+          // Si no está en la pág 1, buscarla en todas las demás páginas
           const totalPaginas = data.pagination.pages;
           let encontrada = false;
           for (let p = 2; p <= totalPaginas && !encontrada; p++) {
@@ -320,7 +305,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
   };
 
   return (
-    <div className="modal-overlay modal-overlay--receta" onClick={cerrar}>
+    <div className="modal-overlay" onClick={cerrar}>
       <div className="modalContenedorReceta" onClick={e => e.stopPropagation()}>
 
         <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
@@ -332,34 +317,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
 
         {/* ── Columna izquierda ── */}
         <div className="modalCol modalIzq">
-
-          {/* Imagen con badge de costo */}
-          <div style={{ position: 'relative', display: 'block', width: '100%', overflow: 'hidden', borderRadius: '12px' }}>
-            <img src={receta.img} alt={receta.nombre} className="modalImg" />
-            {costoFormato && (
-              <div style={{
-                position:       'absolute',
-                bottom:         '12px',
-                left:           '12px',
-                display:        'flex',
-                alignItems:     'center',
-                gap:            '5px',
-                background:     'rgba(0,0,0,0.65)',
-                backdropFilter: 'blur(4px)',
-                color:          '#fff',
-                borderRadius:   '20px',
-                padding:        '6px 14px 6px 10px',
-                fontSize:       '0.9rem',
-                fontWeight:     '600',
-                pointerEvents:  'none',
-              }}>
-                <span style={{ fontSize: '1rem' }}>🍽️</span>
-                <span>{costoFormato}</span>
-                <span style={{ fontWeight: 400, opacity: 0.85, fontSize: '0.8rem' }}>/porción</span>
-              </div>
-            )}
-          </div>
-
+          <img src={receta.img} alt={receta.nombre} className="modalImg" />
           <h2>{receta.nombre}</h2>
           <p className="modalDesc">{receta.desc}</p>
 
@@ -378,6 +336,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
           {/* ══════════ RESEÑAS ══════════ */}
           <div className="modalSeccion resenas-seccion">
 
+            {/* Resumen puntuación */}
             <div className="resenas-resumen">
               <span className="resenas-prom-numero">
                 {puntosProm > 0 ? puntosProm : '—'}
@@ -392,6 +351,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               </div>
             </div>
 
+            {/* Formulario / mi reseña */}
             {isAuthenticated && (
               <div className="resena-form">
                 {miResena && !editando ? (
@@ -459,6 +419,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               </p>
             )}
 
+            {/* Filtro orden */}
             <div className="resenas-filtro">
               <span className="resenas-filtro-label">Ordenar por:</span>
               <div className="resenas-filtro-btns">
@@ -473,6 +434,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               </div>
             </div>
 
+            {/* Lista de reseñas */}
             <div className="resenas-lista">
               {cargandoRes ? (
                 <p className="resenas-estado">Cargando reseñas...</p>
@@ -489,6 +451,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                   const esAdmin  = user?.role === 'admin';
                   return (
                     <div key={r._id} className={`resena-item ${esPropia ? 'propia' : ''}`}>
+
                       <div className="resena-item-header">
                         <div className="resena-avatar">
                           {r.userName.charAt(0).toUpperCase()}
@@ -509,6 +472,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
 
                       {r.texto && <p className="resena-texto">{r.texto}</p>}
 
+                      {/* Votos */}
                       <div className="resena-votos">
                         <span className="votos-label">¿Te resultó útil?</span>
                         <button
@@ -523,6 +487,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                         >👎 <span>{r.dislikes}</span></button>
                       </div>
 
+                      {/* Respuestas */}
                       <SeccionRespuestas
                         recetaId={receta._id}
                         resenaId={r._id}
@@ -530,12 +495,14 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
                         user={user}
                         isAuthenticated={isAuthenticated}
                       />
+
                     </div>
                   );
                 })
               )}
             </div>
 
+            {/* Paginación */}
             {totalPags > 1 && (
               <div className="resenas-paginacion">
                 <button

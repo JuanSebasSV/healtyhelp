@@ -1,41 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RecipeForm.css';
 
-// ── Iconos ────────────────────────────────────────────────────────────────────
-const IcoInfo  = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
-const IcoSalud = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>;
-const IcoIng   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/></svg>;
-const IcoPasos = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
-const IcoNutri = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
-const IcoX     = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-const IcoPlus  = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{verticalAlign:'middle',marginRight:'5px'}}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
-const IcoSave  = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
-const IcoEdit2 = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+const IcoInfo    = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
+const IcoSalud   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>;
+const IcoIng     = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/></svg>;
+const IcoPasos   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
+const IcoNutri   = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
+const IcoX       = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IcoPlus    = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{verticalAlign:'middle',marginRight:'5px'}}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoSave    = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
+const IcoEdit2   = () => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
 
-const IcoCosto = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="2"
-    style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}>
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M9.5 9a3 3 0 0 1 5 1.5c0 2-3 3-3 3"/>
-    <line x1="12" y1="17" x2="12.01" y2="17"/>
-  </svg>
-);
 
-// Icono de importar (flecha hacia abajo con lista)
-const IcoImportar = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="2.5"
-    style={{verticalAlign:'middle',marginRight:'6px'}}>
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-    <polyline points="7 10 12 15 17 10"/>
-    <line x1="12" y1="15" x2="12" y2="3"/>
-  </svg>
-);
-
-// ── Componente de input numérico con flechas ──────────────────────────────────
 const NumeroInput = ({ value, onChange, min, max, step, name, placeholder }) => {
   const s = parseFloat(step) || 1;
   const increment = () => {
@@ -62,31 +40,20 @@ const NumeroInput = ({ value, onChange, min, max, step, name, placeholder }) => 
   );
 };
 
-// ── Helpers de costo ──────────────────────────────────────────────────────────
-const calcularTotalCosto = (ingredientesCosto = []) =>
-  ingredientesCosto.reduce((sum, ing) => sum + (parseFloat(ing.costo) || 0), 0);
-
-const formatCosto = (valor, moneda) =>
-  valor.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' ' + moneda;
-
-// ── Componente principal ──────────────────────────────────────────────────────
 const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const isEditing = !!recipe;
 
-  const estadoInicial = {
+  const [formData, setFormData] = useState({
     nombre: '', desc: '', img: '', cat: 'almuerzo',
     salud: [], puntos: 0, ingredientes: [''], pasos: [''],
-    nutri: { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 },
-    ingredientesCosto: [],
-    porciones: 1,
-    moneda: 'COP',
-  };
+    nutri: { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 }
+  });
 
-  const [formData, setFormData]                   = useState(estadoInicial);
-  const [loading, setLoading]                     = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showAdvancedNutri, setShowAdvancedNutri] = useState(false);
   const DRAFT_KEY = 'recipe_form_draft';
 
+  // Recuperar borrador solo al crear (no al editar)
   useEffect(() => {
     if (!isEditing) {
       try {
@@ -96,32 +63,18 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     }
   }, [isEditing]);
 
+  // Guardar borrador mientras escribe (solo al crear)
   useEffect(() => {
     if (!isEditing) {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
     }
   }, [formData, isEditing]);
 
-  useEffect(() => {
-    if (recipe) {
-      setFormData({
-        ...estadoInicial,
-        ...recipe,
-        ingredientes:      recipe.ingredientes      || [''],
-        pasos:             recipe.pasos             || [''],
-        nutri:             recipe.nutri             || { cal:0, prot:0, carb:0, gras:0, fiber:0, sodio:0 },
-        ingredientesCosto: recipe.ingredientesCosto || [],
-        porciones:         recipe.porciones         || 1,
-        moneda:            recipe.moneda            || 'COP',
-      });
-    }
-  }, [recipe]);
-
   const categorias = [
-    { id: 'desayuno',       nombre: 'Desayuno' },
-    { id: 'almuerzo',       nombre: 'Almuerzo' },
-    { id: 'cena',           nombre: 'Cena' },
-    { id: 'postres-snacks', nombre: 'Postres & Snacks' },
+    { id: 'desayuno', nombre: 'Desayuno' },
+    { id: 'almuerzo', nombre: 'Almuerzo' },
+    { id: 'cena', nombre: 'Cena' },
+    { id: 'postres-snacks', nombre: 'Postres & Snacks' }
   ];
 
   const condicionesSalud = [
@@ -129,110 +82,44 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     'vegano','vegetariano','bajo-sodio','bajo-carbohidratos',
     'keto','paleo','sin-frutos-secos','sin-mariscos',
     'bajo-grasa','sin-azucar','colesterol-alto','enfermedad-renal',
-    'gastritis','sindrome-intestino',
+    'gastritis','sindrome-intestino'
   ];
 
-  // ── Handlers generales ────────────────────────────────────────────────────
-  const handleChange      = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  const handleNutriChange = (field, value) =>
-    setFormData(prev => ({ ...prev, nutri: { ...prev.nutri, [field]: parseFloat(value) || 0 } }));
-  const handleSaludToggle = (c) =>
-    setFormData(prev => ({
-      ...prev,
-      salud: prev.salud?.includes(c) ? prev.salud.filter(s => s !== c) : [...(prev.salud||[]), c],
-    }));
-
-  const handleIngChange   = (i, v) => { const a = [...formData.ingredientes]; a[i] = v; setFormData(p => ({ ...p, ingredientes: a })); };
-  const addIngrediente    = () => setFormData(p => ({ ...p, ingredientes: [...p.ingredientes, ''] }));
-  const removeIngrediente = (i) => setFormData(p => ({ ...p, ingredientes: p.ingredientes.filter((_,x) => x !== i) }));
-
-  const handlePasoChange = (i, v) => { const a = [...formData.pasos]; a[i] = v; setFormData(p => ({ ...p, pasos: a })); };
-  const addPaso          = () => setFormData(p => ({ ...p, pasos: [...p.pasos, ''] }));
-  const removePaso       = (i) => setFormData(p => ({ ...p, pasos: p.pasos.filter((_,x) => x !== i) }));
-
-  // ── Handlers de costo ────────────────────────────────────────────────────
-  const handleIngCostoChange = (i, field, value) => {
-    const arr = [...formData.ingredientesCosto];
-    arr[i] = { ...arr[i], [field]: field === 'costo' ? (parseFloat(value) || 0) : value };
-    setFormData(p => ({ ...p, ingredientesCosto: arr }));
-  };
-
-  const addIngCosto = () =>
-    setFormData(p => ({
-      ...p,
-      ingredientesCosto: [...p.ingredientesCosto, { nombre: '', cantidad: '', costo: 0 }],
-    }));
-
-  const removeIngCosto = (i) =>
-    setFormData(p => ({ ...p, ingredientesCosto: p.ingredientesCosto.filter((_,x) => x !== i) }));
-
-  // ── Importar ingredientes desde la lista de texto ─────────────────────────
-  const importarIngredientes = () => {
-    const validos = formData.ingredientes.filter(i => i.trim());
-    if (!validos.length) {
-      toast.warning('Primero agrega ingredientes en la sección de Ingredientes');
-      return;
+  useEffect(() => {
+    if (recipe) {
+      setFormData({
+        ...recipe,
+        ingredientes: recipe.ingredientes || [''],
+        pasos: recipe.pasos || [''],
+        nutri: recipe.nutri || { cal:0, prot:0, carb:0, gras:0, fiber:0, sodio:0 }
+      });
     }
+  }, [recipe]);
 
-    // Conservar costos ya ingresados si el nombre coincide
-    const costosPrevios = {};
-    formData.ingredientesCosto.forEach(ic => {
-      if (ic.nombre.trim()) costosPrevios[ic.nombre.trim().toLowerCase()] = ic;
-    });
+  const handleChange       = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleNutriChange  = (field, value) => setFormData(prev => ({ ...prev, nutri: { ...prev.nutri, [field]: parseFloat(value) || 0 } }));
+  const handleSaludToggle  = (c) => setFormData(prev => ({ ...prev, salud: prev.salud?.includes(c) ? prev.salud.filter(s => s !== c) : [...(prev.salud||[]), c] }));
+  const handleIngChange    = (i, v) => { const a = [...formData.ingredientes]; a[i] = v; setFormData(p => ({ ...p, ingredientes: a })); };
+  const handlePasoChange   = (i, v) => { const a = [...formData.pasos]; a[i] = v; setFormData(p => ({ ...p, pasos: a })); };
+  const addIngrediente     = () => setFormData(p => ({ ...p, ingredientes: [...p.ingredientes, ''] }));
+  const removeIngrediente  = (i) => setFormData(p => ({ ...p, ingredientes: p.ingredientes.filter((_,x) => x !== i) }));
+  const addPaso            = () => setFormData(p => ({ ...p, pasos: [...p.pasos, ''] }));
+  const removePaso         = (i) => setFormData(p => ({ ...p, pasos: p.pasos.filter((_,x) => x !== i) }));
 
-    const nuevos = validos.map(texto => {
-      const key = texto.trim().toLowerCase();
-      // Si ya existe con ese nombre, conservar su costo y cantidad
-      if (costosPrevios[key]) return costosPrevios[key];
-      return { nombre: texto.trim(), cantidad: '', costo: 0 };
-    });
-
-    setFormData(p => ({ ...p, ingredientesCosto: nuevos }));
-    toast.success(`${nuevos.length} ingrediente${nuevos.length !== 1 ? 's' : ''} importado${nuevos.length !== 1 ? 's' : ''}`);
-  };
-
-  // Calcular resumen en tiempo real
-  const costoTotalActual   = calcularTotalCosto(formData.ingredientesCosto);
-  const costoPorcionActual = formData.porciones > 0
-    ? costoTotalActual / formData.porciones
-    : costoTotalActual;
-
-  // ── Submit ────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.nombre || !formData.desc || !formData.cat) {
-      toast.error('Completa los campos obligatorios');
-      return;
-    }
-
-    const cleanData = {
-      ...formData,
-      ingredientes:      formData.ingredientes.filter(i => i.trim()),
-      pasos:             formData.pasos.filter(p => p.trim()),
-      ingredientesCosto: formData.ingredientesCosto.filter(i => i.nombre.trim()),
-      costoTotal:   costoTotalActual,
-      costoPorcion: costoPorcionActual,
-    };
-
+    if (!formData.nombre || !formData.desc || !formData.cat) { toast.error('Completa los campos obligatorios'); return; }
+    const cleanData = { ...formData, ingredientes: formData.ingredientes.filter(i => i.trim()), pasos: formData.pasos.filter(p => p.trim()) };
     setLoading(true);
     try {
-      if (isEditing) {
-        await api.put(`/recipes/${recipe._id}`, cleanData);
-        toast.success('Receta actualizada');
-      } else {
-        await api.post('/recipes', cleanData);
-        localStorage.removeItem(DRAFT_KEY);
-        toast.success('Receta creada');
-      }
+      if (isEditing) { await api.put(`/recipes/${recipe._id}`, cleanData); toast.success('Receta actualizada'); }
+      else           { await api.post('/recipes', cleanData); localStorage.removeItem(DRAFT_KEY); toast.success('Receta creada'); }
       onSuccess();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error guardando receta');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="recipe-form">
       <h2>
@@ -241,22 +128,20 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
 
       <form onSubmit={handleSubmit}>
 
-        {/* ── Información Básica ── */}
+        {/* Información Básica */}
         <div className="form-section">
           <h3><IcoInfo />Información Básica</h3>
           <div className="form-group">
             <label>Nombre de la Receta *</label>
-            <input type="text" name="nombre" value={formData.nombre} onChange={handleChange}
-              placeholder="Ej: Ensalada Mediterránea" required />
+            <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Ej: Ensalada Mediterránea" required />
           </div>
           <div className="form-group">
             <label>Descripción *</label>
-            <textarea name="desc" value={formData.desc} onChange={handleChange}
-              placeholder="Describe brevemente la receta..." rows="3" required />
+            <textarea name="desc" value={formData.desc} onChange={handleChange} placeholder="Describe brevemente la receta..." rows="3" required />
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>URL de Imagen</label>
+              <label>URL de Imagen *</label>
               <input type="url" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." />
             </div>
             <div className="form-group">
@@ -272,27 +157,25 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
           </div>
         </div>
 
-        {/* ── Condiciones de Salud ── */}
+        {/* Condiciones de Salud */}
         <div className="form-section">
           <h3><IcoSalud />Condiciones de Salud</h3>
           <div className="salud-grid">
             {condicionesSalud.map(condicion => (
               <label key={condicion} className="salud-checkbox">
-                <input type="checkbox" checked={formData.salud?.includes(condicion)}
-                  onChange={() => handleSaludToggle(condicion)} />
+                <input type="checkbox" checked={formData.salud?.includes(condicion)} onChange={() => handleSaludToggle(condicion)} />
                 <span>{condicion.replace(/-/g, ' ')}</span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* ── Ingredientes (texto) ── */}
+        {/* Ingredientes */}
         <div className="form-section">
           <h3><IcoIng />Ingredientes</h3>
           {formData.ingredientes.map((ing, i) => (
             <div key={i} className="dynamic-input">
-              <input type="text" value={ing} onChange={(e) => handleIngChange(i, e.target.value)}
-                placeholder={`Ingrediente ${i + 1}`} />
+              <input type="text" value={ing} onChange={(e) => handleIngChange(i, e.target.value)} placeholder={`Ingrediente ${i + 1}`} />
               {formData.ingredientes.length > 1 && (
                 <button type="button" onClick={() => removeIngrediente(i)} className="btn-remove"><IcoX /></button>
               )}
@@ -301,14 +184,13 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
           <button type="button" onClick={addIngrediente} className="btn-add"><IcoPlus />Agregar Ingrediente</button>
         </div>
 
-        {/* ── Pasos ── */}
+        {/* Pasos */}
         <div className="form-section">
           <h3><IcoPasos />Pasos de Preparación</h3>
           {formData.pasos.map((paso, i) => (
             <div key={i} className="dynamic-input">
               <span className="paso-number">{i + 1}.</span>
-              <textarea value={paso} onChange={(e) => handlePasoChange(i, e.target.value)}
-                placeholder={`Paso ${i + 1}`} rows="2" />
+              <textarea value={paso} onChange={(e) => handlePasoChange(i, e.target.value)} placeholder={`Paso ${i + 1}`} rows="2" />
               {formData.pasos.length > 1 && (
                 <button type="button" onClick={() => removePaso(i)} className="btn-remove"><IcoX /></button>
               )}
@@ -317,140 +199,27 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
           <button type="button" onClick={addPaso} className="btn-add"><IcoPlus />Agregar Paso</button>
         </div>
 
-        {/* ── Costo de Preparación ── */}
-        <div className="form-section">
-          <h3><IcoCosto />Costo de Preparación</h3>
-
-          <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted, #9ca3af)', marginBottom: '1rem', marginTop: '-0.25rem' }}>
-            Ingresa el costo aproximado de cada ingrediente. El sistema calculará el costo total y por porción automáticamente.
-          </p>
-
-          {/* Porciones y moneda */}
-          <div className="form-row" style={{ marginBottom: '1rem' }}>
-            <div className="form-group">
-              <label>Número de porciones</label>
-              <NumeroInput name="porciones" value={formData.porciones}
-                onChange={handleChange} min={1} step={1} placeholder="1" />
-            </div>
-            <div className="form-group">
-              <label>Moneda</label>
-              <select name="moneda" value={formData.moneda} onChange={handleChange}>
-                <option value="COP">COP — Peso colombiano</option>
-                <option value="USD">USD — Dólar</option>
-                <option value="EUR">EUR — Euro</option>
-                <option value="MXN">MXN — Peso mexicano</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Botón importar — siempre visible */}
-          <button
-            type="button"
-            onClick={importarIngredientes}
-            className="btn-add"
-            style={{ marginBottom: '0.75rem', background: 'rgba(251,146,60,0.12)', borderColor: 'rgba(251,146,60,0.4)', color: 'var(--color-primary, #fb923c)' }}
-          >
-            <IcoImportar />Importar ingredientes de la receta
-          </button>
-
-          {/* Cabecera de columnas */}
-          {formData.ingredientesCosto.length > 0 && (
-            <div className="costo-header">
-              <span style={{ flex: 2 }}>Ingrediente</span>
-              <span style={{ flex: 1 }}>Cantidad</span>
-              <span style={{ flex: 1 }}>Costo ({formData.moneda})</span>
-              <span style={{ width: '32px' }}></span>
-            </div>
-          )}
-
-          {/* Filas de ingredientes con costo */}
-          {formData.ingredientesCosto.map((ing, i) => (
-            <div key={i} className="dynamic-input costo-row">
-              <input
-                type="text"
-                value={ing.nombre}
-                onChange={(e) => handleIngCostoChange(i, 'nombre', e.target.value)}
-                placeholder="Nombre del ingrediente"
-                style={{ flex: 2 }}
-              />
-              <input
-                type="text"
-                value={ing.cantidad}
-                onChange={(e) => handleIngCostoChange(i, 'cantidad', e.target.value)}
-                placeholder="Ej: 200g"
-                style={{ flex: 1 }}
-              />
-              <input
-                type="number"
-                value={ing.costo}
-                min={0}
-                step={1}
-                onChange={(e) => handleIngCostoChange(i, 'costo', e.target.value)}
-                placeholder="0"
-                style={{ flex: 1 }}
-              />
-              <button type="button" onClick={() => removeIngCosto(i)} className="btn-remove">
-                <IcoX />
-              </button>
-            </div>
-          ))}
-
-          <button type="button" onClick={addIngCosto} className="btn-add">
-            <IcoPlus />Agregar ingrediente manualmente
-          </button>
-
-          {/* Resumen calculado en tiempo real */}
-          {formData.ingredientesCosto.length > 0 && (
-            <div className="costo-resumen">
-              <div className="costo-resumen-item">
-                <span className="costo-resumen-label">Costo total</span>
-                <span className="costo-resumen-valor">
-                  {formatCosto(costoTotalActual, formData.moneda)}
-                </span>
-              </div>
-              <div className="costo-resumen-divider" />
-              <div className="costo-resumen-item costo-resumen-highlight">
-                <span className="costo-resumen-label">
-                  Costo por porción
-                  <span className="costo-resumen-porciones">
-                    ({formData.porciones} {formData.porciones === 1 ? 'porción' : 'porciones'})
-                  </span>
-                </span>
-                <span className="costo-resumen-valor costo-resumen-valor-grande">
-                  {formatCosto(costoPorcionActual, formData.moneda)}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Nutrición básica ── */}
+        {/* Nutrición básica */}
         <div className="form-section">
           <h3><IcoNutri />Información Nutricional Básica</h3>
           <div className="nutri-grid">
             {[
-              { label: 'Calorías',          field: 'cal',   step: '1'   },
-              { label: 'Proteínas (g)',      field: 'prot',  step: '0.1' },
-              { label: 'Carbohidratos (g)', field: 'carb',  step: '0.1' },
-              { label: 'Grasas (g)',         field: 'gras',  step: '0.1' },
-              { label: 'Fibra (g)',          field: 'fiber', step: '0.1' },
-              { label: 'Sodio (mg)',         field: 'sodio', step: '1'   },
-            ].map(({ label, field, step }) => (
+              {label:'Calorías',        field:'cal',   step:'1'},
+              {label:'Proteínas (g)',   field:'prot',  step:'0.1'},
+              {label:'Carbohidratos (g)',field:'carb', step:'0.1'},
+              {label:'Grasas (g)',      field:'gras',  step:'0.1'},
+              {label:'Fibra (g)',       field:'fiber', step:'0.1'},
+              {label:'Sodio (mg)',      field:'sodio', step:'1'},
+            ].map(({label, field, step}) => (
               <div className="form-group" key={field}>
                 <label>{label}</label>
-                <NumeroInput
-                  value={formData.nutri[field] || 0}
-                  onChange={(e) => handleNutriChange(field, e.target.value)}
-                  min={0} step={step}
-                />
+                <NumeroInput value={formData.nutri[field] || 0} onChange={(e) => handleNutriChange(field, e.target.value)} min={0} step={step} />
               </div>
             ))}
           </div>
 
           <button type="button" onClick={() => setShowAdvancedNutri(!showAdvancedNutri)} className="btn-toggle-advanced">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.5"
-              style={{ verticalAlign:'middle', marginRight:'6px', transform: showAdvancedNutri ? 'rotate(90deg)' : 'none', transition:'transform 0.2s' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{verticalAlign:'middle',marginRight:'6px',transform: showAdvancedNutri ? 'rotate(90deg)' : 'none',transition:'transform 0.2s'}}>
               <polyline points="9 18 15 12 9 6"/>
             </svg>
             Información Nutricional Avanzada
@@ -459,10 +228,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
           {showAdvancedNutri && (
             <div className="advanced-nutri">
               <p className="nutri-note">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'5px'}}>
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'5px'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 Deja en 0 los valores que no conozcas. Puedes agregarlos después.
               </p>
 
@@ -497,21 +263,12 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
           )}
         </div>
 
-        {/* ── Botones ── */}
+        {/* Botones */}
         <div className="form-actions">
-          <button type="button" onClick={onCancel} className="btn-cancel" disabled={loading}>
-            Cancelar
-          </button>
+          <button type="button" onClick={onCancel} className="btn-cancel" disabled={loading}>Cancelar</button>
           <button type="submit" className="btn-submit" disabled={loading}>
             {loading ? (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2"
-                  style={{verticalAlign:'middle',marginRight:'6px',animation:'spin 1s linear infinite'}}>
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                </svg>
-                Guardando...
-              </>
+              <><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',animation:'spin 1s linear infinite'}}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Guardando...</>
             ) : isEditing ? (
               <><IcoSave />Actualizar Receta</>
             ) : (
@@ -519,7 +276,6 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
             )}
           </button>
         </div>
-
       </form>
     </div>
   );

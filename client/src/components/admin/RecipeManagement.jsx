@@ -18,8 +18,7 @@ const RecipeManagement = () => {
   const fetchRecipes = async () => {
     try {
       const { data } = await api.get('/recipes?limit=200');
-      console.log("DATA BACKEND:", data);
-      setRecipes(data.data);
+      setRecipes(data.recipes);
     } catch { toast.error('Error cargando recetas'); }
     finally { setLoading(false); }
   };

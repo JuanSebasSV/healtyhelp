@@ -158,16 +158,16 @@ function AppContent() {
   }, []);
 
   const cargarRecetas = async () => {
-  setCargandoRecetas(true);
-  try {
-    const { data } = await api.get('/recipes?limit=200');
-    setRecetas(data.data || []);   // ← cambiar data.recipes por data.data
-  } catch {
-    setRecetas([]);
-  } finally {
-    setCargandoRecetas(false);
-  }
-};
+    setCargandoRecetas(true);
+    try {
+      const { data } = await api.get('/recipes?limit=200');
+      setRecetas(data.recipes || []);
+    } catch {
+      setRecetas([]);
+    } finally {
+      setCargandoRecetas(false);
+    }
+  };
 
   // ── Lógica de cookies y términos ────────────────────────────────────────────
   useEffect(() => {
