@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import api from '../../api/axios';
@@ -25,6 +25,20 @@ const Dashboard = () => {
 
   // Conteo de imágenes pendientes para mostrar badge en la pestaña
   const [imgPendientes, setImgPendientes] = useState(0);
+  const pollingRef = useRef(null);
+
+  // Polling cada 30s para mantener el badge actualizado en tiempo real
+  useEffect(() => {
+    const fetchPendientes = async () => {
+      try {
+        const res = await api.get('/admin/imagenes-resenas?estado=pendiente&solo_total=true').catch(() => ({ data: { total: 0 } }));
+        setImgPendientes(res.data.total ?? res.data.imagenes?.length ?? 0);
+      } catch { /* silencioso */ }
+    };
+    fetchPendientes();
+    pollingRef.current = setInterval(fetchPendientes, 30_000);
+    return () => clearInterval(pollingRef.current);
+  }, []);
 
   useEffect(() => {
     if (!isAdmin()) {
@@ -40,14 +54,12 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, usersRes, imgRes] = await Promise.all([
+      const [statsRes, usersRes] = await Promise.all([
         api.get('/admin/stats'),
         api.get('/admin/users'),
-        api.get('/admin/imagenes-resenas?estado=pendiente&solo_total=true').catch(() => ({ data: { total: 0 } })),
       ]);
       setStats(statsRes.data.stats);
       setUsers(usersRes.data.users);
-      setImgPendientes(imgRes.data.total ?? imgRes.data.imagenes?.length ?? 0);
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error('Acceso denegado');
@@ -302,7 +314,7 @@ const Dashboard = () => {
       {activeTab === 'imagenes' && (
         <ImagenesAprobacion
           // Al aprobar/rechazar, refrescamos el badge del tab
-          onCambio={() => fetchData()}
+          onCambio={async () => { fetchData(); try { const r = await api.get('/admin/imagenes-resenas?estado=pendiente&solo_total=true').catch(() => ({ data: { total: 0 } })); setImgPendientes(r.data.total ?? r.data.imagenes?.length ?? 0); } catch {} }}
         />
       )}
 
