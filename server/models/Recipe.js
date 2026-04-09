@@ -98,9 +98,7 @@ const respuestaSchema = new mongoose.Schema(
 
 // ─────────────────────────────────────────────
 // Sub-esquema de reseña
-// likes    = array de userIds que marcaron "Es útil"
-// dislikes = array de userIds que marcaron "No es útil"
-// respuestas = comentarios anidados (estilo YouTube)
+// imagen: adjunto opcional, requiere aprobación admin
 // ─────────────────────────────────────────────
 const resenaSchema = new mongoose.Schema(
   {
@@ -108,11 +106,24 @@ const resenaSchema = new mongoose.Schema(
     userName:   { type: String, required: true },
     estrellas:  { type: Number, required: true, min: 1, max: 5 },
     texto:      { type: String, trim: true, maxlength: [500, 'Máximo 500 caracteres'], default: '' },
-    // Votos de utilidad
-    likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
-    dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },   // userIds
-    // Respuestas anidadas
+
+    // ── Votos de utilidad ──
+    likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },
+    dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },
+
+    // ── Respuestas anidadas ──
     respuestas: { type: [respuestaSchema], default: [] },
+
+    // ── Imagen adjunta (flujo de aprobación) ──
+    imagen: {
+      url:       { type: String, default: null },   // URL pública de Cloudinary
+      publicId:  { type: String, default: null },   // public_id para destroy()
+      estado:    {
+        type:    String,
+        enum:    ['pendiente', 'aprobada', 'rechazada'],
+        default: 'pendiente',
+      },
+    },
   },
   { timestamps: true }
 );

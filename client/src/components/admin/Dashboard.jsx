@@ -9,6 +9,7 @@ import Stats from './Stats';
 import RecipeManagement from './RecipeManagement';
 import TermsManager from './TermsManager';
 import PanelIA from './PanelIA';
+import ImagenesAprobacion from './ImagenesAprobacion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const [activeTab, setActiveTab]   = useState('users');
+
+  // Conteo de imágenes pendientes para mostrar badge en la pestaña
+  const [imgPendientes, setImgPendientes] = useState(0);
 
   useEffect(() => {
     if (!isAdmin()) {
@@ -36,12 +40,14 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, usersRes] = await Promise.all([
+      const [statsRes, usersRes, imgRes] = await Promise.all([
         api.get('/admin/stats'),
-        api.get('/admin/users')
+        api.get('/admin/users'),
+        api.get('/admin/imagenes-resenas?estado=pendiente&solo_total=true').catch(() => ({ data: { total: 0 } })),
       ]);
       setStats(statsRes.data.stats);
       setUsers(usersRes.data.users);
+      setImgPendientes(imgRes.data.total ?? imgRes.data.imagenes?.length ?? 0);
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error('Acceso denegado');
@@ -158,6 +164,7 @@ const Dashboard = () => {
           </svg>
           Usuarios
         </button>
+
         <button
           className={`main-tab ${activeTab === 'recipes' ? 'active' : ''}`}
           onClick={() => setActiveTab('recipes')}
@@ -167,6 +174,7 @@ const Dashboard = () => {
           </svg>
           Recetas
         </button>
+
         <button
           className={`main-tab ${activeTab === 'terms' ? 'active' : ''}`}
           onClick={() => setActiveTab('terms')}
@@ -180,6 +188,23 @@ const Dashboard = () => {
           </svg>
           Términos
         </button>
+
+        {/* ── Pestaña imágenes ── */}
+        <button
+          className={`main-tab ${activeTab === 'imagenes' ? 'active' : ''}`}
+          onClick={() => setActiveTab('imagenes')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Imágenes
+          {imgPendientes > 0 && (
+            <span className="main-tab-badge">{imgPendientes}</span>
+          )}
+        </button>
+
         <button
           className={`main-tab ${activeTab === 'ia' ? 'active' : ''}`}
           onClick={() => setActiveTab('ia')}
@@ -196,6 +221,7 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* ── Usuarios ── */}
       {activeTab === 'users' && (
         <>
           <div className="admin-controls">
@@ -269,17 +295,18 @@ const Dashboard = () => {
         </>
       )}
 
-      {activeTab === 'recipes' && (
-        <RecipeManagement />
+      {activeTab === 'recipes' && <RecipeManagement />}
+
+      {activeTab === 'terms'   && <TermsManager />}
+
+      {activeTab === 'imagenes' && (
+        <ImagenesAprobacion
+          // Al aprobar/rechazar, refrescamos el badge del tab
+          onCambio={() => fetchData()}
+        />
       )}
 
-      {activeTab === 'terms' && (
-        <TermsManager />
-      )}
-
-      {activeTab === 'ia' && (
-        <PanelIA />
-      )}
+      {activeTab === 'ia' && <PanelIA />}
     </div>
   );
 };

@@ -35,6 +35,7 @@ import Dashboard from './components/admin/Dashboard';
 import UserList from './components/admin/UserList';
 import Stats from './components/admin/Stats';
 import RecipeManagement from './components/admin/RecipeManagement';
+import ImagenesAprobacion from './components/admin/ImagenesAprobacion';
 
 // Otros
 import RobotIA from './components/inicio/RobotIA';
@@ -323,6 +324,7 @@ function AppContent() {
             <Route path="/admin/stats"   element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
             <Route path="/admin/recipes" element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
             <Route path="/perfil"        element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+            <Route path="/admin/imagenes" element={<PrivateRoute requireAdmin={true}><ImagenesAprobacion /></PrivateRoute>} />
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -337,3 +337,35 @@
   stroke: var(--blanco-puro);
   vertical-align: middle;
 }
+
+/* 
+   Badge de notificación en pestañas (ej: imágenes pendientes)
+ */
+ 
+/* Pestaña con badge — necesita position relative */
+.main-tab {
+  position: relative; /* asegurarse de que ya lo tiene o añadirlo */
+}
+ 
+.main-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--naranja);
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-left: 0.4rem;
+  /* Pequeña animación para llamar la atención */
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+ 
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.8; transform: scale(1.12); }
+}
