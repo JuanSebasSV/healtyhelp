@@ -37,16 +37,23 @@ const Estrellas = ({ valor, onChange, readonly = false }) => {
 
 /* ─────────────────────────────────────────────────────────────
    Imagen del comentario
-   - Si está aprobada: muestra la imagen.
+   - Si está aprobada: muestra la imagen real.
    - Si está pendiente y es del propio usuario: muestra placeholder.
    - Si está pendiente y es de otro usuario: no muestra nada.
+   - Si está rechazada: no muestra nada para nadie.
+
+   IMPORTANTE: el backend devuelve imagen.estado ('aprobada' | 'pendiente')
+   y imagen.url (null si pendiente, URL si aprobada).
 ───────────────────────────────────────────────────────────── */
 const ImagenResena = ({ imagen, esPropia }) => {
+  // Sin imagen o rechazada → nada
   if (!imagen) return null;
+  if (imagen.estado === 'rechazada') return null;
 
-  const aprobada = imagen.aprobada === true;
-  const pendiente = !aprobada;
+  const aprobada  = imagen.estado === 'aprobada';
+  const pendiente = imagen.estado === 'pendiente';
 
+  // Pendiente y no es del propio usuario → nada
   if (pendiente && !esPropia) return null;
 
   return (
@@ -59,6 +66,7 @@ const ImagenResena = ({ imagen, esPropia }) => {
           loading="lazy"
         />
       ) : (
+        /* Placeholder visible solo para el autor */
         <div className="sr-imagen-pendiente">
           <div className="sr-imagen-pendiente-icono">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -68,7 +76,7 @@ const ImagenResena = ({ imagen, esPropia }) => {
               <polyline points="21 15 16 10 5 21"/>
             </svg>
           </div>
-          <p className="sr-imagen-pendiente-titulo">Autorización pendiente</p>
+          <p className="sr-imagen-pendiente-titulo">Imagen pendiente de aprobación</p>
           <p className="sr-imagen-pendiente-subtitulo">Tiempo aproximado: 3 días</p>
         </div>
       )}
@@ -77,7 +85,7 @@ const ImagenResena = ({ imagen, esPropia }) => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   Selector de imagen (solo para comentarios principales)
+   Selector de imagen (solo para comentarios principales nuevos)
 ───────────────────────────────────────────────────────────── */
 const SelectorImagen = ({ imagen, onChange, onRemove }) => {
   const inputRef = useRef(null);
@@ -89,8 +97,8 @@ const SelectorImagen = ({ imagen, onChange, onRemove }) => {
       toast.error('Solo se permiten imágenes');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('La imagen no puede superar 2MB');
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('La imagen no puede superar 5 MB');
       return;
     }
     onChange(file);
@@ -355,7 +363,17 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
 
   /* ── Publicar / editar reseña ── */
   const handleSubmitResena = async () => {
-    if (!formEstrellas) { toast.error('Selecciona una puntuación'); return; }
+    // Validaciones
+    if (!formEstrellas) {
+      toast.error('Selecciona una puntuación');
+      return;
+    }
+    // Si adjunta imagen, el texto es obligatorio
+    if (formImagen && !formTexto.trim()) {
+      toast.error('Escribe un comentario para acompañar la imagen');
+      return;
+    }
+
     setEnviando(true);
     try {
       let data;
@@ -364,22 +382,22 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
         // Nueva reseña con imagen → multipart/form-data
         const fd = new FormData();
         fd.append('estrellas', formEstrellas);
-        fd.append('texto', formTexto);
+        fd.append('texto', formTexto.trim());
         fd.append('imagen', formImagen);
         ({ data } = await api.post(`/recipes/${receta._id}/resenas`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         }));
       } else if (miResena) {
-        // Editar reseña existente (sin cambio de imagen en edición, se puede ampliar)
+        // Editar reseña existente
         ({ data } = await api.put(`/recipes/${receta._id}/resenas`, {
           estrellas: formEstrellas,
-          texto: formTexto,
+          texto:     formTexto.trim(),
         }));
       } else {
         // Nueva reseña sin imagen
         ({ data } = await api.post(`/recipes/${receta._id}/resenas`, {
           estrellas: formEstrellas,
-          texto: formTexto,
+          texto:     formTexto.trim(),
         }));
       }
 
@@ -484,7 +502,11 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
               <Estrellas valor={formEstrellas} onChange={setFormEstrellas} />
               <textarea
                 className="sr-textarea"
-                placeholder="Escribe un comentario (opcional)..."
+                placeholder={
+                  formImagen
+                    ? 'Escribe un comentario (obligatorio con imagen)...'
+                    : 'Escribe un comentario (opcional)...'
+                }
                 value={formTexto}
                 onChange={e => setFormTexto(e.target.value)}
                 maxLength={500}
@@ -500,6 +522,32 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                   onChange={setFormImagen}
                   onRemove={() => setFormImagen(null)}
                 />
+              )}
+
+              {/* En modo editar: mostrar imagen existente (pendiente/aprobada) con opción de quitar */}
+              {miResena && miResena.imagen && miResena.imagen.estado !== 'rechazada' && (
+                <div className="sr-edit-imagen-wrap">
+                  <ImagenResena imagen={miResena.imagen} esPropia />
+                  <button
+                    type="button"
+                    className="sr-btn-quitar-img sr-btn-quitar-img-edit"
+                    onClick={async () => {
+                      if (!window.confirm('¿Quitar la imagen de esta reseña?')) return;
+                      try {
+                        await api.delete(`/recipes/${receta._id}/resenas/imagen`);
+                        setMiResena(prev => ({ ...prev, imagen: null }));
+                        toast.success('Imagen eliminada');
+                      } catch (e) {
+                        toast.error(`❌ ${e.response?.data?.error || 'Error al quitar imagen'}`);
+                      }
+                    }}
+                  >
+                    ✕ Quitar imagen
+                  </button>
+                  <p className="sr-preview-aviso" style={{marginTop:"6px"}}>
+                    Para subir una nueva imagen, crea una nueva reseña.
+                  </p>
+                </div>
               )}
 
               <div className="sr-form-actions">
@@ -518,7 +566,12 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                 <button
                   className="sr-btn-enviar"
                   onClick={handleSubmitResena}
-                  disabled={enviando || !formEstrellas}
+                  disabled={
+                    enviando ||
+                    !formEstrellas ||
+                    // Si hay imagen adjunta, bloquear hasta que haya texto
+                    (!!formImagen && !formTexto.trim())
+                  }
                 >
                   {enviando
                     ? '⏳ Guardando...'
