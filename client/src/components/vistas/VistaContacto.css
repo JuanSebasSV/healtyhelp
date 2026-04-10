@@ -17,7 +17,7 @@
 /* ============ HEADER ============ */
 .contacto-header {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 5rem;
   margin-bottom: 3.5rem;
   flex-shrink: 0;
   
@@ -25,9 +25,8 @@
 
 .vista-contacto h1 {
   color: rgb(82, 76, 65);
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
-  font-family: 'Georgia', serif;
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
@@ -288,4 +287,101 @@
 @media (max-width: 360px) {
   .contacto-info     { min-height: 260px; }
   .vista-contacto h1 { font-size: 1.6rem; }
+}
+
+
+
+/* ============ SECCIÓN FAQ UNIFICADA ============ */
+.seccion-faq-unificada {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto 6rem auto;
+  padding: 0 2rem;
+}
+
+
+/* El contenedor principal que agrupa todo */
+.faq-tabla {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  overflow: hidden; /* Para que los bordes redondeados corten las filas */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+.faq-titulo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.modo-oscuro .faq-tabla {
+  background: rgba(10, 30, 20, 0.6);
+  border-color: rgba(79, 119, 45, 0.2);
+}
+
+/* Cada fila de la tabla */
+.faq-fila {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease;
+}
+
+.faq-fila:last-child {
+  border-bottom: none; /* Quita la línea a la última pregunta */
+}
+
+.modo-oscuro .faq-fila {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Hover para resaltar la fila donde está el mouse */
+.faq-fila:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.faq-fila summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  font-weight: 600;
+  color: var(--verde-bosque);
+  cursor: pointer;
+}
+
+.modo-oscuro .faq-fila summary {
+  color: #e1ede7;
+}
+
+.faq-numero {
+  margin-right: 1rem;
+  color: var(--naranja);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.faq-flecha {
+  margin-left: auto; /* Empuja la flecha al final */
+  font-size: 0.7rem;
+  color: var(--naranja);
+  transition: transform 0.3s ease;
+}
+
+.faq-fila[open] {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.faq-fila[open] .faq-flecha {
+  transform: rotate(180deg);
+}
+
+.faq-respuesta {
+  padding: 0 1.5rem 1.5rem 3.2rem; /* Alineado con el texto de la pregunta */
+  color: var(--gris-oscuro);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.modo-oscuro .faq-respuesta {
+  color: rgba(225, 237, 231, 0.8);
 }

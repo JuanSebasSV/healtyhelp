@@ -1,15 +1,16 @@
 /* VistaInicio.css */
 
-.vistaInicio {
-  display: block;
-  max-width: 100%;
-  background: #e3e9e8;
-  
-}
-.modo-oscuro .VistaInicio{
-  background: #061311;
+/* En lugar de solo .modo-oscuro .vistaInicio */
+.modo-oscuro {
+  background-color: #0c1311 !important;
 }
 
+/* Esto quitará el fondo blanco que se ve detrás de las recetas */
+.modo-oscuro .contenido-principal,
+.modo-oscuro main,
+.modo-oscuro .contenedor-grid {
+  background: transparent !important;
+}
 
 /* ============ HERO ============ */
 .hero {
@@ -132,17 +133,14 @@
   background: var(--dorado);
   border-radius: 2px;
 }
-/* Columna Izquierda (Stats) */
+/* ============ COLUMNA IZQUIERDA ============ */
 .columna-stats {
   position: sticky; /* Opcional: para que las stats te sigan al bajar */
   top: 20px;
-  margin-top: 5rem;
-  margin-left: 5rem;
-  width: 100%;
+  margin-top: 2rem;
+  margin-left: 1rem;
+ 
 }
-
-
-
 
 
 .hero-stats {
@@ -157,6 +155,7 @@
   border-radius: 16px;
   padding: 1.5rem 2rem;
   flex-shrink: 0;
+  
 }
 
 .hero-stat {
@@ -287,14 +286,16 @@
 
 .contenedor-grid {
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  gap: 10px;
+  grid-template-columns: 300px 1fr 300px;
+  gap: 2rem;
   width: 100%;
   align-items: start;
+  padding: 0 7rem;
 }
 .modo-oscuro .contenedor-grid {
   background: #061311;
 }
+
 /*=========div de la seccion abajo del hero=========*/
 
 .filtros-recetas{
@@ -303,12 +304,15 @@
   padding: 0 !important;
   min-height: 0 !important; /* Fuerza a que no ocupe más espacio del necesario */
   height: fit-content;
+
 }
 
 .columna-cuerpo {
   display: block; /* Cambia de flex a block para que el flujo sea natural */
   height: auto;
-  margin: 3rem 12rem;
+  margin: 0 ;           /* era: margin: 3rem */
+  padding: 2rem 2rem;
+ 
 }
 
 /* ============ CATEGORÍAS — glassmorphism ============ */
@@ -322,7 +326,7 @@
 }
 
 .catBtn {
-  background: #146356a6;
+  background: #2881727e;
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -415,10 +419,12 @@
   background: #ffffff;
   border: 1.5px solid #c8d4cf;
   border-radius: 16px;
-  margin-bottom: 1rem;
+  margin: 0 0 2rem 0;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  
+  width: 100%; 
+  display: block;
+  margin-left: 8%;
 }
  
 .modo-oscuro .filtroSalud {
@@ -431,11 +437,14 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
+  align-items: center;
   text-align: center;
   background: linear-gradient(90deg, #006050 0%, #69D7A7 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: filter 0.2s ease;
   position: relative;
+  overflow: hidden;
+  
 }
 .filtroHeader h2 {
   color: #e1ede7;
@@ -632,30 +641,46 @@
   box-shadow: 0 2px 6px rgba(26, 77, 46, 0.35);
 }
 
+@media(max-width: 2445px) {
+  .filtroSalud {
+   
+    margin-left: 0 ;
+  }
+}
+
+
 /* ============ RECETAS GRID ============ */
+
+
 .recetasGrid {
   margin-top: 1.5rem; /* Cámbialo de 6rem a algo más pequeño */
   animation: fadeIn 0.6s ease;
-  border-radius: 20px;
+  border-radius: 10px;
+  margin-top: 2rem;
+  padding: 2rem 8rem;
+  width: 100%;
+  
+  
   
 }
 
 .recetasGrid h2 {
   text-align: center;
-  color: #5b5851;
-  font-size: 2rem;
+  color: #514a3e;
+  font-size: 1.6rem;
   margin-bottom: 0.5rem;
   padding-top: 2rem;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  font-family: 'Playfair Display', serif;
+  
    
 }
 .recetas-linea{
-  width: 300px;
+  width: 200px;
   height: 3px;
   background: var(--dorado);
   border-radius: 2px;
   margin: auto;
+  margin-bottom: 3.5rem;
   
 }
 
@@ -677,8 +702,9 @@
 
 /* ============ COLUMNA DERECHA ============ */
 .columna-right{
-  margin-top: 5rem;
-  margin-right: 5rem;
+  margin-top: 2rem;
+  margin-right: 1rem; 
+  
 }
 
 
@@ -754,73 +780,21 @@
   font-weight: 600;
 }
 
-/* 1. Asegurar visibilidad en los contenedores padres */
-.columna-right, 
-.widget-precio, 
-.precio-opciones {
-  overflow: visible !important;
- 
-}
+@media (max-width: 1200px) {
+  .contenedor-grid {
+    display: block;  /* cancela el flex */
+  }
 
-/* 2. Contenedor relativo */
-.tooltip-wrapper {
-  position: relative;
-  width: 100%;
-}
+  .columna-stats,
+  .columna-right {
+    display: none;  /* oculta ambos sidebars */
+  }
 
-/* 3. La Burbuja (Aparecerá a la IZQUIERDA del botón) */
-.tooltip-wrapper::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  right: 110%; /* Lo lanza hacia el centro de la web */
-  top: 50%;
-  transform: translateY(-50%) scale(0.8);
-  
-  background: #333;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  white-space: normal; /* Permite saltos de línea si el texto es largo */
-  width: 150px;
-  text-align: center;
-  
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.25s ease;
-  z-index: 9999;
-  pointer-events: none;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  .columna-cuerpo {
+    width: 100%;
+    padding: 1.5rem 1rem;
+  }
 }
-
-/* 4. La Flechita */
-.tooltip-wrapper::before {
-  content: '';
-  position: absolute;
-  right: 102%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-left-color: #333; /* Flecha apuntando al botón */
-  
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.25s ease;
-  z-index: 9999;
-}
-
-/* 5. Activación al pasar el mouse */
-.tooltip-wrapper:hover::after {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(-50%) scale(1);
-}
-
-.tooltip-wrapper:hover::before {
-  opacity: 1;
-  visibility: visible;
-}
-
 
 
 
@@ -898,227 +872,3 @@
   }
 }
 
-/* ============ PREMIUM BANNER ============ */
-.premiumBanner {
-  position: relative;
-  margin-bottom: 3rem;
-  border-radius: 20px;
-  padding: 1.4rem 2rem;
-  cursor: pointer;
-  overflow: hidden;
-  background: linear-gradient(
-    115deg,
-    rgba(247, 127, 0, 0.18) 0%,
-    rgba(255, 200, 80, 0.12) 40%,
-    rgba(247, 127, 0, 0.18) 100%
-  );
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1.5px solid rgba(255, 185, 60, 0.45);
-  box-shadow:
-    0 8px 32px rgba(247, 127, 0, 0.2),
-    inset 0 1px 0 rgba(255, 220, 120, 0.25);
-  transition: var(--transicion);
-  animation: premiumEntrada 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes premiumEntrada {
-  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.premiumBanner:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 185, 60, 0.75);
-  box-shadow:
-    0 16px 48px rgba(247, 127, 0, 0.32),
-    inset 0 1px 0 rgba(255, 220, 120, 0.35);
-}
-
-.premiumBanner:hover .premiumBanner__brillo {
-  transform: translateX(100%);
-}
-
-/* Brillo que pasa al hacer hover */
-.premiumBanner__brillo {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 220, 120, 0.18),
-    transparent
-  );
-  transform: translateX(-100%);
-  transition: transform 0.65s ease;
-  pointer-events: none;
-}
-
-/* Estrellas animadas de fondo */
-.premiumBanner__estrellas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.premiumBanner__estrella {
-  position: absolute;
-  color: rgba(255, 200, 80, 0.35);
-  font-size: 0.75rem;
-  animation: estrellaPulso 3s ease-in-out infinite;
-}
-
-.premiumBanner__estrella:nth-child(1) { top: 20%; left: 5%;   font-size: 0.6rem; }
-.premiumBanner__estrella:nth-child(2) { top: 60%; left: 15%;  font-size: 1rem;   }
-.premiumBanner__estrella:nth-child(3) { top: 15%; left: 40%;  font-size: 0.5rem; }
-.premiumBanner__estrella:nth-child(4) { top: 70%; left: 55%;  font-size: 0.8rem; }
-.premiumBanner__estrella:nth-child(5) { top: 25%; left: 75%;  font-size: 0.6rem; }
-.premiumBanner__estrella:nth-child(6) { top: 65%; left: 88%;  font-size: 1rem;   }
-
-@keyframes estrellaPulso {
-  0%, 100% { opacity: 0.2; transform: scale(1);    }
-  50%       { opacity: 0.7; transform: scale(1.4);  }
-}
-
-/* Layout interior */
-.premiumBanner__contenido {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.premiumBanner__izq {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-/* Badge NUEVO */
-.premiumBanner__badge {
-  display: inline-block;
-  background: rgba(255, 185, 60, 0.25);
-  border: 1px solid rgba(255, 185, 60, 0.55);
-  color: #ffd47a;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  padding: 0.2rem 0.7rem;
-  border-radius: 50px;
-  width: fit-content;
-  animation: badgePulso 2.5s ease-in-out infinite;
-}
-
-@keyframes badgePulso {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 185, 60, 0); }
-  50%       { box-shadow: 0 0 0 4px rgba(255, 185, 60, 0.2); }
-}
-
-/* Título */
-.premiumBanner__titulo {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #ffffff;
-  font-family: 'Georgia', serif;
-  margin: 0;
-  line-height: 1.2;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-}
-
-.premiumBanner__titulo span {
-  background: linear-gradient(90deg, #ffd47a, #f77f00, #ffd47a);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: textoDorado 3s linear infinite;
-}
-
-@keyframes textoDorado {
-  to { background-position: 200% center; }
-}
-
-/* Descripción */
-.premiumBanner__desc {
-  font-size: 0.85rem;
-  color: rgba(255, 220, 150, 0.8);
-  margin: 0;
-  letter-spacing: 0.3px;
-}
-
-/* Botón CTA */
-.premiumBanner__cta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.5rem;
-  background: linear-gradient(135deg, rgba(247,127,0,0.5), rgba(255,160,30,0.4));
-  border: 1.5px solid rgba(255, 185, 60, 0.65);
-  border-radius: 50px;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 0.92rem;
-  cursor: pointer;
-  transition: var(--transicion);
-  white-space: nowrap;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.25);
-  flex-shrink: 0;
-}
-
-.premiumBanner__cta:hover {
-  background: linear-gradient(135deg, rgba(247,127,0,0.75), rgba(255,160,30,0.65));
-  transform: translateX(4px);
-  box-shadow: 0 6px 24px rgba(247, 127, 0, 0.4);
-}
-
-.premiumBanner__cta svg {
-  transition: transform 0.3s ease;
-}
-
-.premiumBanner:hover .premiumBanner__cta svg {
-  transform: translateX(4px);
-}
-
-/* Modo oscuro */
-.modo-oscuro .premiumBanner {
-  background: linear-gradient(
-    115deg,
-    rgba(180, 90, 0, 0.25) 0%,
-    rgba(200, 130, 20, 0.15) 40%,
-    rgba(180, 90, 0, 0.25) 100%
-  );
-  border-color: rgba(220, 150, 40, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 200, 80, 0.15);
-}
-
-.modo-oscuro .premiumBanner:hover {
-  border-color: rgba(220, 150, 40, 0.65);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 200, 80, 0.2);
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-  .premiumBanner {
-    padding: 1.2rem 1.25rem;
-  }
-
-  .premiumBanner__titulo {
-    font-size: 1.1rem;
-  }
-
-  .premiumBanner__desc {
-    font-size: 0.78rem;
-  }
-
-  .premiumBanner__cta {
-    padding: 0.6rem 1.1rem;
-    font-size: 0.85rem;
-  }
-}

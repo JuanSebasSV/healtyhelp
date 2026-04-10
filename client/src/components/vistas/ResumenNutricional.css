@@ -46,8 +46,11 @@
 
 .resumen-subtitulo {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.502);
+  color: rgba(255, 255, 255, 0.708);
   margin-bottom: 1.5rem;
+}
+.modo-oscuro .resumen-subtitulo{
+  color: rgba(255, 255, 255, 0.443);
 }
 
 /* ── Gráfica dona (MÁS GRANDE) ── */

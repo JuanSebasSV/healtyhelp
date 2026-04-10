@@ -94,7 +94,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   });
 
   return (
-    <div className="vistaInicio">
+    <div className="vistaInicio tema-inicio">
 
       {/* ── Hero con carrusel — borde a borde ── */}
       <div className="hero">
@@ -167,6 +167,8 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
                 {/* ── Filtro salud ── */}
                 <section id="filtro-salud" className="filtroSalud">
                   <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
+                      {/* Capa de brillo premium */}
+                      <div className="premium-brillo-header"></div>
                     <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
                     <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
                   </div>
@@ -212,35 +214,11 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             ))}
           </section>
 
-
-          {/* ── Recetas ── */}
-          <section className="recetasGrid">
-            <h2>Recetas Recomendadas</h2>
-            <div className='recetas-linea'></div>
-
-            {cargandoRecetas ? (
-              <div className="recetasCargando">
-                <div className="spinner-recetas" />
-                <p>Cargando recetas...</p>
-              </div>
-            ) : (
-              <div className="grid">
-                {recetasFiltradas.map(receta => (
-                  <TarjetaReceta
-                    key={receta._id}
-                    receta={receta}
-                    toggleFav={toggleFav}
-                    esFav={favoritos.includes(receta._id)}
-                  />
-                ))}
-              </div>
-            )}
-
-            {!cargandoRecetas && recetasFiltradas.length === 0 && (
-              <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
-            )}
-          </section>
           </main> 
+
+           
+
+
           <aside className="columna-right">
             <div className="panel-lateral widget-precio">
               <div className="widget-header">
@@ -278,6 +256,33 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             </div>
           </aside>
       </div>
+       {/* ── Recetas ── */}
+       <section className="recetasGrid">
+            <h2>Recetas recomendadas</h2>
+            <div className='recetas-linea'></div>
+
+            {cargandoRecetas ? (
+              <div className="recetasCargando">
+                <div className="spinner-recetas" />
+                <p>Cargando recetas...</p>
+              </div>
+            ) : (
+              <div className="grid">
+                {recetasFiltradas.map(receta => (
+                  <TarjetaReceta
+                    key={receta._id}
+                    receta={receta}
+                    toggleFav={toggleFav}
+                    esFav={favoritos.includes(receta._id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {!cargandoRecetas && recetasFiltradas.length === 0 && (
+              <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
+            )}
+          </section>
     </div>
     
   );

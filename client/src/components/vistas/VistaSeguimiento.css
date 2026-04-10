@@ -141,6 +141,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+ 
 }
 
 /* ── Tarjeta consumo ── */
@@ -287,8 +288,11 @@
   justify-content: space-between;
   padding: 0.65rem 1rem;
   border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.502);
+  border: 1px dashed rgba(255, 255, 255, 0.567);
   background: rgba(255,255,255,0.02);
+}
+.modo-oscuro .seg-consumo-vacio{
+  border:1px dashed rgba(255, 255, 255, 0.326);
 }
 .seg-vacio-label {
   font-size: 0.82rem;
@@ -297,7 +301,7 @@
 .seg-btn-agregar {
   padding: 0.3rem 0.85rem;
   border-radius: 8px;
-  border: 1px solid rgba(79,119,45,0.4);
+  border: 1px solid rgba(22, 133, 74, 0.474);
   background: rgba(79,119,45,0.1);
   color: rgba(167,213,136,0.8);
   font-size: 0.78rem;
@@ -308,6 +312,10 @@
 .seg-btn-agregar:hover {
   background: rgba(79,119,45,0.25);
   color: var(--blanco-puro);
+}
+
+.modo-oscuro .seg-btn-agregar{
+  border: 1px solid rgba(27, 113, 67, 0.474);
 }
 
 /* ── Estados ── */
