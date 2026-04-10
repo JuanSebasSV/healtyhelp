@@ -27,7 +27,12 @@ const adminLogSchema = new mongoose.Schema({
       'SYSTEM_CONFIG',
       'INVITE_ADMIN',
       'ADMIN_INVITE_ACCEPTED',
-      'REVOKE_INVITATION'
+      'REVOKE_INVITATION',
+      'DELETE_RESENA',
+      'APPROVE_RESENA',
+      'REJECT_RESENA',
+      'REJECT_RESENA_IMAGE',
+      'DELETE_RESENA_IMAGE'
     ]
   },
   targetUserId: {
