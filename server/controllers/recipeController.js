@@ -1,7 +1,5 @@
-const Recipe = require('../models/Recipe');
+const Recipe   = require('../models/Recipe');
 const AdminLog = require('../models/AdminLog');
-const fs = require('fs').promises;
-const path = require('path');
 
 // ─────────────────────────────────────────────
 // 📊 Obtener todas las recetas
@@ -13,7 +11,7 @@ exports.getAllRecipes = async (req, res) => {
     if (search) {
       filters.$or = [
         { nombre: { $regex: search, $options: 'i' } },
-        { desc:   { $regex: search, $options: 'i' } }
+        { desc:   { $regex: search, $options: 'i' } },
       ];
     }
     if (cat)   filters.cat   = cat;
@@ -26,7 +24,11 @@ exports.getAllRecipes = async (req, res) => {
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
 
-    res.json({ success: true, recipes, pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) } });
+    res.json({
+      success: true,
+      recipes,
+      pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) },
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error obteniendo recetas' });
   }
@@ -47,7 +49,11 @@ exports.createRecipe = async (req, res) => {
     const recipeData = { ...req.body, createdBy: req.user._id };
     delete recipeData.resenas; delete recipeData.puntosProm; delete recipeData.totalResenas;
     const recipe = await Recipe.create(recipeData);
-    await AdminLog.create({ adminId: req.user._id, action: 'CREATE_RECIPE', metadata: { recipeName: recipe.nombre, recipeId: recipe._id } });
+    await AdminLog.create({
+      adminId:  req.user._id,
+      action:   'CREATE_RECIPE',
+      metadata: { recipeName: recipe.nombre, recipeId: recipe._id },
+    });
     res.status(201).json({ success: true, message: 'Receta creada correctamente', recipe });
   } catch (error) {
     res.status(500).json({ error: 'Error creando receta', details: error.message });
@@ -60,7 +66,11 @@ exports.updateRecipe = async (req, res) => {
     delete updates.resenas; delete updates.puntosProm; delete updates.totalResenas;
     const recipe = await Recipe.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
-    await AdminLog.create({ adminId: req.user._id, action: 'UPDATE_RECIPE', metadata: { recipeName: recipe.nombre, recipeId: recipe._id } });
+    await AdminLog.create({
+      adminId:  req.user._id,
+      action:   'UPDATE_RECIPE',
+      metadata: { recipeName: recipe.nombre, recipeId: recipe._id },
+    });
     res.json({ success: true, message: 'Receta actualizada correctamente', recipe });
   } catch (error) {
     res.status(500).json({ error: 'Error actualizando receta', details: error.message });
@@ -71,10 +81,11 @@ exports.deleteRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findByIdAndDelete(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
-    if (recipe.img && recipe.img.includes('/uploads/')) {
-      try { await fs.unlink(path.join(__dirname, '..', recipe.img)); } catch {}
-    }
-    await AdminLog.create({ adminId: req.user._id, action: 'DELETE_RECIPE', metadata: { recipeName: recipe.nombre } });
+    await AdminLog.create({
+      adminId:  req.user._id,
+      action:   'DELETE_RECIPE',
+      metadata: { recipeName: recipe.nombre },
+    });
     res.json({ success: true, message: 'Receta eliminada correctamente' });
   } catch (error) {
     res.status(500).json({ error: 'Error eliminando receta' });
@@ -84,9 +95,14 @@ exports.deleteRecipe = async (req, res) => {
 exports.deleteMultipleRecipes = async (req, res) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ error: 'IDs inválidos' });
+    if (!Array.isArray(ids) || ids.length === 0)
+      return res.status(400).json({ error: 'IDs inválidos' });
     const result = await Recipe.deleteMany({ _id: { $in: ids } });
-    await AdminLog.create({ adminId: req.user._id, action: 'DELETE_MULTIPLE_RECIPES', metadata: { count: result.deletedCount } });
+    await AdminLog.create({
+      adminId:  req.user._id,
+      action:   'DELETE_MULTIPLE_RECIPES',
+      metadata: { count: result.deletedCount },
+    });
     res.json({ success: true, message: `${result.deletedCount} recetas eliminadas`, deleted: result.deletedCount });
   } catch (error) {
     res.status(500).json({ error: 'Error eliminando recetas' });
@@ -141,7 +157,7 @@ exports.getRecipeStats = async (req, res) => {
     const byHealth   = await Recipe.aggregate([
       { $unwind: '$salud' },
       { $group: { _id: '$salud', count: { $sum: 1 } } },
-      { $sort: { count: -1 } }
+      { $sort: { count: -1 } },
     ]);
     res.json({ success: true, stats: { total, byCategory, byHealth } });
   } catch (error) {
@@ -153,30 +169,53 @@ exports.getRecipeStats = async (req, res) => {
 // ⭐ SISTEMA DE RESEÑAS
 // ═══════════════════════════════════════════════════════════════
 
-// Utilidad: serializar reseña con conteos para el cliente
-const serializarResena = (r, userId) => ({
-  _id:        r._id,
-  userId:     r.userId,
-  userName:   r.userName,
-  estrellas:  r.estrellas,
-  texto:      r.texto,
-  createdAt:  r.createdAt,
-  updatedAt:  r.updatedAt,
-  likes:      r.likes.length,
-  dislikes:   r.dislikes.length,
-  miVoto:     userId
-    ? r.likes.some(id => id.toString() === userId.toString())    ? 'like'
-    : r.dislikes.some(id => id.toString() === userId.toString()) ? 'dislike'
-    : null
-    : null,
-  respuestas: r.respuestas.map(rp => ({
-    _id:       rp._id,
-    userId:    rp.userId,
-    userName:  rp.userName,
-    texto:     rp.texto,
-    createdAt: rp.createdAt,
-  })),
-});
+/**
+ * Serializa una reseña para el cliente.
+ * La imagen solo se expone si está aprobada O si el userId coincide con el solicitante.
+ */
+const serializarResena = (r, userId) => {
+  const esAutor    = userId && r.userId.toString() === userId.toString();
+  const imgAprobada = r.imagen?.estado === 'aprobada';
+  const imgPendiente = r.imagen?.estado === 'pendiente' && esAutor;
+
+  let imagenCliente = null;
+  // CORRECCIÓN: imagen pendiente tiene url=null en DB, no podemos depender de r.imagen?.url
+  // Hay que verificar que exista el objeto imagen con estado válido
+  if (r.imagen && r.imagen.estado) {
+    if (imgAprobada) {
+      imagenCliente = { url: r.imagen.url, estado: 'aprobada' };
+    } else if (imgPendiente) {
+      // El autor ve placeholder con estado pendiente (sin URL real)
+      imagenCliente = { url: null, estado: 'pendiente' };
+    }
+    // rechazada → null para todos
+  }
+
+  return {
+    _id:        r._id,
+    userId:     r.userId,
+    userName:   r.userName,
+    estrellas:  r.estrellas,
+    texto:      r.texto,
+    createdAt:  r.createdAt,
+    updatedAt:  r.updatedAt,
+    likes:      r.likes.length,
+    dislikes:   r.dislikes.length,
+    imagen:     imagenCliente,
+    miVoto: userId
+      ? r.likes.some(id => id.toString() === userId.toString())    ? 'like'
+      : r.dislikes.some(id => id.toString() === userId.toString()) ? 'dislike'
+      : null
+      : null,
+    respuestas: r.respuestas.map(rp => ({
+      _id:       rp._id,
+      userId:    rp.userId,
+      userName:  rp.userName,
+      texto:     rp.texto,
+      createdAt: rp.createdAt,
+    })),
+  };
+};
 
 // ─────────────────────────────────────────────
 // GET /recipes/:id/resenas?page=1&limit=5&orden=reciente|relevancia
@@ -184,16 +223,15 @@ const serializarResena = (r, userId) => ({
 exports.getResenas = async (req, res) => {
   try {
     const { page = 1, limit = 5, orden = 'reciente' } = req.query;
-    const skip    = (parseInt(page) - 1) * parseInt(limit);
-    const userId  = req.user?._id;
+    const skip   = (parseInt(page) - 1) * parseInt(limit);
+    const userId = req.user?._id;
 
-    const recipe  = await Recipe.findById(req.params.id).select('resenas puntosProm totalResenas');
+    const recipe = await Recipe.findById(req.params.id).select('resenas puntosProm totalResenas');
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     let ordenadas = [...recipe.resenas];
 
     if (orden === 'relevancia') {
-      // Ordenar por (likes - dislikes) descendente, luego por fecha
       ordenadas.sort((a, b) => {
         const scoreA = a.likes.length - a.dislikes.length;
         const scoreB = b.likes.length - b.dislikes.length;
@@ -201,7 +239,6 @@ exports.getResenas = async (req, res) => {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
     } else {
-      // Más recientes primero
       ordenadas.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
@@ -209,9 +246,9 @@ exports.getResenas = async (req, res) => {
 
     res.json({
       success:      true,
-      resenas:      paginated.map(r => serializarResena(r, userId)),
       puntosProm:   recipe.puntosProm,
       totalResenas: recipe.totalResenas,
+      resenas:      paginated.map(r => serializarResena(r, userId)),
       pagination: {
         total: recipe.resenas.length,
         page:  parseInt(page),
@@ -226,6 +263,8 @@ exports.getResenas = async (req, res) => {
 
 // ─────────────────────────────────────────────
 // POST /recipes/:id/resenas — Crear reseña
+// Acepta application/json (sin imagen) o multipart/form-data (con imagen)
+// La imagen se procesa por uploadResena middleware ANTES de llegar aquí
 // ─────────────────────────────────────────────
 exports.crearResena = async (req, res) => {
   try {
@@ -239,7 +278,24 @@ exports.crearResena = async (req, res) => {
     const yaReseno = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
     if (yaReseno) return res.status(400).json({ error: 'Ya tienes una reseña en esta receta. Puedes editarla.' });
 
-    recipe.resenas.push({ userId: req.user._id, userName: req.user.name, estrellas: parseInt(estrellas), texto: texto.trim() });
+    // Construir objeto de reseña
+    const nuevaResena = {
+      userId:    req.user._id,
+      userName:  req.user.name,
+      estrellas: parseInt(estrellas),
+      texto:     texto.trim(),
+    };
+
+    // Si multer adjuntó imagen (campo "imagen")
+    if (req.file) {
+      nuevaResena.imagen = {
+        url:      req.file.path,       // Cloudinary devuelve la URL en req.file.path
+        publicId: req.file.filename,   // y el public_id en req.file.filename
+        estado:   'pendiente',
+      };
+    }
+
+    recipe.resenas.push(nuevaResena);
     recipe.recalcularPuntos();
     await recipe.save();
 
@@ -254,6 +310,54 @@ exports.crearResena = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al publicar la reseña' });
+  }
+};
+
+// ─────────────────────────────────────────────
+// POST /recipes/:id/resenas/:resenaId/imagen
+// Sube imagen a una reseña ya existente (botón "Adjuntar imagen" post-publicación)
+// Procesado por uploadResena middleware
+// ─────────────────────────────────────────────
+exports.subirImagenResena = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
+
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    const resena = recipe.resenas.id(req.params.resenaId);
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
+
+    // Solo el autor puede adjuntar imagen
+    if (resena.userId.toString() !== req.user._id.toString())
+      return res.status(403).json({ error: 'No puedes modificar esta reseña' });
+
+    // Si ya tiene imagen aprobada, no se permite reemplazar
+    if (resena.imagen?.estado === 'aprobada')
+      return res.status(400).json({ error: 'La imagen ya fue aprobada y no puede ser reemplazada' });
+
+    // Si hay imagen previa pendiente en Cloudinary, borrarla antes
+    const { cloudinary } = require('../config/cloudinary');
+    if (resena.imagen?.publicId) {
+      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+    }
+
+    resena.imagen = {
+      url:      req.file.path,
+      publicId: req.file.filename,
+      estado:   'pendiente',
+    };
+
+    await recipe.save();
+
+    res.json({
+      success: true,
+      message: 'Imagen subida. Pendiente de aprobación (≈3 días).',
+      imagen:  { url: null, estado: 'pendiente' }, // El autor ve placeholder
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error subiendo imagen' });
   }
 };
 
@@ -277,14 +381,22 @@ exports.editarResena = async (req, res) => {
     recipe.recalcularPuntos();
     await recipe.save();
 
-    res.json({ success: true, message: 'Reseña actualizada', puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas, resena: serializarResena(resena, req.user._id) });
+    res.json({
+      success:      true,
+      message:      'Reseña actualizada',
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+      resena:       serializarResena(resena, req.user._id),
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error al editar la reseña' });
   }
 };
 
 // ─────────────────────────────────────────────
-// DELETE /recipes/:id/resenas/:resenaId — Borrar propia reseña (o admin borra cualquiera)
+// DELETE /recipes/:id/resenas/:resenaId
+// Borra propia reseña (o admin borra cualquiera)
+// Si tenía imagen en Cloudinary, la elimina también
 // ─────────────────────────────────────────────
 exports.borrarResena = async (req, res) => {
   try {
@@ -298,11 +410,22 @@ exports.borrarResena = async (req, res) => {
     const esAutor = resena.userId.toString() === req.user._id.toString();
     if (!esAutor && !esAdmin) return res.status(403).json({ error: 'No puedes borrar esta reseña' });
 
+    // Eliminar imagen de Cloudinary si existe
+    if (resena.imagen?.publicId) {
+      const { cloudinary } = require('../config/cloudinary');
+      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+    }
+
     resena.deleteOne();
     recipe.recalcularPuntos();
     await recipe.save();
 
-    res.json({ success: true, message: 'Reseña eliminada', puntosProm: recipe.puntosProm, totalResenas: recipe.totalResenas });
+    res.json({
+      success:      true,
+      message:      'Reseña eliminada',
+      puntosProm:   recipe.puntosProm,
+      totalResenas: recipe.totalResenas,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al borrar la reseña' });
@@ -315,7 +438,7 @@ exports.borrarResena = async (req, res) => {
 // ─────────────────────────────────────────────
 exports.votarResena = async (req, res) => {
   try {
-    const { tipo } = req.body; // 'like' | 'dislike'
+    const { tipo } = req.body;
     if (!['like', 'dislike'].includes(tipo))
       return res.status(400).json({ error: 'Tipo de voto inválido' });
 
@@ -325,13 +448,12 @@ exports.votarResena = async (req, res) => {
     const resena = recipe.resenas.id(req.params.resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    const uid       = req.user._id;
-    const enLikes   = resena.likes.some(id => id.toString() === uid.toString());
+    const uid        = req.user._id;
+    const enLikes    = resena.likes.some(id => id.toString() === uid.toString());
     const enDislikes = resena.dislikes.some(id => id.toString() === uid.toString());
 
     if (tipo === 'like') {
       if (enLikes) {
-        // Toggle off
         resena.likes = resena.likes.filter(id => id.toString() !== uid.toString());
       } else {
         resena.likes.push(uid);
@@ -363,7 +485,7 @@ exports.votarResena = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// POST /recipes/:id/resenas/:resenaId/respuestas — Responder una reseña
+// POST /recipes/:id/resenas/:resenaId/respuestas
 // ─────────────────────────────────────────────
 exports.responderResena = async (req, res) => {
   try {
@@ -380,7 +502,16 @@ exports.responderResena = async (req, res) => {
     await recipe.save();
 
     const nueva = resena.respuestas[resena.respuestas.length - 1];
-    res.status(201).json({ success: true, respuesta: { _id: nueva._id, userId: nueva.userId, userName: nueva.userName, texto: nueva.texto, createdAt: nueva.createdAt } });
+    res.status(201).json({
+      success:   true,
+      respuesta: {
+        _id:       nueva._id,
+        userId:    nueva.userId,
+        userName:  nueva.userName,
+        texto:     nueva.texto,
+        createdAt: nueva.createdAt,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al responder' });
@@ -388,7 +519,7 @@ exports.responderResena = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// DELETE /recipes/:id/resenas/:resenaId/respuestas/:respId — Borrar respuesta
+// DELETE /recipes/:id/resenas/:resenaId/respuestas/:respId
 // ─────────────────────────────────────────────
 exports.borrarRespuesta = async (req, res) => {
   try {

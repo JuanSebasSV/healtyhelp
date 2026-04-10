@@ -41,7 +41,22 @@ const userSchema = new mongoose.Schema({
   twoFactorEnabled: { type: Boolean, default: false },
   twoFactorSecret:    String,
   resetPasswordToken: String,
-  resetPasswordExpire: Date
+  resetPasswordExpire: Date,
+
+  // ── Términos y condiciones ──
+  termsAccepted:   { type: Boolean, default: false },
+  termsAcceptedAt: { type: Date },
+  termsVersion:    { type: String, default: '' },
+
+  // ── Perfil de salud ──
+  healthProfile: {
+    condiciones:  { type: [String], default: [] },
+    alergias:     { type: [String], default: [] },
+    preferencias: { type: [String], default: [] }
+  },
+
+  // ── Perfil completo ──
+  profileComplete: { type: Boolean, default: false }
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {

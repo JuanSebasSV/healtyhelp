@@ -661,6 +661,8 @@
 .deco-hoja { font-size: 1.2rem; opacity: 0.6; }
 
 /* ============ RESPONSIVE ============ */
+
+/* ── Tablet: sidebar pasa a fila horizontal ── */
 @media (max-width: 900px) {
   .perfil-contenedor { grid-template-columns: 1fr; }
   .perfil-sidebar    { order: 1; }
@@ -679,27 +681,106 @@
   .sidebar-deco     { display: none; }
 }
 
+/* ── Móvil ≤ 640px: columna única, sidebar vuelve a centrado vertical ── */
 @media (max-width: 640px) {
-  .perfil-pagina    { padding: 1.5rem 1rem; }
-  .perfil-contenido { padding: 1.5rem; }
-  .campos-grid      { grid-template-columns: 1fr; }
-
-  .perfil-header {
-    flex-direction: column;
-    align-items: flex-start;
+  /* Página: quitar overflow:hidden para que el contenido no se corte */
+  .perfil-pagina {
+    padding: 1.25rem 0.875rem;
+    overflow: visible;
+    min-height: calc(100vh - 64px);
   }
 
-  .perfil-titulo { font-size: 1.5rem; }
-
-  .btn-editar, .btn-group {
-    width: 100%;
-    justify-content: center;
+  /* Contenedor: columna única sin gap excesivo */
+  .perfil-contenedor {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
+  /* Sidebar: vuelve a columna centrada */
   .perfil-identidad {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+    padding: 1.75rem 1.25rem;
+    gap: 0.75rem;
   }
+
+  /* Stats: restablecer borde top en móvil */
+  .perfil-stats {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 0.75rem;
+    width: 100%;
+  }
+
+  /* Botón cerrar sesión ocupa todo el ancho */
+  .btn-cerrar-sesion { width: 100%; }
+
+  /* Contenido principal: padding reducido */
+  .perfil-contenido {
+    padding: 1.25rem 1rem;
+    gap: 1.25rem;
+  }
+
+  /* Secciones: padding reducido */
+  .perfil-seccion { padding: 1.25rem 1rem; }
+
+  /* Header del perfil: columna */
+  .perfil-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .perfil-titulo { font-size: 1.4rem; }
+  .perfil-subtitulo { margin-left: 0; margin-top: 0.25rem; }
+
+  /* Botones editar/guardar/cancelar: ancho completo */
+  .btn-editar,
+  .btn-group {
+    width: 100%;
+    justify-content: center;
+  }
+  .btn-group .btn-cancelar,
+  .btn-group .btn-guardar {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Campos: una columna */
+  .campos-grid { grid-template-columns: 1fr; }
+
+  /* Campo valor: wrap para emails largos */
+  .campo-valor {
+    word-break: break-all;
+    white-space: normal;
+    font-size: 0.88rem;
+  }
+
+  /* Google vinculo: ajuste en pantallas pequeñas */
+  .google-vinculo { flex-wrap: wrap; gap: 0.75rem; }
+  .google-desc    { font-size: 0.78rem; }
+
+  /* Partículas: reducir tamaño para no afectar layout */
+  .particula-1 { width: 50px;  height: 50px; }
+  .particula-3 { width: 70px;  height: 70px; }
+  .particula-6 { width: 55px;  height: 55px; }
+}
+
+/* ── Móvil muy pequeño ≤ 380px ── */
+@media (max-width: 380px) {
+  .perfil-pagina    { padding: 1rem 0.75rem; }
+  .perfil-contenido { padding: 1rem 0.875rem; }
+  .perfil-seccion   { padding: 1rem 0.875rem; }
+  .perfil-titulo    { font-size: 1.25rem; }
+
+  .avatar-wrapper {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+    min-height: 90px;
+  }
+
+  .avatar-iniciales span { font-size: 1.6rem; }
 }
 
 /* ============ AVATAR CLICKABLE ============ */

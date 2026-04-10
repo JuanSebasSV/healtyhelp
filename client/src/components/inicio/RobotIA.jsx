@@ -1,14 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
+import { toast } from 'react-toastify';
 import ChatCore from './ChatCore';
 import './RobotIA.css';
 
+// 🤖 Robot IA — Integrado con backend /chat
+// Envía historial de los últimos 10 mensajes para contexto
+// La lógica de API vive aquí; ChatCore solo renderiza la UI
+
 const RobotIA = ({ activo, toggleIA }) => {
   const navigate = useNavigate();
+  const [mensaje, setMensaje] = useState('');
+  const [chat, setChat]       = useState([]);
+  const [cargando, setCargando] = useState(false);
 
   const irAChatCompleto = () => {
     toggleIA(); // cierra el flotante
     navigate('/chatbot');
+  };
+
+  const enviarMensaje = async () => {
+    if (!mensaje.trim()) return;
+
+    const nuevoMensaje = { tipo: 'usuario', texto: mensaje };
+    setChat(prev => [...prev, nuevoMensaje]);
+    setMensaje('');
+    setCargando(true);
+
+    try {
+      const response = await api.post('/chat', {
+        message: mensaje,
+        history: chat.slice(-10).map(msg => ({
+          role: msg.tipo === 'usuario' ? 'user' : 'model',
+          text: msg.texto
+        }))
+      });
+
+      setChat(prev => [...prev, {
+        tipo: 'ia',
+        texto: response.data.reply
+      }]);
+
+    } catch (error) {
+      toast.error('Error al comunicarse con el asistente');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      enviarMensaje();
+    }
   };
 
   return (
@@ -24,11 +69,20 @@ const RobotIA = ({ activo, toggleIA }) => {
         </svg>
       </button>
 
-      {/* Panel flotante */}
+      {/* Panel flotante — delega todo el render a ChatCore */}
       {activo && (
         <div className="robotChat">
-          <ChatCore onExpandir={irAChatCompleto} 
-          onCerrar={toggleIA}/>
+          <ChatCore
+            modoExpandido={false}
+            chat={chat}
+            cargando={cargando}
+            mensaje={mensaje}
+            onMensajeChange={(e) => setMensaje(e.target.value)}
+            onEnviar={enviarMensaje}
+            onKeyPress={handleKeyPress}
+            onExpandir={irAChatCompleto}
+            onCerrar={toggleIA}
+          />
         </div>
       )}
     </>

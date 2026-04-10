@@ -1,0 +1,308 @@
+/* TermsManager.css — Panel de edición de Términos, fondo claro */
+
+.terms-manager {
+  background: #ffffff;
+  border: 1.5px solid rgba(26, 77, 46, 0.15);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Cabecera ── */
+.terms-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #f0f4f0;
+}
+
+.terms-manager-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.terms-manager-title svg {
+  stroke: #1a4d2e;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.terms-manager-title h2 {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.25rem;
+  color: #1a4d2e;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.terms-manager-meta {
+  color: #6b7280;
+  font-size: 0.84rem;
+}
+.terms-manager-meta strong { color: #1a4d2e; font-weight: 700; }
+
+/* ── Botón preview ── */
+.terms-manager-actions { display: flex; gap: 0.5rem; }
+
+.btn-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  background: #f0f7ec;
+  border: 1.5px solid #a8d490;
+  border-radius: 10px;
+  color: #1a4d2e;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-preview:hover,
+.btn-preview.active {
+  background: #e4f3d8;
+  border-color: #4f772d;
+}
+.btn-preview svg { stroke: #1a4d2e; }
+
+/* ── Aviso ── */
+.terms-manager-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: #fff7ed;
+  border: 1.5px solid #f77f00;
+  border-radius: 10px;
+  color: #92400e;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.terms-manager-aviso svg { stroke: #f77f00; margin-top: 2px; flex-shrink: 0; }
+.terms-manager-aviso code {
+  background: rgba(247, 127, 0, 0.1);
+  color: #92400e;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* ── Versión ── */
+.terms-manager-version-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.terms-manager-version-row label {
+  color: #374151;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.terms-version-input {
+  padding: 0.6rem 1rem;
+  background: #ffffff;
+  border: 2px solid #c8d8c8;
+  border-radius: 10px;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+  width: 130px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.terms-version-input:focus {
+  border-color: #1a4d2e;
+  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.12);
+}
+.terms-version-hint {
+  color: #92400e;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ── Editor ── */
+.terms-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.terms-editor-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.terms-char-count {
+  color: #9ca3af;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+.terms-editor {
+  width: 100%;
+  min-height: 420px;
+  padding: 1rem;
+  background: #fafcfa;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  color: #111827;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.terms-editor:focus {
+  border-color: #1a4d2e;
+  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.1);
+  background: #ffffff;
+}
+.terms-editor::placeholder { color: #9ca3af; }
+
+/* ── Preview ── */
+.terms-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.terms-preview-label {
+  color: #4f772d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.terms-preview-content {
+  background: #fafcfa;
+  border: 1.5px solid #c8d8c8;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  max-height: 480px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4f772d #e0ece0;
+}
+.terms-preview-content::-webkit-scrollbar { width: 7px; }
+.terms-preview-content::-webkit-scrollbar-track { background: #e0ece0; border-radius: 4px; }
+.terms-preview-content::-webkit-scrollbar-thumb { background: #4f772d; border-radius: 4px; }
+
+.terms-preview-content h3 {
+  color: #1a4d2e;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1.5px solid #d8ecd8;
+}
+.terms-preview-content h3:first-child { margin-top: 0; }
+.terms-preview-content p {
+  color: #1f2937;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-bottom: 0.75rem;
+}
+.terms-preview-content ul {
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.terms-preview-content ul li {
+  color: #1f2937;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-bottom: 0.3rem;
+}
+.terms-preview-content ul li::marker { color: #4f772d; }
+.terms-preview-content strong { color: #111827; font-weight: 700; }
+
+/* ── Footer / publicar ── */
+.terms-manager-footer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 2px solid #f0f4f0;
+}
+
+.btn-publicar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  background: #f77f00;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
+  white-space: nowrap;
+}
+.btn-publicar:hover:not(:disabled) {
+  background: #d66e00;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(247, 127, 0, 0.4);
+}
+.btn-publicar:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn-publicar svg { stroke: currentColor; flex-shrink: 0; }
+
+.terms-manager-warning {
+  color: #9ca3af;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+/* ── Loading ── */
+.terms-manager-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: #6b7280;
+  background: #ffffff;
+  border-radius: 20px;
+}
+
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1a4d2e;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .terms-manager { padding: 1.25rem; }
+  .terms-manager-header { flex-direction: column; }
+  .terms-manager-version-row { flex-direction: column; align-items: flex-start; }
+  .terms-version-input { width: 100%; }
+  .terms-manager-footer { flex-direction: column; align-items: flex-start; }
+  .btn-publicar { width: 100%; justify-content: center; }
+  .terms-editor { min-height: 300px; }
+  .terms-preview-content { padding: 1rem 1.1rem; }
+}

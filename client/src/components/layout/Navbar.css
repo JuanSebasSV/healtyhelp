@@ -378,6 +378,7 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 1rem !important;
     width: 100% !important;
     padding: 0.6rem 0 !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
@@ -670,4 +671,36 @@ nav .navHamburguesa span,
 .nav .navHamburguesa span {
   background-color: #ffffff !important;
   opacity: 1 !important;
+}
+
+/* Badge de imágenes pendientes en el botón Admin Panel */
+.nav-admin-btn {
+  position: relative;
+}
+ 
+.nav-badge-pendientes {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #f97316;          /* naranja llamativo */
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--color-fondo, #fff);
+  /* Pulso para llamar la atención */
+  animation: badge-pulso 2s ease-in-out infinite;
+  pointer-events: none;
+}
+ 
+@keyframes badge-pulso {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0 2px var(--color-fondo, #fff); }
+  50%       { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(249,115,22,.3); }
 }

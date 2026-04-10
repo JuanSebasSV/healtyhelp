@@ -1,6 +1,10 @@
+// routes/admin.js
+
 const express = require('express');
-const router = express.Router();
-const { protect, admin } = require('../middleware/auth');
+const router  = express.Router();
+
+const { protect, admin, requireAdmin } = require('../middleware/auth');
+
 const {
   getAllUsers,
   deleteUser,
@@ -11,31 +15,100 @@ const {
   inviteAdmin,
   acceptAdminInvite,
   getPendingInvitations,
-  revokeInvitation
+  revokeInvitation,
+  // ── Imágenes de reseñas ──
+  getImagenesResenas,
+  aprobarImagenResena,
+  rechazarImagenResena,
 } = require('../controllers/adminController');
 
-// ✅ Ruta pública — aceptar invitación con token
+const User          = require('../models/User');
+const TermsDocument = require('../models/TermsDocument');
+
+// =====================================================================
+// ✅ RUTAS PÚBLICAS
+// =====================================================================
 router.post('/accept-invite/:token', acceptAdminInvite);
 
-// 🛡️ Todas las demás rutas requieren auth + admin
+// =====================================================================
+// 🛡️ A partir de aquí todas las rutas requieren auth + rol admin
+// =====================================================================
 router.use(protect);
-router.use(admin);
+router.use(admin || requireAdmin);
 
-// 📊 Estadísticas
+// =====================================================================
+// 📊 ESTADÍSTICAS
+// =====================================================================
 router.get('/stats', getStats);
 
-// 👥 Usuarios
-router.get('/users', getAllUsers);
-router.delete('/users/:id', deleteUser);
-router.put('/users/:id/role', updateUserRole);
+// =====================================================================
+// 👥 USUARIOS
+// =====================================================================
+router.get   ('/users',          getAllUsers);
+router.delete('/users/:id',      deleteUser);
+router.put   ('/users/:id/role', updateUserRole);
 
-// 📝 Logs
+// =====================================================================
+// 📝 LOGS
+// =====================================================================
 router.post('/logs', createLog);
-router.get('/logs', getLogs);
+router.get ('/logs', getLogs);
 
-// 📨 Invitaciones
-router.post('/invite', inviteAdmin);
-router.get('/invitations', getPendingInvitations);
-router.delete('/invitations/:id', revokeInvitation);
+// =====================================================================
+// 📨 INVITACIONES
+// =====================================================================
+router.post  ('/invite',              inviteAdmin);
+router.get   ('/invitations',         getPendingInvitations);
+router.delete('/invitations/:id',     revokeInvitation);
+
+// =====================================================================
+// 🖼️  IMÁGENES DE RESEÑAS
+// GET  /admin/imagenes-resenas?estado=pendiente|aprobada|rechazada
+// PUT  /admin/imagenes-resenas/:recipeId/:resenaId/aprobar
+// PUT  /admin/imagenes-resenas/:recipeId/:resenaId/rechazar
+// =====================================================================
+router.get('/imagenes-resenas',                                  getImagenesResenas);
+router.put('/imagenes-resenas/:recipeId/:resenaId/aprobar',      aprobarImagenResena);
+router.put('/imagenes-resenas/:recipeId/:resenaId/rechazar',     rechazarImagenResena);
+
+// =====================================================================
+// 📄 TÉRMINOS Y CONDICIONES
+// =====================================================================
+router.get('/terms', async (req, res) => {
+  try {
+    const terms = await TermsDocument.findOne().sort({ publishedAt: -1 });
+    res.json({ terms: terms || null });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo términos' });
+  }
+});
+
+router.put('/terms', async (req, res) => {
+  try {
+    const { version, content } = req.body;
+    if (!version || !content)
+      return res.status(400).json({ error: 'Versión y contenido son obligatorios' });
+
+    const current = await TermsDocument.findOne().sort({ publishedAt: -1 });
+    if (current && current.version === version)
+      return res.status(400).json({ error: 'La versión publicada debe ser diferente a la actual' });
+
+    const newTerms = await TermsDocument.create({
+      version,
+      content,
+      publishedBy: req.user._id,
+      publishedAt: new Date(),
+    });
+
+    await User.updateMany(
+      { _id: { $ne: req.user._id } },
+      { $set: { termsAccepted: false, termsVersion: '' } }
+    );
+
+    res.json({ success: true, terms: newTerms });
+  } catch (error) {
+    res.status(500).json({ error: 'Error publicando términos' });
+  }
+});
 
 module.exports = router;

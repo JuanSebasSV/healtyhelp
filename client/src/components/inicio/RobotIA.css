@@ -50,15 +50,18 @@
   flex-direction: column;
   animation: slideUp 0.3s ease;
 }
-.robotSaludo{
+
+.robotSaludo {
   color: aliceblue;
   text-align: center;
   padding-bottom: 1rem;
 }
-.hola{
+
+.hola {
   font-family: 'Cormorant Garamond', serif;
   font-size: larger;
 }
+
 .modo-oscuro .robotChat {
   background: rgba(10, 25, 15, 0.65);
   border-color: rgba(79, 119, 45, 0.3);

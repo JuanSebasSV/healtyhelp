@@ -1,13 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import api from '../../api/axios';
 import './Navbar.css';
 
 const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
   const { user, logout, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const [menuAbierto, setMenuAbierto] = useState(false);
+
+  // ── Badge imágenes pendientes (solo admins) ──
+  const [imgPendientes, setImgPendientes] = useState(0);
+  const pollingRef = useRef(null);
+
+  useEffect(() => {
+    if (!user || !isAdmin?.()) return;
+
+    const fetchPendientes = async () => {
+      try {
+        const { data } = await api.get('/admin/stats');
+        const total = data.stats?.imagenesPendientes ?? 0;
+
+        setImgPendientes(prev => {
+          // Si subió el número, mostramos notificación del navegador (si tiene permiso)
+          if (total > prev && prev !== 0) {
+            if (Notification.permission === 'granted') {
+              new Notification('Healthy Help — Panel Admin', {
+                body: `${total} imagen${total !== 1 ? 'es' : ''} pendiente${total !== 1 ? 's' : ''} de aprobación`,
+                icon: '/favicon.ico',
+              });
+            }
+          }
+          return total;
+        });
+      } catch {
+        // silencioso — no interrumpir la navegación
+      }
+    };
+
+    // Pedir permiso de notificaciones al primer render
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    fetchPendientes();
+    pollingRef.current = setInterval(fetchPendientes, 30_000); // cada 30 s
+
+    return () => clearInterval(pollingRef.current);
+  }, [user, isAdmin]);
 
   const handleNavigate = (ruta) => {
     navigate(ruta);
@@ -35,8 +76,8 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
           </div>
           <span className="logoTexto">Healthy Help</span>
         </div>
-        
-        <button 
+
+        <button
           className={`navHamburguesa ${menuAbierto ? 'abierto' : ''}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
           aria-label="Menú"
@@ -47,24 +88,24 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
         </button>
 
         <ul className={`navMenu ${menuAbierto ? 'activo' : ''}`}>
-          <li 
+          <li
             onClick={() => handleNavigate('/')}
             className={isActive('/') ? 'activo' : ''}
           >
             <svg className="nav-icon"  xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Inicio
           </li>
-          
+
           {user && (
             <>
-              <li 
+              <li
                 onClick={() => handleNavigate('/seguimiento')}
                 className={isActive('/seguimiento') ? 'activo' : ''}
               >
                 <svg className="nav-icon"  xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                 Seguimiento
               </li>
-              <li 
+              <li
                 onClick={() => handleNavigate('/favoritos')}
                 className={isActive('/favoritos') ? 'activo' : ''}
               >
@@ -73,8 +114,8 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
               </li>
             </>
           )}
-          
-          <li 
+
+          <li
             onClick={() => handleNavigate('/contacto')}
             className={isActive('/contacto') ? 'activo' : ''}
           >
@@ -83,7 +124,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
           </li>
 
           {user && isAdmin && isAdmin() && (
-            <li 
+            <li
               onClick={() => handleNavigate('/admin')}
               className={`nav-admin-btn ${isActive('/admin') ? 'activo' : ''}`}
             >
@@ -92,27 +133,29 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
               Admin Panel
+              {/* Badge imágenes pendientes */}
+              {imgPendientes > 0 && (
+                <span className="nav-badge-pendientes" title={`${imgPendientes} imagen${imgPendientes !== 1 ? 'es' : ''} por aprobar`}>
+                  {imgPendientes > 99 ? '99+' : imgPendientes}
+                </span>
+              )}
             </li>
           )}
 
           <li className="navMenu-tema">
-            <button 
-              className="btnTema" 
-              onClick={toggleModoOscuro} 
+            <button
+              className="btnTema"
+              onClick={toggleModoOscuro}
               title={modoOscuro ? 'Modo Claro' : 'Modo Oscuro'}
               aria-label={modoOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
             >
               {modoOscuro ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="4" />
-                  <path d="M12 2v2" />
-                  <path d="M12 20v2" />
-                  <path d="m4.93 4.93 1.41 1.41" />
-                  <path d="m17.66 17.66 1.41 1.41" />
-                  <path d="M2 12h2" />
-                  <path d="M20 12h2" />
-                  <path d="m6.34 17.66-1.41 1.41" />
-                  <path d="m19.07 4.93-1.41 1.41" />
+                  <path d="M12 2v2" /><path d="M12 20v2" />
+                  <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+                  <path d="M2 12h2" /><path d="M20 12h2" />
+                  <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
                 </svg>
               ) : (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
