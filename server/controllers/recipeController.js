@@ -179,7 +179,9 @@ const serializarResena = (r, userId) => {
   const imgPendiente = r.imagen?.estado === 'pendiente' && esAutor;
 
   let imagenCliente = null;
-  if (r.imagen?.url) {
+  // CORRECCIÓN: imagen pendiente tiene url=null en DB, no podemos depender de r.imagen?.url
+  // Hay que verificar que exista el objeto imagen con estado válido
+  if (r.imagen && r.imagen.estado) {
     if (imgAprobada) {
       imagenCliente = { url: r.imagen.url, estado: 'aprobada' };
     } else if (imgPendiente) {

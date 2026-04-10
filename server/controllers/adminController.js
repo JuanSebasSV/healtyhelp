@@ -36,7 +36,7 @@ exports.getStats = async (req, res) => {
     // Conteo de imágenes de reseñas pendientes para el badge del dashboard
     const imagenesPendientes = await Recipe.aggregate([
       { $unwind: '$resenas' },
-      { $match: { 'resenas.imagen.estado': 'pendiente', 'resenas.imagen.url': { $ne: null } } },
+      { $match: { 'resenas.imagen.estado': 'pendiente' } },
       { $count: 'total' },
     ]);
 
@@ -304,7 +304,6 @@ exports.getImagenesResenas = async (req, res) => {
       { $unwind: '$resenas' },
       {
         $match: {
-          'resenas.imagen.url':    { $ne: null },
           'resenas.imagen.estado': estado,
         },
       },
