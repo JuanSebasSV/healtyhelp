@@ -216,9 +216,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
 
           </main> 
 
-           
-
-
           <aside className="columna-right">
             <div className="panel-lateral widget-precio">
               <div className="widget-header">
