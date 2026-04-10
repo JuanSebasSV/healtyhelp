@@ -81,6 +81,7 @@ app.use('/api/recipes',  require('./routes/recipes'));
 app.use('/api/consumos', require('./routes/consumos'));
 app.use('/api/chat',     require('./routes/chat'));
 app.use('/api/terms', require('./routes/terms'));
+app.use('/api', require('./routes/utils'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'API funcionando correctamente ✅' });
