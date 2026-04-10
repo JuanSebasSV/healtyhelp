@@ -256,3 +256,23 @@
     -webkit-line-clamp: 3;
   }
 }
+
+/* Botón seleccionar PDF */
+.btnSeleccionar {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.btnSeleccionar.activo { background: #16a34a; }
+.tarjeta-seleccionada { outline: 2px solid #16a34a; }
