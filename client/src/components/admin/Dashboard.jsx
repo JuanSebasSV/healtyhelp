@@ -87,7 +87,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleChangeRole = async (userId, newRole) => {
+  const handleChangeRole = async (userId, newRole, action) => {
+    // Señal de refresh enviada por baneo/desbaneo en UserList
+    if (action === '__refresh__') { fetchData(); return; }
     try {
       await api.put(`/admin/users/${userId}/role`, { role: newRole });
       toast.success(`Rol actualizado a ${newRole === 'admin' ? 'Administrador' : 'Usuario'}`);

@@ -20,6 +20,10 @@ const {
   getImagenesResenas,
   aprobarImagenResena,
   rechazarImagenResena,
+  // ── Baneo ──
+  banearUsuario,
+  desbanearUsuario,
+  getBanInfo,
 } = require('../controllers/adminController');
 
 const User          = require('../models/User');
@@ -47,6 +51,16 @@ router.get('/stats', getStats);
 router.get   ('/users',          getAllUsers);
 router.delete('/users/:id',      deleteUser);
 router.put   ('/users/:id/role', updateUserRole);
+
+// =====================================================================
+// 🔨 BANEO DE USUARIOS
+// PUT /admin/users/:id/ban    — { motivo, dias } (dias=null → permanente)
+// PUT /admin/users/:id/unban  — desbanear
+// GET /admin/users/:id/ban    — info de baneo
+// =====================================================================
+router.put('/users/:id/ban',   banearUsuario);
+router.put('/users/:id/unban', desbanearUsuario);
+router.get('/users/:id/ban',   getBanInfo);
 
 // =====================================================================
 // 📝 LOGS

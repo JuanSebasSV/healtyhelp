@@ -75,13 +75,14 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Rutas
-app.use('/api/auth',     require('./routes/auth'));
-app.use('/api/admin',    require('./routes/admin'));
-app.use('/api/recipes',  require('./routes/recipes'));
-app.use('/api/consumos', require('./routes/consumos'));
-app.use('/api/chat',     require('./routes/chat'));
-app.use('/api/terms', require('./routes/terms'));
-app.use('/api', require('./routes/utils'));
+app.use('/api/auth',           require('./routes/auth'));
+app.use('/api/admin',          require('./routes/admin'));
+app.use('/api/recipes',        require('./routes/recipes'));
+app.use('/api/consumos',       require('./routes/consumos'));
+app.use('/api/chat',           require('./routes/chat'));
+app.use('/api/terms',          require('./routes/terms'));
+app.use('/api/notifications',  require('./routes/notifications'));
+app.use('/api',                require('./routes/utils'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'API funcionando correctamente ✅' });
@@ -110,4 +111,4 @@ app.listen(PORT, () => {
 });
 
 const AdminLog = require('./models/AdminLog');
-console.log('AdminLog enum:', AdminLog.schema.path('action').enumValues); 
+console.log('AdminLog enum:', AdminLog.schema.path('action').enumValues);

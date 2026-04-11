@@ -713,6 +713,108 @@
 .sr-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
 .sr-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
 
+.sr-imagen-pendiente {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 108px;
+  border: 2px dashed rgba(247, 127, 0, 0.4);
+  border-radius: 12px;
+  background: rgba(247, 127, 0, 0.07);
+  backdrop-filter: blur(8px);
+  padding: 20px 16px;
+  margin: 8px 0;
+  text-align: center;
+  transition: var(--transicion);
+}
+ 
+.sr-imagen-pendiente-icono {
+  color: rgba(247, 127, 0, 0.6);
+}
+ 
+.sr-imagen-pendiente-titulo {
+  font-weight: 700;
+  font-size: 0.87rem;
+  color: var(--naranja);
+}
+ 
+.sr-imagen-pendiente-sub {
+  font-size: 0.74rem;
+  color: rgba(247, 127, 0, 0.58);
+  max-width: 230px;
+  line-height: 1.45;
+}
+ 
+/* Modo editar: X flotante sobre la imagen/placeholder */
+.sr-edit-imagen-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0;
+}
+ 
+.sr-edit-imagen-inner {
+  position: relative;
+  display: inline-block; /* se encoge al tamaño de su hijo (img o placeholder) */
+  max-width: 100%;
+}
+
+/* Imagen en modo editar — mismo estilo que sr-imagen pero block */
+.sr-edit-img {
+  display: block;
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Placeholder pendiente en modo editar — ancho fijo para que la X tenga referencia */
+.sr-edit-pendiente {
+  width: 280px;
+  max-width: 100%;
+}
+ 
+.sr-edit-quitar-btn {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(220, 38, 38, 0.65);
+  background: rgba(15, 25, 18, 0.9);
+  color: #f87171;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  transition: var(--transicion);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+}
+ 
+.sr-edit-quitar-btn:hover {
+  background: rgba(220, 38, 38, 0.85);
+  border-color: #f87171;
+  color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+ 
+.sr-edit-imagen-aviso {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.28);
+  text-align: center;
+  font-style: italic;
+}
+
 /* ════════════════════════════════
    RESPONSIVE
 ════════════════════════════════ */
@@ -734,4 +836,69 @@
 
 @media (max-width: 400px) {
   .sr-prom-numero { font-size: 2rem; }
+}
+
+/* ════════════════════════════════
+   ÍCONOS — alineación y utilidades
+════════════════════════════════ */
+
+.sr-btn-editar,
+.sr-btn-borrar,
+.sr-btn-enviar,
+.sr-btn-adjuntar,
+.sr-btn-orden,
+.sr-btn-responder,
+.sr-btn-toggle-resp,
+.sr-btn-enviar-resp,
+.sr-btn-voto,
+.sr-btn-borrar-lista,
+.sr-btn-borrar-resp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sr-login-aviso { gap: 0.45rem; }
+
+.sr-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sr-imagen-pendiente-titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.sr-paginacion button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Spinner animado */
+@keyframes sr-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.sr-spin {
+  animation: sr-spin 0.9s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ── Reseña destacada (llegada desde notificación) ── */
+@keyframes sr-destacar {
+  0%   { box-shadow: 0 0 0 0   rgba(107, 158, 74, 0);    background: rgba(79, 119, 45, 0);   }
+  30%  { box-shadow: 0 0 0 4px rgba(107, 158, 74, 0.5);  background: rgba(79, 119, 45, 0.18); }
+  100% { box-shadow: 0 0 0 0   rgba(107, 158, 74, 0);    background: rgba(79, 119, 45, 0);   }
+}
+
+.sr-item--destacada {
+  animation: sr-destacar 2s ease 0.5s both;
+  border-radius: 12px;
+  scroll-margin-top: 80px; /* compensa el navbar sticky */
 }

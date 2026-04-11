@@ -9,6 +9,7 @@ const {
   getResenas, crearResena, editarResena, borrarResena,
   votarResena, responderResena, borrarRespuesta,
   subirImagenResena,
+  quitarImagenResena,
 } = require('../controllers/recipeController');
 
 // ── Públicas ──
@@ -30,6 +31,9 @@ router.delete('/:id/resenas/:resenaId',      protect,      borrarResena);
 router.post  ('/:id/resenas/:resenaId/voto', protect,      votarResena);
 
 // ── Imagen en reseña existente ──
+// IMPORTANTE: esta ruta fija debe ir ANTES de /:id/resenas/:resenaId
+router.delete('/:id/resenas/imagen', protect, quitarImagenResena);
+
 router.post(
   '/:id/resenas/:resenaId/imagen',
   protect,

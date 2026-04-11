@@ -1,7 +1,8 @@
 // VistaInicio.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
+import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
 import './VistaInicio.css';
 import api from '../../api/axios';
@@ -25,10 +26,28 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   const [filtrosActivos,    setFiltrosActivos]    = useState([]);
   const [filtroAbierto,     setFiltroAbierto]     = useState(false);
   const [imagenActual,      setImagenActual]       = useState(0);
-  const [seleccionadas,     setSeleccionadas]      = useState([]);  // IDs seleccionadas para PDF
+  const [seleccionadas,     setSeleccionadas]      = useState([]);
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
+  const [recetaAbierta,     setRecetaAbierta]      = useState(null);
+  const [resenaIdDestacada, setResenaIdDestacada]  = useState(null); // scroll al comentario desde notif
   const transitandoRef = React.useRef(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ── Abrir receta desde ?receta=ID&resena=ID (notificaciones) ──
+  useEffect(() => {
+    if (!recetas.length) return;
+    const params   = new URLSearchParams(location.search);
+    const recetaId = params.get('receta');
+    const resenaId = params.get('resena');
+    if (!recetaId) return;
+    const encontrada = recetas.find(r => r._id === recetaId);
+    if (encontrada) {
+      setRecetaAbierta(encontrada);
+      setResenaIdDestacada(resenaId || null);
+      navigate('/', { replace: true });
+    }
+  }, [location.search, recetas]);
 
   const cambiarImagen = (indice) => {
     if (transitandoRef.current) return;
@@ -145,7 +164,53 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
         </div>
       </div>
 
-      {/* Categorías */}
+      {/* Botón que abre el modal de filtro salud */}
+      <div className="filtroModalWrapper">
+        <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          ¡Busca tu Tipo de Dieta Aquí!
+          {filtrosActivos.length > 0 && (
+            <span className="filtroModalBadge">{filtrosActivos.length}</span>
+          )}
+        </button>
+      </div>
+
+      {/* Modal de filtro salud */}
+      {filtroAbierto && (
+        <div className="filtroModalOverlay" onClick={(e) => { if (e.target === e.currentTarget) setFiltroAbierto(false); }}>
+          <div className="filtroModal">
+            <div className="filtroModalHeader">
+              <h2>¡Busca tu Tipo de Dieta!</h2>
+              <button className="filtroModalCerrar" onClick={() => setFiltroAbierto(false)} aria-label="Cerrar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="filtroModalBody">
+              <div className="filtroInfo">
+                <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
+                {filtrosActivos.length > 0 && (
+                  <button className="btnLimpiar" onClick={limpiarFiltros}>Limpiar filtros ({filtrosActivos.length})</button>
+                )}
+              </div>
+              <div className="filtroGrid">
+                {condicionesSalud.map(condicion => (
+                  <button key={condicion.id} className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`} onClick={() => toggleFiltro(condicion.id)}>
+                    <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
+                    <span className="filtroNombre">{condicion.nombre}</span>
+                    {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Categorías — pills compactas debajo del botón de dieta */}
       <section className="categorias">
         {categorias.map(cat => (
           <button key={cat.id} className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`} onClick={() => cambiarCategoria(cat.id)}>
@@ -153,33 +218,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             <span>{cat.nombre}</span>
           </button>
         ))}
-      </section>
-
-      {/* Filtro salud */}
-      <section id="filtro-salud" className="filtroSalud">
-        <div className="filtroHeader" onClick={() => setFiltroAbierto(!filtroAbierto)}>
-          <h2>¡Busca tu Tipo de Dieta Aquí!</h2>
-          <span className="filtroToggle">{filtroAbierto ? '▲' : '▼'}</span>
-        </div>
-        {filtroAbierto && (
-          <div className="filtroContenido">
-            <div className="filtroInfo">
-              <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
-              {filtrosActivos.length > 0 && (
-                <button className="btnLimpiar" onClick={limpiarFiltros}>Limpiar filtros ({filtrosActivos.length})</button>
-              )}
-            </div>
-            <div className="filtroGrid">
-              {condicionesSalud.map(condicion => (
-                <button key={condicion.id} className={`filtroCard ${filtrosActivos.includes(condicion.id) ? 'activo' : ''}`} onClick={() => toggleFiltro(condicion.id)}>
-                  <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: condicion.icono }} />
-                  <span className="filtroNombre">{condicion.nombre}</span>
-                  {filtrosActivos.includes(condicion.id) && <span className="filtroCheck">✓</span>}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Recetas */}
@@ -245,6 +283,15 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
             </>
           )}
         </button>
+      )}
+
+      {/* ── Modal de detalle abierto desde notificación (deep-link ?receta=ID) ── */}
+      {recetaAbierta && (
+        <DetalleReceta
+          receta={recetaAbierta}
+          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); }}
+          resenaIdDestacada={resenaIdDestacada}
+        />
       )}
 
     </div>

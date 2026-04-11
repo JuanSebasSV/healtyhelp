@@ -9,7 +9,7 @@ import useAuth from '../../hooks/useAuth';
 import SeccionResenas from './SeccionResenas';
 import './DetalleReceta.css';
 
-const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
+const DetalleReceta = ({ receta, cerrar, abrirNutricion, resenaIdDestacada }) => {
   const { user, isAuthenticated } = useAuth();
 
   // ── Bloquear scroll del body mientras el modal está abierto ──
@@ -65,6 +65,7 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
               receta={receta}
               user={user}
               isAuthenticated={isAuthenticated}
+              resenaIdDestacada={resenaIdDestacada}
             />
           </div>
         </div>

@@ -370,3 +370,181 @@
 .google-badge svg {
   stroke: var(--azul-medio);
 }
+
+
+.banned-row {
+  background: rgba(220, 38, 38, 0.06) !important;
+}
+.banned-row td {
+  opacity: 0.8;
+}
+ 
+.ban-status {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+ 
+.ban-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(220, 38, 38, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  width: fit-content;
+  letter-spacing: 0.02em;
+}
+ 
+.ban-hasta {
+  font-size: 0.69rem;
+  color: rgba(248, 113, 113, 0.6);
+  font-weight: 500;
+}
+ 
+.ban-motivo {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.28);
+  font-style: italic;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.ban-status-ok {
+  font-size: 0.78rem;
+  color: #6ee7b7;
+  font-weight: 600;
+}
+ 
+.btn-ban {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  color: #f87171;
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn-ban:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.22);
+  border-color: rgba(248, 113, 113, 0.5);
+  transform: translateY(-1px);
+}
+ 
+.btn-unban {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(110, 231, 183, 0.1);
+  border: 1px solid rgba(110, 231, 183, 0.25);
+  color: #6ee7b7;
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn-unban:hover:not(:disabled) {
+  background: rgba(110, 231, 183, 0.2);
+  border-color: rgba(110, 231, 183, 0.45);
+  transform: translateY(-1px);
+}
+ 
+.btn-ban:disabled,
+.btn-unban:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+/* ── Botón de mensaje directo ── */
+.btn-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.42rem 0.7rem;
+  background: rgba(129, 140, 248, 0.1);
+  border: 1.5px solid rgba(129, 140, 248, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(165, 180, 252, 0.8);
+  transition: var(--transicion);
+}
+.btn-message:hover {
+  background: rgba(129, 140, 248, 0.22);
+  border-color: rgba(129, 140, 248, 0.5);
+  color: rgba(165, 180, 252, 1);
+  transform: scale(1.08);
+  box-shadow: 0 3px 10px rgba(129, 140, 248, 0.18);
+}
+.btn-message svg { stroke: currentColor; }
+
+/* ── Modal de mensaje ── */
+.msg-modal {
+  max-width: 460px;
+}
+
+.msg-input {
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: var(--blanco-puro);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+.msg-input::placeholder { color: rgba(255,255,255,0.28); }
+.msg-input:focus { border-color: rgba(129, 140, 248, 0.5); }
+
+.msg-contador {
+  display: block;
+  text-align: right;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 4px;
+}
+
+.msg-btn-enviar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  background: linear-gradient(135deg, rgba(79,119,45,0.85), rgba(107,158,74,0.85));
+  border: none;
+  border-radius: 10px;
+  color: var(--blanco-puro);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.msg-btn-enviar:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(79,119,45,0.35);
+}
+.msg-btn-enviar:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@keyframes msg-spin {
+  to { transform: rotate(360deg); }
+}
+.msg-spin { animation: msg-spin 0.8s linear infinite; }

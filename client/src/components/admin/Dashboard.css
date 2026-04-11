@@ -277,6 +277,283 @@
   animation: spin 0.9s linear infinite;
 }
 
+.ban-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+ 
+.ban-modal {
+  background: rgba(15, 26, 20, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(79, 119, 45, 0.25);
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: slideUp 0.25s ease;
+}
+ 
+.ban-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+.ban-modal-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f87171;
+}
+ 
+.ban-modal-cerrar {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: var(--transicion);
+  font-family: inherit;
+}
+.ban-modal-cerrar:hover {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+}
+ 
+.ban-modal-usuario {
+  margin: 0;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+}
+ 
+.ban-modal-contexto {
+  margin: -8px 0 0;
+  font-size: 0.79rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-style: italic;
+  padding: 8px 14px;
+  border-left: 3px solid rgba(247, 127, 0, 0.35);
+  background: rgba(247, 127, 0, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+ 
+.ban-modal-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+ 
+.ban-modal-campo label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+ 
+.ban-opcional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.76rem;
+  opacity: 0.65;
+}
+ 
+.ban-modal-campo textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 10px 13px;
+  font-size: 0.86rem;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  line-height: 1.5;
+}
+.ban-modal-campo textarea:focus {
+  outline: none;
+  border-color: rgba(220, 38, 38, 0.4);
+  background: rgba(255, 255, 255, 0.07);
+}
+.ban-modal-campo textarea::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+ 
+.ban-tipo-btns {
+  display: flex;
+  gap: 8px;
+}
+ 
+.ban-tipo-btn {
+  flex: 1;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: var(--transicion);
+  font-family: inherit;
+}
+.ban-tipo-btn:hover:not(.activo) {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+.ban-tipo-btn.activo {
+  background: rgba(102, 126, 234, 0.18);
+  border-color: rgba(102, 126, 234, 0.45);
+  color: #a5b4fc;
+}
+.ban-tipo-btn--rojo.activo {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+}
+ 
+.ban-dias-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+ 
+.ban-dias-btn {
+  padding: 5px 13px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: var(--transicion);
+  font-family: inherit;
+}
+.ban-dias-btn:hover:not(.activo) {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+.ban-dias-btn.activo {
+  background: rgba(79, 119, 45, 0.22);
+  border-color: rgba(107, 158, 74, 0.5);
+  color: #a8e063;
+}
+ 
+.ban-dias-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 9px 13px;
+  font-size: 0.86rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  margin-top: 4px;
+}
+.ban-dias-input:focus {
+  outline: none;
+  border-color: rgba(79, 119, 45, 0.45);
+}
+.ban-dias-input::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+ 
+.ban-aviso-permanente {
+  margin: 0;
+  padding: 11px 14px;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: #f87171;
+  line-height: 1.5;
+}
+ 
+.ban-modal-acciones {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+ 
+.ban-btn-cancelar {
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 0.87rem;
+  font-weight: 600;
+  transition: var(--transicion);
+  font-family: inherit;
+}
+.ban-btn-cancelar:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.ban-btn-cancelar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+ 
+.ban-btn-confirmar {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.18);
+  color: #f87171;
+  cursor: pointer;
+  font-size: 0.87rem;
+  font-weight: 700;
+  transition: var(--transicion);
+  font-family: inherit;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.18);
+}
+.ban-btn-confirmar:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.35);
+  border-color: rgba(248, 113, 113, 0.6);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(220, 38, 38, 0.32);
+}
+.ban-btn-confirmar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* ── Responsive ── */
 @media (max-width: 968px) {
   .admin-dashboard { padding: 1.25rem; }

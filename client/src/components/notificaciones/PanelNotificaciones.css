@@ -1,0 +1,247 @@
+/* PanelNotificaciones.css
+   Glassmorphism coherente con el resto de la app
+   Prefijo: pn-
+*/
+
+/* ── Panel contenedor ── */
+.pn-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 2rem);
+  background: rgba(12, 28, 18, 0.92);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  z-index: 1000;
+  overflow: hidden;
+  animation: pn-aparecer 0.18s ease;
+}
+
+@keyframes pn-aparecer {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── Header ── */
+.pn-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.1rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pn-header-izq {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pn-header-izq svg { color: rgba(167, 213, 136, 0.8); }
+
+.pn-titulo {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  letter-spacing: 0.01em;
+}
+
+.pn-badge-header {
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.1rem 0.45rem;
+  border-radius: 50px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.pn-btn-leer-todas {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.pn-btn-leer-todas:hover {
+  border-color: rgba(167, 213, 136, 0.4);
+  color: rgba(167, 213, 136, 0.9);
+}
+
+/* ── Lista ── */
+.pn-lista {
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.pn-lista::-webkit-scrollbar { width: 4px; }
+.pn-lista::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+/* ── Item ── */
+.pn-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: default;
+  transition: background 0.15s ease;
+}
+.pn-item:last-child { border-bottom: none; }
+.pn-item:hover { background: rgba(255, 255, 255, 0.04); }
+
+.pn-item.no-leida {
+  background: rgba(79, 119, 45, 0.08);
+  cursor: pointer;
+}
+.pn-item.no-leida:hover { background: rgba(79, 119, 45, 0.14); }
+
+/* Punto indicador de no leída */
+.pn-dot {
+  position: absolute;
+  top: 1rem;
+  left: 0.4rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--verde-hoja, #6db33f);
+  flex-shrink: 0;
+}
+
+/* ── Ícono de tipo ── */
+.pn-icono {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pn-icono--reply {
+  background: rgba(79, 119, 45, 0.18);
+  border: 1px solid rgba(79, 119, 45, 0.3);
+  color: rgba(167, 213, 136, 0.9);
+}
+
+.pn-icono--message {
+  background: rgba(129, 140, 248, 0.15);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  color: rgba(165, 180, 252, 0.9);
+}
+
+/* ── Contenido ── */
+.pn-contenido { flex: 1; min-width: 0; }
+
+.pn-texto {
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.45;
+  margin: 0 0 0.25rem;
+}
+.pn-texto strong { color: var(--blanco-puro); font-weight: 700; }
+.pn-texto em { color: rgba(167, 213, 136, 0.8); font-style: normal; }
+
+.pn-preview {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-style: italic;
+  margin: 0 0 0.3rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pn-fecha {
+  font-size: 0.71rem;
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 500;
+}
+
+/* ── Estado vacío ── */
+.pn-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+.pn-vacio p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+.pn-vacio span {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.2);
+  line-height: 1.45;
+}
+
+/* ── Estado cargando ── */
+.pn-estado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.pn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(167, 213, 136, 0.6);
+  border-radius: 50%;
+  animation: pn-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .pn-panel {
+    width: calc(100vw - 1rem);
+    right: -0.5rem;
+    border-radius: 12px;
+  }
+}
+
+/* Item con navegación (reply con recetaId) */
+.pn-clickable {
+  cursor: pointer;
+}
+.pn-clickable:hover .pn-texto em {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

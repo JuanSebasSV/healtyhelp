@@ -8,6 +8,182 @@ import { toast } from 'react-toastify';
 import './SeccionResenas.css';
 
 /* ─────────────────────────────────────────────────────────────
+   Íconos SVG — todos inline, sin dependencias externas
+   Estilo: stroke, strokeWidth=1.5, redondeado (Heroicons / Lucide)
+───────────────────────────────────────────────────────────── */
+const Icon = ({ d, size = 16, viewBox = '0 0 24 24', className = '', style = {} }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox={viewBox}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+    aria-hidden="true"
+  >
+    {d}
+  </svg>
+);
+
+// Íconos individuales
+const IcoEditar = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </>
+  }/>
+);
+
+const IcoBorrar = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+    </>
+  }/>
+);
+
+const IcoGuardar = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+      <polyline points="17 21 17 13 7 13 7 21"/>
+      <polyline points="7 3 7 8 15 8"/>
+    </>
+  }/>
+);
+
+const IcoPublicar = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <line x1="22" y1="2" x2="11" y2="13"/>
+      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </>
+  }/>
+);
+
+const IcoLock = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </>
+  }/>
+);
+
+const IcoThumbUp = ({ size }) => (
+  <Icon size={size} d={
+    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H4.72A2 2 0 0 1 3 18.28V13a2 2 0 0 1 2-2h2v9z"/>
+  }/>
+);
+
+const IcoThumbDown = ({ size }) => (
+  <Icon size={size} d={
+    <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17V2z"/>
+  }/>
+);
+
+const IcoClock = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </>
+  }/>
+);
+
+const IcoChevronDown = ({ size }) => (
+  <Icon size={size} d={<polyline points="6 9 12 15 18 9"/>}/>
+);
+
+const IcoChevronUp = ({ size }) => (
+  <Icon size={size} d={<polyline points="18 15 12 9 6 15"/>}/>
+);
+
+const IcoCornerDownLeft = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <polyline points="9 10 4 15 9 20"/>
+      <path d="M20 4v7a4 4 0 0 1-4 4H4"/>
+    </>
+  }/>
+);
+
+const IcoImage = ({ size, className }) => (
+  <Icon size={size} className={className} d={
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="3"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+    </>
+  }/>
+);
+
+const IcoInfo = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </>
+  }/>
+);
+
+const IcoX = ({ size }) => (
+  <Icon size={size} d={<path d="M18 6L6 18M6 6l12 12"/>}/>
+);
+
+const IcoImagePlus = ({ size, className }) => (
+  <Icon size={size} className={className} d={
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="3"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+      <line x1="14" y1="8" x2="14" y2="14" strokeWidth="2"/>
+      <line x1="11" y1="11" x2="17" y2="11" strokeWidth="2"/>
+    </>
+  }/>
+);
+
+const IcoLoader = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <line x1="12" y1="2" x2="12" y2="6"/>
+      <line x1="12" y1="18" x2="12" y2="22"/>
+      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+      <line x1="2" y1="12" x2="6" y2="12"/>
+      <line x1="18" y1="12" x2="22" y2="12"/>
+      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+    </>
+  }/>
+);
+
+const IcoStar = ({ size }) => (
+  <Icon size={size} d={
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  }/>
+);
+
+const IcoEmptyReviews = ({ size }) => (
+  <Icon size={size} d={
+    <>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      <line x1="9" y1="10" x2="15" y2="10"/>
+    </>
+  }/>
+);
+
+/* ─────────────────────────────────────────────────────────────
    Utilidades
 ───────────────────────────────────────────────────────────── */
 const formatFecha = (f) =>
@@ -41,51 +217,44 @@ const Estrellas = ({ valor, onChange, readonly = false }) => {
    - Si está pendiente y es del propio usuario: muestra placeholder.
    - Si está pendiente y es de otro usuario: no muestra nada.
    - Si está rechazada: no muestra nada para nadie.
-
-   IMPORTANTE: el backend devuelve imagen.estado ('aprobada' | 'pendiente')
-   y imagen.url (null si pendiente, URL si aprobada).
 ───────────────────────────────────────────────────────────── */
 const ImagenResena = ({ imagen, esPropia }) => {
-  // Sin imagen o rechazada → nada
-  if (!imagen) return null;
+  if (!imagen || !imagen.estado) return null;
   if (imagen.estado === 'rechazada') return null;
 
   const aprobada  = imagen.estado === 'aprobada';
   const pendiente = imagen.estado === 'pendiente';
 
-  // Pendiente y no es del propio usuario → nada
   if (pendiente && !esPropia) return null;
 
-  return (
-    <div className="sr-imagen-wrap">
-      {aprobada ? (
+  if (aprobada) {
+    return (
+      <div className="sr-imagen-wrap">
         <img
           src={imagen.url}
           alt="Imagen del comentario"
           className="sr-imagen"
           loading="lazy"
         />
-      ) : (
-        /* Placeholder visible solo para el autor */
-        <div className="sr-imagen-pendiente">
-          <div className="sr-imagen-pendiente-icono">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="3"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-          </div>
-          <p className="sr-imagen-pendiente-titulo">Imagen pendiente de aprobación</p>
-          <p className="sr-imagen-pendiente-subtitulo">Tiempo aproximado: 3 días</p>
-        </div>
-      )}
+      </div>
+    );
+  }
+
+  // Pendiente → placeholder
+  return (
+    <div className="sr-imagen-pendiente">
+      <IcoImage size={28} className="sr-imagen-pendiente-icono" />
+      <span className="sr-imagen-pendiente-titulo">
+        <IcoClock size={13} style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+        En revisión
+      </span>
+      <span className="sr-imagen-pendiente-sub">Tu imagen fue recibida y está pendiente de aprobación</span>
     </div>
   );
 };
 
 /* ─────────────────────────────────────────────────────────────
-   Selector de imagen (solo para comentarios principales nuevos)
+   Selector de imagen
 ───────────────────────────────────────────────────────────── */
 const SelectorImagen = ({ imagen, onChange, onRemove }) => {
   const inputRef = useRef(null);
@@ -113,12 +282,7 @@ const SelectorImagen = ({ imagen, onChange, onRemove }) => {
           onClick={() => inputRef.current?.click()}
           title="Adjuntar imagen (requiere aprobación)"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
+          <IcoImagePlus size={14} />
           Adjuntar imagen
         </button>
       ) : (
@@ -133,14 +297,11 @@ const SelectorImagen = ({ imagen, onChange, onRemove }) => {
             className="sr-btn-quitar-img"
             onClick={onRemove}
             title="Quitar imagen"
-          >✕</button>
+          >
+            <IcoX size={10} />
+          </button>
           <span className="sr-preview-aviso">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
+            <IcoInfo size={12} />
             Requiere aprobación (≈3 días)
           </span>
         </div>
@@ -157,8 +318,7 @@ const SelectorImagen = ({ imagen, onChange, onRemove }) => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   Sección de respuestas (hilo de un comentario)
-   Sin soporte de imagen — solo texto
+   Sección de respuestas
 ───────────────────────────────────────────────────────────── */
 const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isAuthenticated }) => {
   const [respuestas,   setRespuestas]   = useState(respInit || []);
@@ -179,9 +339,9 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
       setTexto('');
       setRespondiendo(false);
       setExpandido(true);
-      toast.success('✅ Respuesta publicada');
+      toast.success('Respuesta publicada');
     } catch (e) {
-      toast.error(`❌ ${e.response?.data?.error || 'Error al responder'}`);
+      toast.error(e.response?.data?.error || 'Error al responder');
     } finally {
       setEnviando(false);
     }
@@ -194,7 +354,7 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
       setRespuestas(prev => prev.filter(r => r._id !== respId));
       toast.success('Respuesta eliminada');
     } catch (e) {
-      toast.error(`❌ ${e.response?.data?.error || 'Error al borrar'}`);
+      toast.error(e.response?.data?.error || 'Error al borrar');
     }
   };
 
@@ -204,13 +364,14 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
         {respuestas.length > 0 && (
           <button className="sr-btn-toggle-resp" onClick={() => setExpandido(v => !v)}>
             {expandido
-              ? '▲ Ocultar respuestas'
-              : `▼ ${respuestas.length} respuesta${respuestas.length !== 1 ? 's' : ''}`}
+              ? <><IcoChevronUp size={13} /> Ocultar respuestas</>
+              : <><IcoChevronDown size={13} /> {respuestas.length} respuesta{respuestas.length !== 1 ? 's' : ''}</>
+            }
           </button>
         )}
         {isAuthenticated && (
           <button className="sr-btn-responder" onClick={() => setRespondiendo(true)}>
-            ↩ Responder
+            <IcoCornerDownLeft size={13} /> Responder
           </button>
         )}
       </div>
@@ -232,7 +393,9 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
                         className="sr-btn-borrar-resp"
                         onClick={() => handleBorrar(rp._id)}
                         title="Eliminar respuesta"
-                      >🗑️</button>
+                      >
+                        <IcoBorrar size={13} />
+                      </button>
                     )}
                 </div>
                 <p className="sr-resp-texto">{rp.texto}</p>
@@ -269,7 +432,12 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
                 className="sr-btn-enviar-resp"
                 onClick={handleEnviar}
                 disabled={enviando || !texto.trim()}
-              >{enviando ? '⏳' : '↩ Publicar'}</button>
+              >
+                {enviando
+                  ? <><IcoLoader size={13} className="sr-spin" /> Enviando</>
+                  : <><IcoCornerDownLeft size={13} /> Publicar</>
+                }
+              </button>
             </div>
           </div>
         </div>
@@ -280,12 +448,8 @@ const SeccionRespuestas = ({ recetaId, resenaId, respuestas: respInit, user, isA
 
 /* ─────────────────────────────────────────────────────────────
    COMPONENTE PRINCIPAL — SeccionResenas
-   Props:
-     receta        → objeto receta completo
-     user          → usuario autenticado (o null)
-     isAuthenticated → boolean
 ───────────────────────────────────────────────────────────── */
-const SeccionResenas = ({ receta, user, isAuthenticated }) => {
+const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) => {
   const [resenas,       setResenas]       = useState([]);
   const [puntosProm,    setPuntosProm]    = useState(receta.puntosProm   || 0);
   const [totalResenas,  setTotalResenas]  = useState(receta.totalResenas || 0);
@@ -298,8 +462,24 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
   const [editando,      setEditando]      = useState(false);
   const [formEstrellas, setFormEstrellas] = useState(5);
   const [formTexto,     setFormTexto]     = useState('');
-  const [formImagen,    setFormImagen]    = useState(null); // File | null
+  const [formImagen,    setFormImagen]    = useState(null);
   const [enviando,      setEnviando]      = useState(false);
+
+  // Ref para hacer scroll a la reseña destacada (desde notificación)
+  const resenaDestacadaRef = useRef(null);
+
+  // Cuando carga y hay resenaIdDestacada, hacer scroll suave hacia ella
+  useEffect(() => {
+    if (!resenaIdDestacada || cargandoRes) return;
+    // Pequeño delay para que el DOM esté listo
+    const t = setTimeout(() => {
+      resenaDestacadaRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 400);
+    return () => clearTimeout(t);
+  }, [resenaIdDestacada, cargandoRes]);
 
   /* ── Cargar reseñas ── */
   const cargarResenas = useCallback(async (pag = 1, ord = orden) => {
@@ -318,8 +498,17 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
           r => r.userId?.toString() === user._id?.toString() ||
                r.userId?.toString() === user.id?.toString()
         );
+
+        const fusionarImagen = (resenaServidor, resenaLocal) => {
+          if (resenaServidor.imagen) return resenaServidor;
+          if (resenaLocal?.imagen?.estado === 'pendiente') {
+            return { ...resenaServidor, imagen: resenaLocal.imagen };
+          }
+          return resenaServidor;
+        };
+
         if (mia) {
-          setMiResena(mia);
+          setMiResena(prev => fusionarImagen(mia, prev));
           setFormEstrellas(mia.estrellas);
           setFormTexto(mia.texto || '');
         } else if (pag === 1) {
@@ -335,7 +524,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
             );
             if (mia2) {
               encontrada = true;
-              setMiResena(mia2);
+              setMiResena(prev => fusionarImagen(mia2, prev));
               setFormEstrellas(mia2.estrellas);
               setFormTexto(mia2.texto || '');
             }
@@ -363,12 +552,10 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
 
   /* ── Publicar / editar reseña ── */
   const handleSubmitResena = async () => {
-    // Validaciones
     if (!formEstrellas) {
       toast.error('Selecciona una puntuación');
       return;
     }
-    // Si adjunta imagen, el texto es obligatorio
     if (formImagen && !formTexto.trim()) {
       toast.error('Escribe un comentario para acompañar la imagen');
       return;
@@ -379,7 +566,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
       let data;
 
       if (formImagen && !miResena) {
-        // Nueva reseña con imagen → multipart/form-data
         const fd = new FormData();
         fd.append('estrellas', formEstrellas);
         fd.append('texto', formTexto.trim());
@@ -388,30 +574,30 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
           headers: { 'Content-Type': 'multipart/form-data' },
         }));
       } else if (miResena) {
-        // Editar reseña existente
         ({ data } = await api.put(`/recipes/${receta._id}/resenas`, {
           estrellas: formEstrellas,
           texto:     formTexto.trim(),
         }));
       } else {
-        // Nueva reseña sin imagen
         ({ data } = await api.post(`/recipes/${receta._id}/resenas`, {
           estrellas: formEstrellas,
           texto:     formTexto.trim(),
         }));
       }
 
-      toast.success(miResena ? '✅ Reseña actualizada' : '✅ Reseña publicada');
+      toast.success(miResena ? 'Reseña actualizada' : 'Reseña publicada');
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
-      setMiResena(data.resena);
+
+      const resenaConImagen = data.resena;
+      setMiResena(resenaConImagen);
       setFormEstrellas(data.resena.estrellas);
       setFormTexto(data.resena.texto || '');
       setFormImagen(null);
       setEditando(false);
       cargarResenas(pagina, orden);
     } catch (error) {
-      toast.error(`❌ ${error.response?.data?.error || 'Error al publicar la reseña'}`);
+      toast.error(error.response?.data?.error || 'Error al publicar la reseña');
     } finally {
       setEnviando(false);
     }
@@ -430,7 +616,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
       setEditando(false);
       cargarResenas(1, orden);
     } catch (e) {
-      toast.error(`❌ ${e.response?.data?.error || 'Error al borrar'}`);
+      toast.error(e.response?.data?.error || 'Error al borrar');
     }
   };
 
@@ -448,7 +634,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
           : r
       ));
     } catch (e) {
-      toast.error(`❌ ${e.response?.data?.error || 'Error al votar'}`);
+      toast.error(e.response?.data?.error || 'Error al votar');
     }
   };
 
@@ -480,10 +666,10 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                 <span className="sr-mi-resena-label">Tu reseña</span>
                 <div className="sr-mi-resena-acciones">
                   <button className="sr-btn-editar" onClick={() => setEditando(true)}>
-                    ✏️ Editar
+                    <IcoEditar size={13} /> Editar
                   </button>
                   <button className="sr-btn-borrar" onClick={() => handleBorrarResena(miResena._id)}>
-                    🗑️ Borrar
+                    <IcoBorrar size={13} /> Eliminar
                   </button>
                 </div>
               </div>
@@ -491,8 +677,15 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
               {miResena.texto && (
                 <p className="sr-mi-resena-texto">"{miResena.texto}"</p>
               )}
-              {/* Imagen propia pendiente o aprobada */}
               <ImagenResena imagen={miResena.imagen} esPropia />
+              {/* Respuestas visibles aunque la reseña no aparezca en la lista */}
+              <SeccionRespuestas
+                recetaId={receta._id}
+                resenaId={miResena._id}
+                respuestas={miResena.respuestas || []}
+                user={user}
+                isAuthenticated={isAuthenticated}
+              />
             </div>
           ) : (
             <>
@@ -515,7 +708,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                 spellCheck="true"
               />
 
-              {/* Selector de imagen — solo en comentarios nuevos, no al editar */}
               {!miResena && (
                 <SelectorImagen
                   imagen={formImagen}
@@ -524,28 +716,46 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                 />
               )}
 
-              {/* En modo editar: mostrar imagen existente (pendiente/aprobada) con opción de quitar */}
               {miResena && miResena.imagen && miResena.imagen.estado !== 'rechazada' && (
                 <div className="sr-edit-imagen-wrap">
-                  <ImagenResena imagen={miResena.imagen} esPropia />
-                  <button
-                    type="button"
-                    className="sr-btn-quitar-img sr-btn-quitar-img-edit"
-                    onClick={async () => {
-                      if (!window.confirm('¿Quitar la imagen de esta reseña?')) return;
-                      try {
-                        await api.delete(`/recipes/${receta._id}/resenas/imagen`);
-                        setMiResena(prev => ({ ...prev, imagen: null }));
-                        toast.success('Imagen eliminada');
-                      } catch (e) {
-                        toast.error(`❌ ${e.response?.data?.error || 'Error al quitar imagen'}`);
-                      }
-                    }}
-                  >
-                    ✕ Quitar imagen
-                  </button>
-                  <p className="sr-preview-aviso" style={{marginTop:"6px"}}>
-                    Para subir una nueva imagen, crea una nueva reseña.
+                  <div className="sr-edit-imagen-inner">
+                    {miResena.imagen.estado === 'aprobada' ? (
+                      <img
+                        src={miResena.imagen.url}
+                        alt="Imagen de la reseña"
+                        className="sr-imagen sr-edit-img"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="sr-imagen-pendiente sr-edit-pendiente">
+                        <IcoImage size={28} className="sr-imagen-pendiente-icono" />
+                        <span className="sr-imagen-pendiente-titulo">
+                          <IcoClock size={13} style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                          En revisión
+                        </span>
+                        <span className="sr-imagen-pendiente-sub">Tu imagen fue recibida y está pendiente de aprobación</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="sr-edit-quitar-btn"
+                      title="Quitar imagen"
+                      onClick={async () => {
+                        if (!window.confirm('¿Quitar la imagen de esta reseña?')) return;
+                        try {
+                          await api.delete(`/recipes/${receta._id}/resenas/imagen`);
+                          setMiResena(prev => ({ ...prev, imagen: null }));
+                          toast.success('Imagen eliminada');
+                        } catch (e) {
+                          toast.error(e.response?.data?.error || 'Error al quitar imagen');
+                        }
+                      }}
+                    >
+                      <IcoX size={11} />
+                    </button>
+                  </div>
+                  <p className="sr-edit-imagen-aviso">
+                    Para subir una nueva imagen crea una nueva reseña
                   </p>
                 </div>
               )}
@@ -569,13 +779,15 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                   disabled={
                     enviando ||
                     !formEstrellas ||
-                    // Si hay imagen adjunta, bloquear hasta que haya texto
                     (!!formImagen && !formTexto.trim())
                   }
                 >
                   {enviando
-                    ? '⏳ Guardando...'
-                    : miResena ? '💾 Guardar cambios' : '📝 Publicar reseña'}
+                    ? <><IcoLoader size={14} className="sr-spin" /> Guardando</>
+                    : miResena
+                      ? <><IcoGuardar size={14} /> Guardar cambios</>
+                      : <><IcoPublicar size={14} /> Publicar reseña</>
+                  }
                 </button>
               </div>
             </>
@@ -585,7 +797,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
 
       {!isAuthenticated && (
         <p className="sr-login-aviso">
-          <span>🔒</span> Inicia sesión para dejar una reseña
+          <IcoLock size={14} /> Inicia sesión para dejar una reseña
         </p>
       )}
 
@@ -596,29 +808,58 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
           <button
             className={`sr-btn-orden ${orden === 'reciente' ? 'activo' : ''}`}
             onClick={() => cambiarOrden('reciente')}
-          >🕐 Más recientes</button>
+          >
+            <IcoClock size={13} /> Más recientes
+          </button>
           <button
             className={`sr-btn-orden ${orden === 'relevancia' ? 'activo' : ''}`}
             onClick={() => cambiarOrden('relevancia')}
-          >👍 Más relevantes</button>
+          >
+            <IcoThumbUp size={13} /> Más relevantes
+          </button>
         </div>
       </div>
 
       {/* Lista de reseñas */}
       <div className="sr-lista">
         {cargandoRes ? (
-          <p className="sr-estado">Cargando reseñas...</p>
+          <p className="sr-estado">
+            <IcoLoader size={16} className="sr-spin" /> Cargando reseñas
+          </p>
         ) : resenas.length === 0 ? (
-          <p className="sr-estado sr-vacio">Sé el primero en dejar una reseña ✨</p>
+          <p className="sr-estado sr-vacio">
+            <IcoEmptyReviews size={18} /> Sé el primero en dejar una reseña
+          </p>
         ) : (
-          resenas.map(r => {
+          resenas
+            // Si la reseña propia ya se muestra en la card "Tu reseña" (miResena && !editando),
+            // la ocultamos de la lista para evitar duplicación.
+            .filter(r => {
+              if (!miResena || editando) return true;
+              const esPropia = user && (
+                r.userId?.toString() === user._id?.toString() ||
+                r.userId?.toString() === user.id?.toString()
+              );
+              return !esPropia;
+            })
+            .map(r => {
             const esPropia = user && (
               r.userId?.toString() === user._id?.toString() ||
               r.userId?.toString() === user.id?.toString()
             );
             const esAdmin = user?.role === 'admin';
+
+            const imagenParaMostrar =
+              esPropia && !r.imagen && miResena?.imagen?.estado === 'pendiente'
+                ? miResena.imagen
+                : r.imagen;
+
             return (
-              <div key={r._id} className={`sr-item ${esPropia ? 'propia' : ''}`}>
+              <div
+                key={r._id}
+                ref={r._id === resenaIdDestacada ? resenaDestacadaRef : null}
+                className={`sr-item ${esPropia ? 'propia' : ''} ${r._id === resenaIdDestacada ? 'sr-item--destacada' : ''}`}
+              >
 
                 <div className="sr-item-header">
                   <div className="sr-avatar">
@@ -634,14 +875,15 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                       className="sr-btn-borrar-lista"
                       onClick={() => handleBorrarResena(r._id)}
                       title="Eliminar reseña"
-                    >🗑️</button>
+                    >
+                      <IcoBorrar size={15} />
+                    </button>
                   )}
                 </div>
 
                 {r.texto && <p className="sr-texto">{r.texto}</p>}
 
-                {/* Imagen del comentario */}
-                <ImagenResena imagen={r.imagen} esPropia={!!esPropia} />
+                <ImagenResena imagen={imagenParaMostrar} esPropia={!!esPropia} />
 
                 {/* Votos */}
                 <div className="sr-votos">
@@ -650,12 +892,16 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
                     className={`sr-btn-voto sr-like ${r.miVoto === 'like' ? 'activo' : ''}`}
                     onClick={() => handleVotar(r._id, 'like')}
                     title="Es útil"
-                  >👍 <span>{r.likes}</span></button>
+                  >
+                    <IcoThumbUp size={13} /> <span>{r.likes}</span>
+                  </button>
                   <button
                     className={`sr-btn-voto sr-dislike ${r.miVoto === 'dislike' ? 'activo' : ''}`}
                     onClick={() => handleVotar(r._id, 'dislike')}
                     title="No es útil"
-                  >👎 <span>{r.dislikes}</span></button>
+                  >
+                    <IcoThumbDown size={13} /> <span>{r.dislikes}</span>
+                  </button>
                 </div>
 
                 {/* Respuestas */}
@@ -679,12 +925,16 @@ const SeccionResenas = ({ receta, user, isAuthenticated }) => {
           <button
             disabled={pagina === 1}
             onClick={() => { const p = pagina - 1; setPagina(p); cargarResenas(p, orden); }}
-          >← Anterior</button>
+          >
+            <IcoChevronDown size={14} style={{ transform: 'rotate(90deg)' }} /> Anterior
+          </button>
           <span>{pagina} / {totalPags}</span>
           <button
             disabled={pagina === totalPags}
             onClick={() => { const p = pagina + 1; setPagina(p); cargarResenas(p, orden); }}
-          >Siguiente →</button>
+          >
+            Siguiente <IcoChevronDown size={14} style={{ transform: 'rotate(-90deg)' }} />
+          </button>
         </div>
       )}
 

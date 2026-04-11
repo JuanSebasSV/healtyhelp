@@ -488,6 +488,60 @@
   font-size: 0.9rem;
 }
 
+.ia-card-img-eliminada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  min-height: 140px;
+  background: rgba(220, 38, 38, 0.07);
+  border-radius: 10px;
+  color: rgba(248, 113, 113, 0.5);
+  font-size: 0.78rem;
+}
+ 
+.ia-card-comentario--vacio {
+  color: rgba(255, 255, 255, 0.28);
+  font-style: italic;
+}
+ 
+.ia-modal-comentario {
+  margin: 6px 0 0;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-style: italic;
+}
+ 
+.ia-btn-banear {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  background: rgba(220, 38, 38, 0.1);
+  color: #f87171;
+  cursor: pointer;
+  font-size: 0.81rem;
+  font-weight: 700;
+  transition: var(--transicion);
+  font-family: inherit;
+}
+.ia-btn-banear:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: rgba(248, 113, 113, 0.45);
+  transform: translateY(-1px);
+}
+.ia-btn-banear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ════════════════════════════════
    RESPONSIVE
 ════════════════════════════════ */
@@ -521,3 +575,4 @@
   .ia-filtros { gap: 0.35rem; }
   .ia-filtro-btn { font-size: 0.78rem; padding: 0.4rem 0.75rem; }
 }
+

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import './Navbar.css';
+import PanelNotificaciones from '../notificaciones/PanelNotificaciones';
 
 const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
   const { user, logout, isAdmin } = useAuth();
@@ -13,6 +14,13 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
   // ── Badge imágenes pendientes (solo admins) ──
   const [imgPendientes, setImgPendientes] = useState(0);
   const pollingRef = useRef(null);
+
+  // ── Notificaciones ──
+  const [panelAbierto,     setPanelAbierto]     = useState(false);
+  const [notificaciones,   setNotificaciones]   = useState([]);
+  const [noLeidas,         setNoLeidas]         = useState(0);
+  const [cargandoNotifs,   setCargandoNotifs]   = useState(false);
+  const notifPollingRef = useRef(null);
 
   useEffect(() => {
     if (!user || !isAdmin?.()) return;
@@ -50,6 +58,51 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
     return () => clearInterval(pollingRef.current);
   }, [user, isAdmin]);
 
+  // ── Cargar y polling de notificaciones (usuarios autenticados) ──
+  const fetchNotificaciones = useCallback(async () => {
+    if (!user) return;
+    try {
+      const { data } = await api.get('/notifications');
+      setNotificaciones(data.notificaciones || []);
+      setNoLeidas(data.noLeidas || 0);
+    } catch {
+      // silencioso
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchNotificaciones();
+    notifPollingRef.current = setInterval(fetchNotificaciones, 30_000);
+    return () => clearInterval(notifPollingRef.current);
+  }, [user, fetchNotificaciones]);
+
+  const handleAbrirPanel = () => {
+    setPanelAbierto(v => !v);
+    if (!panelAbierto) {
+      setCargandoNotifs(true);
+      fetchNotificaciones().finally(() => setCargandoNotifs(false));
+    }
+  };
+
+  const handleLeerTodas = async () => {
+    try {
+      await api.put('/notifications/leer-todas');
+      setNotificaciones(prev => prev.map(n => ({ ...n, leida: true })));
+      setNoLeidas(0);
+    } catch { /* silencioso */ }
+  };
+
+  const handleLeerUna = async (id) => {
+    try {
+      await api.put(`/notifications/${id}/leer`);
+      setNotificaciones(prev =>
+        prev.map(n => n._id === id ? { ...n, leida: true } : n)
+      );
+      setNoLeidas(prev => Math.max(0, prev - 1));
+    } catch { /* silencioso */ }
+  };
+
   const handleNavigate = (ruta) => {
     navigate(ruta);
     setMenuAbierto(false);
@@ -76,6 +129,41 @@ const Navbar = ({ modoOscuro, toggleModoOscuro }) => {
           </div>
           <span className="logoTexto">Healthy Help</span>
         </div>
+
+        {/* ── Campana de notificaciones (solo usuarios autenticados) ── */}
+        {user && (
+          <div className="nav-notif-wrap">
+            <button
+              className="nav-notif-btn"
+              onClick={handleAbrirPanel}
+              aria-label={`Notificaciones${noLeidas > 0 ? ` (${noLeidas} sin leer)` : ''}`}
+              title="Notificaciones"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              {noLeidas > 0 && (
+                <span className="nav-notif-badge" aria-hidden="true">
+                  {noLeidas > 9 ? '9+' : noLeidas}
+                </span>
+              )}
+            </button>
+
+            {panelAbierto && (
+              <PanelNotificaciones
+                notificaciones={notificaciones}
+                noLeidas={noLeidas}
+                cargando={cargandoNotifs}
+                onLeerTodas={handleLeerTodas}
+                onLeerUna={handleLeerUna}
+                onCerrar={() => setPanelAbierto(false)}
+                onNavegar={(url) => { setPanelAbierto(false); navigate(url); }}
+              />
+            )}
+          </div>
+        )}
 
         <button
           className={`navHamburguesa ${menuAbierto ? 'abierto' : ''}`}
