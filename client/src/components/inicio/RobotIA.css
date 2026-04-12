@@ -291,11 +291,15 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   flex: 1;
   padding: 1rem;
   overflow-y: auto;
-  max-height: 300px;
   position: relative;
   z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: rgba(107,158,74,0.3) transparent;
+}
+
+/* max-height solo para el flotante, no afecta la vista expandida */
+.robotChat .robotMensajes {
+  max-height: 300px;
 }
 
 .robotMensajes::-webkit-scrollbar { width: 3px; }
@@ -609,21 +613,21 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     padding: 1.5px;
   }
 
-  .robotHeader { padding: 0.75rem 0.9rem; }
-  .robotHeader__info h3 { font-size: 0.82rem; }
+  .robotChat .robotHeader { padding: 0.75rem 0.9rem; }
+  .robotChat .robotHeader__info h3 { font-size: 0.82rem; }
 
-  .robotMensajes { max-height: none; padding: 0.75rem; }
-  .robotMensajeTexto { font-size: 0.8rem; padding: 0.5rem 0.7rem; }
+  .robotChat .robotMensajes { max-height: none; padding: 0.75rem; }
+  .robotChat .robotMensajeTexto { font-size: 0.8rem; padding: 0.5rem 0.7rem; }
 
-  .chatBienvenida__titulo { font-size: 0.88rem; }
-  .chatBienvenida__sub    { font-size: 0.72rem; }
-  .chatSugerencia         { font-size: 0.72rem; padding: 0.42rem 0.65rem; }
+  .robotChat .chatBienvenida__titulo { font-size: 0.88rem; }
+  .robotChat .chatBienvenida__sub    { font-size: 0.72rem; }
+  .robotChat .chatSugerencia         { font-size: 0.72rem; padding: 0.42rem 0.65rem; }
 
-  .robotInput { padding: 0.55rem 0.7rem; }
-  .robotInput__wrap textarea { font-size: 0.8rem; }
+  .robotChat .robotInput { padding: 0.55rem 0.7rem; }
+  .robotChat .robotInput__wrap textarea { font-size: 0.8rem; }
 
-  .robotFooter { padding: 0.35rem; }
-  .robotFooter small { font-size: 0.64rem; }
+  .robotChat .robotFooter { padding: 0.35rem; }
+  .robotChat .robotFooter small { font-size: 0.64rem; }
 }
 
 /* ============================================================

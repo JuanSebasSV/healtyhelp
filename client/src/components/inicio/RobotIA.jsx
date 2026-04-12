@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChatCore from './ChatCore';
 import './RobotIA.css';
 
-// ✅ Ya no maneja estado propio — recibe chatProps desde App
 const RobotIA = ({ activo, toggleIA, chatProps }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.style.overflow = activo ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [activo]);
 
   const irAChatCompleto = () => {
     toggleIA();

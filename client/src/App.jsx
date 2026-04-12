@@ -1,58 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Profile
-import UserProfile from './components/profile/UserProfile';
-
-// Context
 import { AuthProvider } from './context/AuthProvider';
-
-// Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import FondoAnimado from './components/layout/FondoAnimado';
 import PrivateRoute from './components/layout/PrivateRoute';
-
-// Auth
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import GoogleCallback from './components/auth/GoogleCallback';
-import ForgotPassword from './components/auth/ForgotPassword';
-import ResetPassword from './components/auth/ResetPassword';
-import VerificarEmail from './components/auth/VerificarEmail';
-
-// Vistas principales
-import VistaInicio from './components/inicio/VistaInicio';
-import VistaSeguimiento from './components/vistas/VistaSeguimiento';
-import VistaFavoritos from './components/vistas/VistaFavoritos';
-import VistaContacto from './components/vistas/VistaContacto';
-import VistaChatbot from './components/vistas/VistaChatbot';
-
-// Admin
-import Dashboard from './components/admin/Dashboard';
-import UserList from './components/admin/UserList';
-import Stats from './components/admin/Stats';
-import RecipeManagement from './components/admin/RecipeManagement';
-import ImagenesAprobacion from './components/admin/ImagenesAprobacion';
-
-// Otros
-import RobotIA from './components/inicio/RobotIA';
-
-// Modales bloqueantes
-import ModalTerminos from './components/admin/ModalTerminos';
-import ModalCompletarPerfil from './components/admin/ModalCompletarPerfil';
-import ModalCookies from './components/admin/ModalCookies';
-
-// API
 import api from './api/axios';
-
-// Hooks
 import useAuth from './hooks/useAuth';
-import useChat from './hooks/useChat'; // ✅ hook compartido de chat
+import useChat from './hooks/useChat';
 
-// ─── Helpers de persistencia ──────────────────────────────────────────────────
+const UserProfile       = lazy(() => import('./components/profile/UserProfile'));
+const Login             = lazy(() => import('./components/auth/Login'));
+const Register          = lazy(() => import('./components/auth/Register'));
+const GoogleCallback    = lazy(() => import('./components/auth/GoogleCallback'));
+const ForgotPassword    = lazy(() => import('./components/auth/ForgotPassword'));
+const ResetPassword     = lazy(() => import('./components/auth/ResetPassword'));
+const VerificarEmail    = lazy(() => import('./components/auth/VerificarEmail'));
+const VistaInicio       = lazy(() => import('./components/inicio/VistaInicio'));
+const VistaSeguimiento  = lazy(() => import('./components/vistas/VistaSeguimiento'));
+const VistaFavoritos    = lazy(() => import('./components/vistas/VistaFavoritos'));
+const VistaContacto     = lazy(() => import('./components/vistas/VistaContacto'));
+const VistaChatbot      = lazy(() => import('./components/vistas/VistaChatbot'));
+const Dashboard         = lazy(() => import('./components/admin/Dashboard'));
+const UserList          = lazy(() => import('./components/admin/UserList'));
+const Stats             = lazy(() => import('./components/admin/Stats'));
+const RecipeManagement  = lazy(() => import('./components/admin/RecipeManagement'));
+const ImagenesAprobacion= lazy(() => import('./components/admin/ImagenesAprobacion'));
+const RobotIA           = lazy(() => import('./components/inicio/RobotIA'));
+const ModalTerminos     = lazy(() => import('./components/admin/ModalTerminos'));
+const ModalCompletarPerfil = lazy(() => import('./components/admin/ModalCompletarPerfil'));
+const ModalCookies      = lazy(() => import('./components/admin/ModalCookies'));
+
 const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
 const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
 const TERMS_VERSION_KEY  = 'hh_terms_version';
@@ -101,11 +82,8 @@ const migrarSessionACookies = () => {
 
 const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '/verificar-email'];
 
-// ─── AppContent ───────────────────────────────────────────────────────────────
 function AppContent() {
   const { user, checkAuth } = useAuth();
-
-  // ✅ Estado del chat compartido entre RobotIA y VistaChatbot
   const chatProps = useChat();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
@@ -125,7 +103,6 @@ function AppContent() {
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
-  const [terminosResueltos,      setTerminosResueltos]      = useState(false);
   const [activeTermsVersion,     setActiveTermsVersion]     = useState(null);
 
   const terminosAceptadosEnSesion = useRef(false);
@@ -140,7 +117,20 @@ function AppContent() {
   }, [favoritos]);
 
   useEffect(() => {
-    cargarRecetas();
+    let cancelled = false;
+    const cargar = async () => {
+      setCargandoRecetas(true);
+      try {
+        const { data } = await api.get('/recipes?limit=200');
+        if (!cancelled) setRecetas(data.recipes || []);
+      } catch {
+        if (!cancelled) setRecetas([]);
+      } finally {
+        if (!cancelled) setCargandoRecetas(false);
+      }
+    };
+    cargar();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -149,36 +139,13 @@ function AppContent() {
       .catch(() => setActiveTermsVersion('1.0.0'));
   }, []);
 
-  const cargarRecetas = async () => {
-    setCargandoRecetas(true);
-    try {
-      const { data } = await api.get('/recipes?limit=200');
-      setRecetas(data.recipes || []);
-    } catch {
-      setRecetas([]);
-    } finally {
-      setCargandoRecetas(false);
+  const resolverTerminos = useCallback(() => {
+    if (user && !user.profileComplete) {
+      setMostrarCompletarPerfil(true);
     }
-  };
+  }, [user]);
 
-  useEffect(() => {
-    if (!activeTermsVersion) return;
-    if (terminosAceptadosEnSesion.current) return;
-
-    const ruta = window.location.pathname;
-    const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
-    if (esRutaLibre) { setTerminosResueltos(true); return; }
-
-    if (!user) {
-      const yaDecidio = cookiesConsentidas() ||
-                        sessionStorage.getItem(COOKIE_CONSENT_KEY) === 'dismissed';
-      if (!yaDecidio) setMostrarCookies(true);
-    }
-
-    evaluarTerminos(activeTermsVersion);
-  }, [user, activeTermsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const evaluarTerminos = (version) => {
+  const evaluarTerminos = useCallback((version) => {
     if (user) {
       const serverVersion = user.activeTermsVersion || version;
       const necesita = !user.termsAccepted || user.termsVersion !== serverVersion;
@@ -200,20 +167,29 @@ function AppContent() {
         resolverTerminos();
       }
     }
-  };
+  }, [user, resolverTerminos]);
 
-  const resolverTerminos = () => {
-    if (user && !user.profileComplete) {
-      setMostrarCompletarPerfil(true);
-    } else {
-      setTerminosResueltos(true);
+  useEffect(() => {
+    if (!activeTermsVersion) return;
+    if (terminosAceptadosEnSesion.current) return;
+
+    const ruta = window.location.pathname;
+    const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
+    if (esRutaLibre) { setTerminosResueltos(true); return; }
+
+    if (!user) {
+      const yaDecidio = cookiesConsentidas() ||
+                        sessionStorage.getItem(COOKIE_CONSENT_KEY) === 'dismissed';
+      if (!yaDecidio) setMostrarCookies(true);
     }
-  };
 
-  const handleCookiesAceptadas  = () => { migrarSessionACookies(); setMostrarCookies(false); };
-  const handleCookiesRechazadas = () => { sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed'); setMostrarCookies(false); };
+    evaluarTerminos(activeTermsVersion);
+  }, [user, activeTermsVersion, evaluarTerminos]);
 
-  const handleAceptarTerminos = async () => {
+  const handleCookiesAceptadas  = useCallback(() => { migrarSessionACookies(); setMostrarCookies(false); }, []);
+  const handleCookiesRechazadas = useCallback(() => { sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed'); setMostrarCookies(false); }, []);
+
+  const handleAceptarTerminos = useCallback(async () => {
     terminosAceptadosEnSesion.current = true;
     const version = activeTermsVersion || '1.0.0';
     setPersisted(TERMS_ACCEPTED_KEY, 'true');
@@ -229,25 +205,24 @@ function AppContent() {
     }
     setMostrarTerminos(false);
     resolverTerminos();
-  };
+  }, [activeTermsVersion, user, checkAuth, resolverTerminos]);
 
-  const handlePerfilCompletado = () => {
+  const handlePerfilCompletado = useCallback(() => {
     setMostrarCompletarPerfil(false);
-    setTerminosResueltos(true);
     checkAuth();
-  };
+  }, [checkAuth]);
 
-  const toggleModoOscuro = () => setModoOscuro(prev => !prev);
-  const toggleRobotIA    = () => setRobotIAActivo(prev => !prev);
-  const cambiarCategoria = (cat) => setCategoriaActiva(cat);
+  const toggleModoOscuro = useCallback(() => setModoOscuro(prev => !prev), []);
+  const toggleRobotIA    = useCallback(() => setRobotIAActivo(prev => !prev), []);
+  const cambiarCategoria = useCallback((cat) => setCategoriaActiva(cat), []);
 
-  const toggleFav = (recetaId) => {
+  const toggleFav = useCallback((recetaId) => {
     setFavoritos(prev =>
       prev.includes(recetaId)
         ? prev.filter(id => id !== recetaId)
         : [...prev, recetaId]
     );
-  };
+  }, []);
 
   return (
     <Router>
@@ -256,71 +231,74 @@ function AppContent() {
         <Navbar modoOscuro={modoOscuro} toggleModoOscuro={toggleModoOscuro} />
 
         <main className="contenido-principal">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <VistaInicio
-                  recetas={recetas}
-                  cargandoRecetas={cargandoRecetas}
-                  toggleFav={toggleFav}
-                  favoritos={favoritos}
-                  cambiarCategoria={cambiarCategoria}
-                  categoriaActiva={categoriaActiva}
-                />
-              }
-            />
-            <Route path="/login"                 element={<Login />} />
-            <Route path="/registro"              element={<Register />} />
-            <Route path="/google-callback"       element={<GoogleCallback />} />
-            <Route path="/recuperar"             element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/verificar-email"       element={<VerificarEmail />} />
-            <Route path="/contacto"              element={<VistaContacto />} />
-            <Route
-              path="/chatbot"
-              element={
-                // ✅ chatProps comparte el mismo estado que RobotIA
-                <VistaChatbot
-                  abrirFlotante={() => setRobotIAActivo(true)}
-                  chatProps={chatProps}
-                />
-              }
-            />
-
-            <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
-            <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
-            <Route path="/favoritos"   element={
-              <PrivateRoute>
-                <VistaFavoritos recetas={recetas} toggleFav={toggleFav} favoritos={favoritos} />
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin"          element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
-            <Route path="/admin/users"    element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
-            <Route path="/admin/stats"    element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
-            <Route path="/admin/recipes"  element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
-            <Route path="/perfil"         element={<PrivateRoute><UserProfile /></PrivateRoute>} />
-            <Route path="/admin/imagenes" element={<PrivateRoute requireAdmin={true}><ImagenesAprobacion /></PrivateRoute>} />
-
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <VistaInicio
+                    recetas={recetas}
+                    cargandoRecetas={cargandoRecetas}
+                    toggleFav={toggleFav}
+                    favoritos={favoritos}
+                    cambiarCategoria={cambiarCategoria}
+                    categoriaActiva={categoriaActiva}
+                  />
+                }
+              />
+              <Route path="/login"                 element={<Login />} />
+              <Route path="/registro"              element={<Register />} />
+              <Route path="/google-callback"       element={<GoogleCallback />} />
+              <Route path="/recuperar"             element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/verificar-email"       element={<VerificarEmail />} />
+              <Route path="/contacto"              element={<VistaContacto />} />
+              <Route
+                path="/chatbot"
+                element={
+                  <VistaChatbot
+                    abrirFlotante={() => setRobotIAActivo(true)}
+                    chatProps={chatProps}
+                  />
+                }
+              />
+              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
+              <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
+              <Route path="/favoritos"   element={
+                <PrivateRoute>
+                  <VistaFavoritos recetas={recetas} toggleFav={toggleFav} favoritos={favoritos} />
+                </PrivateRoute>
+              } />
+              <Route path="/admin"          element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
+              <Route path="/admin/users"    element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
+              <Route path="/admin/stats"    element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
+              <Route path="/admin/recipes"  element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
+              <Route path="/perfil"         element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+              <Route path="/admin/imagenes" element={<PrivateRoute requireAdmin={true}><ImagenesAprobacion /></PrivateRoute>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </main>
 
         <Footer />
 
-        {/* ✅ chatProps compartido — mismo historial que VistaChatbot */}
-        {user && <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />}
+        {user && (
+          <Suspense fallback={null}>
+            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />
+          </Suspense>
+        )}
 
-        {mostrarTerminos && (
-          <ModalTerminos onAceptar={handleAceptarTerminos} esActualizacion={esActualizacion} />
-        )}
-        {mostrarCookies && (
-          <ModalCookies onAceptar={handleCookiesAceptadas} onRechazar={handleCookiesRechazadas} />
-        )}
-        {!mostrarTerminos && mostrarCompletarPerfil && (
-          <ModalCompletarPerfil onCompletado={handlePerfilCompletado} user={user} />
-        )}
+        <Suspense fallback={null}>
+          {mostrarTerminos && (
+            <ModalTerminos onAceptar={handleAceptarTerminos} esActualizacion={esActualizacion} />
+          )}
+          {mostrarCookies && (
+            <ModalCookies onAceptar={handleCookiesAceptadas} onRechazar={handleCookiesRechazadas} />
+          )}
+          {!mostrarTerminos && mostrarCompletarPerfil && (
+            <ModalCompletarPerfil onCompletado={handlePerfilCompletado} user={user} />
+          )}
+        </Suspense>
 
         <ToastContainer
           position="top-right"

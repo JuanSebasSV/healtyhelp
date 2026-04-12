@@ -97,13 +97,7 @@ const VistaChatbot = ({ abrirFlotante, chatProps }) => {
             ))}
           </div>
 
-          <div className="vistaChatbot__badge">
-            <span className="vistaChatbot__badgeDot" />
-            <div className="vistaChatbot__badgeTexto">
-              <strong>IA en línea</strong>
-              Respuestas en tiempo real
-            </div>
-          </div>
+
         </aside>
 
         <div className="vistaChatbot__chat">

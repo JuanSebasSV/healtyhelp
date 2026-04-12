@@ -1,10 +1,6 @@
-// ChatCore.jsx - UI compartida entre flotante (RobotIA) y página expandida (VistaChatbot)
 import React, { useRef, useEffect } from 'react';
 
-/* ── SVGs inline ─────────────────────────────────────────────────────────────
-   ✅ Definidos FUERA de ChatCore: React siempre ve el mismo tipo de componente
-   entre renders, por eso no hay re-montaje ni reset de estado.
-────────────────────────────────────────────────────────────────────────────── */
+/* ── Iconos ── */
 const IconoRobot = ({ size = 20, color = 'currentColor' }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -96,10 +92,7 @@ const IconoSemilla = ({ size = 14 }) => (
   </svg>
 );
 
-/* ── Sugerencias rápidas ─────────────────────────────────────────────────────
-   ✅ También fuera de ChatCore: es un valor constante que no necesita
-   recrearse en cada render.
-────────────────────────────────────────────────────────────────────────────── */
+/* ── Sugerencias ── */
 const sugerencias = [
   { icono: <IconoZanahoría size={13}/>, texto: 'Recetas para diabéticos' },
   { icono: <IconoCorazon size={13}/>, texto: 'Menú bajo en sodio' },
@@ -107,7 +100,7 @@ const sugerencias = [
   { icono: <IconoManzana size={13}/>, texto: 'Sin gluten' },
 ];
 
-/* ── Componente principal ────────────────────────────────────────────────── */
+/* ── Componente ── */
 const ChatCore = ({
   modoExpandido = false,
   chat = [],
@@ -121,17 +114,28 @@ const ChatCore = ({
   onMinimizar,
 }) => {
   const mensajesRef = useRef(null);
+  const prevChatLen = useRef(chat.length);
+
+  const setMensajesRef = (el) => {
+    if (el) el.scrollTop = 0;
+    mensajesRef.current = el;
+  };
 
   useEffect(() => {
-    if (mensajesRef.current) {
-      mensajesRef.current.scrollTop = mensajesRef.current.scrollHeight;
+    const el = mensajesRef.current;
+    if (!el) return;
+
+    const creció = chat.length > prevChatLen.current;
+    prevChatLen.current = chat.length;
+
+    if (creció || (cargando && chat.length > 0)) {
+      el.scrollTop = el.scrollHeight;
     }
   }, [chat, cargando]);
 
   return (
     <div className={`chatCore ${modoExpandido ? 'chatCore--expandido' : ''}`}>
 
-      {/* ── Orbes decorativos (solo flotante) ─────────────────── */}
       {!modoExpandido && (
         <div className="chatOrbes" aria-hidden="true">
           <div className="chatOrbe chatOrbe--1" />
@@ -140,7 +144,6 @@ const ChatCore = ({
         </div>
       )}
 
-      {/* ── Header ────────────────────────────────────────────── */}
       <div className="robotHeader">
         <div className="robotHeader__izq">
           <div className="robotHeader__avatar">
@@ -176,10 +179,7 @@ const ChatCore = ({
         </div>
       </div>
 
-      {/* ── Área de mensajes ─────────────────────────────────── */}
-      <div className="robotMensajes" ref={mensajesRef}>
-
-        {/* Bienvenida */}
+      <div className="robotMensajes" ref={setMensajesRef}>
         {chat.length === 0 && (
           <div className="chatBienvenida">
             <div className="chatBienvenida__icono">
@@ -204,7 +204,6 @@ const ChatCore = ({
           </div>
         )}
 
-        {/* Mensajes */}
         {chat.map((msg, i) => (
           <div key={i} className={`robotMensaje ${msg.tipo}`}>
             <div className="robotMensajeAvatar">
@@ -217,7 +216,6 @@ const ChatCore = ({
           </div>
         ))}
 
-        {/* Typing */}
         {cargando && (
           <div className="robotMensaje ia">
             <div className="robotMensajeAvatar"><IconoRobot size={14} color="currentColor"/></div>
@@ -230,7 +228,6 @@ const ChatCore = ({
         )}
       </div>
 
-      {/* ── Input ────────────────────────────────────────────── */}
       <div className="robotInput">
         <div className="robotInput__wrap">
           <textarea
@@ -252,7 +249,6 @@ const ChatCore = ({
         </div>
       </div>
 
-      {/* ── Footer ───────────────────────────────────────────── */}
       <div className="robotFooter">
         <IconoHoja size={11} />
         <small>Potenciado por IA · Solo orientación nutricional</small>

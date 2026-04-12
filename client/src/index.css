@@ -1,20 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&display=swap');
 
-/* index.css — Variables globales y estilos base */
-
-/* ============ RESET ============ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Forzar fuente global en TODOS los elementos incluyendo inputs y botones */
-*, *::before, *::after {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* ============ VARIABLES CSS ============ */
 :root {
   --verde-bosque: #1a4d2e;
   --verde-hoja:   #4f772d;
@@ -42,7 +36,6 @@
   --verde-progreso: #34d399;
   --verde-progreso-oscuro: #059669;
   --verde-profundo: #0a1a0f;
-  /* Gradientes del fondo animado */
   --fondo-grad-claro-medio: #2d5a3d;
   --fondo-oscuro-0: #0f1a14;
   --fondo-oscuro-50: #1a2820;
@@ -67,14 +60,12 @@
   --sombra:       0 4px 6px rgba(0, 0, 0, 0.1);
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
   --transicion:   all 0.3s ease;
-
   --page-px:  clamp(0.6rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
   --page-max: 1400px;
   --navbar-h: 64px;
 }
 
-/* ============ VARIABLES MODO OSCURO ============ */
 .modo-oscuro {
   --verde-bosque: #2d5a3d;
   --verde-hoja:   #6b9e4a;
@@ -88,19 +79,12 @@
   --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
-/* ============ BASE ============ */
 html, body {
   overflow-x: clip;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Scrollbar del navegador oculto globalmente — usamos barra custom en React */
-html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 html::-webkit-scrollbar,
 body::-webkit-scrollbar { display: none; }
 
@@ -109,18 +93,20 @@ body {
   color: var(--gris-oscuro);
   background: transparent;
   line-height: 1.6;
-  /* Evitar pixelado por composición GPU */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* SVGs nítidos en todos los monitores */
 svg {
   shape-rendering: geometricPrecision;
   text-rendering: optimizeLegibility;
 }
 
-/* ============ ESTRUCTURA APP ============ */
+@media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 96dpi) {
+  * {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+  }
+}
+
 .App {
   min-height: 100vh;
   display: flex;
@@ -139,16 +125,19 @@ svg {
   min-height: calc(100vh - var(--navbar-h));
 }
 
-/* Sin padding-top cuando es la página de inicio — el hero ocupa ese espacio */
-/* Cuando el contenido principal tiene la vista de inicio,
-   cancelar su padding-top para que el hero toque el navbar */
 .contenido-principal:has(.vistaInicio) {
   padding-top: 0;
   padding-left: 0;
   padding-right: 0;
 }
 
-/* En móvil añadir padding lateral al vistaInicio para que el contenido no toque los bordes */
+.contenido-principal:has(.vistaChatbot) {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+}
+
 @media (max-width: 900px) {
   .contenido-principal:has(.vistaInicio) {
     padding-left: 0.6rem;
@@ -156,7 +145,6 @@ svg {
   }
 }
 
-/* ============ GRID COMPARTIDO ============ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
@@ -165,7 +153,6 @@ svg {
   margin-bottom: clamp(1rem, 2.5vw, 2rem);
 }
 
-/* ============ MODAL OVERLAY ============ */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -177,6 +164,7 @@ svg {
   padding: clamp(1rem, 3vw, 2rem);
   animation: fadeIn 0.3s ease;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .modo-oscuro .modal-overlay { background: rgba(0, 0, 0, 0.9); }
 
@@ -200,7 +188,7 @@ svg {
   -webkit-backdrop-filter: blur(16px);
   color: var(--blanco);
   cursor: pointer;
-  transition: var(--transicion);
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   z-index: 2001;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   display: flex;
@@ -213,10 +201,7 @@ svg {
   width: 36px;
   height: 36px;
 }
-.modal-cerrar--izq svg {
-  width: 14px;
-  height: 14px;
-}
+.modal-cerrar--izq svg { width: 14px; height: 14px; }
 .modal-cerrar svg {
   width: 18px;
   height: 18px;
@@ -238,7 +223,6 @@ svg {
 .modo-oscuro .modal-cerrar:hover { background: rgba(247, 127, 0, 0.85); }
 .modo-oscuro .modal-cerrar:hover svg { stroke: var(--blanco); }
 
-/* ============ AUTH ============ */
 .vista-auth {
   min-height: 70vh;
   display: flex;
@@ -274,7 +258,7 @@ svg {
   border: 2px solid var(--gris-medio);
   border-radius: 10px;
   font-size: 1rem;
-  transition: var(--transicion);
+  transition: border-color 0.3s ease;
   background: var(--blanco);
   color: var(--negro);
 }
@@ -289,7 +273,6 @@ svg {
 .auth-card p span { color: var(--naranja); cursor: pointer; font-weight: 600; }
 .auth-card p span:hover { text-decoration: underline; }
 
-/* ============ BOTONES GLOBALES ============ */
 .btn-primario,
 .btn-secundario {
   padding: 0.75rem 1.5rem;
@@ -297,7 +280,7 @@ svg {
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   font-size: 1rem;
 }
 .btn-primario { background: var(--naranja); color: var(--blanco); box-shadow: var(--sombra); }
@@ -305,7 +288,6 @@ svg {
 .btn-secundario { background: transparent; color: var(--blanco-puro); border: 2px solid white; }
 .btn-secundario:hover { background: var(--blanco-puro); color: var(--naranja-oscuro); }
 
-/* ============ OJO EN INPUTS ============ */
 .inputWrapper { position: relative; display: flex; align-items: center; }
 .inputWrapper input { width: 100%; padding-right: 2.8rem; }
 .eyeButton {
@@ -317,7 +299,6 @@ svg {
 .eyeButton:hover { color: var(--gris-oscuro); }
 .eyeButton:focus { outline: none; }
 
-/* ============ ANIMACIONES ============ */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -335,9 +316,6 @@ svg {
   50%       { transform: translateY(-10px); }
 }
 
-/* ============ RESPONSIVE ============ */
-
-/* Todos los teléfonos incluyendo 360px — forzar 2 columnas siempre */
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -346,75 +324,10 @@ svg {
   .auth-card { padding: 1.5rem 1.25rem; }
 }
 
-/* Solo pantallas muy pequeñas (menos de 320px): 1 columna */
 @media (max-width: 319px) {
   .grid { grid-template-columns: 1fr !important; }
 }
 
-
-/* ============================================================
-   RENDERIZADO GLOBAL — aplica a todos los componentes
-   Cualquier archivo nuevo hereda estas mejoras automáticamente
-   ============================================================ */
-
-/* Fuentes suaves en todos los elementos */
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* En pantallas estándar (1x) el subpixel es más nítido */
-@media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 96dpi) {
-  * {
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: auto;
-  }
-}
-
-/* SVGs nítidos globalmente */
-svg {
-  shape-rendering: geometricPrecision;
-  text-rendering: optimizeLegibility;
-}
-
-/* Cualquier elemento con transform animado — capa GPU propia */
-*[class*="animado"],
-*[class*="hero"],
-*[class*="fondo"],
-*[class*="onda"] {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Elementos con will-change declarado — preparar capa antes del evento */
-[style*="transform"],
-[class*="tarjeta"],
-[class*="card"],
-[class*="modal"],
-[class*="btn"] {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Elementos con backdrop-filter — aislar para no pixelar vecinos */
-[class*="glass"],
-[class*="blur"],
-[class*="navbar"],
-[class*="nav-"],
-[class*="modal"] {
-  isolation: isolate;
-}
-
-/* will-change en elementos que sabemos que se animan */
-[class*="tarjeta"]:not(:has(*)):hover,
-[class*="btn"]:hover,
-[class*="catBtn"]:hover,
-[class*="filtroCard"]:hover {
-  will-change: transform;
-}
-
-/* ============ INPUT NUMBER — FLECHAS CUSTOM GLOBALES ============ */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -452,34 +365,22 @@ input[type="number"] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.45);
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   padding: 0;
 }
-.numero-flechas button:first-child {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
+.numero-flechas button:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 .numero-flechas button:hover {
   background: rgba(79, 119, 45, 0.3);
   color: rgba(167, 213, 136, 0.95);
 }
-.numero-flechas button:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
-}
-.numero-flechas button svg {
-  width: 10px;
-  height: 10px;
-  stroke: currentColor;
-  stroke-width: 2.5;
-}
+.numero-flechas button:disabled { opacity: 0.25; cursor: not-allowed; }
+.numero-flechas button svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; }
 
-/* Ocultar flechas en móvil — en pantallas pequeñas se ve raro */
 @media (max-width: 640px) {
   .numero-flechas { display: none; }
   .numero-wrapper input { padding-right: 1rem !important; }
 }
 
-/* ============ REQUISITOS CONTRASEÑA (visibles antes de escribir) ============ */
 .password-requisitos-previos {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -523,10 +424,5 @@ input[type="number"] { -moz-appearance: textfield; }
   transition: stroke 0.2s ease;
 }
 
-.password-requisitos-previos li.req-ok {
-  color: rgba(167, 213, 136, 0.9);
-}
-
-.password-requisitos-previos li.req-ok svg {
-  stroke: rgba(107, 158, 74, 0.9);
-}
+.password-requisitos-previos li.req-ok { color: rgba(167, 213, 136, 0.9); }
+.password-requisitos-previos li.req-ok svg { stroke: rgba(107, 158, 74, 0.9); }

@@ -1,5 +1,3 @@
-/* TarjetaReceta.css */
-
 .tarjetaReceta {
   position: relative;
   border-radius: 20px;
@@ -11,17 +9,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-
   background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
-  /* El borde izquierdo de color reemplaza al ::after — siempre sigue el border-radius */
   border: 1.5px solid rgba(255, 255, 255, 0.38);
   border-left: 4px solid var(--naranja);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  will-change: transform;
+  contain: layout style;
 }
-
-/* Eliminado ::after — el acento de color es ahora border-left */
 
 .tarjetaReceta:hover {
   transform: translateY(-10px) scale(1.015);
@@ -43,7 +39,6 @@
     0 0 0 1px rgba(247, 127, 0, 0.4);
 }
 
-/* ── Bloque imagen — independiente con su propio border-radius ── */
 .tarjetaImg {
   position: relative;
   height: 220px;
@@ -56,8 +51,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
   filter: brightness(0.92) saturate(1.08);
+  will-change: transform;
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
@@ -76,7 +72,6 @@
   pointer-events: none;
 }
 
-/* ── Botón favorito ── */
 .btnFav {
   position: absolute;
   top: 0.85rem;
@@ -89,7 +84,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +98,7 @@
   stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 2;
   fill: none;
-  transition: var(--transicion);
+  transition: fill 0.3s ease, stroke 0.3s ease;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
 }
 
@@ -117,7 +112,6 @@
 .btnFav.activo { background: rgba(220, 38, 38, 0.3); border-color: rgba(220, 38, 38, 0.6); }
 .btnFav.activo svg { fill: var(--rojo); stroke: var(--rojo); }
 
-/* ── Bloque info — independiente con su propio border-radius ── */
 .tarjetaInfo {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -155,7 +149,6 @@
 
 .modo-oscuro .tarjetaInfo p { color: rgba(200, 230, 180, 0.6); }
 
-/* ── Puntuación ── */
 .tarjetaPuntuacion {
   display: flex;
   align-items: center;
@@ -185,48 +178,33 @@
   color: rgba(255, 255, 255, 0.55);
 }
 .modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }
-/* ============================================================
-   RESPONSIVE — Solo teléfonos (320px – 767px)
-   No afecta tablets ni escritorio
-   ============================================================ */
 
 @media (max-width: 900px) {
-  /* Tarjeta ~170px de ancho en 360px viewport */
   .tarjetaReceta {
     padding: 0.4rem;
     gap: 0.4rem;
   }
-
   .tarjetaImg {
     height: 130px;
     border-radius: 8px;
   }
-
   .tarjetaInfo {
     padding: 0.5rem 0.5rem 0.5rem 0.65rem;
     gap: 0.25rem;
   }
-
   .tarjetaInfo h3 {
     font-size: 0.82rem;
     margin-bottom: 0.25rem;
     line-height: 1.2;
   }
-
-  /* Ocultar descripción en móvil — solo título y puntuación */
-  .tarjetaInfo p {
-    display: none;
-  }
-
+  .tarjetaInfo p { display: none; }
   .estrella-ico { font-size: 0.72rem; }
   .tarjeta-prom-txt { font-size: 0.67rem; }
-
   .tarjetaPuntuacion {
     padding-top: 0.4rem;
     gap: 0.3rem;
     margin-top: 0;
   }
-
   .btnFav {
     width: 28px;
     height: 28px;
@@ -234,30 +212,18 @@
     right: 0.4rem;
     border-radius: 8px;
   }
-
-  .btnFav svg {
-    width: 14px;
-    height: 14px;
-  }
+  .btnFav svg { width: 14px; height: 14px; }
 }
 
 @media (max-width: 360px) {
-  /* 1 columna: la imagen puede ser más alta */
-  .tarjetaImg {
-    height: 180px;
-  }
-
-  .tarjetaInfo h3 {
-    font-size: 0.9rem;
-  }
-
+  .tarjetaImg { height: 180px; }
+  .tarjetaInfo h3 { font-size: 0.9rem; }
   .tarjetaInfo p {
     font-size: 0.82rem;
     -webkit-line-clamp: 3;
   }
 }
 
-/* Botón seleccionar PDF */
 .btnSeleccionar {
   position: absolute;
   bottom: 0.85rem;
@@ -276,9 +242,7 @@
   justify-content: center;
   padding: 0;
   z-index: 3;
-  transition: background 0.2s ease,
-              border-color 0.2s ease,
-              transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btnSeleccionar svg {
@@ -296,20 +260,11 @@
   border-color: rgba(74, 182, 107, 0.6);
   transform: scale(1.13);
 }
-
-.btnSeleccionar:hover svg {
-  stroke: #4ab66b;
-}
-
+.btnSeleccionar:hover svg { stroke: #4ab66b; }
 .btnSeleccionar.activo {
   background: rgba(22, 163, 74, 0.35);
   border-color: rgba(22, 163, 74, 0.65);
 }
+.btnSeleccionar.activo svg { stroke: #4ade80; }
 
-.btnSeleccionar.activo svg {
-  stroke: #4ade80;
-}
-
-.tarjeta-seleccionada {
-  outline: 2px solid #16a34a;
-}
+.tarjeta-seleccionada { outline: 2px solid #16a34a; }
