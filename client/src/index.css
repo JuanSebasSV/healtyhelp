@@ -90,13 +90,16 @@
 
 /* ============ BASE ============ */
 html, body {
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  /* Suavizado de fuentes — evita texto pixelado */
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Scrollbar del navegador oculto globalmente — usamos barra custom en React */
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar { display: none; }

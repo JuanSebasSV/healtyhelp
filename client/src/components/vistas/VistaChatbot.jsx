@@ -49,37 +49,17 @@ const IconoChispa = ({ size = 14 }) => (
   </svg>
 );
 
-/* ── Datos del panel lateral ──────────────────────────────── */
 const capacidades = [
-  {
-    icono: <IconoCorazon size={14}/>,
-    titulo: 'Condiciones crónicas',
-    desc: 'Diabetes, hipertensión, colesterol',
-  },
-  {
-    icono: <IconoSemilla size={14}/>,
-    titulo: 'Dietas especiales',
-    desc: 'Vegano, keto, paleo, celíaco',
-  },
-  {
-    icono: <IconoZanahoria size={14}/>,
-    titulo: 'Recetas adaptadas',
-    desc: 'Ingredientes y sustitutos',
-  },
-  {
-    icono: <IconoEscudo size={14}/>,
-    titulo: 'Alergias e intolerancias',
-    desc: 'Gluten, lactosa, frutos secos',
-  },
-  {
-    icono: <IconoChispa size={14}/>,
-    titulo: 'Consejos nutricionales',
-    desc: 'Basados en tu perfil de salud',
-  },
+  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',    desc: 'Diabetes, hipertensión, colesterol' },
+  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',       desc: 'Vegano, keto, paleo, celíaco' },
+  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',     desc: 'Ingredientes y sustitutos' },
+  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias', desc: 'Gluten, lactosa, frutos secos' },
+  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',   desc: 'Basados en tu perfil de salud' },
 ];
 
 /* ── Componente ──────────────────────────────────────────── */
-const VistaChatbot = ({ abrirFlotante }) => {
+// ✅ Recibe chatProps desde App — mismo historial que RobotIA
+const VistaChatbot = ({ abrirFlotante, chatProps }) => {
   const navigate = useNavigate();
 
   const handleMinimizar = () => {
@@ -91,10 +71,7 @@ const VistaChatbot = ({ abrirFlotante }) => {
     <div className="vistaChatbot">
       <div className="vistaChatbot__inner">
 
-        {/* ── Panel lateral informativo ──────────────────── */}
         <aside className="vistaChatbot__panel">
-
-          {/* Marca */}
           <div className="vistaChatbot__marca">
             <div className="vistaChatbot__marcaIcono">
               <IconoHoja size={22}/>
@@ -107,7 +84,6 @@ const VistaChatbot = ({ abrirFlotante }) => {
 
           <div className="vistaChatbot__divisor" />
 
-          {/* Capacidades */}
           <div className="vistaChatbot__caps">
             <p className="vistaChatbot__capsTitle">Puedo ayudarte con</p>
             {capacidades.map((cap, i) => (
@@ -121,7 +97,6 @@ const VistaChatbot = ({ abrirFlotante }) => {
             ))}
           </div>
 
-          {/* Badge estado */}
           <div className="vistaChatbot__badge">
             <span className="vistaChatbot__badgeDot" />
             <div className="vistaChatbot__badgeTexto">
@@ -129,14 +104,13 @@ const VistaChatbot = ({ abrirFlotante }) => {
               Respuestas en tiempo real
             </div>
           </div>
-
         </aside>
 
-        {/* ── Área del chat ─────────────────────────────── */}
         <div className="vistaChatbot__chat">
           <ChatCore
             modoExpandido={true}
             onMinimizar={handleMinimizar}
+            {...chatProps}
           />
         </div>
 

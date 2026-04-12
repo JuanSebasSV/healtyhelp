@@ -48,14 +48,15 @@ import ModalCookies from './components/admin/ModalCookies';
 // API
 import api from './api/axios';
 
-// Hook de autenticación
+// Hooks
 import useAuth from './hooks/useAuth';
+import useChat from './hooks/useChat'; // ✅ hook compartido de chat
 
 // ─── Helpers de persistencia ──────────────────────────────────────────────────
 const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
 const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
 const TERMS_VERSION_KEY  = 'hh_terms_version';
-const COOKIE_MAX_AGE     = 60 * 60 * 24 * 365; // 1 año
+const COOKIE_MAX_AGE     = 60 * 60 * 24 * 365;
 
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
@@ -66,19 +67,15 @@ const setCookie = (name, value, maxAge = COOKIE_MAX_AGE) => {
   document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 };
 
-// ¿El usuario ya autorizó cookies persistentes?
 const cookiesConsentidas = () =>
   getCookie(COOKIE_CONSENT_KEY) === 'accepted' ||
   localStorage.getItem(COOKIE_CONSENT_KEY) === 'accepted';
 
-// Lee según nivel de consentimiento:
-// con consentimiento → cookie/localStorage | sin consentimiento → sessionStorage
 const getPersisted = (key) => {
   if (cookiesConsentidas()) return getCookie(key) || localStorage.getItem(key) || null;
   return sessionStorage.getItem(key) || null;
 };
 
-// Escribe según nivel de consentimiento
 const setPersisted = (key, value) => {
   if (cookiesConsentidas()) {
     setCookie(key, value);
@@ -88,7 +85,6 @@ const setPersisted = (key, value) => {
   }
 };
 
-// Al aceptar cookies: migra sessionStorage → cookies/localStorage permanentes
 const migrarSessionACookies = () => {
   [TERMS_ACCEPTED_KEY, TERMS_VERSION_KEY].forEach(key => {
     const val = sessionStorage.getItem(key);
@@ -103,12 +99,14 @@ const migrarSessionACookies = () => {
   sessionStorage.removeItem(COOKIE_CONSENT_KEY);
 };
 
-// Rutas donde no mostramos modales bloqueantes
 const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '/verificar-email'];
 
 // ─── AppContent ───────────────────────────────────────────────────────────────
 function AppContent() {
   const { user, checkAuth } = useAuth();
+
+  // ✅ Estado del chat compartido entre RobotIA y VistaChatbot
+  const chatProps = useChat();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
@@ -123,21 +121,15 @@ function AppContent() {
   const [recetas, setRecetas]             = useState([]);
   const [cargandoRecetas, setCargandoRecetas] = useState(true);
 
-  // ── Estado de modales ──
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
   const [terminosResueltos,      setTerminosResueltos]      = useState(false);
+  const [activeTermsVersion,     setActiveTermsVersion]     = useState(null);
 
-  // Versión activa de los términos (cargada desde el servidor al arrancar)
-  const [activeTermsVersion, setActiveTermsVersion] = useState(null);
-
-  // Bandera de sesión: evita que el useEffect reabra el modal
-  // después de que checkAuth() actualiza el user en el contexto.
   const terminosAceptadosEnSesion = useRef(false);
 
-  // ── Efectos de utilidad ──
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
     localStorage.setItem('modoOscuro', JSON.stringify(modoOscuro));
@@ -151,7 +143,6 @@ function AppContent() {
     cargarRecetas();
   }, []);
 
-  // ── Cargar versión activa de términos UNA sola vez al montar ──
   useEffect(() => {
     api.get('/terms')
       .then(({ data }) => setActiveTermsVersion(data.terms?.version ?? '1.0.0'))
@@ -170,7 +161,6 @@ function AppContent() {
     }
   };
 
-  // ── Lógica de cookies y términos ────────────────────────────────────────────
   useEffect(() => {
     if (!activeTermsVersion) return;
     if (terminosAceptadosEnSesion.current) return;
@@ -179,7 +169,6 @@ function AppContent() {
     const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
     if (esRutaLibre) { setTerminosResueltos(true); return; }
 
-    // Banner de cookies: SOLO para usuarios anónimos
     if (!user) {
       const yaDecidio = cookiesConsentidas() ||
                         sessionStorage.getItem(COOKIE_CONSENT_KEY) === 'dismissed';
@@ -187,14 +176,12 @@ function AppContent() {
     }
 
     evaluarTerminos(activeTermsVersion);
-
   }, [user, activeTermsVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const evaluarTerminos = (version) => {
     if (user) {
       const serverVersion = user.activeTermsVersion || version;
       const necesita = !user.termsAccepted || user.termsVersion !== serverVersion;
-
       if (necesita) {
         setEsActualizacion(user.termsAccepted === true && user.termsVersion !== serverVersion);
         setMostrarTerminos(true);
@@ -206,7 +193,6 @@ function AppContent() {
     } else {
       const localVersion  = getPersisted(TERMS_VERSION_KEY);
       const localAccepted = getPersisted(TERMS_ACCEPTED_KEY);
-
       if (localAccepted !== 'true' || localVersion !== version) {
         setEsActualizacion(localAccepted === 'true' && localVersion !== version);
         setMostrarTerminos(true);
@@ -224,25 +210,14 @@ function AppContent() {
     }
   };
 
-  // ── Handlers ──
-  const handleCookiesAceptadas = () => {
-    migrarSessionACookies();
-    setMostrarCookies(false);
-  };
-
-  const handleCookiesRechazadas = () => {
-    sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed');
-    setMostrarCookies(false);
-  };
+  const handleCookiesAceptadas  = () => { migrarSessionACookies(); setMostrarCookies(false); };
+  const handleCookiesRechazadas = () => { sessionStorage.setItem(COOKIE_CONSENT_KEY, 'dismissed'); setMostrarCookies(false); };
 
   const handleAceptarTerminos = async () => {
     terminosAceptadosEnSesion.current = true;
-
     const version = activeTermsVersion || '1.0.0';
-
     setPersisted(TERMS_ACCEPTED_KEY, 'true');
     setPersisted(TERMS_VERSION_KEY, version);
-
     if (user) {
       try {
         await api.post('/auth/accept-terms', { version });
@@ -252,7 +227,6 @@ function AppContent() {
         return;
       }
     }
-
     setMostrarTerminos(false);
     resolverTerminos();
   };
@@ -283,7 +257,6 @@ function AppContent() {
 
         <main className="contenido-principal">
           <Routes>
-            {/* Rutas públicas */}
             <Route
               path="/"
               element={
@@ -306,10 +279,15 @@ function AppContent() {
             <Route path="/contacto"              element={<VistaContacto />} />
             <Route
               path="/chatbot"
-              element={<VistaChatbot abrirFlotante={() => setRobotIAActivo(true)} />}
+              element={
+                // ✅ chatProps comparte el mismo estado que RobotIA
+                <VistaChatbot
+                  abrirFlotante={() => setRobotIAActivo(true)}
+                  chatProps={chatProps}
+                />
+              }
             />
 
-            {/* Rutas protegidas */}
             <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
             <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
             <Route path="/favoritos"   element={
@@ -318,42 +296,28 @@ function AppContent() {
               </PrivateRoute>
             } />
 
-            {/* Rutas admin */}
-            <Route path="/admin"         element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
-            <Route path="/admin/users"   element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
-            <Route path="/admin/stats"   element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
-            <Route path="/admin/recipes" element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
-            <Route path="/perfil"        element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+            <Route path="/admin"          element={<PrivateRoute requireAdmin={true}><Dashboard /></PrivateRoute>} />
+            <Route path="/admin/users"    element={<PrivateRoute requireAdmin={true}><UserList /></PrivateRoute>} />
+            <Route path="/admin/stats"    element={<PrivateRoute requireAdmin={true}><Stats /></PrivateRoute>} />
+            <Route path="/admin/recipes"  element={<PrivateRoute requireAdmin={true}><RecipeManagement /></PrivateRoute>} />
+            <Route path="/perfil"         element={<PrivateRoute><UserProfile /></PrivateRoute>} />
             <Route path="/admin/imagenes" element={<PrivateRoute requireAdmin={true}><ImagenesAprobacion /></PrivateRoute>} />
 
-            {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 
         <Footer />
 
-        {user && <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />}
+        {/* ✅ chatProps compartido — mismo historial que VistaChatbot */}
+        {user && <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />}
 
-        {/* ── Modales ── */}
-
-        {/* 1. Términos — bloquea navegación, corre independiente de cookies */}
         {mostrarTerminos && (
-          <ModalTerminos
-            onAceptar={handleAceptarTerminos}
-            esActualizacion={esActualizacion}
-          />
+          <ModalTerminos onAceptar={handleAceptarTerminos} esActualizacion={esActualizacion} />
         )}
-
-        {/* 2. Cookies — informativo, esquina inferior, solo usuarios anónimos */}
         {mostrarCookies && (
-          <ModalCookies
-            onAceptar={handleCookiesAceptadas}
-            onRechazar={handleCookiesRechazadas}
-          />
+          <ModalCookies onAceptar={handleCookiesAceptadas} onRechazar={handleCookiesRechazadas} />
         )}
-
-        {/* 3. Completar perfil (solo después de que los términos estén ok) */}
         {!mostrarTerminos && mostrarCompletarPerfil && (
           <ModalCompletarPerfil onCompletado={handlePerfilCompletado} user={user} />
         )}

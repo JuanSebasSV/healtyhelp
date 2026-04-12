@@ -1056,3 +1056,57 @@
 
 .recetasGrid-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .pdf-hint { font-size: 0.85rem; color: #16a34a; font-weight: 600; }
+/* ============ SCROLLBAR VERDE PERSONALIZADO ============ */
+.scrollbar-custom-track {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .scrollbar-custom-track {
+    display: block;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Zona visible de 8px pero área clickeable extendida con padding */
+    width: 8px;
+    padding-left: 16px;
+    height: 60vh;
+    border-radius: 999px;
+    z-index: 9999;
+    pointer-events: none;
+    box-sizing: content-box;
+  }
+
+  .scrollbar-custom-thumb {
+    position: absolute;
+    left: 16px; /* compensa el padding */
+    right: 0;
+    height: 30%;
+    top: 0;
+    transform: translateY(calc(var(--scroll-pct, 0) * 233%));
+    background: linear-gradient(
+      180deg,
+      #86efac 0%,
+      #4ade80 20%,
+      #22c55e 50%,
+      #16a34a 70%,
+      #22c55e 85%,
+      #4ade80 100%
+    );
+    border-radius: 999px;
+    box-shadow:
+      0 0 10px 3px rgba(74, 222, 128, 0.85),
+      0 0 24px 5px rgba(34, 197, 94, 0.55),
+      0 0 40px 8px rgba(22, 163, 74, 0.3);
+    transition: transform 0.06s linear;
+    cursor: grab;
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  .scrollbar-custom-thumb--dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+}
