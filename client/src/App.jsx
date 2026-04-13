@@ -12,27 +12,28 @@ import api from './api/axios';
 import useAuth from './hooks/useAuth';
 import useChat from './hooks/useChat';
 
-const UserProfile       = lazy(() => import('./components/profile/UserProfile'));
-const Login             = lazy(() => import('./components/auth/Login'));
-const Register          = lazy(() => import('./components/auth/Register'));
-const GoogleCallback    = lazy(() => import('./components/auth/GoogleCallback'));
-const ForgotPassword    = lazy(() => import('./components/auth/ForgotPassword'));
-const ResetPassword     = lazy(() => import('./components/auth/ResetPassword'));
-const VerificarEmail    = lazy(() => import('./components/auth/VerificarEmail'));
-const VistaInicio       = lazy(() => import('./components/inicio/VistaInicio'));
-const VistaSeguimiento  = lazy(() => import('./components/vistas/VistaSeguimiento'));
-const VistaFavoritos    = lazy(() => import('./components/vistas/VistaFavoritos'));
-const VistaContacto     = lazy(() => import('./components/vistas/VistaContacto'));
-const VistaChatbot      = lazy(() => import('./components/vistas/VistaChatbot'));
-const Dashboard         = lazy(() => import('./components/admin/Dashboard'));
-const UserList          = lazy(() => import('./components/admin/UserList'));
-const Stats             = lazy(() => import('./components/admin/Stats'));
-const RecipeManagement  = lazy(() => import('./components/admin/RecipeManagement'));
-const ImagenesAprobacion= lazy(() => import('./components/admin/ImagenesAprobacion'));
-const RobotIA           = lazy(() => import('./components/inicio/RobotIA'));
-const ModalTerminos     = lazy(() => import('./components/admin/ModalTerminos'));
+const UserProfile          = lazy(() => import('./components/profile/UserProfile'));
+const Login                = lazy(() => import('./components/auth/Login'));
+const Register             = lazy(() => import('./components/auth/Register'));
+const GoogleCallback       = lazy(() => import('./components/auth/GoogleCallback'));
+const ForgotPassword       = lazy(() => import('./components/auth/ForgotPassword'));
+const ResetPassword        = lazy(() => import('./components/auth/ResetPassword'));
+const VerificarEmail       = lazy(() => import('./components/auth/VerificarEmail'));
+const VistaInicio          = lazy(() => import('./components/inicio/VistaInicio'));
+const VistaSeguimiento     = lazy(() => import('./components/vistas/VistaSeguimiento'));
+const VistaFavoritos       = lazy(() => import('./components/vistas/VistaFavoritos'));
+const VistaContacto        = lazy(() => import('./components/vistas/VistaContacto'));
+const VistaChatbot         = lazy(() => import('./components/vistas/VistaChatbot'));
+const Dashboard            = lazy(() => import('./components/admin/Dashboard'));
+const UserList             = lazy(() => import('./components/admin/UserList'));
+const Stats                = lazy(() => import('./components/admin/Stats'));
+const RecipeManagement     = lazy(() => import('./components/admin/RecipeManagement'));
+const ImagenesAprobacion   = lazy(() => import('./components/admin/ImagenesAprobacion'));
+const RobotIA              = lazy(() => import('./components/inicio/RobotIA'));
+const ModalTerminos        = lazy(() => import('./components/admin/ModalTerminos'));
 const ModalCompletarPerfil = lazy(() => import('./components/admin/ModalCompletarPerfil'));
-const ModalCookies      = lazy(() => import('./components/admin/ModalCookies'));
+const ModalCookies         = lazy(() => import('./components/admin/ModalCookies'));
+const ModalGooglePassword  = lazy(() => import('./components/auth/ModalGooglePassword'));
 
 const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
 const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
@@ -90,19 +91,20 @@ function AppContent() {
     const saved = localStorage.getItem('modoOscuro');
     return saved ? JSON.parse(saved) : false;
   });
-  const [categoriaActiva, setCategoriaActiva] = useState('todas');
+  const [categoriaActiva, setCategoriaActiva]     = useState('todas');
   const [favoritos, setFavoritos] = useState(() => {
     const saved = localStorage.getItem('favoritos');
     return saved ? JSON.parse(saved) : [];
   });
-  const [robotIAActivo, setRobotIAActivo] = useState(false);
-  const [recetas, setRecetas]             = useState([]);
-  const [cargandoRecetas, setCargandoRecetas] = useState(true);
+  const [robotIAActivo, setRobotIAActivo]         = useState(false);
+  const [recetas, setRecetas]                     = useState([]);
+  const [cargandoRecetas, setCargandoRecetas]     = useState(true);
 
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
+  const [mostrarGooglePassword,  setMostrarGooglePassword]  = useState(false);
   const [activeTermsVersion,     setActiveTermsVersion]     = useState(null);
 
   const terminosAceptadosEnSesion = useRef(false);
@@ -138,6 +140,16 @@ function AppContent() {
       .then(({ data }) => setActiveTermsVersion(data.terms?.version ?? '1.0.0'))
       .catch(() => setActiveTermsVersion('1.0.0'));
   }, []);
+
+  useEffect(() => {
+    if (!user) { setMostrarGooglePassword(false); return; }
+    if (window.location.pathname.startsWith('/google-callback')) return;
+    if (user.googleId && user.hasPassword === false) {
+      setMostrarGooglePassword(true);
+    } else {
+      setMostrarGooglePassword(false);
+    }
+  }, [user]);
 
   const resolverTerminos = useCallback(() => {
     if (user && !user.profileComplete) {
@@ -175,7 +187,7 @@ function AppContent() {
 
     const ruta = window.location.pathname;
     const esRutaLibre = RUTAS_LIBRES.some(r => ruta.startsWith(r));
-    if (esRutaLibre) { setTerminosResueltos(true); return; }
+    if (esRutaLibre) return;
 
     if (!user) {
       const yaDecidio = cookiesConsentidas() ||
@@ -209,6 +221,11 @@ function AppContent() {
 
   const handlePerfilCompletado = useCallback(() => {
     setMostrarCompletarPerfil(false);
+    checkAuth();
+  }, [checkAuth]);
+
+  const handleGooglePasswordSuccess = useCallback(() => {
+    setMostrarGooglePassword(false);
     checkAuth();
   }, [checkAuth]);
 
@@ -289,13 +306,16 @@ function AppContent() {
         )}
 
         <Suspense fallback={null}>
-          {mostrarTerminos && (
+          {mostrarGooglePassword && (
+            <ModalGooglePassword onSuccess={handleGooglePasswordSuccess} />
+          )}
+          {!mostrarGooglePassword && mostrarTerminos && (
             <ModalTerminos onAceptar={handleAceptarTerminos} esActualizacion={esActualizacion} />
           )}
-          {mostrarCookies && (
+          {!mostrarGooglePassword && mostrarCookies && (
             <ModalCookies onAceptar={handleCookiesAceptadas} onRechazar={handleCookiesRechazadas} />
           )}
-          {!mostrarTerminos && mostrarCompletarPerfil && (
+          {!mostrarGooglePassword && !mostrarTerminos && mostrarCompletarPerfil && (
             <ModalCompletarPerfil onCompletado={handlePerfilCompletado} user={user} />
           )}
         </Suspense>

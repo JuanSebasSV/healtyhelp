@@ -1,40 +1,42 @@
 import { useState, useEffect } from 'react';
 import './ModalCookies.css';
 
-export const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
-export const COOKIE_MAX_AGE     = 60 * 60 * 24 * 365; // 1 año en segundos
+export const COOKIE_KEY   = 'hh_cookie_consent';
+export const COOKIE_AGE   = 60 * 60 * 24 * 365;
 
-/** Lee una cookie por nombre */
 export const getCookie = (name) => {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[1]) : null;
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
 };
 
-/** Escribe una cookie persistente (sobrevive Ctrl+Shift+R) */
-export const setCookie = (name, value, maxAge = COOKIE_MAX_AGE) => {
+export const setCookie = (name, value, maxAge = COOKIE_AGE) => {
   document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 };
 
-const ModalCookies = ({ onAceptar, onRechazar }) => {
-  const [visible, setVisible] = useState(false);
+export const cookiesAceptadas = () =>
+  getCookie(COOKIE_KEY) === 'accepted' || localStorage.getItem(COOKIE_KEY) === 'accepted';
+
+const ModalCookies = ({ onAceptar }) => {
+  const [visible,  setVisible]  = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 
   useEffect(() => {
-    // Pequeño delay para que no aparezca antes que la página termine de pintar
     const t = setTimeout(() => setVisible(true), 600);
     return () => clearTimeout(t);
   }, []);
 
   const aceptar = () => {
     setSaliendo(true);
-    setCookie(COOKIE_CONSENT_KEY, 'accepted');
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted'); // respaldo
+    setCookie(COOKIE_KEY, 'accepted');
+    localStorage.setItem(COOKIE_KEY, 'accepted');
     setTimeout(() => onAceptar(), 400);
   };
 
   const rechazar = () => {
     setSaliendo(true);
-    setTimeout(() => onRechazar(), 400);
+    setTimeout(() => {
+      window.location.href = 'about:blank';
+    }, 400);
   };
 
   if (!visible) return null;
@@ -61,11 +63,14 @@ const ModalCookies = ({ onAceptar, onRechazar }) => {
         </div>
 
         <div className="cookies-texto">
-          <h3>Usamos cookies</h3>
+          <h3>Cookies necesarias</h3>
           <p>
-            Healthy Help usa cookies esenciales para recordar tus preferencias y garantizar
-            que no tengas que aceptar los Términos y Condiciones más de una vez.
-            Sin cookies no podemos ofrecerte esa experiencia.
+            Healthy Help <strong>requiere cookies funcionales</strong> para operar correctamente.
+            Las usamos para recordar tus preferencias de dieta, el estado de los Términos y
+            Condiciones, y tu sesión. <strong>Sin ellas la aplicación no puede funcionar.</strong>
+          </p>
+          <p className="cookies-aviso-critico">
+            Si rechazas o cierras este aviso serás redirigido fuera de la aplicación.
           </p>
         </div>
 
@@ -75,13 +80,12 @@ const ModalCookies = ({ onAceptar, onRechazar }) => {
                  stroke="currentColor" strokeWidth="2.5">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            Aceptar cookies
+            Aceptar y continuar
+          </button>
+          <button className="cookies-btn-rechazar" onClick={rechazar}>
+            Salir
           </button>
         </div>
-
-        <p className="cookies-nota">
-          Al continuar usando la app, aceptas implícitamente el uso de cookies funcionales.
-        </p>
       </div>
     </div>
   );

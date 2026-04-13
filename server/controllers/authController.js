@@ -7,7 +7,6 @@ const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
 
-// ── Transporter reutilizable ──
 const crearTransporter = () => nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
@@ -15,7 +14,6 @@ const crearTransporter = () => nodemailer.createTransport({
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
 
-// ── Plantilla base de email ──
 const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizaste esta acción, ignora este correo.' }) => `
 <!DOCTYPE html>
 <html lang="es">
@@ -24,64 +22,65 @@ const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizas
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1f13;padding:40px 16px;">
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-
-        <!-- Logo -->
         <tr><td align="center" style="padding-bottom:24px;">
           <div style="display:inline-block;background:linear-gradient(135deg,#1a4d2e,#4f772d);border-radius:14px;padding:12px 24px;">
             <span style="color:#fff;font-size:20px;font-weight:700;font-family:Georgia,serif;">🌿 Healthy Help</span>
           </div>
         </td></tr>
-
-        <!-- Card -->
         <tr><td style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:36px 32px;">
           <h1 style="color:#fff;font-size:24px;font-family:Georgia,serif;margin:0 0 6px;text-align:center;">${titulo}</h1>
           <p style="color:rgba(255,255,255,0.5);font-size:13px;text-align:center;margin:0 0 28px;">${subtitulo}</p>
           ${contenido}
         </td></tr>
-
-        <!-- Footer -->
         <tr><td align="center" style="padding-top:20px;">
           <p style="color:rgba(255,255,255,0.22);font-size:12px;margin:0;">${footerTexto}</p>
           <p style="color:rgba(255,255,255,0.12);font-size:11px;margin:5px 0 0;">© Healthy Help — Cuida tu salud con confianza</p>
         </td></tr>
-
       </table>
     </td></tr>
   </table>
 </body>
 </html>`;
 
-// ── Helper: objeto user seguro para devolver al cliente ──
-// ✅ FIX: incluye termsVersion en TODAS las respuestas
-const buildUserResponse = (user) => ({
-  id:              user._id,
-  name:            user.name,
-  email:           user.email,
-  role:            user.role,
-  avatar:          user.avatar,
-  googleId:        user.googleId,
-  isVerified:      user.isVerified || false,
-  isSuperAdmin:    user.isSuperAdmin || false,
-  age:             user.age,
-  weight:          user.weight,
-  height:          user.height,
-  termsAccepted:   user.termsAccepted  || false,
-  termsVersion:    user.termsVersion   || '',   // ✅ antes faltaba en login y verifyEmail
-  profileComplete: user.profileComplete || false,
-  createdAt:       user.createdAt
-});
+const buildUserResponse = (user) => {
+  const obj = {
+    id:              user._id,
+    name:            user.name,
+    email:           user.email,
+    role:            user.role,
+    avatar:          user.avatar,
+    googleId:        user.googleId,
+    isVerified:      user.isVerified      || false,
+    isSuperAdmin:    user.isSuperAdmin    || false,
+    age:             user.age,
+    weight:          user.weight,
+    height:          user.height,
+    termsAccepted:   user.termsAccepted   || false,
+    termsVersion:    user.termsVersion    || '',
+    profileComplete: user.profileComplete || false,
+    createdAt:       user.createdAt
+  };
+  if (user.password !== undefined) obj.hasPassword = !!user.password;
+  return obj;
+};
 
-// ============================================================
-// REGISTRO — genera código de verificación y envía email
-// ============================================================
 const validarNombre = (name) => {
   if (!name || name.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
-  if (name.trim().length > 50) return 'El nombre es muy largo';
+  if (name.trim().length > 50)         return 'El nombre es muy largo';
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) return 'El nombre solo puede contener letras';
-  if (/(.)\1{2,}/.test(name)) return 'El nombre no puede tener letras repetidas consecutivamente';
+  if (/(.)\1{2,}/.test(name))          return 'El nombre no puede tener letras repetidas consecutivamente';
   return null;
 };
 
+const validarPassword = (password) => {
+  if (!password || password.length < 8) return 'Debe tener al menos 8 caracteres';
+  if (!/[a-z]/.test(password))          return 'Debe contener al menos una letra minúscula';
+  if (!/[A-Z]/.test(password))          return 'Debe contener al menos una letra mayúscula';
+  if (!/\d/.test(password))             return 'Debe contener al menos un número';
+  return null;
+};
+
+// REGISTRO
 exports.register = async (req, res) => {
   try {
     const { name, email, password, age, weight, height } = req.body;
@@ -91,8 +90,8 @@ exports.register = async (req, res) => {
 
     const edadNum = parseInt(age, 10);
     if (!age || isNaN(edadNum)) return res.status(400).json({ error: 'La edad es requerida' });
-    if (edadNum < 18) return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
-    if (edadNum > 100) return res.status(400).json({ error: 'La edad máxima permitida es 100 años' });
+    if (edadNum < 18)           return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
+    if (edadNum > 100)          return res.status(400).json({ error: 'La edad máxima permitida es 100 años' });
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -119,13 +118,11 @@ exports.register = async (req, res) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     await User.create({
-      name,
-      email,
-      password,
+      name, email, password,
       age: edadNum,
       ...(weight && { weight: parseFloat(weight) }),
       ...(height && { height: parseFloat(height) }),
-      isVerified: false,
+      isVerified:         false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),
       verificationExpire: Date.now() + 15 * 60 * 1000
     });
@@ -138,13 +135,11 @@ exports.register = async (req, res) => {
       email,
       message: 'Cuenta creada. Revisa tu correo para verificar.'
     });
-
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// ── Enviar código de verificación ──
 async function enviarCodigoVerificacion(email, name, code) {
   const transporter = crearTransporter();
   const digitos = code.split('').map(d =>
@@ -172,9 +167,7 @@ async function enviarCodigoVerificacion(email, name, code) {
   });
 }
 
-// ============================================================
 // VERIFICAR EMAIL
-// ============================================================
 exports.verifyEmail = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -190,50 +183,35 @@ exports.verifyEmail = async (req, res) => {
 
     if (!user) return res.status(400).json({ error: 'Código inválido o expirado' });
 
-    user.isVerified        = true;
+    user.isVerified         = true;
     user.verificationCode   = undefined;
     user.verificationExpire = undefined;
     await user.save({ validateBeforeSave: false });
 
     const token = generateToken(user._id);
-    res.json({
-      success: true,
-      token,
-      user: buildUserResponse(user) // ✅ FIX: antes no incluía termsVersion
-    });
+    res.json({ success: true, token, user: buildUserResponse(user) });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// ============================================================
-// GET ME — perfil del usuario autenticado
-// ============================================================
+// PERFIL DEL USUARIO AUTENTICADO
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select('+password');
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    // ✅ Incluir la versión activa de términos para que el frontend pueda comparar
     const TermsDocument = require('../models/TermsDocument');
     const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 }).select('version');
     const activeTermsVersion = activeTerms?.version || '1.0.0';
 
-    res.json({
-      success: true,
-      user: {
-        ...buildUserResponse(user),
-        activeTermsVersion // ✅ el frontend lo usa en App.jsx para la comparación
-      }
-    });
+    res.json({ success: true, user: { ...buildUserResponse(user), activeTermsVersion } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// ============================================================
-// ACCEPT TERMS — marca en BD que el usuario aceptó la versión activa
-// ============================================================
+// ACEPTAR TÉRMINOS
 exports.acceptTerms = async (req, res) => {
   try {
     const { version } = req.body;
@@ -241,11 +219,7 @@ exports.acceptTerms = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      {
-        termsAccepted:   true,
-        termsVersion:    version,
-        termsAcceptedAt: new Date()
-      },
+      { termsAccepted: true, termsVersion: version, termsAcceptedAt: new Date() },
       { new: true }
     );
 
@@ -255,9 +229,7 @@ exports.acceptTerms = async (req, res) => {
   }
 };
 
-// ============================================================
-// COMPLETE PROFILE
-// ============================================================
+// COMPLETAR PERFIL
 exports.completeProfile = async (req, res) => {
   try {
     const { age, weight, height } = req.body;
@@ -285,9 +257,7 @@ exports.completeProfile = async (req, res) => {
   }
 };
 
-// ============================================================
-// LOGIN — con bloqueo por intentos
-// ============================================================
+// LOGIN
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -305,8 +275,12 @@ exports.login = async (req, res) => {
     }
 
     if (user.googleId && !user.password) {
-      return res.status(401).json({
-        error: 'Esta cuenta usa Google para iniciar sesión. Usa el botón "Continuar con Google".'
+      const token = generateToken(user._id);
+      return res.status(200).json({
+        needsGooglePassword: true,
+        token,
+        user: buildUserResponse(user),
+        message: 'Esta cuenta fue creada con Google. Crea una contraseña para iniciar sesión también con tu correo.'
       });
     }
 
@@ -340,15 +314,35 @@ exports.login = async (req, res) => {
 
     await user.resetLoginAttempts();
     const token = generateToken(user._id);
-
-    // ✅ FIX: buildUserResponse incluye termsVersion (antes faltaba)
     res.json({ success: true, token, user: buildUserResponse(user) });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// ── Email de alerta de bloqueo ──
+// ESTABLECER CONTRASEÑA EN CUENTA GOOGLE
+exports.setGooglePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    const pwdError = validarPassword(password);
+    if (pwdError) return res.status(400).json({ error: pwdError });
+
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user)          return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!user.googleId) return res.status(400).json({ error: 'Esta ruta es exclusiva para cuentas de Google' });
+    if (user.password)  return res.status(400).json({ error: 'Esta cuenta ya tiene contraseña establecida' });
+
+    user.password = password;
+    await user.save();
+
+    const token = generateToken(user._id);
+    res.json({ success: true, token, user: buildUserResponse(user) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 async function enviarAlertaBloqueo(email, name) {
   const transporter = crearTransporter();
   const resetUrl = `${process.env.FRONTEND_URL}/recuperar`;
@@ -370,7 +364,7 @@ async function enviarAlertaBloqueo(email, name) {
           Hola <strong style="color:#fff;">${name}</strong>,
         </p>
         <p style="color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin:0 0 24px;">
-          Tu cuenta ha sido bloqueada temporalmente por <strong style="color:#f77f00;">15 minutos</strong> 
+          Tu cuenta ha sido bloqueada temporalmente por <strong style="color:#f77f00;">15 minutos</strong>
           debido a múltiples intentos de inicio de sesión fallidos.
           Si fuiste tú, espera y vuelve a intentarlo. Si no fuiste tú, te recomendamos cambiar tu contraseña.
         </p>
@@ -384,9 +378,7 @@ async function enviarAlertaBloqueo(email, name) {
   });
 }
 
-// ============================================================
 // OLVIDÉ CONTRASEÑA
-// ============================================================
 exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -416,7 +408,7 @@ exports.forgotPassword = async (req, res) => {
             Hola <strong style="color:#fff;">${user.name}</strong>,
           </p>
           <p style="color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin:0 0 28px;">
-            Recibimos una solicitud para restablecer tu contraseña. 
+            Recibimos una solicitud para restablecer tu contraseña.
             Este enlace expira en <strong style="color:#f77f00;">30 minutos</strong>.
           </p>
           <div style="text-align:center;margin-bottom:24px;">
@@ -432,7 +424,6 @@ exports.forgotPassword = async (req, res) => {
     });
 
     res.json({ success: true, message: 'Email enviado' });
-
   } catch (error) {
     try {
       const user = await User.findOne({ email: req.body.email });
@@ -447,9 +438,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// ============================================================
 // RESETEAR CONTRASEÑA
-// ============================================================
 exports.resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -461,12 +450,10 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) return res.status(400).json({ error: 'Token inválido o expirado. Solicita un nuevo enlace.' });
 
-    const pwd = req.body.password || '';
-    if (!pwd || pwd.length < 8) {
-      return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
-    }
+    const pwdError = validarPassword(req.body.password || '');
+    if (pwdError) return res.status(400).json({ error: pwdError });
 
-    user.password            = pwd;
+    user.password            = req.body.password;
     user.resetPasswordToken  = undefined;
     user.resetPasswordExpire = undefined;
     user.loginAttempts       = 0;
@@ -480,16 +467,14 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// ============================================================
 // REENVIAR CÓDIGO
-// ============================================================
 exports.resendCode = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user)            return res.status(404).json({ error: 'Usuario no encontrado' });
-    if (user.isVerified)  return res.status(400).json({ error: 'Esta cuenta ya está verificada' });
+    if (!user)           return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (user.isVerified) return res.status(400).json({ error: 'Esta cuenta ya está verificada' });
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     user.verificationCode   = crypto.createHash('sha256').update(code).digest('hex');

@@ -4,10 +4,12 @@ import { toast } from 'react-toastify';
 import './Login.css';
 import { useAuth } from '../../hooks/useAuth';
 import { validateLoginForm } from '../../utils/validation';
+import ModalGooglePassword from './ModalGooglePassword';
 
 const Login = () => {
   const navigate  = useNavigate();
   const { login } = useAuth();
+  const [googlePasswordData, setGooglePasswordData] = useState(null);
 
   const [formData, setFormData] = useState(() => {
     try {
@@ -68,6 +70,12 @@ const Login = () => {
     setErrors({});
 
     const result = await login({ email: formData.email, password: formData.password });
+
+    if (result.needsGooglePassword) {
+      setGooglePasswordData({ token: result.token });
+      setLoading(false);
+      return;
+    }
 
     if (result.success) {
       localStorage.removeItem('accountLockedUntil');
@@ -189,6 +197,17 @@ const Login = () => {
 
         </form>
       </div>
+
+      {googlePasswordData && (
+        <ModalGooglePassword
+          token={googlePasswordData.token}
+          onSuccess={() => {
+            setGooglePasswordData(null);
+            localStorage.removeItem('login_email_draft');
+            navigate('/');
+          }}
+        />
+      )}
     </div>
   );
 };
