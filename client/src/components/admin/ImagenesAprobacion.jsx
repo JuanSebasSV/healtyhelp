@@ -1,5 +1,5 @@
 // components/admin/ImagenesAprobacion.jsx
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './ImagenesAprobacion.css';
@@ -106,17 +106,39 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
   );
 };
 
+/* ── Helper: mapea un item crudo del API al shape interno ── */
+const mapItem = (img) => ({
+  _id:             `${img.recipeId}_${img.resenaId}`,
+  recipeId:        img.recipeId,
+  resenaId:        img.resenaId,
+  userId:          img.userId,
+  url:             img.imagenUrl,
+  estado:          img.imagenEstado,
+  userName:        img.userName,
+  recetaNombre:    img.recipeNombre,
+  comentarioTexto: img.texto,
+  creadoEn:        img.createdAt,
+});
+
 /* ── Componente principal ── */
 const ImagenesAprobacion = ({ onCambio }) => {
+  // Cache de todos los estados — se llena con UN solo batch de 3 requests
+  const cacheRef = useRef({ pendiente: null, aprobada: null, rechazada: null });
+
   const [imagenes,       setImagenes]       = useState([]);
   const [cargando,       setCargando]       = useState(true);
   const [filtro,         setFiltro]         = useState('pendiente');
   const [totalPorEstado, setTotalPorEstado] = useState({ pendiente: 0, aprobada: 0, rechazada: 0 });
   const [procesando,     setProcesando]     = useState(null);
   const [imagenModal,    setImagenModal]    = useState(null);
-  const [modalBaneo,     setModalBaneo]     = useState(null); // imagen target para banear
+  const [modalBaneo,     setModalBaneo]     = useState(null);
 
-  const cargar = useCallback(async () => {
+  /**
+   * cargarTodo — hace las 3 peticiones en paralelo y rellena el caché.
+   * Solo se llama en el mount inicial y después de cada acción (aprobar/rechazar).
+   * Cambiar el filtro NO dispara esta función.
+   */
+  const cargarTodo = useCallback(async () => {
     setCargando(true);
     try {
       const [pendRes, aprobRes, rechRes] = await Promise.all([
@@ -125,41 +147,61 @@ const ImagenesAprobacion = ({ onCambio }) => {
         api.get('/admin/imagenes-resenas?estado=rechazada&limit=100'),
       ]);
 
-      setTotalPorEstado({
-        pendiente: pendRes.data.pagination?.total ?? 0,
-        aprobada:  aprobRes.data.pagination?.total ?? 0,
-        rechazada: rechRes.data.pagination?.total ?? 0,
-      });
+      const pendItems = (pendRes.data.items  ?? []).map(mapItem);
+      const aprobItems= (aprobRes.data.items ?? []).map(mapItem);
+      const rechItems = (rechRes.data.items  ?? []).map(mapItem);
 
-      const mapaItems = {
-        pendiente: pendRes.data.items  ?? [],
-        aprobada:  aprobRes.data.items ?? [],
-        rechazada: rechRes.data.items  ?? [],
+      // Guardamos en caché
+      cacheRef.current = {
+        pendiente: pendItems,
+        aprobada:  aprobItems,
+        rechazada: rechItems,
       };
 
-      setImagenes(
-        (mapaItems[filtro] ?? []).map(img => ({
-          _id:             `${img.recipeId}_${img.resenaId}`,
-          recipeId:        img.recipeId,
-          resenaId:        img.resenaId,
-          userId:          img.userId,
-          url:             img.imagenUrl,
-          estado:          img.imagenEstado,
-          userName:        img.userName,
-          recetaNombre:    img.recipeNombre,
-          comentarioTexto: img.texto,
-          creadoEn:        img.createdAt,
-        }))
-      );
+      // ── Contadores ──────────────────────────────────────────────────────────
+      // Usamos items.length como fuente de verdad (refleja los registros reales
+      // que devuelve el backend en este momento, sin huérfanos ni borrados).
+      // Solo caemos en pagination.total si el backend truncó la lista (>100).
+      const totalPend  = pendRes.data.pagination?.total  > pendItems.length
+        ? pendRes.data.pagination.total   : pendItems.length;
+      const totalAprob = aprobRes.data.pagination?.total > aprobItems.length
+        ? aprobRes.data.pagination.total  : aprobItems.length;
+      const totalRech  = rechRes.data.pagination?.total  > rechItems.length
+        ? rechRes.data.pagination.total   : rechItems.length;
+
+      setTotalPorEstado({
+        pendiente: totalPend,
+        aprobada:  totalAprob,
+        rechazada: totalRech,
+      });
+
+      // Mostramos el filtro activo actual desde el caché recién cargado
+      setImagenes(cacheRef.current[filtro] ?? []);
+
     } catch (error) {
       toast.error('Error cargando imágenes');
       console.error(error);
     } finally {
       setCargando(false);
     }
-  }, [filtro]);
+  }, []); // ← sin dependencia en `filtro`: cargarTodo no se re-crea al cambiar tab
 
-  useEffect(() => { cargar(); }, [cargar]);
+  // Mount inicial — una sola llamada
+  useEffect(() => {
+    cargarTodo();
+  }, [cargarTodo]);
+
+  /**
+   * Cambio de filtro — SOLO lee del caché, sin petición al servidor.
+   * Si por algún motivo el caché aún no está listo, dispara cargarTodo.
+   */
+  useEffect(() => {
+    if (cacheRef.current[filtro] !== null) {
+      setImagenes(cacheRef.current[filtro]);
+    } else {
+      cargarTodo();
+    }
+  }, [filtro, cargarTodo]);
 
   const handleAprobar = async (id) => {
     const img = imagenes.find(i => i._id === id);
@@ -168,7 +210,9 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar`);
       toast.success('✅ Imagen aprobada');
-      cargar();
+      // Invalidar caché y recargar todo para reflejar el cambio
+      cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
+      await cargarTodo();
       onCambio?.();
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al aprobar'}`);
@@ -185,7 +229,9 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar`);
       toast.success('Imagen rechazada');
-      cargar();
+      // Invalidar caché y recargar todo
+      cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
+      await cargarTodo();
       onCambio?.();
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al rechazar'}`);
