@@ -1,33 +1,37 @@
-/* TarjetaReceta.css — Tierra natural, borde izquierdo verde */
- 
 .tarjetaReceta {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   background: #f5f0e8;
   border: 1.5px solid #ddd5c0;
-  border-left: 5px solid #2d6a52;
+  /* BORRA ESTA LÍNEA: border-left: 5px solid #2d6a52; */
   box-shadow: 0 2px 14px rgba(80, 60, 20, 0.08);
-  margin-top: 0;
+  transition: all 0.3s ease;
 }
- 
-.tarjetaReceta:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(80, 60, 20, 0.15);
-  border-color: #c8b99a;
-  border-left-color: #4d9e7a;
+
+/* CREA LA FRANJA VERDE AQUÍ */
+.tarjetaReceta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px; /* El grosor que quieres */
+  height: 100%;
+  background-color: #2d6a52;
+  z-index: 10; /* Para que esté por encima de la info */
+  pointer-events: none;
 }
- 
-.modo-oscuro .tarjetaReceta {
-  background: #1e1a12;
-  border-color: #3a3020;
-  border-left-color: #4d9e7a;
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+
+/* CAMBIO DE COLOR EN HOVER */
+.tarjetaReceta:hover::before {
+  background-color: #4d9e7a;
+}
+
+/* AJUSTE PARA MODO OSCURO */
+.modo-oscuro .tarjetaReceta::before {
+  background-color: #4d9e7a;
 }
  
 .modo-oscuro .tarjetaReceta:hover {
@@ -229,3 +233,39 @@
   .tarjetaInfo h3 { font-size: 0.85rem; }
 }
  
+.tarjeta-tiempo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #7a6848;
+  background: rgba(45, 106, 82, 0.1);
+  border: 1px solid rgba(45, 106, 82, 0.2);
+  border-radius: 50px;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+}
+
+.tarjeta-tiempo svg {
+  stroke: #2d6a52;
+  flex-shrink: 0;
+}
+
+.modo-oscuro .tarjeta-tiempo {
+  color: #a89068;
+  background: rgba(78, 158, 122, 0.12);
+  border-color: rgba(78, 158, 122, 0.25);
+}
+
+.modo-oscuro .tarjeta-tiempo svg {
+  stroke: #4d9e7a;
+}
+
+@media (max-width: 900px) {
+  .tarjeta-tiempo {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+  }
+}

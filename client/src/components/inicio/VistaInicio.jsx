@@ -15,11 +15,31 @@ const imagenesHero = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp',
 ];
 
+const tips = [
+  'Hidratarte bien mejora la digestión y la absorción de nutrientes.',
+  'Incluir proteína en el desayuno ayuda a controlar el apetito durante el día.',
+  'Los colores en tu plato indican variedad de nutrientes — busca al menos 3 colores.',
+  'Masticar despacio mejora la digestión y ayuda a sentirte satisfecho antes.',
+  'Las legumbres son una excelente fuente de proteína vegetal y fibra.',
+  'Cocinar en casa te da control total sobre los ingredientes de tu dieta.',
+  'El aceite de oliva extra virgen es mejor consumirlo crudo para preservar sus propiedades.',
+];
+const tipDelDia = tips[new Date().getDay() % tips.length];
+
 const _preloaded = imagenesHero.map(src => {
   const img = new Image();
   img.src = src;
   return img;
 });
+
+const normalizarTexto = (texto) => {
+  return texto
+    ? texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+    : "";
+};
 
 const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva }) => {
   const [filtrosActivos,    setFiltrosActivos]    = useState([]);
@@ -27,6 +47,8 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);  // IDs seleccionadas para PDF
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroTiempo, setFiltroTiempo] = useState(null);
   const transitandoRef = React.useRef(false);
   const navigate = useNavigate();
 
@@ -117,12 +139,32 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
 
   const recetasFiltradas = recetas.filter(r => {
     const coincideCategoria = categoriaActiva === 'todas' || r.cat === categoriaActiva;
-    if (filtrosActivos.length === 0) return coincideCategoria;
-    return coincideCategoria && filtrosActivos.every(f => (r.salud || []).includes(f));
+    
+    // --- NUEVA LÓGICA DE BÚSQUEDA ---
+    const busquedaLimpia = normalizarTexto(busqueda);
+    const coincideBusqueda = busqueda.trim() === '' ||
+      normalizarTexto(r.nombre).includes(busquedaLimpia) ||
+      normalizarTexto(r.desc).includes(busquedaLimpia);
+    // --------------------------------
+
+    const coincideSalud = filtrosActivos.length === 0 ||
+    filtrosActivos.every(f => (r.salud || []).includes(f));
+
+  // ── Filtro tiempo ──
+  const t = r.tiempoMinutos || 0;
+  const coincideTiempo =
+    !filtroTiempo ? true :
+    filtroTiempo === 'menos15' ? (t > 0 && t < 15) :
+    filtroTiempo === '15a30'   ? (t >= 15 && t <= 30) :
+    filtroTiempo === 'mas30'   ? (t > 30) : true;
+
+  return coincideCategoria && coincideBusqueda && coincideSalud && coincideTiempo;
   });
 
+
+
   return (
-    <div className="vistaInicio tema-inicio">
+    <div className="vistaInicio ">
 
       {/* ── Hero ── */}
       <div className="hero">
@@ -179,6 +221,17 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
                       <span className="hero-stat__num">100%</span>
                       <span className="hero-stat__label">Saludable</span>
                     </div>
+              </div>
+               {/* Tip del día */}
+              <div className="widget-tip">
+                <div className="widget-tip__header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a7 7 0 0 1 7 7c0 3.87-2.69 6-4 7H9c-1.31-1-4-3.13-4-7a7 7 0 0 1 7-7z"/>
+                    <path d="M9 21h6M10 17v1M14 17v1"/>
+                  </svg>
+                  <span>Tip del día</span>
+                </div>
+                <p className="widget-tip__texto">{tipDelDia}</p>
               </div>
             </aside>
                    
@@ -238,42 +291,92 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
           </main> 
 
           <aside className="columna-right">
-            <div className="panel-lateral widget-precio">
-              <div className="widget-header">
-                <span className="material-symbols-outlined">payments</span>
-                <h3>Presupuesto</h3>
-              </div>
-              
-              <p className="widget-desc">Filtra recetas según tu bolsillo:</p>
-              
-              <div className="precio-opciones">
-                {/* Económico */}
-                <div className="tooltip-wrapper" data-tooltip="Recetas con ingredientes básicos y muy baratos">
-                  <button className="btn-precio">
-                    <span className="precio-tag">$</span>
-                    <span className="precio-label">Económico</span>
-                  </button>
-                </div>
 
-              {/* Medio */}
-              <div className="tooltip-wrapper" data-tooltip="Costo moderado con ingredientes frescos">
-                <button className="btn-precio activo">
-                  <span className="precio-tag">$$</span>
-                  <span className="precio-label">Medio</span>
-                </button>
+            {/* Widget categorías rápidas */}
+            <div className="widget-lateral">
+              <div className="widget-lateral__header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+                <span>Explorar por tiempo</span>
               </div>
-              
-              {/* Premium */}
-              <div className="tooltip-wrapper" data-tooltip="Ingredientes especiales o de mayor costo">
-                <button className="btn-precio">
-                  <span className="precio-tag">$$$</span>
-                  <span className="precio-label">Premium</span>
-                </button>
-              </div>
+              <div className="widget-lateral__lista">
+                {[
+                  { label: 'Menos de 15 min', icono: '⚡', key: 'menos15' },
+                  { label: '15 – 30 min',     icono: '🕐', key: '15a30'   },
+                  { label: 'Más de 30 min',   icono: '👨‍🍳', key: 'mas30'   },
+                ].map(item => (
+                  <button
+                    key={item.key}
+                    className={`widget-lateral__item ${filtroTiempo === item.key ? 'activo' : ''}`}
+                    onClick={() => setFiltroTiempo(prev => prev === item.key ? null : item.key)}
+                  >
+                    <span className="widget-lateral__icono">{item.icono}</span>
+                    <span>{item.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
-          </aside>
+
+            {/* Widget dietas populares */}
+            <div className="widget-lateral" style={{ marginTop: '1rem' }}>
+              <div className="widget-lateral__header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <span>Dietas populares</span>
+              </div>
+              <div className="widget-lateral__tags">
+                {['Vegano', 'Keto', 'Sin Gluten', 'Vegetariano', 'Bajo en Sodio'].map(dieta => (
+                  <button
+                    key={dieta}
+                    className={`widget-tag ${filtrosActivos.includes(
+                      condicionesSalud.find(c => c.nombre === dieta)?.id
+                    ) ? 'activo' : ''}`}
+                    onClick={() => {
+                      const id = condicionesSalud.find(c => c.nombre === dieta)?.id;
+                      if (id) toggleFiltro(id);
+                    }}
+                  >
+                    {dieta}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+</aside>
       </div>
+
+      {/* ── Buscador ── */}
+<div className="buscador-recetas">
+  <div className="buscador-input-wrap">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input
+      type="text"
+      placeholder="Buscar receta por nombre o descripción..."
+      value={busqueda}
+      onChange={e => setBusqueda(e.target.value)}
+      className="buscador-input"
+    />
+    {busqueda && (
+      <button className="buscador-clear" onClick={() => setBusqueda('')}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    )}
+  </div>
+  {busqueda && (
+    <span className="buscador-conteo">
+      {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
+    </span>
+  )}
+</div>
+
+{/* ── Recetas ── */}
+<section className="recetasGrid">
+  ...
+</section>
        {/* ── Recetas ── */}
        <section className="recetasGrid">
             <h2>Recetas recomendadas</h2>

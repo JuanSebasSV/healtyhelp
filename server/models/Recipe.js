@@ -161,6 +161,7 @@ const recipeSchema = new mongoose.Schema(
     resenas:      { type: [resenaSchema], default: [] },
     puntosProm:   { type: Number, default: 0 },
     totalResenas: { type: Number, default: 0 },
+    tiempoMinutos: { type: Number, default: 0 },
 
     nutri:     { type: nutriSchema, default: () => ({}) },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

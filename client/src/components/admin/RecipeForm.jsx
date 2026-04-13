@@ -46,6 +46,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
     nombre: '', desc: '', img: '', cat: 'almuerzo',
     salud: [], puntos: 0, ingredientes: [''], pasos: [''],
+    tiempoMinutos: 0,  
     nutri: { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 }
   });
 
@@ -150,6 +151,10 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
                 {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nombre}</option>)}
               </select>
             </div>
+            <div className="form-group">
+            <label>Tiempo (minutos)</label>
+            <NumeroInput name="tiempoMinutos" value={formData.tiempoMinutos} onChange={handleChange} min={0} max={999} step={5} placeholder="Ej: 30" />
+          </div>
             <div className="form-group">
               <label>Puntuación (0-5)</label>
               <NumeroInput name="puntos" value={formData.puntos} onChange={handleChange} min={0} max={5} step={0.1} />
