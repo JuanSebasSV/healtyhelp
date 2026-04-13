@@ -1,17 +1,3 @@
-/**
- * recomendaciones.js  —  Router Express
- * Ruta: GET /api/recomendaciones
- *
- * Devuelve recomendaciones nutricionales personalizadas combinando:
- *   - Perfil del usuario autenticado (age, weight, height, healthProfile)
- *   - Consumos de los últimos 30 días
- *
- * Coloca este archivo en: server/routes/recomendaciones.js
- * Registra en app.js / server.js:
- *   const recomendacionesRouter = require('./routes/recomendaciones');
- *   app.use('/api/recomendaciones', recomendacionesRouter);
- */
-
 const express = require('express');
 const router  = express.Router();
 const { protect } = require('../middleware/auth');       // tu middleware JWT existente
