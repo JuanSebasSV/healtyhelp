@@ -14,7 +14,7 @@
 
 const express = require('express');
 const router  = express.Router();
-const protect = require('../middleware/auth');       // tu middleware JWT existente
+const { protect } = require('../middleware/auth');       // tu middleware JWT existente
 const Consumo = require('../models/Consumo');        // tu modelo de consumos
 const User    = require('../models/User');
 const { generarRecomendaciones } = require('../utils/motorRecomendaciones');

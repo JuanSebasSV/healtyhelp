@@ -8,7 +8,7 @@ import ResumenNutricional from './ResumenNutricional';
 import PanelRecomendaciones from './PanelRecomendaciones';
 import './VistaSeguimiento.css';
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
+// ─── Iconos SVG ───────────────────────────────────────────────────────────────
 
 const IcoDesayuno = ({ className }) => (
   <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -75,63 +75,80 @@ const IcoBasura = ({ className }) => (
 // ─── Metadata estática ────────────────────────────────────────────────────────
 
 const TIPOS_META = {
-  desayuno: { label: 'Desayuno',       Icon: IcoDesayuno, placeholder: 'Añadir desayuno'      },
-  almuerzo: { label: 'Almuerzo',       Icon: IcoAlmuerzo, placeholder: 'Añadir almuerzo'      },
-  cena:     { label: 'Cena',           Icon: IcoCena,     placeholder: 'Añadir cena'          },
+  desayuno: { label: 'Desayuno',       Icon: IcoDesayuno, placeholder: 'Añadir desayuno'       },
+  almuerzo: { label: 'Almuerzo',       Icon: IcoAlmuerzo, placeholder: 'Añadir almuerzo'       },
+  cena:     { label: 'Cena',           Icon: IcoCena,     placeholder: 'Añadir cena'           },
   snack:    { label: 'Snack / Postre', Icon: IcoSnack,    placeholder: 'Añadir snack o postre' },
 };
 
-const TIPOS_LABEL  = { desayuno: 'Desayuno', almuerzo: 'Almuerzo', cena: 'Cena', snack: 'Snack / Postre' };
-const TIPOS_ORDEN  = ['desayuno', 'almuerzo', 'cena', 'snack'];
-const MAX_SNACKS   = 3;
+const TIPOS_LABEL = { desayuno: 'Desayuno', almuerzo: 'Almuerzo', cena: 'Cena', snack: 'Snack / Postre' };
+const TIPOS_ORDEN = ['desayuno', 'almuerzo', 'cena', 'snack'];
+const TIPOS_COLOR = { desayuno: '#f59e0b', almuerzo: '#06b6d4', cena: '#a855f7', snack: '#10b981' };
+const MAX_SNACKS  = 3;
 
 // ─── Utilidades de fecha ──────────────────────────────────────────────────────
 
-const fechaLegible = (s) => {
-  const [y, m, d] = s.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+const fechaLegible = (fechaStr) => {
+  const [y, m, d] = fechaStr.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-CO', {
+    weekday: 'long', day: 'numeric', month: 'long',
+  });
 };
 
-const lunesDe = (s) => {
-  const [y, m, d] = s.split('-').map(Number);
-  const f = new Date(y, m - 1, d);
-  f.setDate(f.getDate() + (f.getDay() === 0 ? -6 : 1 - f.getDay()));
-  return f.toISOString().split('T')[0];
+const lunesDeSemana = (fechaStr) => {
+  const [y, m, d] = fechaStr.split('-').map(Number);
+  const fecha = new Date(y, m - 1, d);
+  const dia   = fecha.getDay();
+  const diff  = dia === 0 ? -6 : 1 - dia;
+  fecha.setDate(fecha.getDate() + diff);
+  return fecha.toISOString().split('T')[0];
 };
 
-const yearMes     = (s) => s.slice(0, 7);
-const mesLegible  = (ym) => { const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }); };
-const semLegible  = (lunes) => {
+const yearMesDe = (fechaStr) => fechaStr.slice(0, 7);
+
+const mesLegible = (yearMes) => {
+  const [y, m] = yearMes.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+};
+
+const semanaLegible = (lunes) => {
   const [y, m, d] = lunes.split('-').map(Number);
-  const ini = new Date(y, m - 1, d);
-  const fin = new Date(y, m - 1, d + 6);
-  const o = { day: 'numeric', month: 'short' };
-  return `${ini.toLocaleDateString('es-CO', o)} – ${fin.toLocaleDateString('es-CO', o)}`;
+  const inicio = new Date(y, m - 1, d);
+  const fin    = new Date(y, m - 1, d + 6);
+  const opts   = { day: 'numeric', month: 'short' };
+  return `${inicio.toLocaleDateString('es-CO', opts)} - ${fin.toLocaleDateString('es-CO', opts)}`;
 };
 
 const sumarNutri = (consumos) => {
   const base = {};
   consumos.forEach(c => {
     if (!c.nutri) return;
-    Object.entries(c.nutri).forEach(([k, v]) => { base[k] = (base[k] || 0) + (v || 0); });
+    Object.entries(c.nutri).forEach(([k, v]) => {
+      base[k] = (base[k] || 0) + (v || 0);
+    });
   });
   Object.keys(base).forEach(k => { base[k] = Math.round(base[k] * 10) / 10; });
   return base;
 };
 
-// ─── Componente ───────────────────────────────────────────────────────────────
+// ─── Componente principal ─────────────────────────────────────────────────────
 
 const VistaSeguimiento = ({ recetas, filtros = [] }) => {
-  const [periodo,     setPeriodo]     = useState('dia');
-  const [dias,        setDias]        = useState([]);
-  const [seleccionado, setSelec]      = useState(null);
-  const [consumos,    setConsumos]    = useState([]);
-  const [cargando,    setCargando]    = useState(true);
-  const [editandoId,  setEditandoId]  = useState(null);
-  const [vistaReceta, setVistaReceta] = useState(null);
-  const [recetaSelec, setRecetaSelec] = useState(null);
+  const [periodo,      setPeriodo]      = useState('dia');
+  const [dias,         setDias]         = useState([]);
+  const [seleccionado, setSeleccionado] = useState(null);
+  const [consumos,     setConsumos]     = useState([]);
+  const [cargando,     setCargando]     = useState(true);
+  const [editandoId,   setEditandoId]   = useState(null);
+
+  // Modal detalle receta
+  const [vistaReceta,  setVistaReceta]  = useState(null);
+  const [recetaSelec,  setRecetaSelec]  = useState(null);
+
+  // Modal agregar manual
   const [modalAgregar, setModalAgregar] = useState(null);
 
+  // Ref para evitar doble eliminacion
   const eliminandoRef = useRef(new Set());
 
   useEffect(() => { cargarDias(); }, []);
@@ -140,7 +157,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
     try {
       const { data } = await api.get('/consumos/dias');
       setDias(data.dias || []);
-      if (data.dias?.length > 0) setSelec(p => p || data.dias[0]);
+      if (data.dias?.length > 0) setSeleccionado(p => p || data.dias[0]);
     } catch {
       toast.error('Error cargando seguimiento');
     }
@@ -148,39 +165,68 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
 
   const opciones = useCallback(() => {
     if (periodo === 'dia')    return dias;
-    if (periodo === 'semana') return [...new Set(dias.map(lunesDe))].sort((a, b) => b.localeCompare(a));
-    return [...new Set(dias.map(yearMes))].sort((a, b) => b.localeCompare(a));
+    if (periodo === 'semana') {
+      const semanas = [...new Set(dias.map(lunesDeSemana))];
+      return semanas.sort((a, b) => b.localeCompare(a));
+    }
+    const meses = [...new Set(dias.map(yearMesDe))];
+    return meses.sort((a, b) => b.localeCompare(a));
   }, [dias, periodo]);
 
-  const cargarConsumos = useCallback(async () => {
-    if (!seleccionado) { setConsumos([]); setCargando(false); return; }
+  const cargarConsumos = async (fechaSel = seleccionado, per = periodo) => {
+    if (!fechaSel) { setConsumos([]); setCargando(false); return; }
     setCargando(true);
     try {
-      const endpoint = periodo === 'dia' ? `/consumos/dia/${seleccionado}` : periodo === 'semana' ? `/consumos/semana/${seleccionado}` : `/consumos/mes/${seleccionado}`;
-      const { data } = await api.get(endpoint);
+      let data;
+      if (per === 'dia')    ({ data } = await api.get(`/consumos/dia/${fechaSel}`));
+      if (per === 'semana') ({ data } = await api.get(`/consumos/semana/${fechaSel}`));
+      if (per === 'mes')    ({ data } = await api.get(`/consumos/mes/${fechaSel}`));
       setConsumos(data.consumos || []);
     } catch {
       toast.error('Error cargando consumos');
     } finally {
       setCargando(false);
     }
-  }, [seleccionado, periodo]);
+  };
 
+  // Cuando cambia el período, ajustar seleccionado solo si no es válido para ese período
   useEffect(() => {
     const ops = opciones();
-    if (ops.length > 0 && !ops.includes(seleccionado)) setSelec(ops[0]);
-  }, [periodo, opciones, seleccionado]);
+    if (ops.length > 0 && !ops.includes(seleccionado)) {
+      setSeleccionado(ops[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [periodo, dias]);
 
-  useEffect(() => { cargarConsumos(); }, [cargarConsumos]);
+  // Cargar consumos solo cuando cambia el seleccionado o el período, no en cada render
+  useEffect(() => {
+    if (seleccionado) cargarConsumos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seleccionado, periodo]);
 
   const consumosPorFecha = useCallback(() => {
-    return consumos.reduce((m, c) => {
-      (m[c.fechaBogota] = m[c.fechaBogota] || []).push(c);
-      return m;
-    }, {});
+    const mapa = {};
+    consumos.forEach(c => {
+      if (!mapa[c.fechaBogota]) mapa[c.fechaBogota] = [];
+      mapa[c.fechaBogota].push(c);
+    });
+    return mapa;
   }, [consumos]);
 
   const nutriAcumulado = sumarNutri(consumos);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
+  const handleEditarTipo = async (consumoId, nuevoTipo) => {
+    try {
+      await api.put(`/consumos/${consumoId}/tipo`, { tipo: nuevoTipo });
+      toast.success('Tipo actualizado');
+      setEditandoId(null);
+      cargarConsumos();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al editar');
+    }
+  };
 
   const handleEliminar = async (id) => {
     if (eliminandoRef.current.has(id)) return;
@@ -190,58 +236,68 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
       await api.delete(`/consumos/${id}`);
       cargarDias();
     } catch {
-      toast.error('Error eliminando consumo');
+      toast.error('Error al eliminar');
       cargarConsumos();
     } finally {
       eliminandoRef.current.delete(id);
     }
   };
 
-  const handleCambiarTipo = async (id, tipo) => {
-    setConsumos(p => p.map(c => c._id === id ? { ...c, tipo } : c));
-    setEditandoId(null);
-    try {
-      await api.patch(`/consumos/${id}`, { tipo });
-    } catch {
-      toast.error('Error actualizando tipo');
-      cargarConsumos();
+  const abrirReceta = (consumo) => {
+    const recetaCompleta = recetas.find(
+      r => r._id === consumo.recetaId?.toString?.() || r._id === consumo.recetaId
+    );
+    if (recetaCompleta) {
+      setRecetaSelec(recetaCompleta);
+      setVistaReceta('detalle');
+    } else {
+      toast.info('Receta no disponible en la lista actual');
     }
   };
 
-  // ─── Sub-componentes ──────────────────────────────────────────────────────
+  // ── Sub-componentes ────────────────────────────────────────────────────────
 
   const TarjetaConsumo = ({ consumo }) => (
-    <div className="seg-consumo-card">
+    <div className="seg-consumo-card" onClick={() => abrirReceta(consumo)}>
+      <div className="seg-consumo-img-wrap">
+        <img src={consumo.recetaSnapshot?.img} alt={consumo.recetaSnapshot?.nombre} />
+        <span
+          className="seg-consumo-tipo-badge"
+          style={{ background: TIPOS_COLOR[consumo.tipo] }}
+        >
+          {TIPOS_LABEL[consumo.tipo]}
+        </span>
+      </div>
       <div className="seg-consumo-info">
         <p className="seg-consumo-nombre">{consumo.recetaSnapshot?.nombre || 'Consumo manual'}</p>
-        {consumo.nutri && (
-          <p className="seg-consumo-nutri">
-            {consumo.nutri.cal ? `${consumo.nutri.cal} kcal` : ''}
-            {consumo.nutri.prot ? ` · ${consumo.nutri.prot}g prot` : ''}
-          </p>
+        <p className="seg-consumo-hora">{consumo.horaBogota}</p>
+        <p className="seg-consumo-cal">{consumo.nutri?.cal || 0} kcal</p>
+      </div>
+      <div className="seg-consumo-acciones" onClick={e => e.stopPropagation()}>
+        {editandoId === consumo._id ? (
+          <div className="seg-tipo-selector">
+            {TIPOS_ORDEN.map(t => (
+              <button
+                key={t}
+                className={`seg-tipo-btn ${consumo.tipo === t ? 'activo' : ''}`}
+                onClick={() => handleEditarTipo(consumo._id, t)}
+              >
+                {TIPOS_LABEL[t]}
+              </button>
+            ))}
+            <button className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>x</button>
+          </div>
+        ) : (
+          <div className="seg-acciones-row">
+            <button className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
+              <IcoLapiz className="seg-btn-ico" /> Editar tipo
+            </button>
+            <button className="seg-btn-eliminar" onClick={() => handleEliminar(consumo._id)}>
+              <IcoBasura className="seg-btn-ico" />
+            </button>
+          </div>
         )}
       </div>
-      {editandoId === consumo._id ? (
-        <div className="seg-tipo-selector">
-          {TIPOS_ORDEN.map(t => (
-            <button key={t} className={`seg-tipo-opt ${consumo.tipo === t ? 'activo' : ''}`}
-              onClick={() => handleCambiarTipo(consumo._id, t)}>
-              {TIPOS_LABEL[t]}
-            </button>
-          ))}
-          <button className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>✕</button>
-        </div>
-      ) : (
-        <div className="seg-acciones-row">
-          <button className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
-            <IcoLapiz className="seg-btn-ico" />
-            Editar tipo
-          </button>
-          <button className="seg-btn-eliminar" onClick={() => handleEliminar(consumo._id)}>
-            <IcoBasura className="seg-btn-ico" />
-          </button>
-        </div>
-      )}
     </div>
   );
 
@@ -251,10 +307,17 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
     return (
       <div className="seg-tipo-seccion">
         <p className="seg-snacks-titulo"><Icon className="seg-tipo-ico" />{label}</p>
-        {c ? <TarjetaConsumo consumo={c} /> : (
+        {c ? (
+          <TarjetaConsumo consumo={c} />
+        ) : (
           <div className="seg-consumo-vacio">
-            <span className="seg-vacio-label">{placeholder}</span>
-            <button className="seg-btn-agregar" onClick={() => setModalAgregar({ fecha, tipoSugerido: tipo })}>+ Añadir</button>
+            <span className="seg-vacio-label"><Icon className="seg-tipo-ico" />{placeholder}</span>
+            <button
+              className="seg-btn-agregar"
+              onClick={() => setModalAgregar({ fecha, tipo })}
+            >
+              + Anadir
+            </button>
           </div>
         )}
       </div>
@@ -262,19 +325,29 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
   };
 
   const SeccionSnacks = ({ consumosDia, fecha }) => {
-    const snacks    = consumosDia.filter(c => c.tipo === 'snack');
-    const vacios    = MAX_SNACKS - snacks.length;
+    const snacks = consumosDia.filter(c => c.tipo === 'snack');
+    const vacios = MAX_SNACKS - snacks.length;
     return (
-      <div className="seg-snacks-seccion">
+      <div className="seg-tipo-seccion">
         <p className="seg-snacks-titulo"><IcoSnack className="seg-tipo-ico" />{TIPOS_LABEL.snack}</p>
         {snacks.map(c => <TarjetaConsumo key={c._id} consumo={c} />)}
         {vacios > 0 && (
           <div className="seg-consumo-vacio">
-            <span className="seg-vacio-label">{snacks.length === 0 ? 'Añadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} más`}</span>
-            <button className="seg-btn-agregar" onClick={() => setModalAgregar({ fecha, tipoSugerido: 'snack' })}>+ Añadir</button>
+            <span className="seg-vacio-label">
+              <IcoSnack className="seg-tipo-ico" />
+              {snacks.length === 0 ? 'Anadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} mas`}
+            </span>
+            <button
+              className="seg-btn-agregar"
+              onClick={() => setModalAgregar({ fecha, tipo: 'snack' })}
+            >
+              + Anadir
+            </button>
           </div>
         )}
-        {vacios === 0 && <p className="seg-snacks-limite">Límite de {MAX_SNACKS} snacks alcanzado</p>}
+        {vacios === 0 && (
+          <p className="seg-snacks-limite">Limite de {MAX_SNACKS} snacks alcanzado</p>
+        )}
       </div>
     );
   };
@@ -283,7 +356,9 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
     <div className="seg-dia-bloque">
       <h3 className="seg-dia-titulo">{fechaLegible(fecha)}</h3>
       <div className="seg-consumos-lista">
-        {['desayuno', 'almuerzo', 'cena'].map(t => <SeccionTipo key={t} tipo={t} consumosDia={consumosDia} fecha={fecha} />)}
+        {['desayuno', 'almuerzo', 'cena'].map(t => (
+          <SeccionTipo key={t} tipo={t} consumosDia={consumosDia} fecha={fecha} />
+        ))}
         <SeccionSnacks consumosDia={consumosDia} fecha={fecha} />
       </div>
     </div>
@@ -292,7 +367,9 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
   const BloquesDiaActual = () => (
     <div className="seg-dia-bloque">
       <div className="seg-consumos-lista">
-        {['desayuno', 'almuerzo', 'cena'].map(t => <SeccionTipo key={t} tipo={t} consumosDia={consumos} fecha={seleccionado} />)}
+        {['desayuno', 'almuerzo', 'cena'].map(t => (
+          <SeccionTipo key={t} tipo={t} consumosDia={consumos} fecha={seleccionado} />
+        ))}
         <SeccionSnacks consumosDia={consumos} fecha={seleccionado} />
       </div>
     </div>
@@ -306,8 +383,12 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
 
       <div className="seg-periodo-btns">
         {['dia', 'semana', 'mes'].map(p => (
-          <button key={p} className={periodo === p ? 'activo' : ''} onClick={() => setPeriodo(p)}>
-            {p === 'dia' ? 'Día' : p === 'semana' ? 'Semana' : 'Mes'}
+          <button
+            key={p}
+            className={periodo === p ? 'activo' : ''}
+            onClick={() => setPeriodo(p)}
+          >
+            {p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}
           </button>
         ))}
       </div>
@@ -315,7 +396,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
       {ops.length === 0 ? (
         <div className="seg-vacio-total">
           <div className="seg-vacio-icono"><IcoPlato className="seg-plato-svg" /></div>
-          <p>Aún no has registrado ningún consumo.</p>
+          <p>Aun no has registrado ningun consumo.</p>
           <p>Abre una receta y presiona <strong>"Registrar consumo"</strong> para empezar.</p>
         </div>
       ) : (
@@ -323,8 +404,16 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
           <div className="seg-col seg-col-izq">
             <div className="seg-selector-scroll">
               {ops.map(op => (
-                <button key={op} className={`seg-selector-item ${seleccionado === op ? 'activo' : ''}`} onClick={() => setSelec(op)}>
-                  {periodo === 'dia' ? fechaLegible(op) : periodo === 'semana' ? `Sem. ${semLegible(op)}` : mesLegible(op)}
+                <button
+                  key={op}
+                  className={`seg-selector-item ${seleccionado === op ? 'activo' : ''}`}
+                  onClick={() => setSeleccionado(op)}
+                >
+                  {periodo === 'dia'
+                    ? fechaLegible(op)
+                    : periodo === 'semana'
+                    ? `Sem. ${semanaLegible(op)}`
+                    : mesLegible(op)}
                 </button>
               ))}
             </div>
@@ -332,13 +421,15 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
             {cargando ? (
               <p className="seg-estado">Cargando...</p>
             ) : consumos.length === 0 ? (
-              <p className="seg-estado">Sin registros para este período.</p>
+              <p className="seg-estado">Sin registros para este periodo.</p>
             ) : periodo === 'dia' ? (
               <BloquesDiaActual />
             ) : (
               Object.entries(consumosPorFecha())
                 .sort(([a], [b]) => b.localeCompare(a))
-                .map(([fecha, cd]) => <BloquesDia key={fecha} fecha={fecha} consumosDia={cd} />)
+                .map(([fecha, consumosDia]) => (
+                  <BloquesDia key={fecha} fecha={fecha} consumosDia={consumosDia} />
+                ))
             )}
           </div>
 
@@ -353,19 +444,27 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
         </div>
       )}
 
-      {/* ─── Panel de recomendaciones con filtros activos ─── */}
       <PanelRecomendaciones filtrosActivos={filtros} />
 
       {vistaReceta === 'detalle' && recetaSelec && (
-        <DetalleReceta receta={recetaSelec} cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }} abrirNutricion={() => setVistaReceta('nutricion')} />
+        <DetalleReceta
+          receta={recetaSelec}
+          cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }}
+          abrirNutricion={() => setVistaReceta('nutricion')}
+        />
       )}
       {vistaReceta === 'nutricion' && recetaSelec && (
-        <ModalNutricionDetallada nutri={recetaSelec.nutri} cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }} volver={() => setVistaReceta('detalle')} />
+        <ModalNutricionDetallada
+          nutri={recetaSelec.nutri}
+          cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }}
+          volver={() => setVistaReceta('detalle')}
+        />
       )}
+
       {modalAgregar && (
         <ModalAgregarConsumo
           fecha={modalAgregar.fecha}
-          tipoSugerido={modalAgregar.tipoSugerido}
+          tipo={modalAgregar.tipo}
           cerrar={() => setModalAgregar(null)}
           onAgregado={() => { cargarConsumos(); cargarDias(); setModalAgregar(null); }}
         />

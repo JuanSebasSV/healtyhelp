@@ -9,7 +9,7 @@
   color: var(--blanco-puro);
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Playfair Display', Georgia, serif;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
@@ -67,12 +67,26 @@
 .seg-col::-webkit-scrollbar { display: none; }
 .seg-col { scrollbar-width: none; }
 
+/* ── Modo oscuro ── */
 .modo-oscuro .seg-col {
   background: rgba(15, 35, 20, 0.55);
   border-color: rgba(79, 119, 45, 0.25);
 }
 
-/* ── Selector scroll horizontal ── */
+.modo-oscuro .seg-consumo-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(79, 119, 45, 0.2);
+}
+
+.modo-oscuro .seg-consumo-nombre {
+  color: rgba(210, 235, 195, 0.95) !important;
+}
+
+.modo-oscuro .seg-dia-titulo {
+  color: rgba(167, 213, 136, 0.95);
+}
+
+/* ── Selector scroll ── */
 .seg-selector-scroll {
   display: flex;
   flex-direction: column;
@@ -89,7 +103,7 @@
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.83rem;
   font-weight: 600;
   cursor: pointer;
@@ -126,6 +140,25 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+}
+
+/* ── Sección por tipo ── */
+.seg-tipo-seccion {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Cabecera de sección (título tipo) ── */
+.seg-snacks-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 /* ── Tarjeta consumo ── */
@@ -177,7 +210,7 @@
 .seg-consumo-nombre {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--blanco-puro);
+  color: var(--blanco-puro) !important;
   margin-bottom: 0.2rem;
   white-space: nowrap;
   overflow: hidden;
@@ -185,7 +218,7 @@
 }
 .seg-consumo-hora {
   font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255, 255, 255, 0.5);
 }
 .seg-consumo-cal {
   font-size: 0.78rem;
@@ -203,6 +236,9 @@
 }
 
 .seg-btn-editar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.3rem 0.65rem;
   background: rgba(247,127,0,0.1);
   border: 1px solid rgba(247,127,0,0.3);
@@ -219,6 +255,9 @@
 }
 
 .seg-btn-eliminar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.3rem 0.5rem;
   background: rgba(220,38,38,0.08);
   border: 1px solid rgba(220,38,38,0.25);
@@ -278,8 +317,11 @@
   background: rgba(255,255,255,0.02);
 }
 .seg-vacio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.55);
 }
 .seg-btn-agregar {
   padding: 0.3rem 0.85rem;
@@ -297,10 +339,18 @@
   color: var(--blanco-puro);
 }
 
+/* ── Límite snacks ── */
+.seg-snacks-limite {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  padding: 0.4rem 0;
+}
+
 /* ── Estados ── */
 .seg-estado {
   text-align: center;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.9rem;
   padding: 2rem 0;
 }
@@ -311,7 +361,7 @@
 }
 .seg-vacio-icono { font-size: 4rem; margin-bottom: 1rem; }
 .seg-vacio-total p {
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 1rem;
   margin-bottom: 0.5rem;
   line-height: 1.6;
@@ -328,6 +378,7 @@
   }
 }
 
+/* ── Iconos SVG ── */
 .seg-tipo-ico {
   width: 14px;
   height: 14px;
@@ -347,39 +398,4 @@
   height: 38px;
   stroke: currentColor;
   opacity: 0.4;
-}
-
-.seg-snacks-titulo {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 0.5rem;
-  margin-top: 0.25rem;
-}
-
-.seg-tipo-seccion {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.25rem;
-}
-
-.seg-vacio-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.seg-btn-editar {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.seg-btn-eliminar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

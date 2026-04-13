@@ -83,6 +83,7 @@ app.use('/api/chat',           require('./routes/chat'));
 app.use('/api/terms',          require('./routes/terms'));
 app.use('/api/notifications',  require('./routes/notifications'));
 app.use('/api',                require('./routes/utils'));
+app.use('/api/recomendaciones', require('./routes/recomendaciones'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'API funcionando correctamente ✅' });
