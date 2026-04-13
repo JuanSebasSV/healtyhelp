@@ -312,6 +312,119 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
         </h2>
       </div>
 
+      {/* ── Tarjetas móvil ── */}
+      <div className="user-cards-movil">
+        {users.map((user) => {
+          const targetId      = user._id || user.id;
+          const isCurrentUser = targetId === currentUserId;
+          const canEdit       = canModify(user);
+          const canBanUser    = canBan(user);
+          const esBaneado     = user.baneado === true;
+          const procesando    = procesandoBan === targetId;
+
+          return (
+            <div
+              key={targetId}
+              className={[
+                'user-card-movil',
+                esBaneado             ? 'banned-row'      : '',
+                user.isSuperAdmin     ? 'super-admin-row' : '',
+                user.role === 'admin' ? 'admin-row'       : '',
+              ].join(' ')}
+            >
+              {/* Fila superior: avatar + nombre + email */}
+              <div className="ucard-top">
+                <div className="user-avatar">
+                  {user.avatar
+                    ? <img src={user.avatar} alt={user.name} referrerPolicy="no-referrer" />
+                    : <div className="avatar-placeholder">{user.name.charAt(0).toUpperCase()}</div>
+                  }
+                </div>
+                <div className="ucard-info">
+                  <div className="ucard-name">
+                    {user.name}
+                    {isCurrentUser && <span className="you-badge"> (Tú)</span>}
+                  </div>
+                  <div className="ucard-email">{user.email}</div>
+                </div>
+              </div>
+
+              {/* Fila media: rol + estado baneo */}
+              <div className="ucard-mid">
+                {canEdit ? (
+                  <select
+                    value={user.role}
+                    onChange={(e) => onChangeRole(user._id, e.target.value)}
+                    className={`role-select role-${user.role}`}
+                  >
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                ) : (
+                  <span className={`badge ${user.isSuperAdmin ? 'super-admin' : user.role === 'admin' ? 'admin' : 'user'}`}>
+                    {user.isSuperAdmin ? '⭐ Super Admin' : user.role === 'admin' ? '🛡️ Admin' : '👤 Usuario'}
+                  </span>
+                )}
+
+                {esBaneado ? (
+                  <span className="ban-badge">🔨 Baneado</span>
+                ) : (
+                  <span className="ban-status-ok">✅ Activo</span>
+                )}
+              </div>
+
+              {/* Fila inferior: fecha + acciones */}
+              <div className="ucard-bottom">
+                <span className="ucard-fecha">
+                  {new Date(user.createdAt).toLocaleDateString('es-ES', {
+                    day: 'numeric', month: 'short', year: 'numeric'
+                  })}
+                </span>
+                <div className="ucard-actions">
+                  {!isCurrentUser && (
+                    <button onClick={() => setModalMensaje(user)} className="btn-message" title="Enviar mensaje">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                      </svg>
+                    </button>
+                  )}
+                  {canEdit ? (
+                    <button onClick={() => onDelete(user._id)} className="btn-delete" title="Eliminar">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      </svg>
+                    </button>
+                  ) : (
+                    <span className="protected-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                    </span>
+                  )}
+                  {canBanUser && (
+                    esBaneado ? (
+                      <button className="btn-unban" onClick={() => handleUnban(targetId, user.name)} disabled={procesando}>
+                        {procesando ? '⏳' : '✅'}
+                      </button>
+                    ) : (
+                      <button className="btn-ban" onClick={() => setModalBaneo(user)} disabled={procesando}>
+                        {procesando ? '⏳' : '🔨'}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Tabla desktop ── */}
       <div className="table-container">
         <table className="user-table">
           <thead>

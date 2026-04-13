@@ -314,15 +314,62 @@
 
 /* ── Responsive ── */
 @media (max-width: 968px) {
+  .recipe-form { padding: 0 0.25rem; }
+  .recipe-form h2 { font-size: 1.2rem; margin-bottom: 1.25rem; }
+
+  .form-section {
+    padding: 1.1rem 0.9rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+  }
+  .form-section h3 { font-size: 0.92rem; margin-bottom: 1rem; }
+  .form-section h4 { font-size: 0.82rem; margin: 1rem 0 0.65rem; }
+
+  .form-row { grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  .nutri-grid { grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+  .salud-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+  /* Inputs dinámicos más compactos */
+  .dynamic-input { gap: 0.4rem; }
+  .paso-number {
+    padding: 0.55rem 0.65rem;
+    min-width: 32px;
+    font-size: 0.8rem;
+  }
+  .btn-remove { padding: 0.55rem 0.6rem; }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+  }
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 0.9rem 1rem;
+  }
+
+  .salud-checkbox {
+    padding: 0.55rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-section { padding: 0.85rem 0.7rem; }
   .form-row { grid-template-columns: 1fr; }
   .nutri-grid { grid-template-columns: 1fr 1fr; }
-  .salud-grid { grid-template-columns: 1fr 1fr; }
-  .form-actions { flex-direction: column; }
-  .btn-cancel, .btn-submit { width: 100%; text-align: center; }
-}
-@media (max-width: 480px) {
   .salud-grid { grid-template-columns: 1fr; }
-  .nutri-grid { grid-template-columns: 1fr; }
+
+  .recipe-form h2 { font-size: 1.05rem; }
+
+  /* Ingredientes: textarea compacto */
+  .dynamic-input textarea { min-height: 48px; }
+
+  /* Nota nutri */
+  .nutri-note { font-size: 0.82rem; padding: 0.7rem 0.85rem; }
 }
 
 /* ── Títulos de sección con SVG alineado ── */

@@ -245,3 +245,32 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+/* ── Header derecho (agrupa "leer todas" + botón X) ── */
+.pn-header-der {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Botón X cerrar modal (solo móvil) ── */
+.pn-btn-cerrar-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+.pn-btn-cerrar-modal:hover {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: rgba(255, 120, 120, 0.9);
+  transform: scale(1.08);
+}

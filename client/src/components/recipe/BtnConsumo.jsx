@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import './BtnConsumo.css';
 
-const TOOLTIP_KEY  = 'consumo_tooltip_visto';
+const TOOLTIP_KEY = 'consumo_tooltip_visto';
 const MAX_TOOLTIP  = 5;
 
 const getTooltipCount  = () => parseInt(sessionStorage.getItem(TOOLTIP_KEY) || '0', 10);
@@ -20,6 +20,29 @@ const getTipoBogota = () => {
 
 const TIPO_EMOJIS = { desayuno: '🌅', almuerzo: '☀️', cena: '🌙' };
 
+// ── Iconos memoizados ─────────────────────────────────────────────────────────
+const IcoCheck = memo(() => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 6L9 17l-5-5"/>
+  </svg>
+));
+IcoCheck.displayName = 'IcoCheck';
+
+const IcoPlus = memo(() => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+));
+IcoPlus.displayName = 'IcoPlus';
+
+const IcoCerrar = memo(() => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M18 6L6 18M6 6l12 12"/>
+  </svg>
+));
+IcoCerrar.displayName = 'IcoCerrar';
+
+// ── BtnConsumo ────────────────────────────────────────────────────────────────
 const BtnConsumo = ({ recetaId }) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -36,21 +59,27 @@ const BtnConsumo = ({ recetaId }) => {
   const observerRef = useRef(null);
   const yaMostroRef = useRef(false);
 
-  /* ── Cargar estado del botón ── */
+  /* ── Cargar estado inicial — protegido contra doble-mount (StrictMode) ── */
   useEffect(() => {
     if (!isAuthenticated) { setCargando(false); return; }
+
+    let cancelled = false;   // FIX 429: evita setState tras desmontaje (StrictMode)
+
     api.get(`/consumos/receta/${recetaId}/hoy`)
       .then(({ data }) => {
+        if (cancelled) return;
         if (data.registrado) {
           setConsumoId(data.consumoId);
           setTipoActual(data.tipo);
         }
       })
       .catch(() => {})
-      .finally(() => setCargando(false));
+      .finally(() => { if (!cancelled) setCargando(false); });
+
+    return () => { cancelled = true; };
   }, [recetaId, isAuthenticated]);
 
-  /* ── IntersectionObserver: activar en cuanto el botón sea visible ── */
+  /* ── IntersectionObserver: tooltip educativo ── */
   useEffect(() => {
     if (!isAuthenticated || cargando || consumoId) return;
     if (getTooltipCount() >= MAX_TOOLTIP) return;
@@ -84,15 +113,15 @@ const BtnConsumo = ({ recetaId }) => {
     if (!tooltip) return;
     const handler = (e) => {
       if (
-        tooltipRef.current && !tooltipRef.current.contains(e.target) &&
-        wrapperRef.current && !wrapperRef.current.contains(e.target)
+        tooltipRef.current  && !tooltipRef.current.contains(e.target) &&
+        wrapperRef.current  && !wrapperRef.current.contains(e.target)
       ) setTooltip(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [tooltip]);
 
-  const handleRegistrar = async () => {
+  const handleRegistrar = useCallback(async () => {
     if (!isAuthenticated) {
       toast.info('Inicia sesión para registrar tu consumo');
       navigate('/login');
@@ -117,13 +146,15 @@ const BtnConsumo = ({ recetaId }) => {
     } finally {
       setProcesando(false);
     }
-  };
+  }, [isAuthenticated, navigate, consumoId, recetaId]);
 
-  const handleVerTooltip = (e) => {
+  const handleVerTooltip = useCallback((e) => {
     e.stopPropagation();
     setSeñalar(true);
     setTooltip(v => !v);
-  };
+  }, []);
+
+  const handleCerrarTooltip = useCallback(() => setTooltip(false), []);
 
   if (cargando) return null;
 
@@ -137,12 +168,10 @@ const BtnConsumo = ({ recetaId }) => {
         <div className="btnConsumo-tooltip" ref={tooltipRef}>
           <button
             className="btnConsumo-tooltip-cerrar"
-            onClick={() => setTooltip(false)}
+            onClick={handleCerrarTooltip}
             aria-label="Cerrar"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
+            <IcoCerrar />
           </button>
           <p>
             <strong>¿Preparaste o comiste esta receta hoy?</strong> Pulsa el botón
@@ -169,16 +198,12 @@ const BtnConsumo = ({ recetaId }) => {
             <span className="btnConsumo-spinner" />
           ) : registrado ? (
             <>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
+              <IcoCheck />
               {TIPO_EMOJIS[tipoActual]} Registrado · Cancelar
             </>
           ) : (
             <>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
+              <IcoPlus />
               Registrar consumo
             </>
           )}
@@ -198,4 +223,4 @@ const BtnConsumo = ({ recetaId }) => {
   );
 };
 
-export default BtnConsumo;
+export default memo(BtnConsumo);

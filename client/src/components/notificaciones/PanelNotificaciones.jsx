@@ -67,6 +67,7 @@ const PanelNotificaciones = ({
   onLeerUna,
   onCerrar,
   onNavegar,   // callback para navegar sin cerrar el Router context
+  esMobil = false,
 }) => {
   const panelRef = useRef(null);
 
@@ -119,11 +120,22 @@ const PanelNotificaciones = ({
             <span className="pn-badge-header">{noLeidas}</span>
           )}
         </div>
-        {noLeidas > 0 && (
-          <button className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
-            <IcoCheck /> Leer todas
-          </button>
-        )}
+        <div className="pn-header-der">
+          {noLeidas > 0 && (
+            <button className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
+              <IcoCheck /> Leer todas
+            </button>
+          )}
+          {esMobil && (
+            <button className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Cuerpo */}

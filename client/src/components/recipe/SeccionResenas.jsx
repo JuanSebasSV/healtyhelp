@@ -3,11 +3,11 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './SeccionResenas.css';
 
+// ── Componente de icono genérico ──────────────────────────────────────────────
 const Icon = memo(({ d, size = 16, viewBox = '0 0 24 24', className = '', style = {} }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
+    width={size} height={size}
     viewBox={viewBox}
     fill="none"
     stroke="currentColor"
@@ -23,98 +23,48 @@ const Icon = memo(({ d, size = 16, viewBox = '0 0 24 24', className = '', style 
 ));
 Icon.displayName = 'Icon';
 
-const IcoEditar = memo(({ size }) => (
-  <Icon size={size} d={<><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>}/>
-));
+const IcoEditar      = memo(({ size }) => <Icon size={size} d={<><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>}/>);
 IcoEditar.displayName = 'IcoEditar';
-
-const IcoBorrar = memo(({ size }) => (
-  <Icon size={size} d={<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></>}/>
-));
+const IcoBorrar      = memo(({ size }) => <Icon size={size} d={<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></>}/>);
 IcoBorrar.displayName = 'IcoBorrar';
-
-const IcoGuardar = memo(({ size }) => (
-  <Icon size={size} d={<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>}/>
-));
+const IcoGuardar     = memo(({ size }) => <Icon size={size} d={<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>}/>);
 IcoGuardar.displayName = 'IcoGuardar';
-
-const IcoPublicar = memo(({ size }) => (
-  <Icon size={size} d={<><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>}/>
-));
+const IcoPublicar    = memo(({ size }) => <Icon size={size} d={<><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>}/>);
 IcoPublicar.displayName = 'IcoPublicar';
-
-const IcoLock = memo(({ size }) => (
-  <Icon size={size} d={<><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>}/>
-));
+const IcoLock        = memo(({ size }) => <Icon size={size} d={<><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>}/>);
 IcoLock.displayName = 'IcoLock';
-
-const IcoThumbUp = memo(({ size }) => (
-  <Icon size={size} d={<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H4.72A2 2 0 0 1 3 18.28V13a2 2 0 0 1 2-2h2v9z"/>}/>
-));
+const IcoThumbUp     = memo(({ size }) => <Icon size={size} d={<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H4.72A2 2 0 0 1 3 18.28V13a2 2 0 0 1 2-2h2v9z"/>}/>);
 IcoThumbUp.displayName = 'IcoThumbUp';
-
-const IcoThumbDown = memo(({ size }) => (
-  <Icon size={size} d={<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17V2z"/>}/>
-));
+const IcoThumbDown   = memo(({ size }) => <Icon size={size} d={<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17V2z"/>}/>);
 IcoThumbDown.displayName = 'IcoThumbDown';
-
-const IcoClock = memo(({ size }) => (
-  <Icon size={size} d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>
-));
+const IcoClock       = memo(({ size, style }) => <Icon size={size} style={style} d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>);
 IcoClock.displayName = 'IcoClock';
-
-const IcoChevronDown = memo(({ size }) => (
-  <Icon size={size} d={<polyline points="6 9 12 15 18 9"/>}/>
-));
+const IcoChevronDown = memo(({ size, style }) => <Icon size={size} style={style} d={<polyline points="6 9 12 15 18 9"/>}/>);
 IcoChevronDown.displayName = 'IcoChevronDown';
-
-const IcoChevronUp = memo(({ size }) => (
-  <Icon size={size} d={<polyline points="18 15 12 9 6 15"/>}/>
-));
+const IcoChevronUp   = memo(({ size }) => <Icon size={size} d={<polyline points="18 15 12 9 6 15"/>}/>);
 IcoChevronUp.displayName = 'IcoChevronUp';
-
-const IcoCornerDownLeft = memo(({ size }) => (
-  <Icon size={size} d={<><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></>}/>
-));
+const IcoCornerDownLeft = memo(({ size }) => <Icon size={size} d={<><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></>}/>);
 IcoCornerDownLeft.displayName = 'IcoCornerDownLeft';
-
-const IcoImage = memo(({ size, className }) => (
-  <Icon size={size} className={className} d={<><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></>}/>
-));
+const IcoImage       = memo(({ size, className }) => <Icon size={size} className={className} d={<><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></>}/>);
 IcoImage.displayName = 'IcoImage';
-
-const IcoInfo = memo(({ size }) => (
-  <Icon size={size} d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>}/>
-));
+const IcoInfo        = memo(({ size }) => <Icon size={size} d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>}/>);
 IcoInfo.displayName = 'IcoInfo';
-
-const IcoX = memo(({ size }) => (
-  <Icon size={size} d={<path d="M18 6L6 18M6 6l12 12"/>}/>
-));
+const IcoX           = memo(({ size }) => <Icon size={size} d={<path d="M18 6L6 18M6 6l12 12"/>}/>);
 IcoX.displayName = 'IcoX';
-
-const IcoImagePlus = memo(({ size, className }) => (
-  <Icon size={size} className={className} d={<><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="14" y1="8" x2="14" y2="14" strokeWidth="2"/><line x1="11" y1="11" x2="17" y2="11" strokeWidth="2"/></>}/>
-));
+const IcoImagePlus   = memo(({ size, className }) => <Icon size={size} className={className} d={<><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="14" y1="8" x2="14" y2="14" strokeWidth="2"/><line x1="11" y1="11" x2="17" y2="11" strokeWidth="2"/></>}/>);
 IcoImagePlus.displayName = 'IcoImagePlus';
-
-const IcoLoader = memo(({ size }) => (
-  <Icon size={size} d={<><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></>}/>
-));
+const IcoLoader      = memo(({ size, className }) => <Icon size={size} className={className} d={<><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></>}/>);
 IcoLoader.displayName = 'IcoLoader';
-
-const IcoEmptyReviews = memo(({ size }) => (
-  <Icon size={size} d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></>}/>
-));
+const IcoEmptyReviews = memo(({ size }) => <Icon size={size} d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></>}/>);
 IcoEmptyReviews.displayName = 'IcoEmptyReviews';
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const formatFecha = (f) =>
-  new Date(f).toLocaleDateString('es-ES', {
-    year: 'numeric', month: 'short', day: 'numeric',
-  });
+  new Date(f).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
 
 const ESTRELLAS = [1, 2, 3, 4, 5];
 
+// ── Estrellas ─────────────────────────────────────────────────────────────────
 const Estrellas = memo(({ valor, onChange, readonly = false }) => {
   const [hover, setHover] = useState(0);
   return (
@@ -133,16 +83,12 @@ const Estrellas = memo(({ valor, onChange, readonly = false }) => {
 });
 Estrellas.displayName = 'Estrellas';
 
+// ── ImagenResena ──────────────────────────────────────────────────────────────
 const ImagenResena = memo(({ imagen, esPropia }) => {
-  if (!imagen || !imagen.estado) return null;
-  if (imagen.estado === 'rechazada') return null;
+  if (!imagen?.estado || imagen.estado === 'rechazada') return null;
+  if (imagen.estado === 'pendiente' && !esPropia) return null;
 
-  const aprobada  = imagen.estado === 'aprobada';
-  const pendiente = imagen.estado === 'pendiente';
-
-  if (pendiente && !esPropia) return null;
-
-  if (aprobada) {
+  if (imagen.estado === 'aprobada') {
     return (
       <div className="sr-imagen-wrap">
         <img src={imagen.url} alt="Imagen del comentario" className="sr-imagen" loading="lazy" />
@@ -163,6 +109,7 @@ const ImagenResena = memo(({ imagen, esPropia }) => {
 });
 ImagenResena.displayName = 'ImagenResena';
 
+// ── SelectorImagen ────────────────────────────────────────────────────────────
 const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
   const inputRef = useRef(null);
 
@@ -175,6 +122,13 @@ const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
   }, [onChange]);
 
   const handleClick = useCallback(() => inputRef.current?.click(), []);
+
+  // Revocar object URL al desmontar para evitar memory leaks
+  useEffect(() => {
+    if (!imagen) return;
+    const url = URL.createObjectURL(imagen);
+    return () => URL.revokeObjectURL(url);
+  }, [imagen]);
 
   return (
     <div className="sr-selector-imagen">
@@ -195,12 +149,19 @@ const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
           </span>
         </div>
       )}
-      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handleFile} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        style={{ display: 'none' }}
+        onChange={handleFile}
+      />
     </div>
   );
 });
 SelectorImagen.displayName = 'SelectorImagen';
 
+// ── SeccionRespuestas ─────────────────────────────────────────────────────────
 const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user, isAuthenticated }) => {
   const [respuestas,   setRespuestas]   = useState(respInit || []);
   const [texto,        setTexto]        = useState('');
@@ -318,6 +279,14 @@ const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user
 });
 SeccionRespuestas.displayName = 'SeccionRespuestas';
 
+// ── Helper: ¿es la reseña del usuario actual? ─────────────────────────────────
+const esDelUsuario = (r, user) =>
+  user && (
+    r.userId?.toString() === user._id?.toString() ||
+    r.userId?.toString() === user.id?.toString()
+  );
+
+// ── SeccionResenas ────────────────────────────────────────────────────────────
 const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) => {
   const [resenas,       setResenas]       = useState([]);
   const [puntosProm,    setPuntosProm]    = useState(receta.puntosProm   || 0);
@@ -336,6 +305,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
 
   const resenaDestacadaRef = useRef(null);
 
+  // Scroll a reseña destacada
   useEffect(() => {
     if (!resenaIdDestacada || cargandoRes || !resenaDestacadaRef.current) return;
     const t = setTimeout(() => {
@@ -344,20 +314,27 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
     return () => clearTimeout(t);
   }, [resenaIdDestacada, cargandoRes]);
 
+  /* ── cargarResenas — protegida contra doble-mount (StrictMode) ── */
   const cargarResenas = useCallback(async (pag = 1, ord = orden) => {
     setCargandoRes(true);
+
+    // FIX 429: usamos un objeto ref para poder cancelar desde el efecto padre
+    let cancelled = false;
+
     try {
-      const { data } = await api.get(`/recipes/${receta._id}/resenas?page=${pag}&limit=5&orden=${ord}`);
+      const { data } = await api.get(
+        `/recipes/${receta._id}/resenas?page=${pag}&limit=5&orden=${ord}`
+      );
+
+      if (cancelled) return;
+
       setResenas(data.resenas);
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
       setTotalPags(data.pagination.pages);
 
       if (user) {
-        const mia = data.resenas.find(
-          r => r.userId?.toString() === user._id?.toString() ||
-               r.userId?.toString() === user.id?.toString()
-        );
+        const mia = data.resenas.find(r => esDelUsuario(r, user));
 
         const fusionarImagen = (resenaServidor, resenaLocal) => {
           if (resenaServidor.imagen) return resenaServidor;
@@ -372,22 +349,26 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
           setFormEstrellas(mia.estrellas);
           setFormTexto(mia.texto || '');
         } else if (pag === 1) {
+          // Buscar la reseña propia en otras páginas (máximo totalPaginas)
           const totalPaginas = data.pagination.pages;
           let encontrada = false;
-          for (let p = 2; p <= totalPaginas && !encontrada; p++) {
-            const { data: d2 } = await api.get(`/recipes/${receta._id}/resenas?page=${p}&limit=5&orden=${ord}`);
-            const mia2 = d2.resenas.find(
-              r => r.userId?.toString() === user._id?.toString() ||
-                   r.userId?.toString() === user.id?.toString()
+
+          for (let p = 2; p <= totalPaginas && !encontrada && !cancelled; p++) {
+            const { data: d2 } = await api.get(
+              `/recipes/${receta._id}/resenas?page=${p}&limit=5&orden=${ord}`
             );
+            const mia2 = d2.resenas.find(r => esDelUsuario(r, user));
             if (mia2) {
               encontrada = true;
-              setMiResena(prev => fusionarImagen(mia2, prev));
-              setFormEstrellas(mia2.estrellas);
-              setFormTexto(mia2.texto || '');
+              if (!cancelled) {
+                setMiResena(prev => fusionarImagen(mia2, prev));
+                setFormEstrellas(mia2.estrellas);
+                setFormTexto(mia2.texto || '');
+              }
             }
           }
-          if (!encontrada) {
+
+          if (!encontrada && !cancelled) {
             setMiResena(null);
             setFormEstrellas(5);
             setFormTexto('');
@@ -395,13 +376,49 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
         }
       }
     } catch {
-      toast.error('Error cargando reseñas');
+      if (!cancelled) toast.error('Error cargando reseñas');
     } finally {
-      setCargandoRes(false);
+      if (!cancelled) setCargandoRes(false);
     }
+
+    // Devolvemos función de cancelación para uso interno si se necesita
+    return () => { cancelled = true; };
   }, [receta._id, user, orden]);
 
-  useEffect(() => { cargarResenas(1, orden); }, [orden]);
+  /* ── Efecto principal: recarga al cambiar orden — protegido con cleanup ── */
+  useEffect(() => {
+    let cancelled = false;
+    setCargandoRes(true);
+
+    api.get(`/recipes/${receta._id}/resenas?page=1&limit=5&orden=${orden}`)
+      .then(({ data }) => {
+        if (cancelled) return;
+
+        setResenas(data.resenas);
+        setPuntosProm(data.puntosProm);
+        setTotalResenas(data.totalResenas);
+        setTotalPags(data.pagination.pages);
+        setPagina(1);
+
+        if (user) {
+          const mia = data.resenas.find(r => esDelUsuario(r, user));
+          if (mia) {
+            setMiResena(prev => {
+              if (prev?.imagen?.estado === 'pendiente' && !mia.imagen) {
+                return { ...mia, imagen: prev.imagen };
+              }
+              return mia;
+            });
+            setFormEstrellas(mia.estrellas);
+            setFormTexto(mia.texto || '');
+          }
+        }
+      })
+      .catch(() => { if (!cancelled) toast.error('Error cargando reseñas'); })
+      .finally(() => { if (!cancelled) setCargandoRes(false); });
+
+    return () => { cancelled = true; };
+  }, [orden]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const cambiarOrden = useCallback((nuevoOrden) => {
     setOrden(nuevoOrden);
@@ -420,12 +437,21 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
         fd.append('estrellas', formEstrellas);
         fd.append('texto', formTexto.trim());
         fd.append('imagen', formImagen);
-        ({ data } = await api.post(`/recipes/${receta._id}/resenas`, fd, { headers: { 'Content-Type': 'multipart/form-data' } }));
+        ({ data } = await api.post(`/recipes/${receta._id}/resenas`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }));
       } else if (miResena) {
-        ({ data } = await api.put(`/recipes/${receta._id}/resenas`, { estrellas: formEstrellas, texto: formTexto.trim() }));
+        ({ data } = await api.put(`/recipes/${receta._id}/resenas`, {
+          estrellas: formEstrellas,
+          texto: formTexto.trim(),
+        }));
       } else {
-        ({ data } = await api.post(`/recipes/${receta._id}/resenas`, { estrellas: formEstrellas, texto: formTexto.trim() }));
+        ({ data } = await api.post(`/recipes/${receta._id}/resenas`, {
+          estrellas: formEstrellas,
+          texto: formTexto.trim(),
+        }));
       }
+
       toast.success(miResena ? 'Reseña actualizada' : 'Reseña publicada');
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
@@ -472,14 +498,14 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
     }
   }, [isAuthenticated, receta._id]);
 
-  const handleFormTexto = useCallback((e) => setFormTexto(e.target.value), []);
+  const handleFormTexto      = useCallback((e) => setFormTexto(e.target.value), []);
   const handleCancelarEdicion = useCallback(() => {
     setEditando(false);
     setFormEstrellas(miResena.estrellas);
     setFormTexto(miResena.texto || '');
     setFormImagen(null);
   }, [miResena]);
-  const handleQuitarImagen = useCallback(() => setFormImagen(null), []);
+  const handleQuitarImagen   = useCallback(() => setFormImagen(null), []);
 
   const promRedondeado = Math.round(puntosProm);
 
@@ -491,7 +517,9 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
         <div className="sr-prom-detalle">
           <Estrellas valor={promRedondeado} readonly />
           <span className="sr-total-txt">
-            {totalResenas > 0 ? `${totalResenas} reseña${totalResenas !== 1 ? 's' : ''}` : 'Sin reseñas aún'}
+            {totalResenas > 0
+              ? `${totalResenas} reseña${totalResenas !== 1 ? 's' : ''}`
+              : 'Sin reseñas aún'}
           </span>
         </div>
       </div>
@@ -530,7 +558,9 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
               <Estrellas valor={formEstrellas} onChange={setFormEstrellas} />
               <textarea
                 className="sr-textarea"
-                placeholder={formImagen ? 'Escribe un comentario (obligatorio con imagen)...' : 'Escribe un comentario (opcional)...'}
+                placeholder={formImagen
+                  ? 'Escribe un comentario (obligatorio con imagen)...'
+                  : 'Escribe un comentario (opcional)...'}
                 value={formTexto}
                 onChange={handleFormTexto}
                 maxLength={500}
@@ -543,7 +573,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
                 <SelectorImagen imagen={formImagen} onChange={setFormImagen} onRemove={handleQuitarImagen} />
               )}
 
-              {miResena && miResena.imagen && miResena.imagen.estado !== 'rechazada' && (
+              {miResena?.imagen && miResena.imagen.estado !== 'rechazada' && (
                 <div className="sr-edit-imagen-wrap">
                   <div className="sr-edit-imagen-inner">
                     {miResena.imagen.estado === 'aprobada' ? (
@@ -582,7 +612,9 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
 
               <div className="sr-form-actions">
                 {miResena && (
-                  <button className="sr-btn-cancelar" onClick={handleCancelarEdicion} disabled={enviando}>Cancelar</button>
+                  <button className="sr-btn-cancelar" onClick={handleCancelarEdicion} disabled={enviando}>
+                    Cancelar
+                  </button>
                 )}
                 <button
                   className="sr-btn-enviar"
@@ -639,18 +671,11 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
           resenas
             .filter(r => {
               if (!miResena || editando) return true;
-              const esPropia = user && (
-                r.userId?.toString() === user._id?.toString() ||
-                r.userId?.toString() === user.id?.toString()
-              );
-              return !esPropia;
+              return !esDelUsuario(r, user);
             })
             .map(r => {
-              const esPropia = user && (
-                r.userId?.toString() === user._id?.toString() ||
-                r.userId?.toString() === user.id?.toString()
-              );
-              const esAdmin = user?.role === 'admin';
+              const esPropia = esDelUsuario(r, user);
+              const esAdmin  = user?.role === 'admin';
               const imagenParaMostrar =
                 esPropia && !r.imagen && miResena?.imagen?.estado === 'pendiente'
                   ? miResena.imagen
@@ -670,7 +695,11 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
                     </div>
                     <Estrellas valor={r.estrellas} readonly />
                     {isAuthenticated && (esPropia || esAdmin) && (
-                      <button className="sr-btn-borrar-lista" onClick={() => handleBorrarResena(r._id)} title="Eliminar reseña">
+                      <button
+                        className="sr-btn-borrar-lista"
+                        onClick={() => handleBorrarResena(r._id)}
+                        title="Eliminar reseña"
+                      >
                         <IcoBorrar size={15} />
                       </button>
                     )}
@@ -681,10 +710,18 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada }) =>
 
                   <div className="sr-votos">
                     <span className="sr-votos-label">¿Te resultó útil?</span>
-                    <button className={`sr-btn-voto sr-like${r.miVoto === 'like' ? ' activo' : ''}`} onClick={() => handleVotar(r._id, 'like')} title="Es útil">
+                    <button
+                      className={`sr-btn-voto sr-like${r.miVoto === 'like' ? ' activo' : ''}`}
+                      onClick={() => handleVotar(r._id, 'like')}
+                      title="Es útil"
+                    >
                       <IcoThumbUp size={13} /> <span>{r.likes}</span>
                     </button>
-                    <button className={`sr-btn-voto sr-dislike${r.miVoto === 'dislike' ? ' activo' : ''}`} onClick={() => handleVotar(r._id, 'dislike')} title="No es útil">
+                    <button
+                      className={`sr-btn-voto sr-dislike${r.miVoto === 'dislike' ? ' activo' : ''}`}
+                      onClick={() => handleVotar(r._id, 'dislike')}
+                      title="No es útil"
+                    >
                       <IcoThumbDown size={13} /> <span>{r.dislikes}</span>
                     </button>
                   </div>

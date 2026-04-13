@@ -123,7 +123,9 @@ const mapItem = (img) => ({
 /* ── Componente principal ── */
 const ImagenesAprobacion = ({ onCambio }) => {
   // Cache de todos los estados — se llena con UN solo batch de 3 requests
-  const cacheRef = useRef({ pendiente: null, aprobada: null, rechazada: null });
+  const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
+  // Flag para evitar doble carga en React StrictMode (doble-invoke de effects en dev)
+  const cargandoRef = useRef(false);
 
   const [imagenes,       setImagenes]       = useState([]);
   const [cargando,       setCargando]       = useState(true);
@@ -139,7 +141,11 @@ const ImagenesAprobacion = ({ onCambio }) => {
    * Cambiar el filtro NO dispara esta función.
    */
   const cargarTodo = useCallback(async () => {
+    // Evita que StrictMode lance dos fetches simultáneos en dev
+    if (cargandoRef.current) return;
+    cargandoRef.current = true;
     setCargando(true);
+
     try {
       const [pendRes, aprobRes, rechRes] = await Promise.all([
         api.get('/admin/imagenes-resenas?estado=pendiente&limit=100'),
@@ -147,35 +153,17 @@ const ImagenesAprobacion = ({ onCambio }) => {
         api.get('/admin/imagenes-resenas?estado=rechazada&limit=100'),
       ]);
 
-      const pendItems = (pendRes.data.items  ?? []).map(mapItem);
-      const aprobItems= (aprobRes.data.items ?? []).map(mapItem);
-      const rechItems = (rechRes.data.items  ?? []).map(mapItem);
+      const pendItems  = (pendRes.data.items  ?? []).map(mapItem);
+      const aprobItems = (aprobRes.data.items ?? []).map(mapItem);
+      const rechItems  = (rechRes.data.items  ?? []).map(mapItem);
 
-      // Guardamos en caché
-      cacheRef.current = {
-        pendiente: pendItems,
-        aprobada:  aprobItems,
-        rechazada: rechItems,
-      };
+      cacheRef.current = { pendiente: pendItems, aprobada: aprobItems, rechazada: rechItems };
 
-      // ── Contadores ──────────────────────────────────────────────────────────
-      // Usamos items.length como fuente de verdad (refleja los registros reales
-      // que devuelve el backend en este momento, sin huérfanos ni borrados).
-      // Solo caemos en pagination.total si el backend truncó la lista (>100).
-      const totalPend  = pendRes.data.pagination?.total  > pendItems.length
-        ? pendRes.data.pagination.total   : pendItems.length;
-      const totalAprob = aprobRes.data.pagination?.total > aprobItems.length
-        ? aprobRes.data.pagination.total  : aprobItems.length;
-      const totalRech  = rechRes.data.pagination?.total  > rechItems.length
-        ? rechRes.data.pagination.total   : rechItems.length;
+      const totalPend  = pendRes.data.pagination?.total  > pendItems.length  ? pendRes.data.pagination.total  : pendItems.length;
+      const totalAprob = aprobRes.data.pagination?.total > aprobItems.length ? aprobRes.data.pagination.total : aprobItems.length;
+      const totalRech  = rechRes.data.pagination?.total  > rechItems.length  ? rechRes.data.pagination.total  : rechItems.length;
 
-      setTotalPorEstado({
-        pendiente: totalPend,
-        aprobada:  totalAprob,
-        rechazada: totalRech,
-      });
-
-      // Mostramos el filtro activo actual desde el caché recién cargado
+      setTotalPorEstado({ pendiente: totalPend, aprobada: totalAprob, rechazada: totalRech });
       setImagenes(cacheRef.current[filtro] ?? []);
 
     } catch (error) {
@@ -183,17 +171,19 @@ const ImagenesAprobacion = ({ onCambio }) => {
       console.error(error);
     } finally {
       setCargando(false);
+      cargandoRef.current = false;
     }
-  }, []); // ← sin dependencia en `filtro`: cargarTodo no se re-crea al cambiar tab
+  }, []); // sin dep en `filtro` — cargarTodo no se recrea al cambiar tab
 
-  // Mount inicial — una sola llamada
+  // Mount inicial — una sola llamada efectiva
   useEffect(() => {
     cargarTodo();
+    // Cleanup: si StrictMode desmonta antes de que termine, reseteamos el flag
+    return () => { cargandoRef.current = false; };
   }, [cargarTodo]);
 
   /**
    * Cambio de filtro — SOLO lee del caché, sin petición al servidor.
-   * Si por algún motivo el caché aún no está listo, dispara cargarTodo.
    */
   useEffect(() => {
     if (cacheRef.current[filtro] !== null) {
@@ -210,7 +200,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar`);
       toast.success('✅ Imagen aprobada');
-      // Invalidar caché y recargar todo para reflejar el cambio
       cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
       await cargarTodo();
       onCambio?.();
@@ -229,7 +218,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar`);
       toast.success('Imagen rechazada');
-      // Invalidar caché y recargar todo
       cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
       await cargarTodo();
       onCambio?.();
@@ -329,7 +317,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
           {imagenes.map(img => (
             <div key={img._id} className={`ia-card ia-card--${ESTADOS[img.estado]?.color || 'naranja'}`}>
 
-              {/* Imagen (o placeholder si fue rechazada y ya no tiene url) */}
+              {/* Imagen */}
               <div
                 className="ia-card-img-wrap"
                 onClick={() => img.url && setImagenModal(img)}
@@ -393,7 +381,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
                   </p>
                 )}
 
-                {/* Comentario — siempre visible para contexto */}
                 {img.comentarioTexto ? (
                   <p className="ia-card-comentario">"{img.comentarioTexto}"</p>
                 ) : (
@@ -402,7 +389,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
                   </p>
                 )}
 
-                {/* Estado badge */}
                 <span className={`ia-estado-badge ia-estado-badge--${ESTADOS[img.estado]?.color || 'naranja'}`}>
                   {img.estado === 'pendiente' && '⏳ Pendiente'}
                   {img.estado === 'aprobada'  && '✅ Aprobada'}
@@ -455,7 +441,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
                 </div>
               )}
 
-              {/* Acciones rechazadas — botón banear */}
+              {/* Acciones rechazadas */}
               {img.estado === 'rechazada' && (
                 <div className="ia-card-acciones">
                   <button

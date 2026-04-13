@@ -17,11 +17,9 @@
 
 .navContenedor {
   width: 100%;
-  max-width: var(--page-max);
-  margin: 0 auto;
   padding: 0 var(--page-px);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
 }
@@ -108,6 +106,7 @@
   gap: clamp(0.75rem, 1.5vw, 2rem);
   align-items: center;
   flex-wrap: nowrap;
+  margin-left: auto;
 }
 .navMenu li { color: var(--blanco); cursor: pointer; font-weight: 500; transition: var(--transicion); position: relative; white-space: nowrap; }
 .navMenu li:not(:has(button)):hover { color: var(--naranja); }
@@ -753,6 +752,16 @@ nav .navHamburguesa span,
   to   { transform: scale(1);   opacity: 1; }
 }
 
+/* Campana desktop: oculta en móvil */
+.nav-notif-wrap--desktop {
+  display: flex;
+}
+
+/* Campana dentro del menú móvil: oculta en desktop */
+.nav-notif-btn--movil {
+  display: none;
+}
+
 /* Reordenar en desktop para que la campana quede a la derecha del menú */
 @media (min-width: 769px) {
   .navContenedor {
@@ -766,12 +775,89 @@ nav .navHamburguesa span,
   }
 }
 
-/* En móvil la campana queda entre el logo y la hamburguesa */
+/* En móvil la campana queda dentro del menú hamburguesa */
 @media (max-width: 768px) {
-  .nav-notif-wrap {
-    order: 2;
+  .nav-notif-wrap--desktop {
+    display: none !important;
+  }
+  .nav-notif-btn--movil {
+    display: flex !important;
   }
   .navHamburguesa {
     order: 3;
+    margin-left: auto;
+  }
+}
+/* ════════════════════════════════════════════════════
+   MODAL NOTIFICACIONES — solo móvil
+════════════════════════════════════════════════════ */
+.pn-modal-movil {
+  display: none;
+}
+
+@media (max-width: 968px) {
+  .pn-modal-movil {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: pn-modal-fade 0.2s ease;
+    padding: 1rem;
+  }
+
+  @keyframes pn-modal-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .pn-modal-movil__contenido {
+    width: 100%;
+    max-width: 420px;
+    animation: pn-modal-slide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pn-modal-slide {
+    from { transform: translateY(20px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+
+  /* En móvil el panel no es absolute sino block */
+  .pn-modal-movil .pn-panel {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Fila tema + campana en móvil */
+@media (max-width: 968px) {
+  .navMenu li.navMenu-tema {
+    gap: 1rem !important;
+  }
+  .nav-notif-btn--movil {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-notif-btn--movil:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--blanco-puro);
   }
 }
