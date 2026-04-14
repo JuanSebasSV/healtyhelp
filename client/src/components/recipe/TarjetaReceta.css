@@ -39,12 +39,16 @@
     0 0 0 1px rgba(247, 127, 0, 0.4);
 }
 
+/* ── Imagen ── */
 .tarjetaImg {
   position: relative;
   height: 220px;
   overflow: hidden;
   border-radius: 12px;
   flex-shrink: 0;
+  /* FIX: min-height evita el layout shift cuando la imagen carga */
+  min-height: 220px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .tarjetaImg img {
@@ -54,6 +58,8 @@
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
   filter: brightness(0.92) saturate(1.08);
   will-change: transform;
+  /* FIX: evita el parpadeo al cargar la imagen */
+  display: block;
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
@@ -72,6 +78,33 @@
   pointer-events: none;
 }
 
+/* ── Skeleton loader mientras carga la imagen ── */
+.tarjetaImg--cargando {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+.tarjetaImg--cargando img {
+  opacity: 0;
+}
+
+.tarjetaImg--cargada img {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Botón favorito ── */
 .btnFav {
   position: absolute;
   top: 0.85rem;
@@ -81,6 +114,7 @@
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(0, 0, 0, 0.28);
+  /* FIX: backdrop-filter solo en desktop (muy costoso en móvil) */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
@@ -112,6 +146,7 @@
 .btnFav.activo { background: rgba(220, 38, 38, 0.3); border-color: rgba(220, 38, 38, 0.6); }
 .btnFav.activo svg { fill: var(--rojo); stroke: var(--rojo); }
 
+/* ── Info de la tarjeta ── */
 .tarjetaInfo {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -179,24 +214,56 @@
 }
 .modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }
 
+/* =====================================================
+   RESPONSIVE MÓVIL
+   ===================================================== */
 @media (max-width: 900px) {
   .tarjetaReceta {
     padding: 0.4rem;
     gap: 0.4rem;
+    /* FIX: en móvil, backdrop-filter en las tarjetas es muy
+       costoso y causa el bugeo visual. Se reemplaza por un
+       fondo sólido semitransparente que no requiere GPU extra. */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(20, 55, 30, 0.75);
+    /* FIX: hover desactivado en móvil (no hay cursor, no tiene sentido
+       y el translateY causa repaints innecesarios) */
+    transition: none;
   }
+
+  /* FIX: deshabilitar completamente el hover en touch */
+  .tarjetaReceta:hover {
+    transform: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  }
+
   .tarjetaImg {
     height: 130px;
+    min-height: 130px;
     border-radius: 8px;
   }
+
+  /* FIX: skeleton más pequeño en móvil */
+  .tarjetaImg--cargando {
+    min-height: 130px;
+  }
+
   .tarjetaInfo {
     padding: 0.5rem 0.5rem 0.5rem 0.65rem;
     gap: 0.25rem;
+    /* FIX: quitar backdrop-filter del info también */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(10, 30, 15, 0.6);
   }
+
   .tarjetaInfo h3 {
     font-size: 0.82rem;
     margin-bottom: 0.25rem;
     line-height: 1.2;
   }
+
   .tarjetaInfo p { display: none; }
   .estrella-ico { font-size: 0.72rem; }
   .tarjeta-prom-txt { font-size: 0.67rem; }
@@ -205,18 +272,24 @@
     gap: 0.3rem;
     margin-top: 0;
   }
+
   .btnFav {
     width: 28px;
     height: 28px;
     top: 0.4rem;
     right: 0.4rem;
     border-radius: 8px;
+    /* FIX: sin blur en botones sobre móvil */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.45);
   }
+
   .btnFav svg { width: 14px; height: 14px; }
 }
 
 @media (max-width: 360px) {
-  .tarjetaImg { height: 180px; }
+  .tarjetaImg { height: 180px; min-height: 180px; }
   .tarjetaInfo h3 { font-size: 0.9rem; }
   .tarjetaInfo p {
     font-size: 0.82rem;
@@ -224,6 +297,7 @@
   }
 }
 
+/* ── Botón seleccionar ── */
 .btnSeleccionar {
   position: absolute;
   bottom: 0.85rem;
@@ -266,5 +340,13 @@
   border-color: rgba(22, 163, 74, 0.65);
 }
 .btnSeleccionar.activo svg { stroke: #4ade80; }
+
+@media (max-width: 900px) {
+  .btnSeleccionar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.45);
+  }
+}
 
 .tarjeta-seleccionada { outline: 2px solid #16a34a; }
