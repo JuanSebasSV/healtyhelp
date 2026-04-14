@@ -1,18 +1,31 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
 
-const crearTransporter = () => nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-});
+const enviarEmail = async ({ to, subject, html }) => {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: process.env.EMAIL_FROM,   // ej: "Healthy Help <no-reply@tudominio.com>"
+      to,
+      subject,
+      html
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`Resend error: ${JSON.stringify(err)}`);
+  }
+  return res.json();
+};
 
 const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizaste esta acción, ignora este correo.' }) => `
 <!DOCTYPE html>
@@ -141,13 +154,11 @@ exports.register = async (req, res) => {
 };
 
 async function enviarCodigoVerificacion(email, name, code) {
-  const transporter = crearTransporter();
   const digitos = code.split('').map(d =>
     `<span style="display:inline-block;width:44px;height:52px;line-height:52px;text-align:center;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-size:26px;font-weight:800;margin:0 4px;">${d}</span>`
   ).join('');
 
-  await transporter.sendMail({
-    from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: '🔐 Verifica tu cuenta — Healthy Help',
     html: emailBase({
@@ -344,11 +355,9 @@ exports.setGooglePassword = async (req, res) => {
 };
 
 async function enviarAlertaBloqueo(email, name) {
-  const transporter = crearTransporter();
   const resetUrl = `${process.env.FRONTEND_URL}/recuperar`;
 
-  await transporter.sendMail({
-    from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: '⚠️ Actividad sospechosa en tu cuenta — Healthy Help',
     html: emailBase({
@@ -394,10 +403,8 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    const transporter = crearTransporter();
 
-    await transporter.sendMail({
-      from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+    await enviarEmail({
       to: user.email,
       subject: '🔐 Recupera tu contraseña — Healthy Help',
       html: emailBase({
