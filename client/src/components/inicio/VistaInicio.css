@@ -137,7 +137,7 @@
 .columna-stats {
   position: sticky; /* Opcional: para que las stats te sigan al bajar */
   top: 20px;
-  margin-top: 2rem;
+ 
   margin-left: 1rem;
  
 }
@@ -966,6 +966,7 @@
   gap: 0.6rem;
   padding: 0 var(--page-px);
   margin-bottom: 1.5rem;
+
 }
 
 .buscador-input-wrap {
