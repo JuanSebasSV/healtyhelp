@@ -222,7 +222,7 @@ const recetasFiltradas = useMemo(() => {
     // Solo si cumple las 4 condiciones, la receta se muestra
     return coincideCategoria && coincideBusqueda && coincideSalud && coincideTiempo;
   });
-}, [recetas, categoriaActiva, busqueda, filtrosActivos, filtroTiempo]); 
+}, [recetas, categoriaActiva, busqueda, filtros, filtroTiempo]); 
 // ^ IMPORTANTE: Añadimos todas las dependencias para que el filtro se actualice al cambiar cualquier valor.
 
 
@@ -270,34 +270,64 @@ const recetasFiltradas = useMemo(() => {
       <div className="contenedor-grid">    
           {/* Stats flotantes */}
           <aside className="columna-stats">
-              <div className="hero-stats">
-                   <div className="hero-stat">
-                      <span className="hero-stat__num">+120</span>
-                      <span className="hero-stat__label">Recetas</span>
-                    </div>
-                    <div className="hero-stat-div"></div>
-                    <div className="hero-stat">
-                      <span className="hero-stat__num">16</span>
-                      <span className="hero-stat__label">Dietas</span>
-                    </div>
-                    <div className="hero-stat-div"></div>
-                    <div className="hero-stat">
-                      <span className="hero-stat__num">100%</span>
-                      <span className="hero-stat__label">Saludable</span>
-                    </div>
+            {/* Stats con íconos grandes */}
+            <div className="stats-card">
+              <div className="stat-item">
+                <div className="stat-icono-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/>
+                  </svg>
+                </div>
+                <div className="stat-info">
+                  <span className="stat-num">+120</span>
+                  <span className="stat-label">Recetas disponibles</span>
+                </div>
               </div>
-               {/* Tip del día */}
-              <div className="widget-tip">
-                <div className="widget-tip__header">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+
+              <div className="stat-divider" />
+
+              <div className="stat-item">
+                <div className="stat-icono-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                  </svg>
+                </div>
+                <div className="stat-info">
+                  <span className="stat-num">16</span>
+                  <span className="stat-label">Tipos de dieta</span>
+                </div>
+              </div>
+
+              <div className="stat-divider" />
+
+              <div className="stat-item">
+                <div className="stat-icono-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+                <div className="stat-info">
+                  <span className="stat-num">100%</span>
+                  <span className="stat-label">Saludable</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tip del día */}
+            <div className="tip-card">
+              <div className="tip-header">
+                <div className="tip-icono-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2a7 7 0 0 1 7 7c0 3.87-2.69 6-4 7H9c-1.31-1-4-3.13-4-7a7 7 0 0 1 7-7z"/>
                     <path d="M9 21h6M10 17v1M14 17v1"/>
                   </svg>
-                  <span>Tip del día</span>
                 </div>
-                <p className="widget-tip__texto">{tipDelDia}</p>
+                <span className="tip-titulo">Tip del día</span>
               </div>
-            </aside>
+              <p className="tip-texto">{tipDelDia}</p>
+              <div className="tip-deco" />
+            </div>
+          </aside>
                    
             <main className="columna-cuerpo">  
                         {/* ─── Botón filtro ─── */}
@@ -357,6 +387,32 @@ const recetasFiltradas = useMemo(() => {
                 ))}
               </section>
 
+                    {/* ── Buscador ── */}
+              <div className="buscador-recetas">
+                <div className="buscador-input-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Buscar receta por nombre o descripción..."
+                    value={busqueda}
+                    onChange={e => setBusqueda(e.target.value)}
+                    className="buscador-input"
+                  />
+                  {busqueda && (
+                    <button className="buscador-clear" onClick={() => setBusqueda('')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                  )}
+                </div>
+                {busqueda && (
+                  <span className="buscador-conteo">
+                    {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
+                  </span>
+                )}
+              </div>
+
           </main> 
 
           <aside className="columna-right">
@@ -396,51 +452,28 @@ const recetasFiltradas = useMemo(() => {
                 <span>Dietas populares</span>
               </div>
               <div className="widget-lateral__tags">
-                {['Vegano', 'Keto', 'Sin Gluten', 'Vegetariano', 'Bajo en Sodio'].map(dieta => (
-                  <button
-                    key={dieta}
-                    className={`widget-tag ${filtros.includes(
-                      CONDICIONES.find(c => c.nombre === dieta)?.id
-                    ) ? 'activo' : ''}`}
-                    onClick={() => {
-                      const id = CONDICIONES.find(c => c.nombre === dieta)?.id;
-                      if (id) toggleFiltro(id);
-                    }}
-                  >
-                    {dieta}
-                  </button>
-                ))}
+              {[
+                { label: 'Vegano',        id: 'vegano'           },
+                { label: 'Keto',          id: 'keto'             },
+                { label: 'Sin Gluten',    id: 'celiaco'          },
+                { label: 'Vegetariano',   id: 'vegetariano'      },
+                { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
+              ].map(dieta => (
+                <button
+                  key={dieta.id}
+                  className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
+                  onClick={() => toggleFiltro(dieta.id)}
+                >
+                  {dieta.label}
+                </button>
+              ))}
               </div>
             </div>
 
         </aside>
       </div>
 
-      {/* ── Buscador ── */}
-<div className="buscador-recetas">
-  <div className="buscador-input-wrap">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input
-      type="text"
-      placeholder="Buscar receta por nombre o descripción..."
-      value={busqueda}
-      onChange={e => setBusqueda(e.target.value)}
-      className="buscador-input"
-    />
-    {busqueda && (
-      <button className="buscador-clear" onClick={() => setBusqueda('')}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    )}
-  </div>
-  {busqueda && (
-    <span className="buscador-conteo">
-      {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
-    </span>
-  )}
-</div>
+
 
        {/* ── Recetas ── */}
        <section className="recetasGrid">

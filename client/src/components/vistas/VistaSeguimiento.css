@@ -116,13 +116,8 @@
   padding: 0.55rem 1rem;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.12);
-<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.326);
   color: rgba(255,255,255,0.65);
-=======
-  background: rgba(255,255,255,0.05);
-  color: rgba(255, 255, 255, 0.8);
->>>>>>> cb028bbd89702626df48b4dc65caad790be2c506
   font-size: 0.83rem;
   font-weight: 600;
   cursor: pointer;
@@ -345,11 +340,7 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.82rem;
-<<<<<<< HEAD
   color: rgba(255, 255, 255, 0.785);
-=======
-  color: rgba(255, 255, 255, 0.55);
->>>>>>> cb028bbd89702626df48b4dc65caad790be2c506
 }
 .seg-btn-agregar {
   padding: 0.3rem 0.85rem;
@@ -367,27 +358,21 @@
   color: var(--blanco-puro);
 }
 
-<<<<<<< HEAD
 .modo-oscuro .seg-btn-agregar{
   border: 1px solid rgba(27, 113, 67, 0.474);
-=======
+}
 /* ── Límite snacks ── */
 .seg-snacks-limite {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.35);
   text-align: center;
   padding: 0.4rem 0;
->>>>>>> cb028bbd89702626df48b4dc65caad790be2c506
 }
 
 /* ── Estados ── */
 .seg-estado {
   text-align: center;
-<<<<<<< HEAD
   color: rgba(255, 255, 255, 0.247);
-=======
-  color: rgba(255, 255, 255, 0.65);
->>>>>>> cb028bbd89702626df48b4dc65caad790be2c506
   font-size: 0.9rem;
   padding: 2rem 0;
 }

@@ -129,57 +129,189 @@
   border-radius: 2px;
 }
 /* ============ COLUMNA IZQUIERDA ============ */
+/* ── Columna stats ───────────────────────────────── */
+/* ── Columna stats ───────────────────────────────── */
 .columna-stats {
-  position: sticky; /* Opcional: para que las stats te sigan al bajar */
-  top: 20px;
- 
-  margin-left: 1rem;
- 
-}
-
-
-.hero-stats {
-  display: flex;
-  flex-direction: column;   /* apilados verticalmente uno sobre otro */
-  align-items: center;
-  gap: 1.2rem;
-  background: rgba(136, 207, 194, 0.184);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(168, 177, 176, 0.18);
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  flex-shrink: 0;
-  
-}
-
-.hero-stat {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-}
- 
-.hero-stat__num {
-  font-family: 'Georgia', serif;
-  font-size: 2rem;
-  font-weight: 400;
-  color: #e37201;
-  line-height: 1;
-}
- 
-.hero-stat__label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(225, 156, 83, 0.6);
+  gap: 1rem;
 }
 
-.hero-stat-div {
-  width: 40px;
+/* ── Stats card ──────────────────────────────────── */
+.stats-card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 18px;
+  padding: 1.2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0.5rem;
+}
+
+.stat-icono-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #2d6a4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat-divider {
   height: 1px;
-  background: rgba(255, 195, 31, 0.782);
+  background: rgba(0,0,0,0.06);
+  margin: 0 0.5rem;
+}
+
+/* ── Tip card ────────────────────────────────────── */
+.tip-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(45, 106, 79, 0.2);
+  border-left: 4px solid #2d6a4f;
+  border-radius: 18px;
+  padding: 1.2rem 1.1rem 1.4rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.tip-icono-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(45, 106, 79, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2d6a4f;
+  flex-shrink: 0;
+}
+
+.tip-titulo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #2d6a4f;
+}
+
+.tip-texto {
+  font-size: 0.88rem;
+  color: #797979 !important;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.tip-deco {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(45, 106, 79, 0.06);
+  pointer-events: none;
+}
+
+/* ── Tip card ────────────────────────────────────── */
+.tip-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(76,175,130,0.15) 0%, rgba(45,122,87,0.08) 100%);
+  border: 1px solid rgba(76,175,130,0.25);
+  border-radius: 18px;
+  padding: 1.2rem 1.1rem 1.4rem;
+  overflow: hidden;
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.tip-icono-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(76,175,130,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primario, #4caf82);
+  flex-shrink: 0;
+}
+
+.tip-titulo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primario, #4caf82);
+}
+
+.tip-texto {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.tip-deco {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(76,175,130,0.1);
+  pointer-events: none;
 }
 
 
@@ -245,7 +377,7 @@
 
 .contenedor-grid {
   display: grid;
-  grid-template-columns: 300px 1fr 300px;
+  grid-template-columns: 400px 1fr 400px;
   gap: 2rem;
   width: 100%;
   align-items: start;
@@ -288,8 +420,8 @@
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border: 1.5px solid rgba(255, 255, 255, 0.25);
-  padding: 0.45rem 1.1rem;
-  border-radius: 50px;
+  padding: 1rem 1.1rem;
+  border-radius: 30px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -364,14 +496,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.85rem 2rem;
-  background: rgba(26, 77, 46, 0.6);
+  padding: 1.5rem 3rem;
+  background: rgba(33, 123, 99, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50px;
+  border-radius: 40px;
   color: var(--blanco-puro);
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
@@ -380,7 +512,7 @@
   position: relative;
 }
 .filtroModalBtn:hover {
-  background: rgba(26, 77, 46, 0.85);
+  background: rgba(19, 87, 69, 0.74);
   border-color: rgba(247, 127, 0, 0.5);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
   transform: translateY(-2px);
@@ -637,7 +769,7 @@
 
 .recetasGrid h2 {
   text-align: center;
-  color: #514a3e;
+  color: #000000;
   font-size: 1.6rem;
   margin-bottom: 0.5rem;
   padding-top: 2rem;
@@ -670,43 +802,6 @@
 
 /* ============ COLUMNA DERECHA ============ */
 
-/* ── Widget tip del día ── */
-.widget-tip {
-  margin-top: 1rem;
-  background: #ffffff;
-  border: 1.5px solid #c8d4cf;
-  border-radius: 14px;
-  padding: 1rem 1.1rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-.widget-tip__header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: #4D9E7A;
-  margin-bottom: 0.65rem;
-}
-
-.widget-tip__header svg { color: #4D9E7A; flex-shrink: 0; }
-
-.widget-tip__texto {
-  font-size: 0.82rem;
-  color: #5a7060;
-  line-height: 1.6;
-  margin: 0;
-  font-style: italic;
-}
-
-.modo-oscuro .widget-tip {
-  background: rgba(18, 32, 22, 0.85);
-  border-color: rgba(79, 119, 45, 0.3);
-}
-.modo-oscuro .widget-tip__texto { color: rgba(180, 220, 160, 0.75); }
 
 /* ── Widget lateral genérico ── */
 .widget-lateral {
@@ -958,6 +1053,7 @@
   gap: 0.6rem;
   padding: 0 var(--page-px);
   margin-bottom: 1.5rem;
+  margin-top: 5rem;
 
 }
 
