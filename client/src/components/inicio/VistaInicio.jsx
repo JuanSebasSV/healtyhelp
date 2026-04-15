@@ -50,7 +50,7 @@ const CONDICIONES = [
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 
-const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario }) => {
+const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, onFiltrosCambiados }) => {
   // ── Hook de filtros (maneja condiciones + categorias + persistencia) ───────
   const {
     filtros,         // condiciones de salud seleccionadas
@@ -192,6 +192,21 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario }
     }
   };
 
+  const handleToggleFiltro = useCallback((id) => {
+    toggleFiltro(id);
+    onFiltrosCambiados?.();
+  }, [toggleFiltro, onFiltrosCambiados]);
+
+  const handleToggleCategoria = useCallback((id) => {
+    toggleCategoria(id);
+    onFiltrosCambiados?.();
+  }, [toggleCategoria, onFiltrosCambiados]);
+
+  const handleLimpiarTodo = useCallback(() => {
+    limpiarTodo();
+    onFiltrosCambiados?.();
+  }, [limpiarTodo, onFiltrosCambiados]);
+
   // ─── Manejo del click en botón de categoría ───────────────────────────────
   // Lógica:
   //   • Click en "Todas"  → limpiar todas las categorías persistidas
@@ -199,10 +214,11 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario }
   const handleCategoria = useCallback((catId) => {
     if (catId === 'todas') {
       limpiarCategorias();
+      onFiltrosCambiados?.();
     } else {
-      toggleCategoria(catId);
+      handleToggleCategoria(catId);
     }
-  }, [toggleCategoria, limpiarCategorias]);
+  }, [handleToggleCategoria, limpiarCategorias, onFiltrosCambiados]);
 
   // ─── Filtrado de recetas ──────────────────────────────────────────────────
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
@@ -271,14 +287,14 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario }
                 <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
                 {!listo && <p className="filtroInfo-cargando">Cargando tu perfil...</p>}
                 {totalFiltrosActivos > 0 && (
-                  <button className="btnLimpiar" onClick={limpiarTodo}>
+                  <button className="btnLimpiar" onClick={handleLimpiarTodo}>
                     Limpiar todos los filtros ({totalFiltrosActivos})
                   </button>
                 )}
               </div>
               <div className="filtroGrid">
                 {CONDICIONES.map(c => (
-                  <button key={c.id} className={`filtroCard ${filtros.includes(c.id) ? 'activo' : ''}`} onClick={() => toggleFiltro(c.id)}>
+                  <button key={c.id} className={`filtroCard ${filtros.includes(c.id) ? 'activo' : ''}`} onClick={() => handleToggleFiltro(c.id)}>
                     <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
                     <span className="filtroNombre">{c.nombre}</span>
                     {filtros.includes(c.id) && <span className="filtroCheck">✓</span>}
