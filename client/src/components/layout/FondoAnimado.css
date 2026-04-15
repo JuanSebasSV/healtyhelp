@@ -20,7 +20,6 @@
       var(--verde-hoja) 100%);
   /* FIX: fuerza GPU compositing para el gradiente */
   transform: translateZ(0);
-  will-change: auto;
 }
 
 .modo-oscuro .gradientMesh {
@@ -36,7 +35,6 @@
   height: 200px;
   left: 0;
   pointer-events: none;
-  will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   /* FIX: crea un contexto de composición propio para cada onda */

@@ -15,11 +15,11 @@
   border: 1.5px solid rgba(255, 255, 255, 0.38);
   border-left: 4px solid var(--naranja);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
-  will-change: transform;
   contain: layout style;
 }
 
 .tarjetaReceta:hover {
+  will-change: transform;
   transform: translateY(-10px) scale(1.015);
   box-shadow:
     0 20px 48px rgba(0, 0, 0, 0.28),
@@ -57,12 +57,12 @@
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
   filter: brightness(0.92) saturate(1.08);
-  will-change: transform;
   /* FIX: evita el parpadeo al cargar la imagen */
   display: block;
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
+  will-change: transform;
   transform: scale(1.08);
   filter: brightness(1) saturate(1.15);
 }

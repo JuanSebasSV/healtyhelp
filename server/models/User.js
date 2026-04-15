@@ -49,8 +49,13 @@ const userSchema = new mongoose.Schema({
   termsVersion:    { type: String, default: '' },
 
   // ── Perfil de salud ──
+  // 'condiciones' : filtros de dieta/salud (diabetes, vegano, etc.)
+  // 'categorias'  : filtro de tipo de comida (desayuno, almuerzo, cena, postres-snacks)
+  // 'alergias'    : ingredientes que el usuario no puede consumir
+  // 'preferencias': preferencias generales (texto libre)
   healthProfile: {
     condiciones:  { type: [String], default: [] },
+    categorias:   { type: [String], default: [] }, // ← NUEVO
     alergias:     { type: [String], default: [] },
     preferencias: { type: [String], default: [] }
   },

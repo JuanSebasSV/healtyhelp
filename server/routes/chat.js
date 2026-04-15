@@ -1,73 +1,72 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { protect } = require('../middleware/auth');
-const User = require('../models/User');
+const User     = require('../models/User');
 const AIConfig = require('../models/AIConfig');
-const Recipe = require('../models/Recipe.js');
+const Recipe   = require('../models/Recipe.js');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// ─── POST /chat ───────────────────────────────────────────────────────────────
 
 router.post('/', protect, async (req, res) => {
   try {
     const { message, history = [] } = req.body;
+    if (!message) return res.status(400).json({ error: 'El mensaje es requerido' });
 
-    if (!message) {
-      return res.status(400).json({ error: 'El mensaje es requerido' });
-    }
+    // Selección explícita para garantizar que healthProfile llega completo
+    const user = await User.findById(req.user._id)
+      .select('name healthProfile')
+      .lean();
 
-    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    const condiciones = user.healthProfile?.condiciones?.length
-      ? user.healthProfile.condiciones.join(', ')
-      : 'ninguna indicada';
+    const hp           = user.healthProfile || {};
+    const condiciones  = hp.condiciones?.length  ? hp.condiciones.join(', ')  : 'ninguna';
+    const categorias   = hp.categorias?.length   ? hp.categorias.join(', ')   : 'todas (sin restricción)';
+    const alergias     = hp.alergias?.length     ? hp.alergias.join(', ')     : 'ninguna';
+    const preferencias = hp.preferencias?.length ? hp.preferencias.join(', ') : 'ninguna';
 
-    const alergias = user.healthProfile?.alergias?.length
-      ? user.healthProfile.alergias.join(', ')
-      : 'ninguna indicada';
-
-    const preferencias = user.healthProfile?.preferencias?.length
-      ? user.healthProfile.preferencias.join(', ')
-      : 'ninguna indicada';
-
-    // Obtener recetas de la BD
     const recetas = await Recipe.find(
       {},
       'nombre desc cat salud ingredientes nutri.cal nutri.prot nutri.carb nutri.gras'
     ).lean();
 
-    const recetasTexto = recetas.map(r => {
-      const saludTags = r.salud?.length ? r.salud.join(', ') : 'todos';
-      const ingredientesList = r.ingredientes?.slice(0, 6).join(', ') || 'no especificados';
-      const cal = r.nutri?.cal ?? 0;
-      const prot = r.nutri?.prot ?? 0;
-      const carb = r.nutri?.carb ?? 0;
-      const gras = r.nutri?.gras ?? 0;
+    const catFiltro       = hp.categorias || [];
+    const recetasFiltradas = catFiltro.length
+      ? recetas.filter(r => catFiltro.includes(r.cat))
+      : recetas;
 
-      return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes principales: ${ingredientesList} | Nutrición: ${cal} kcal, ${prot}g proteína, ${carb}g carbs, ${gras}g grasas | Descripción: ${r.desc}`;
+    const recetasTexto = recetasFiltradas.map(r => {
+      const saludTags        = r.salud?.length        ? r.salud.join(', ')                  : 'todos';
+      const ingredientesList = r.ingredientes?.length ? r.ingredientes.slice(0, 6).join(', ') : 'no especificados';
+      return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes: ${ingredientesList} | Nutrición: ${r.nutri?.cal ?? 0} kcal, ${r.nutri?.prot ?? 0}g prot, ${r.nutri?.carb ?? 0}g carbs, ${r.nutri?.gras ?? 0}g grasas | ${r.desc}`;
     }).join('\n');
 
     let config = await AIConfig.findOne();
     if (!config) config = await AIConfig.create({});
 
     const systemPrompt = `
-      ${config.prompt}
+${config.prompt}
 
-      RECETAS DISPONIBLES EN LA PLATAFORMA (${recetas.length} recetas):
-      ${recetasTexto}
+RECETAS DISPONIBLES (${recetasFiltradas.length}${catFiltro.length ? ` — filtradas por: ${categorias}` : ''}):
+${recetasTexto}
 
-      Perfil del usuario "${user.name}":
-      - Condiciones médicas: ${condiciones}
-      - Alergias: ${alergias}
-      - Preferencias alimenticias: ${preferencias}
+Perfil de "${user.name}":
+- Condiciones / dieta: ${condiciones}
+- Tipo de comida activo: ${categorias}
+- Alergias: ${alergias}
+- Preferencias: ${preferencias}
 
-      REGLAS IMPORTANTES:
-      - Recomienda ÚNICAMENTE recetas de la lista anterior que existen en la plataforma.
-      - Nunca inventes ni sugieras recetas que no estén en esa lista.
-      - Filtra las recetas según las condiciones médicas y alergias del usuario.
-      - Cuando recomiendes una receta, menciona su nombre exacto, categoría y por qué es adecuada para el usuario.
-      - Si no hay recetas adecuadas para el usuario, indícalo amablemente.
-    `;
+REGLAS:
+- Recomienda SOLO recetas de la lista anterior.
+- Nunca inventes recetas que no estén en esa lista.
+- Respeta condiciones médicas y alergias.
+- Si el usuario pregunta qué filtros tiene activos, responde exactamente con los valores del perfil de arriba, sin inventar ni asumir nada.
+- Si condiciones = "ninguna", dile que no tiene condiciones seleccionadas.
+- Si categorias = "todas (sin restricción)", dile que no tiene tipo de comida filtrado.
+`.trim();
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',
@@ -79,49 +78,90 @@ router.post('/', protect, async (req, res) => {
       parts: [{ text: msg.text }],
     }));
 
-    const chat = model.startChat({ history: chatHistory });
+    const chat   = model.startChat({ history: chatHistory });
     const result = await chat.sendMessage(message);
-    const reply = result.response.text();
-
-    res.json({ reply });
+    res.json({ reply: result.response.text() });
 
   } catch (error) {
     console.error('❌ Error en chat:', error);
-
     if (error.status === 429) {
-      return res.json({
-        reply: 'Estoy recibiendo muchas consultas en este momento. Por favor intenta de nuevo en unos segundos.'
-      });
+      return res.json({ reply: 'Estoy recibiendo muchas consultas ahora mismo. Intenta de nuevo en unos segundos.' });
     }
-
     res.status(500).json({ error: 'Error al procesar tu mensaje' });
   }
 });
 
+// ─── GET /chat/filtros ────────────────────────────────────────────────────────
+
+router.get('/filtros', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select('healthProfile')
+      .lean();
+    res.json({
+      condiciones:  user.healthProfile?.condiciones  || [],
+      categorias:   user.healthProfile?.categorias   || [],
+      alergias:     user.healthProfile?.alergias     || [],
+      preferencias: user.healthProfile?.preferencias || [],
+    });
+  } catch {
+    res.status(500).json({ error: 'Error al obtener filtros' });
+  }
+});
+
+// ─── GET /chat/debug-perfil ───────────────────────────────────────────────────
+// Ruta temporal de diagnóstico — muestra exactamente lo que hay en MongoDB
+// ELIMINAR después de confirmar que los datos son correctos
+
+router.get('/debug-perfil', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select('name email healthProfile')
+      .lean();
+    res.json({
+      userId:       req.user._id,
+      name:         user?.name,
+      email:        user?.email,
+      healthProfile: user?.healthProfile,
+      tokenUserId:  req.user._id?.toString(),
+      match:        user?._id?.toString() === req.user._id?.toString(),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── PUT /chat/health-profile ─────────────────────────────────────────────────
+
 router.put('/health-profile', protect, async (req, res) => {
   try {
-    const { condiciones, alergias, preferencias } = req.body;
+    const { condiciones, categorias, alergias, preferencias } = req.body;
 
-    const user = await User.findByIdAndUpdate(
+    const userActual = await User.findById(req.user._id)
+      .select('healthProfile')
+      .lean();
+    const hp = userActual?.healthProfile || {};
+
+    const nuevoHP = {
+      condiciones:  Array.isArray(condiciones)  ? condiciones  : hp.condiciones  || [],
+      categorias:   Array.isArray(categorias)   ? categorias   : hp.categorias   || [],
+      alergias:     Array.isArray(alergias)     ? alergias     : hp.alergias     || [],
+      preferencias: Array.isArray(preferencias) ? preferencias : hp.preferencias || [],
+    };
+
+    const updated = await User.findByIdAndUpdate(
       req.user._id,
-      {
-        healthProfile: {
-          condiciones: condiciones || [],
-          alergias: alergias || [],
-          preferencias: preferencias || []
-        }
-      },
-      { new: true }
+      { $set: { healthProfile: nuevoHP } },
+      { new: true, select: 'healthProfile' }
     );
 
-    res.json({
-      message: 'Perfil de salud actualizado',
-      healthProfile: user.healthProfile
-    });
-  } catch (error) {
+    res.json({ message: 'Perfil actualizado', healthProfile: updated.healthProfile });
+  } catch {
     res.status(500).json({ error: 'Error al actualizar perfil de salud' });
   }
 });
+
+// ─── GET /chat/prompt ─────────────────────────────────────────────────────────
 
 router.get('/prompt', protect, async (req, res) => {
   try {
@@ -132,6 +172,8 @@ router.get('/prompt', protect, async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo prompt' });
   }
 });
+
+// ─── PUT /chat/prompt ─────────────────────────────────────────────────────────
 
 router.put('/prompt', protect, async (req, res) => {
   try {
