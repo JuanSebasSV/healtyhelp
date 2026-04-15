@@ -58,6 +58,68 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
         )}
       </div>
 
+      {/* ── Tarjetas móvil ── */}
+      <div className="recipe-cards-movil">
+        {filteredRecipes.map(recipe => (
+          <div key={recipe._id} className="rcard">
+            <div className="rcard-top">
+              {recipe.img
+                ? <img src={recipe.img} alt={recipe.nombre} className="rcard-img" />
+                : <div className="rcard-img-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" strokeWidth="1.5" style={{opacity:0.4}}>
+                      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
+                      <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/>
+                    </svg>
+                  </div>
+              }
+              <div>
+                <div className="rcard-nombre">{recipe.nombre}</div>
+                <div className="rcard-desc">{recipe.desc?.substring(0, 70)}{recipe.desc?.length > 70 ? '…' : ''}</div>
+              </div>
+            </div>
+
+            <div className="rcard-mid">
+              <span className={`badge cat-${recipe.cat}`}>{recipe.cat}</span>
+              <span className="health-count">{recipe.salud?.length || 0} cond.</span>
+              <span className="health-count">{recipe.nutri?.cal || 0} kcal</span>
+              {recipe.puntosProm > 0 && <span className="health-count">⭐ {recipe.puntosProm}</span>}
+            </div>
+
+            <div className="rcard-bottom">
+              <div className="rcard-check-wrap">
+                <input
+                  type="checkbox"
+                  checked={selectedRecipes.includes(recipe._id)}
+                  onChange={() => handleSelectOne(recipe._id)}
+                />
+                <span>Seleccionar</span>
+              </div>
+              <div className="rcard-actions">
+                <button onClick={() => onEdit(recipe)} className="btn-edit" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
+                <button onClick={() => onDelete(recipe._id)} className="btn-delete" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {filteredRecipes.length === 0 && (
+          <div className="no-results"><p>No se encontraron recetas con esos filtros</p></div>
+        )}
+      </div>
+
+      {/* ── Tabla desktop ── */}
       <div className="table-container">
         <table className="recipes-table">
           <thead>

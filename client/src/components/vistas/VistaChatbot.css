@@ -1,59 +1,456 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&family=DM+Sans:wght@300&display=swap');
+/* ============================================================
+   VistaChatbot.css — Botanical Tech · Vista expandida
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap');
 
+/* ── Contenedor principal ────────────────────────────────── */
 .vistaChatbot {
-    /* Neutraliza el padding del layout */
-    margin: 0 -24px; /* ajusta este valor al padding de tu layout */
-    min-height: calc(100vh - 64px);
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(132, 132, 132);
-    border-radius: 20px;
+  position: fixed;
+  inset: 0;
+  top: 64px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 900;
+  overflow: hidden;
+  background: #060f09;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Fondo: malla de gradiente viva ─────────────────────── */
+.vistaChatbot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(26,77,46,0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(107,158,74,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 70% 15%, rgba(247,127,0,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 20% 85%, rgba(26,77,46,0.3) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Partículas orgánicas flotantes ──────────────────────── */
+.vistaChatbot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(107,158,74,0.45) 0%, transparent 100%),
+    radial-gradient(1px 1px   at 35% 72%, rgba(247,127,0,0.3) 0%, transparent 100%),
+    radial-gradient(2px 2px   at 58% 38%, rgba(107,158,74,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px   at 78% 55%, rgba(247,127,0,0.25) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 22%, rgba(107,158,74,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px   at 22% 88%, rgba(247,127,0,0.3) 0%, transparent 100%),
+    radial-gradient(2px 2px   at 68% 90%, rgba(107,158,74,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px   at 45% 12%, rgba(180,230,160,0.3) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+  animation: particulasFlot 20s ease-in-out infinite alternate;
+}
+
+@keyframes particulasFlot {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-12px) scale(1.02); }
+}
+
+/* ── Layout: dos zonas ───────────────────────────────────── */
+.vistaChatbot__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Panel lateral izquierdo ─────────────────────────────── */
+.vistaChatbot__panel {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 1.5rem 2rem;
+  border-right: 1px solid rgba(107,158,74,0.15);
+  background: rgba(6,20,10,0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.vistaChatbot__panel::-webkit-scrollbar { display: none; }
+
+.vistaChatbot__marca {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vistaChatbot__marcaIcono {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(247,127,0,0.25), rgba(26,77,46,0.5));
+  border: 1px solid rgba(247,127,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,180,80,0.9);
+  box-shadow: 0 4px 16px rgba(247,127,0,0.2);
+}
+
+.vistaChatbot__marcaTitulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.vistaChatbot__marcaTitulo span { color: #f77f00; }
+
+.vistaChatbot__marcaSub {
+  font-size: 0.72rem;
+  color: rgba(180,220,150,0.55);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.vistaChatbot__divisor {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(107,158,74,0.3), transparent);
+}
+
+.vistaChatbot__caps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.vistaChatbot__capsTitle {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(107,158,74,0.6);
+  margin: 0 0 0.4rem;
+}
+
+.vistaChatbot__cap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(107,158,74,0.1);
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.vistaChatbot__cap:hover {
+  background: rgba(107,158,74,0.08);
+  border-color: rgba(107,158,74,0.25);
+  transform: translateX(3px);
+}
+
+.vistaChatbot__capIcono {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(26,77,46,0.5);
+  border: 1px solid rgba(107,158,74,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(180,230,160,0.8);
+  flex-shrink: 0;
+}
+
+.vistaChatbot__capTexto {
+  font-size: 0.75rem;
+  color: rgba(210,240,190,0.7);
+  line-height: 1.35;
+}
+
+.vistaChatbot__capTexto strong {
+  display: block;
+  color: rgba(210,240,190,0.9);
+  font-weight: 500;
+  font-size: 0.78rem;
+}
+
+
+
+/* ── Zona derecha: chatCore ──────────────────────────────── */
+/* padding para que el chat respire y no toque los bordes */
+.vistaChatbot__chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+}
+
+/* ── chatCore en modo expandido ──────────────────────────── */
+/* glassmorphism igual que hero-texto y perfil-identidad */
+.chatCore--expandido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(5,25,12,0.52);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Header expandido */
+.chatCore--expandido .robotHeader {
+  padding: 1.1rem 1.75rem;
+  background: linear-gradient(
+    135deg,
+    rgba(20,60,35,0.9) 0%,
+    rgba(12,35,20,0.95) 100%
+  );
+  border-bottom: 1px solid rgba(107,158,74,0.2);
+  border-radius: 0;
+}
+
+.chatCore--expandido .robotHeader__info h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Mensajes expandidos */
+.chatCore--expandido .robotMensajes {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  padding: 1.75rem 2rem;
+  display: block;
+}
+
+/* Bienvenida expandida */
+.chatCore--expandido .chatBienvenida {
+  max-width: 480px;
+  padding: 2rem;
+  margin: 3rem auto 0;
+  text-align: center;
+}
+
+.chatCore--expandido .chatBienvenida__icono {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  margin-bottom: 1.1rem;
+}
+
+.chatCore--expandido .chatBienvenida__icono svg {
+  width: 34px;
+  height: 34px;
+}
+
+.chatCore--expandido .chatBienvenida__titulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  font-style: italic;
+}
+
+.chatCore--expandido .chatBienvenida__sub {
+  font-size: 0.9rem;
+  max-width: 340px;
+  margin: 0 auto 1.2rem;
+}
+
+.chatCore--expandido .chatSugerencias {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.chatCore--expandido .chatSugerencia {
+  font-size: 0.82rem;
+  padding: 0.6rem 0.9rem;
+}
+
+/* Mensajes expandidos */
+.chatCore--expandido .robotMensaje {
+  margin-bottom: 0.9rem;
+}
+
+.chatCore--expandido .robotMensajeTexto {
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+}
+
+.chatCore--expandido .robotMensajeAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+
+/* Input expandido */
+.chatCore--expandido .robotInput {
+  padding: 1rem 1.75rem;
+  border-top: 1px solid rgba(107,158,74,0.15);
+}
+
+.chatCore--expandido .robotInput__wrap {
+  padding: 0.65rem 0.65rem 0.65rem 1rem;
+  border-radius: 16px;
+}
+
+.chatCore--expandido .robotInput__wrap textarea {
+  font-size: 0.92rem;
+}
+
+.chatCore--expandido .robotInput__enviar {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.chatCore--expandido .robotFooter {
+  padding: 0.65rem 1.75rem 1rem;
+}
+
+/* ── Animaciones ─────────────────────────────────────────── */
+@keyframes pulsarVerde {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+}
+
+/* ── Modo oscuro: misma lógica que el resto de la app ─────── */
+.modo-oscuro .vistaChatbot__panel {
+  background: rgba(4,12,7,0.82);
+}
+
+.modo-oscuro .chatCore--expandido {
+  background: rgba(4,12,7,0.72);
+  border-color: rgba(79,119,45,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* ============================================================
+   RESPONSIVE — Tablets (768px – 1024px)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .vistaChatbot__panel {
+    width: 220px;
+    padding: 1.5rem 1rem;
+    gap: 1.1rem;
   }
-  
-  /* El ChatCore en modo expandido ocupa todo */
-  .chatCore--expandido {
-    flex: 1;
-    display: flex;
+
+  .vistaChatbot__marcaTitulo { font-size: 1.3rem; }
+
+  .vistaChatbot__chat { padding: 1rem; }
+
+  .chatCore--expandido .robotMensajes { padding: 1.5rem; }
+  .chatCore--expandido .robotInput    { padding: 0.9rem 1.5rem; }
+  .chatCore--expandido .robotFooter   { padding: 0.5rem 1.5rem; }
+}
+
+/* ============================================================
+   RESPONSIVE — Teléfonos (≤ 767px)
+   ============================================================ */
+@media (max-width: 767px) {
+
+  .vistaChatbot { top: 64px; }
+
+  .vistaChatbot__inner {
     flex-direction: column;
-    min-height: calc(100vh - var(--navbar-h));
-    border-radius: 0;
-    border: none;
+    height: 100%;
+    overflow: hidden;
   }
-  .chatCore--expandido .robotHeader h3{
-    display: flex;
-    gap: 0.5rem;
+
+  /* Panel lateral → barra superior compacta */
+  .vistaChatbot__panel {
+    width: 100%;
+    flex-direction: row;
     align-items: center;
-    margin-left: 2rem;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(107,158,74,0.15);
+    background: rgba(6,18,10,0.85);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-  
-  /* Mensajes ocupan todo el espacio disponible */
-  .chatCore--expandido .robotMensajes {
+
+  .vistaChatbot__panel::-webkit-scrollbar { display: none; }
+
+  .vistaChatbot__divisor,
+  .vistaChatbot__caps,
+  .vistaChatbot__badge { display: none; }
+
+  .vistaChatbot__marca {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .vistaChatbot__marcaIcono { width: 34px; height: 34px; border-radius: 10px; }
+  .vistaChatbot__marcaIcono svg { width: 18px; height: 18px; }
+  .vistaChatbot__marcaTitulo { font-size: 1.05rem; white-space: nowrap; }
+  .vistaChatbot__marcaSub { display: none; }
+
+  .vistaChatbot__chat {
     flex: 1;
-    max-height: none; /* quita el límite de 320px del flotante */
-    padding: 1.5rem 2rem;
-
+    min-height: 0;
+    padding: 0.75rem;
   }
 
-  .chatCore--expandido .hola{
-    font-family: 'Cormorant Garamond', serif;
-    font-size: larger;
+  .chatCore--expandido { border-radius: 14px; }
+
+  .chatCore--expandido .robotHeader { padding: 0.75rem 1rem; }
+  .chatCore--expandido .robotHeader__info h3 { font-size: 0.88rem; }
+
+  .chatCore--expandido .robotMensajes { padding: 0.9rem 1rem; flex: 1; }
+
+  .chatCore--expandido .chatBienvenida {
+    margin: 0.5rem auto;
+    padding: 0.75rem;
+    max-width: 100%;
   }
 
-  .chatCore--expandido .robotSaludo{
-    text-align: center;
-    color: azure;
-    font-size: larger;
-    margin-bottom: 2rem;
-  }
-  .chatCore--expandido .robotBienvenida {
-    margin: 0 10rem ;
-  }
-  
-  /* Input más grande en modo expandido */
-  .chatCore--expandido .robotInput {
-    padding: 1rem 2rem;
-  }
-  
-  .chatCore--expandido .robotInput textarea {
-    font-size: 1rem;
-  }
+  .chatCore--expandido .chatBienvenida__icono { width: 48px; height: 48px; }
+  .chatCore--expandido .chatBienvenida__titulo { font-size: 1.25rem; }
+  .chatCore--expandido .chatBienvenida__sub { font-size: 0.8rem; }
+  .chatCore--expandido .chatSugerencias { grid-template-columns: 1fr; }
+  .chatCore--expandido .chatSugerencia { font-size: 0.78rem; }
+  .chatCore--expandido .robotMensajeTexto { font-size: 0.85rem; padding: 0.6rem 0.8rem; }
+  .chatCore--expandido .robotInput { padding: 0.65rem 0.9rem; }
+  .chatCore--expandido .robotInput__wrap textarea { font-size: 0.85rem; }
+  .chatCore--expandido .robotFooter { padding: 0.4rem 1rem; }
+}
+
+/* ============================================================
+   RESPONSIVE — Muy pequeños (≤ 380px)
+   ============================================================ */
+@media (max-width: 380px) {
+  .vistaChatbot__panel { padding: 0.6rem 0.75rem; }
+  .vistaChatbot__marcaIcono { width: 28px; height: 28px; }
+  .vistaChatbot__marcaTitulo { font-size: 0.9rem; }
+  .vistaChatbot__chat { padding: 0.5rem; }
+  .chatCore--expandido .robotMensajes { padding: 0.65rem 0.75rem; }
+  .chatCore--expandido .robotInput    { padding: 0.55rem 0.75rem; }
+  .chatCore--expandido .chatBienvenida__titulo { font-size: 1.05rem; }
+}

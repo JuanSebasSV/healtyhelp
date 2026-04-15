@@ -1,40 +1,47 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './ModalNutricionDetallada.css';
 
-const FilaNutri = ({ nombre, valor, unidad }) => (
+const FilaNutri = memo(({ nombre, valor, unidad }) => (
   <div className="nutriItemDetalle">
     <span className="nutriNombre">{nombre}</span>
     <span className="nutriValor">{valor ?? 0} {unidad}</span>
   </div>
-);
+));
+FilaNutri.displayName = 'FilaNutri';
 
-const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
+const IconoCerrar = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M18 6L6 18M6 6l12 12"/>
+  </svg>
+));
+IconoCerrar.displayName = 'IconoCerrar';
+
+const IconoVolver = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 12H5M12 19l-7-7 7-7"/>
+  </svg>
+));
+IconoVolver.displayName = 'IconoVolver';
+
+const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
   return (
     <div className="modal-overlay" onClick={cerrar}>
-
-      {/* Wrapper: position relative sin overflow → el botón sobresale */}
       <div className="modalNutriWrapper" onClick={e => e.stopPropagation()}>
 
         <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
+          <IconoCerrar />
         </button>
 
-        {/* Contenido con scroll */}
         <div className="modalNutriDetalle">
 
           <div className="modalNutriHeader">
             <button className="btn-volver-nutri" onClick={volver}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
+              <IconoVolver />
               Volver
             </button>
             <h2>Información Nutricional Detallada</h2>
           </div>
 
-          {/* ── Vitaminas y Minerales ── */}
           <div className="nutriDetalleSeccion">
             <h3>Vitaminas y Minerales</h3>
             <div className="nutriGridDetalle">
@@ -70,7 +77,6 @@ const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
             </div>
           </div>
 
-          {/* ── Azúcares ── */}
           <div className="nutriDetalleSeccion">
             <h3>Azúcares</h3>
             <div className="nutriGridDetalle">
@@ -85,7 +91,6 @@ const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
             </div>
           </div>
 
-          {/* ── Grasas ── */}
           <div className="nutriDetalleSeccion">
             <h3>Grasas</h3>
             <div className="nutriGridDetalle">
@@ -96,7 +101,6 @@ const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
             </div>
           </div>
 
-          {/* ── Ácidos Grasos ── */}
           <div className="nutriDetalleSeccion">
             <h3>Ácidos Grasos</h3>
             <div className="nutriGridDetalle">
@@ -109,7 +113,6 @@ const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
             </div>
           </div>
 
-          {/* ── Aminoácidos ── */}
           <div className="nutriDetalleSeccion">
             <h3>Aminoácidos</h3>
             <div className="nutriGridDetalle">
@@ -135,10 +138,12 @@ const ModalNutricionDetallada = ({ nutri, cerrar, volver }) => {
             </div>
           </div>
 
-        </div>{/* fin modalNutriDetalle */}
-      </div>{/* fin modalNutriWrapper */}
+        </div>
+      </div>
     </div>
   );
-};
+});
+
+ModalNutricionDetallada.displayName = 'ModalNutricionDetallada';
 
 export default ModalNutricionDetallada;

@@ -140,7 +140,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
         {/* Selector filtro visual — oculto cuando el destino es snack */}
         {tipoDestino !== 'snack' && (
           <div className="agr-tipo-selector">
-            {['todas', 'desayuno', 'almuerzo', 'cena', 'snack'].map(t => {
+            {['todas', 'desayuno', 'almuerzo', 'cena'].map(t => {
               const { label, Icon } = TIPOS_META[t];
               return (
                 <button

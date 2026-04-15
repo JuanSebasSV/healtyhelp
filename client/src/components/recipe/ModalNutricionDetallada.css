@@ -1,6 +1,3 @@
-/* ModalNutricionDetallada.css */
-
-/* ── Wrapper: contiene el botón flotante + el modal ── */
 .modalNutriWrapper {
   position: relative;
   max-width: 1100px;
@@ -14,6 +11,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   animation: slideUp 0.3s ease;
+  contain: layout;
 }
 
 .modo-oscuro .modalNutriWrapper {
@@ -21,7 +19,6 @@
   border-color: rgba(79, 119, 45, 0.28);
 }
 
-/* ── Botón cerrar (idéntico al de DetalleReceta) ── */
 .modalNutriWrapper .btn-cerrar-modal {
   position: absolute;
   top: -14px;
@@ -39,7 +36,7 @@
   justify-content: center;
   padding: 0;
   z-index: 10;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 .modalNutriWrapper .btn-cerrar-modal svg {
@@ -54,20 +51,16 @@
   transform: scale(1.1);
   box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
 }
-.modalNutriWrapper .btn-cerrar-modal:hover svg {
-  stroke: var(--blanco-puro);
-}
+.modalNutriWrapper .btn-cerrar-modal:hover svg { stroke: var(--blanco-puro); }
 
-/* ── Contenido scrollable ── */
 .modalNutriDetalle {
   overflow-y: auto;
   border-radius: 22px;
   padding: 2rem;
+  scrollbar-width: none;
 }
 .modalNutriDetalle::-webkit-scrollbar { display: none; }
-.modalNutriDetalle { scrollbar-width: none; }
 
-/* ── Header ── */
 .modalNutriHeader {
   display: flex;
   align-items: center;
@@ -83,7 +76,6 @@
   margin: 0;
 }
 
-/* ── Botón volver ── */
 .btn-volver-nutri {
   display: flex;
   align-items: center;
@@ -96,7 +88,7 @@
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 }
 .btn-volver-nutri svg {
@@ -113,7 +105,6 @@
 }
 .btn-volver-nutri:hover svg { stroke: var(--blanco-puro); }
 
-/* ── Secciones ── */
 .nutriDetalleSeccion {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
@@ -130,7 +121,6 @@
   display: inline-block;
 }
 
-/* ── Grid ── */
 .nutriGridDetalle {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -165,84 +155,27 @@
   white-space: nowrap;
 }
 
-/* ============================================================
-   RESPONSIVE — Solo teléfonos (320px – 767px)
-   No afecta tablets ni escritorio
-   ============================================================ */
-
 @media (max-width: 767px) {
-
-  /* El wrapper ocupa todo el ancho con márgenes laterales */
   .modalNutriWrapper {
     width: calc(100% - 2rem);
     max-width: 100%;
     max-height: 92vh;
     border-radius: 18px;
   }
-
-  .modalNutriDetalle {
-    padding: 1.1rem;
-  }
-
-  /* Título principal — reducir drásticamente */
-  .modalNutriHeader h2 {
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-
-  .modalNutriHeader {
-    gap: 0.6rem;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-  }
-
-  /* Botón volver — más compacto */
-  .btn-volver-nutri {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
-  /* Grid de nutrientes: 1 columna en móvil */
-  .nutriGridDetalle {
-    grid-template-columns: 1fr;
-    gap: 0.4rem;
-  }
-
-  /* Secciones */
-  .nutriDetalleSeccion h3 {
-    font-size: 1rem;
-  }
-
-  .nutriDetalleSeccion {
-    margin-bottom: 1.25rem;
-    padding-bottom: 1rem;
-  }
-
-  /* Items individuales más compactos */
-  .nutriItemDetalle {
-    padding: 0.5rem 0.75rem;
-  }
-
-  .nutriNombre {
-    font-size: 0.8rem;
-  }
-
-  .nutriValor {
-    font-size: 0.82rem;
-  }
+  .modalNutriDetalle { padding: 1.1rem; }
+  .modalNutriHeader h2 { font-size: 1rem; line-height: 1.3; }
+  .modalNutriHeader { gap: 0.6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .btn-volver-nutri { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
+  .nutriGridDetalle { grid-template-columns: 1fr; gap: 0.4rem; }
+  .nutriDetalleSeccion h3 { font-size: 1rem; }
+  .nutriDetalleSeccion { margin-bottom: 1.25rem; padding-bottom: 1rem; }
+  .nutriItemDetalle { padding: 0.5rem 0.75rem; }
+  .nutriNombre { font-size: 0.8rem; }
+  .nutriValor { font-size: 0.82rem; }
 }
 
 @media (max-width: 400px) {
-  .modalNutriWrapper {
-    width: calc(100% - 1rem);
-    border-radius: 14px;
-  }
-
-  .modalNutriDetalle {
-    padding: 0.85rem;
-  }
-
-  .modalNutriHeader h2 {
-    font-size: 0.9rem;
-  }
+  .modalNutriWrapper { width: calc(100% - 1rem); border-radius: 14px; }
+  .modalNutriDetalle { padding: 0.85rem; }
+  .modalNutriHeader h2 { font-size: 0.9rem; }
 }

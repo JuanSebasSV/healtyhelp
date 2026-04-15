@@ -8,7 +8,7 @@ require('../config/passport');
 
 const {
   register, login, forgotPassword, resetPassword,
-  verifyEmail, resendCode
+  verifyEmail, resendCode, setGooglePassword
 } = require('../controllers/authController');
 
 const { protect } = require('../middleware/auth');
@@ -25,18 +25,19 @@ const validatePassword = (password) => {
   return errors;
 };
 
-// ===== RUTAS AUTH =====
+// RUTAS AUTH
 router.post('/register',             register);
 router.post('/login',                login);
 router.post('/verify-email',         verifyEmail);
 router.post('/resend-code',          resendCode);
 router.post('/forgot-password',      forgotPassword);
 router.put('/reset-password/:token', resetPassword);
+router.post('/set-google-password',  protect, setGooglePassword);
 
-// ===== USUARIO ACTUAL =====
+// USUARIO ACTUAL
 router.get('/me', protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select('+password');
     if (!user) return res.status(401).json({ error: 'Usuario no encontrado' });
 
     const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
@@ -47,6 +48,7 @@ router.get('/me', protect, async (req, res) => {
         id: user._id, name: user.name, email: user.email,
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
+        hasPassword: !!user.password,
         isSuperAdmin: user.isSuperAdmin || false,
         age: user.age, weight: user.weight, height: user.height,
         termsAccepted:      user.termsAccepted   || false,
@@ -61,7 +63,7 @@ router.get('/me', protect, async (req, res) => {
   }
 });
 
-// ===== GOOGLE OAUTH =====
+// GOOGLE OAUTH
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback',
@@ -76,7 +78,7 @@ router.get('/google/callback',
   }
 );
 
-// ===== ACTUALIZAR PERFIL =====
+// ACTUALIZAR PERFIL
 router.put('/profile', protect, async (req, res) => {
   try {
     const { name, password, age, weight, height } = req.body;
@@ -117,7 +119,7 @@ router.put('/profile', protect, async (req, res) => {
   }
 });
 
-// ===== SUBIR AVATAR =====
+// SUBIR AVATAR
 router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
@@ -150,7 +152,7 @@ router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) =
   }
 });
 
-// ===== ELIMINAR AVATAR =====
+// ELIMINAR AVATAR
 router.delete('/avatar', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -166,7 +168,7 @@ router.delete('/avatar', protect, async (req, res) => {
   }
 });
 
-// ===== ELIMINAR CUENTA =====
+// ELIMINAR CUENTA
 router.delete('/account', protect, async (req, res) => {
   try {
     const { confirmacion } = req.body;
@@ -209,8 +211,7 @@ router.delete('/account', protect, async (req, res) => {
   }
 });
 
-// ===== ACEPTAR TÉRMINOS =====
-// Obtiene la versión activa directamente del servidor — no depende del cliente
+// ACEPTAR TÉRMINOS
 router.post('/accept-terms', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -230,7 +231,7 @@ router.post('/accept-terms', protect, async (req, res) => {
   }
 });
 
-// ===== COMPLETAR PERFIL =====
+// COMPLETAR PERFIL
 router.post('/complete-profile', protect, async (req, res) => {
   try {
     const { age, weight, height } = req.body;

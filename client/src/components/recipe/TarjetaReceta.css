@@ -269,3 +269,49 @@
     padding: 0.1rem 0.4rem;
   }
 }
+ 
+
+.btnSeleccionar {
+  position: absolute;
+  bottom: 0.85rem;
+  right: 0.85rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 3;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btnSeleccionar svg {
+  width: 18px;
+  height: 18px;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+  fill: none;
+  transition: stroke 0.2s ease;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+
+.btnSeleccionar:hover {
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(74, 182, 107, 0.6);
+  transform: scale(1.13);
+}
+.btnSeleccionar:hover svg { stroke: #4ab66b; }
+.btnSeleccionar.activo {
+  background: rgba(22, 163, 74, 0.35);
+  border-color: rgba(22, 163, 74, 0.65);
+}
+.btnSeleccionar.activo svg { stroke: #4ade80; }
+
+.tarjeta-seleccionada { outline: 2px solid #16a34a; }

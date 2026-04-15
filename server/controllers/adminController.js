@@ -13,7 +13,7 @@ exports.getAllUsers = async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
 
     const users = await User.find()
-      .select('name email role avatar googleId createdAt isSuperAdmin')
+      .select('name email role avatar googleId createdAt isSuperAdmin baneado baneadoHasta baneadoMotivo baneadoEn')
       .sort({ createdAt: -1 });
 
     res.json({ success: true, count: users.length, users });
@@ -366,8 +366,8 @@ exports.aprobarImagenResena = async (req, res) => {
     const resena = recipe.resenas.id(resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    if (!resena.imagen?.url)
-      return res.status(400).json({ error: 'Esta reseña no tiene imagen' });
+    if (!resena.imagen || !resena.imagen.estado)
+      return res.status(400).json({ error: 'Esta reseña no tiene imagen asociada' });
 
     resena.imagen.estado = 'aprobada';
     await recipe.save();
@@ -429,6 +429,101 @@ exports.rechazarImagenResena = async (req, res) => {
 // ─────────────────────────────────────────────
 // Helper interno
 // ─────────────────────────────────────────────
+
+
+// ─────────────────────────────────────────────
+// SISTEMA DE BANEO
+// ─────────────────────────────────────────────
+
+/**
+ * PUT /admin/users/:id/ban
+ * Body: { motivo: string, dias: number | null }
+ *   dias = null  → ban permanente
+ *   dias = N     → ban temporal N días
+ */
+exports.banearUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { motivo = '', dias = null } = req.body;
+
+    const target = await User.findById(id);
+    if (!target) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (target._id.toString() === req.user._id.toString())
+      return res.status(400).json({ error: 'No puedes banearte a ti mismo' });
+    if (target.isSuperAdmin)
+      return res.status(400).json({ error: 'No se puede banear al Super Admin' });
+    if (!req.user.isSuperAdmin && target.role === 'admin')
+      return res.status(403).json({ error: 'No tienes permisos para banear a otro administrador' });
+
+    target.baneado       = true;
+    target.baneadoMotivo = motivo.trim();
+    target.baneadoPor    = req.user._id;
+    target.baneadoEn     = new Date();
+    target.baneadoHasta  = dias ? new Date(Date.now() + dias * 24 * 60 * 60 * 1000) : null;
+    await target.save();
+
+    await logAdminAction(req.user._id, 'BAN_USER', target._id, {
+      motivo, dias: dias || 'permanente', userName: target.name,
+    });
+
+    res.json({
+      success: true,
+      message: dias ? `Usuario baneado por ${dias} día${dias !== 1 ? 's' : ''}` : 'Usuario baneado permanentemente',
+      baneadoHasta: target.baneadoHasta,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al banear usuario' });
+  }
+};
+
+/**
+ * PUT /admin/users/:id/unban
+ */
+exports.desbanearUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const target  = await User.findById(id);
+    if (!target) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    target.baneado       = false;
+    target.baneadoHasta  = null;
+    target.baneadoMotivo = '';
+    target.baneadoPor    = null;
+    target.baneadoEn     = null;
+    await target.save();
+
+    await logAdminAction(req.user._id, 'UNBAN_USER', target._id, { userName: target.name });
+    res.json({ success: true, message: 'Usuario desbaneado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al desbanear usuario' });
+  }
+};
+
+/**
+ * GET /admin/users/:id/ban
+ */
+exports.getBanInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const target  = await User.findById(id).select('name baneado baneadoHasta baneadoMotivo baneadoEn baneadoPor');
+    if (!target) return res.status(404).json({ error: 'Usuario no encontrado' });
+    res.json({
+      success: true,
+      ban: {
+        baneado:       target.baneado,
+        baneadoHasta:  target.baneadoHasta,
+        baneadoMotivo: target.baneadoMotivo,
+        baneadoEn:     target.baneadoEn,
+        permanente:    target.baneado && !target.baneadoHasta,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo info de ban' });
+  }
+};
+
 async function logAdminAction(adminId, action, targetUserId, metadata = {}) {
   try {
     await AdminLog.create({ adminId, action, targetUserId: targetUserId || null, metadata });

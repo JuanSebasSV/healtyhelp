@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import ModalGooglePassword from './ModalGooglePassword';
 
 const GoogleCallback = () => {
   const { checkAuth } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [pendingToken, setPendingToken] = useState(null);
 
   useEffect(() => {
     const handleGoogleCallback = async () => {
@@ -14,7 +16,6 @@ const GoogleCallback = () => {
         const token = urlParams.get('token');
         const errorParam = urlParams.get('error');
 
-        // Si Google devolvió un error
         if (errorParam) {
           setError('No se pudo iniciar sesión con Google. Intenta de nuevo.');
           setTimeout(() => navigate('/login'), 3000);
@@ -28,9 +29,25 @@ const GoogleCallback = () => {
         }
 
         localStorage.setItem('token', token);
+
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.user) {
+          setError('Error al verificar la sesión. Intenta de nuevo.');
+          setTimeout(() => navigate('/login'), 3000);
+          return;
+        }
+
+        if (data.user.googleId && data.user.hasPassword === false) {
+          setPendingToken(token);
+          return;
+        }
+
         await checkAuth();
         navigate('/');
-
       } catch (err) {
         console.error('Error en Google callback:', err);
         setError('Error al procesar la autenticación. Intenta de nuevo.');
@@ -40,6 +57,18 @@ const GoogleCallback = () => {
 
     handleGoogleCallback();
   }, []);
+
+  if (pendingToken) {
+    return (
+      <ModalGooglePassword
+        token={pendingToken}
+        onSuccess={() => {
+          checkAuth();
+          navigate('/');
+        }}
+      />
+    );
+  }
 
   if (error) {
     return (

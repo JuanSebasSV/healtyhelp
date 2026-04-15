@@ -1,31 +1,26 @@
-// components/recetas/DetalleReceta.jsx
-// Componente de detalle de receta.
-// La lógica de reseñas/comentarios fue movida a SeccionResenas.jsx
-
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import NutricionGrafico from './NutricionGrafico';
 import BtnConsumo from './BtnConsumo';
 import useAuth from '../../hooks/useAuth';
 import SeccionResenas from './SeccionResenas';
 import './DetalleReceta.css';
 
-const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
+const IconoCerrar = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M18 6L6 18M6 6l12 12"/>
+  </svg>
+));
+IconoCerrar.displayName = 'IconoCerrar';
+
+const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada }) => {
   const { user, isAuthenticated } = useAuth();
 
-  // ── Bloquear scroll del body mientras el modal está abierto ──
   useEffect(() => {
     const scrollY = window.scrollY;
-    document.body.style.position  = 'fixed';
-    document.body.style.top       = `-${scrollY}px`;
-    document.body.style.left      = '0';
-    document.body.style.right     = '0';
-    document.body.style.overflowY = 'scroll';
+    document.body.style.cssText = `position:fixed;top:-${scrollY}px;left:0;right:0;overflow-y:scroll`;
     return () => {
-      document.body.style.position  = '';
-      document.body.style.top       = '';
-      document.body.style.left      = '';
-      document.body.style.right     = '';
-      document.body.style.overflowY = '';
+      document.body.style.cssText = '';
       window.scrollTo(0, scrollY);
     };
   }, []);
@@ -35,15 +30,11 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       <div className="modalContenedorReceta" onClick={e => e.stopPropagation()}>
 
         <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
+          <IconoCerrar />
         </button>
 
-        {/* ── Columna izquierda ── */}
         <div className="modalCol modalIzq">
-          <img src={receta.img} alt={receta.nombre} className="modalImg" />
+          <img src={receta.img} alt={receta.nombre} className="modalImg" loading="lazy" decoding="async" />
           <h2>{receta.nombre}</h2>
 
           {/* Tiempo debajo del título */}
@@ -79,17 +70,16 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
 
           <BtnConsumo recetaId={receta._id} />
 
-          {/* ══════════ RESEÑAS ══════════ */}
           <div className="modalSeccion resenas-seccion">
             <SeccionResenas
               receta={receta}
               user={user}
               isAuthenticated={isAuthenticated}
+              resenaIdDestacada={resenaIdDestacada}
             />
           </div>
         </div>
 
-        {/* ── Columna derecha ── */}
         <div className="modalCol modalDer">
           <NutricionGrafico nutri={receta.nutri} abrirNutricion={abrirNutricion} />
         </div>
@@ -97,6 +87,8 @@ const DetalleReceta = ({ receta, cerrar, abrirNutricion }) => {
       </div>
     </div>
   );
-};
+});
+
+DetalleReceta.displayName = 'DetalleReceta';
 
 export default DetalleReceta;

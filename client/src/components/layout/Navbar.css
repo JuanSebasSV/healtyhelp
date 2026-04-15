@@ -21,11 +21,9 @@
 
 .navContenedor {
   width: 100%;
-  max-width: var(--page-max);
-  margin: 0 auto;
   padding: 0 var(--page-px);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
 }
@@ -703,4 +701,186 @@ nav .navHamburguesa span,
 @keyframes badge-pulso {
   0%, 100% { transform: scale(1);    box-shadow: 0 0 0 2px var(--color-fondo, #fff); }
   50%       { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(249,115,22,.3); }
+}
+/* ════════════════════════════════
+   CAMPANA DE NOTIFICACIONES
+════════════════════════════════ */
+
+.nav-notif-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* En desktop se queda entre el logo y la hamburguesa;
+     en pantallas grandes se reordena al final (ver orden flex) */
+  order: 3;
+}
+
+.nav-notif-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.nav-notif-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--blanco-puro);
+  transform: scale(1.06);
+}
+.nav-notif-btn:hover svg {
+  animation: campana-ring 0.4s ease;
+}
+
+@keyframes campana-ring {
+  0%   { transform: rotate(0);   }
+  20%  { transform: rotate(12deg);  }
+  40%  { transform: rotate(-10deg); }
+  60%  { transform: rotate(8deg);  }
+  80%  { transform: rotate(-6deg); }
+  100% { transform: rotate(0);   }
+}
+
+/* Badge número de no leídas */
+.nav-notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--verde-bosque, #4f772d), var(--verde-hoja, #6b9e4a));
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 1.5px solid rgba(26, 77, 46, 0.9);
+  animation: badge-pop 0.25s ease;
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Campana desktop: oculta en móvil */
+.nav-notif-wrap--desktop {
+  display: flex;
+}
+
+/* Campana dentro del menú móvil: oculta en desktop */
+.nav-notif-btn--movil {
+  display: none;
+}
+
+/* Reordenar en desktop para que la campana quede a la derecha del menú */
+@media (min-width: 769px) {
+  .navContenedor {
+    /* logo | menú | campana | hamburguesa (oculto en desktop) */
+  }
+  .nav-notif-wrap {
+    order: 4;
+  }
+  .navHamburguesa {
+    order: 5;
+  }
+}
+
+/* En móvil la campana queda dentro del menú hamburguesa */
+@media (max-width: 768px) {
+  .nav-notif-wrap--desktop {
+    display: none !important;
+  }
+  .nav-notif-btn--movil {
+    display: flex !important;
+  }
+  .navHamburguesa {
+    order: 3;
+    margin-left: auto;
+  }
+}
+/* ════════════════════════════════════════════════════
+   MODAL NOTIFICACIONES — solo móvil
+════════════════════════════════════════════════════ */
+.pn-modal-movil {
+  display: none;
+}
+
+@media (max-width: 968px) {
+  .pn-modal-movil {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: pn-modal-fade 0.2s ease;
+    padding: 1rem;
+  }
+
+  @keyframes pn-modal-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .pn-modal-movil__contenido {
+    width: 100%;
+    max-width: 420px;
+    animation: pn-modal-slide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pn-modal-slide {
+    from { transform: translateY(20px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+
+  /* En móvil el panel no es absolute sino block */
+  .pn-modal-movil .pn-panel {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Fila tema + campana en móvil */
+@media (max-width: 968px) {
+  .navMenu li.navMenu-tema {
+    gap: 1rem !important;
+  }
+  .nav-notif-btn--movil {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-notif-btn--movil:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--blanco-puro);
+  }
 }

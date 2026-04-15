@@ -1,5 +1,6 @@
 const Recipe   = require('../models/Recipe');
 const AdminLog = require('../models/AdminLog');
+const { crearNotifRespuesta } = require('./notificationController');
 
 // ─────────────────────────────────────────────
 // 📊 Obtener todas las recetas
@@ -179,13 +180,11 @@ const serializarResena = (r, userId) => {
   const imgPendiente = r.imagen?.estado === 'pendiente' && esAutor;
 
   let imagenCliente = null;
-  // CORRECCIÓN: imagen pendiente tiene url=null en DB, no podemos depender de r.imagen?.url
-  // Hay que verificar que exista el objeto imagen con estado válido
+  // BUGFIX: imagen pendiente tiene url=null en DB → no depender de r.imagen?.url
   if (r.imagen && r.imagen.estado) {
     if (imgAprobada) {
       imagenCliente = { url: r.imagen.url, estado: 'aprobada' };
     } else if (imgPendiente) {
-      // El autor ve placeholder con estado pendiente (sin URL real)
       imagenCliente = { url: null, estado: 'pendiente' };
     }
     // rechazada → null para todos
@@ -219,6 +218,9 @@ const serializarResena = (r, userId) => {
 
 // ─────────────────────────────────────────────
 // GET /recipes/:id/resenas?page=1&limit=5&orden=reciente|relevancia
+// IMPORTANTE: esta ruta debe usar el middleware de auth OPCIONAL (optionalAuth o similar),
+// no el middleware que rechaza la petición si no hay token. Así req.user?._id llega
+// correctamente cuando el usuario está logueado y el autor puede ver su imagen pendiente.
 // ─────────────────────────────────────────────
 exports.getResenas = async (req, res) => {
   try {
@@ -277,6 +279,14 @@ exports.crearResena = async (req, res) => {
 
     const yaReseno = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
     if (yaReseno) return res.status(400).json({ error: 'Ya tienes una reseña en esta receta. Puedes editarla.' });
+
+    // Si adjunta imagen, el texto es obligatorio
+    if (req.file && !texto.trim())
+      return res.status(400).json({ error: 'Escribe un comentario para acompañar la imagen' });
+
+    // Si adjunta imagen, el texto es obligatorio
+    if (req.file && !texto.trim())
+      return res.status(400).json({ error: 'Escribe un comentario para acompañar la imagen' });
 
     // Construir objeto de reseña
     const nuevaResena = {
@@ -502,6 +512,17 @@ exports.responderResena = async (req, res) => {
     await recipe.save();
 
     const nueva = resena.respuestas[resena.respuestas.length - 1];
+
+    // ── Notificar al autor de la reseña original ──
+    crearNotifRespuesta({
+      destinatarioId: resena.userId,
+      fromUserId:     req.user._id,
+      fromUserName:   req.user.name,
+      recetaId:       recipe._id,
+      recetaNombre:   recipe.nombre,
+      resenaId:       resena._id,
+      respuestaTexto: texto.trim(),
+    }); // fire-and-forget — no await para no bloquear la respuesta
     res.status(201).json({
       success:   true,
       respuesta: {
@@ -542,5 +563,34 @@ exports.borrarRespuesta = async (req, res) => {
     res.json({ success: true, message: 'Respuesta eliminada' });
   } catch (error) {
     res.status(500).json({ error: 'Error al borrar la respuesta' });
+  }
+};
+
+// ─────────────────────────────────────────────
+// DELETE /recipes/:id/resenas/imagen
+// Quita la imagen de la propia reseña del usuario (desde modo editar)
+// ─────────────────────────────────────────────
+exports.quitarImagenResena = async (req, res) => {
+  try {
+    const { cloudinary } = require('../config/cloudinary');
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    const resena = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
+    if (!resena) return res.status(404).json({ error: 'No tienes reseña en esta receta' });
+    if (!resena.imagen || !resena.imagen.estado)
+      return res.status(400).json({ error: 'Esta reseña no tiene imagen' });
+
+    if (resena.imagen.publicId) {
+      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+    }
+    resena.imagen.url      = null;
+    resena.imagen.publicId = null;
+    resena.imagen.estado   = undefined;
+    await recipe.save();
+
+    res.json({ success: true, message: 'Imagen eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al quitar la imagen' });
   }
 };

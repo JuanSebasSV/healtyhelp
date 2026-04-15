@@ -56,7 +56,14 @@ const userSchema = new mongoose.Schema({
   },
 
   // ── Perfil completo ──
-  profileComplete: { type: Boolean, default: false }
+  profileComplete: { type: Boolean, default: false },
+
+  // ── Sistema de baneo ──
+  baneado:        { type: Boolean, default: false },
+  baneadoHasta:   { type: Date,    default: null },   // null = permanente
+  baneadoMotivo:  { type: String,  default: '' },
+  baneadoPor:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  baneadoEn:      { type: Date,    default: null },
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
