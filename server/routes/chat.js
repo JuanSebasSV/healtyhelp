@@ -98,11 +98,6 @@ router.post('/', protect, async (req, res) => {
       return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes: ${ingredientesList} | Nutrición: ${r.nutri?.cal ?? 0} kcal, ${r.nutri?.prot ?? 0}g prot, ${r.nutri?.carb ?? 0}g carbs, ${r.nutri?.gras ?? 0}g grasas | ${r.desc}`;
     }).join('\n');
 
-
-    let config = await AIConfig.findOne();
-    if (!config) config = await AIConfig.create({});
-
-
     // Detectar si es el primer mensaje del turno actual
     const esPrimerMensaje = history.length === 0;
 
