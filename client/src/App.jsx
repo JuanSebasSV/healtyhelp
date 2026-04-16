@@ -100,6 +100,7 @@ function AppContent() {
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
 
+  const [versionFiltros,         setVersionFiltros]         = useState(0);
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
@@ -260,6 +261,8 @@ function AppContent() {
                     favoritos={favoritos}
                     cambiarCategoria={cambiarCategoria}
                     categoriaActiva={categoriaActiva}
+                    usuario={user}
+                    onFiltrosCambiados={() => setVersionFiltros(v => v + 1)}
                   />
                 }
               />
@@ -279,7 +282,7 @@ function AppContent() {
                   />
                 }
               />
-              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
+              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} versionFiltros={versionFiltros} /></PrivateRoute>} />
               <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
               <Route path="/favoritos"   element={
                 <PrivateRoute>

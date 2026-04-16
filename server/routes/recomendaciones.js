@@ -1,26 +1,47 @@
 const express = require('express');
 const router  = express.Router();
-const { protect } = require('../middleware/auth');       // tu middleware JWT existente
-const Consumo = require('../models/Consumo');        // tu modelo de consumos
+const { protect } = require('../middleware/auth');
+const Consumo = require('../models/Consumo');
 const User    = require('../models/User');
 const { generarRecomendaciones } = require('../utils/motorRecomendaciones');
 
 /**
+ * GET /api/recomendaciones/filtros
+ * Devuelve SOLO condiciones y categorias del usuario.
+ * No devuelve alergias ni preferencias — esos campos no pertenecen
+ * al sistema de filtros de recomendaciones y causaban datos fantasma.
+ */
+router.get('/filtros', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select('healthProfile.condiciones healthProfile.categorias')
+      .lean();
+
+    res.json({
+      condiciones: user?.healthProfile?.condiciones || [],
+      categorias:  user?.healthProfile?.categorias  || [],
+    });
+  } catch (err) {
+    console.error('[recomendaciones/filtros]', err);
+    res.status(500).json({ error: 'Error al obtener filtros' });
+  }
+});
+
+/**
  * GET /api/recomendaciones
- * Devuelve las recomendaciones para el usuario autenticado.
+ * El motor lee SOLO healthProfile.condiciones y healthProfile.categorias —
+ * nunca alergias, preferencias, cookies ni estado del cliente.
  */
 router.get('/', protect, async (req, res) => {
   try {
-    // Cargar usuario completo (healthProfile no viene en el token)
     const usuario = await User.findById(req.user._id)
-      .select('name age weight height healthProfile')
+      .select('name age weight height healthProfile.condiciones healthProfile.categorias')
       .lean();
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    // Consumos de los últimos 30 días
     const hace30Dias = new Date();
     hace30Dias.setDate(hace30Dias.getDate() - 30);
 
@@ -31,7 +52,6 @@ router.get('/', protect, async (req, res) => {
       .select('tipo fechaBogota nutri recetaSnapshot.nombre')
       .lean();
 
-    // Generar recomendaciones con el motor local
     const recomendaciones = generarRecomendaciones(usuario, consumos);
 
     res.json({

@@ -78,7 +78,7 @@ const useFiltroSalud = (usuario) => {
         limpiarLS();
 
         try {
-          const { data } = await api.get('/chat/filtros');
+          const { data } = await api.get('/recomendaciones/filtros');
           setFiltros(   data.condiciones ?? []);
           setCategorias(data.categorias  ?? []);
         } catch {
@@ -123,7 +123,7 @@ const useFiltroSalud = (usuario) => {
       if (peticionRef.current === token) {
         // Releer desde BD para dejar el estado consistente
         try {
-          const { data } = await api.get('/chat/filtros');
+          const { data } = await api.get('/recomendaciones/filtros');
           setFiltros(   data.condiciones ?? []);
           setCategorias(data.categorias  ?? []);
         } catch {
