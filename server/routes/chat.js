@@ -98,6 +98,14 @@ router.post('/', protect, async (req, res) => {
       return `• ${r.nombre} [${r.cat}] | Apta para: ${saludTags} | Ingredientes: ${ingredientesList} | Nutrición: ${r.nutri?.cal ?? 0} kcal, ${r.nutri?.prot ?? 0}g prot, ${r.nutri?.carb ?? 0}g carbs, ${r.nutri?.gras ?? 0}g grasas | ${r.desc}`;
     }).join('\n');
 
+
+    let config = await AIConfig.findOne();
+    if (!config) config = await AIConfig.create({});
+
+
+    // Detectar si es el primer mensaje del turno actual
+    const esPrimerMensaje = history.length === 0;
+
     const systemPrompt = `
 ${config.prompt}
 
@@ -117,6 +125,10 @@ REGLAS:
 - Si el usuario pregunta qué filtros tiene activos, responde exactamente con los valores del perfil de arriba.
 - Si condiciones = "ninguna", dile que no tiene condiciones seleccionadas.
 - Si categorias = "todas (sin restricción)", dile que no tiene tipo de comida filtrado.
+- ${esPrimerMensaje
+    ? `Es el PRIMER mensaje. Saluda a ${user.name} por su nombre una sola vez, de forma breve y natural.`
+    : `Ya saludaste antes. NO menciones el nombre del usuario ni lo saludes de nuevo. Ve directo a responder.`
+  }
 `.trim();
 
     const model = genAI.getGenerativeModel({
