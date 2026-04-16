@@ -17,8 +17,7 @@ const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp',
 ];
 
-// IDs de las categorías que se sincronizan con la BD
-// 'todas' es un valor especial del UI — no se persiste, representa "sin filtro de categoría"
+// 'todas' es solo UI — no se persiste en BD ni localStorage
 const CATEGORIAS = [
   { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
   { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
@@ -51,19 +50,17 @@ const CONDICIONES = [
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, onFiltrosCambiados }) => {
-  // ── Hook de filtros (maneja condiciones + categorias + persistencia) ───────
   const {
-    filtros,         // condiciones de salud seleccionadas
+    filtros,
     toggleFiltro,
     limpiarFiltros,
-    categorias: categoriasActivas,  // tipos de comida seleccionados en BD/cookie
-    toggleCategoria,
-    limpiarCategorias,
+    categoria,          // string radio: '' | 'desayuno' | 'almuerzo' | 'cena' | 'postres-snacks'
+    setCategoria,       // función radio
+    limpiarCategoria,
     limpiarTodo,
     listo,
   } = useFiltroSalud(usuario);
 
-  // ── Estado local del componente ───────────────────────────────────────────
   const [filtroAbierto,     setFiltroAbierto]     = useState(false);
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);
@@ -71,16 +68,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
   const [recetaAbierta,     setRecetaAbierta]      = useState(null);
   const [resenaIdDestacada, setResenaIdDestacada]  = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
-
-  // 'categoriaActiva' en el UI es "todas" si no hay categorías persistidas,
-  // o la primera categoría persistida si hay exactamente una.
-  // Si hay varias persistidas, el botón "Todas" no se marca — el filtrado de
-  // recetas las maneja recetasFiltradas directamente.
-  const categoriaActivaUI = categoriasActivas.length === 1
-    ? categoriasActivas[0]
-    : categoriasActivas.length === 0
-      ? 'todas'
-      : 'todas'; // con varias categorías, ningún botón individual se marca como único activo
 
   const thumbRef        = useRef(null);
   const trackRef        = useRef(null);
@@ -192,47 +179,42 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
     }
   };
 
+  // ─── Handlers de filtros (notifican al padre si existe onFiltrosCambiados) ─
+
   const handleToggleFiltro = useCallback((id) => {
     toggleFiltro(id);
     onFiltrosCambiados?.();
   }, [toggleFiltro, onFiltrosCambiados]);
-
-  const handleToggleCategoria = useCallback((id) => {
-    toggleCategoria(id);
-    onFiltrosCambiados?.();
-  }, [toggleCategoria, onFiltrosCambiados]);
 
   const handleLimpiarTodo = useCallback(() => {
     limpiarTodo();
     onFiltrosCambiados?.();
   }, [limpiarTodo, onFiltrosCambiados]);
 
-  // ─── Manejo del click en botón de categoría ───────────────────────────────
-  // Lógica:
-  //   • Click en "Todas"  → limpiar todas las categorías persistidas
-  //   • Click en cualquier otra → toggle de esa categoría en el hook
+  // ─── Manejo del click en botón de categoría (comportamiento RADIO) ────────
+  //   • Click en "Todas"       → limpiar categoría ('' = sin filtro)
+  //   • Click en una opción    → seleccionar esa (deselecciona la anterior)
+  //   • Click en la ya activa  → deseleccionar (volver a "todas")
   const handleCategoria = useCallback((catId) => {
     if (catId === 'todas') {
-      limpiarCategorias();
-      onFiltrosCambiados?.();
+      limpiarCategoria();
     } else {
-      handleToggleCategoria(catId);
+      setCategoria(catId); // el hook hace radio internamente
     }
-  }, [handleToggleCategoria, limpiarCategorias, onFiltrosCambiados]);
+    onFiltrosCambiados?.();
+  }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
 
   // ─── Filtrado de recetas ──────────────────────────────────────────────────
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
-    // Filtro de categoría: si hay categorías activas, la receta debe pertenecer a alguna
-    const okCat = categoriasActivas.length === 0 || categoriasActivas.includes(r.cat);
-
-    // Filtro de condiciones de salud: la receta debe cumplir TODAS las condiciones
+    // Categoría radio: '' = mostrar todas
+    const okCat   = !categoria || r.cat === categoria;
+    // Condiciones: multi-selección, la receta debe cumplir TODAS
     const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
-
     return okCat && okSalud;
-  }), [recetas, categoriasActivas, filtros]);
+  }), [recetas, categoria, filtros]);
 
-  // Badge total de filtros activos (condiciones + categorías)
-  const totalFiltrosActivos = filtros.length + categoriasActivas.length;
+  // Badge del botón de filtro: SOLO condiciones (la categoría tiene sus propios botones visibles)
+  const totalCondicionesActivas = filtros.length;
 
   return (
     <div className="vistaInicio">
@@ -257,15 +239,16 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
         </div>
       </div>
 
-      {/* ─── Botón filtro de condiciones de salud ─── */}
+      {/* ─── Botón filtro de condiciones ─── */}
       <div className="filtroModalWrapper">
         <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
           </svg>
           ¡Busca tu Tipo de Dieta Aquí!
-          {totalFiltrosActivos > 0 && (
-            <span className="filtroModalBadge">{totalFiltrosActivos}</span>
+          {/* Badge muestra SOLO condiciones — la categoría tiene sus botones visuales propios */}
+          {totalCondicionesActivas > 0 && (
+            <span className="filtroModalBadge">{totalCondicionesActivas}</span>
           )}
         </button>
       </div>
@@ -286,9 +269,9 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
               <div className="filtroInfo">
                 <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
                 {!listo && <p className="filtroInfo-cargando">Cargando tu perfil...</p>}
-                {totalFiltrosActivos > 0 && (
+                {totalCondicionesActivas > 0 && (
                   <button className="btnLimpiar" onClick={handleLimpiarTodo}>
-                    Limpiar todos los filtros ({totalFiltrosActivos})
+                    Limpiar filtros ({totalCondicionesActivas})
                   </button>
                 )}
               </div>
@@ -306,17 +289,14 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
         </div>
       )}
 
-      {/* ─── Categorías ───────────────────────────────────────────────────────
-          Cada botón llama a handleCategoria(cat.id).
-          Se marca como activo si su id está en categoriasActivas,
-          o si es "todas" y no hay ninguna categoría seleccionada.
+      {/* ─── Categorías (RADIO: solo una activa a la vez) ─────────────────────
+          Se marca como activo:
+            - "Todas" si no hay categoría seleccionada (categoria === '')
+            - La categoría cuyo id coincide con el string `categoria`
       ── */}
       <section className="categorias">
         {CATEGORIAS.map(cat => {
-          const esActivo = cat.id === 'todas'
-            ? categoriasActivas.length === 0
-            : categoriasActivas.includes(cat.id);
-
+          const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
           return (
             <button
               key={cat.id}

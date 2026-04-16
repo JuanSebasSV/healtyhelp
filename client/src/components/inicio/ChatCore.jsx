@@ -95,9 +95,9 @@ const IconoSemilla = ({ size = 14 }) => (
 /* ── Sugerencias ── */
 const sugerencias = [
   { icono: <IconoZanahoría size={13}/>, texto: 'Recetas para diabéticos' },
-  { icono: <IconoCorazon size={13}/>, texto: 'Menú bajo en sodio' },
-  { icono: <IconoSemilla size={13}/>, texto: 'Opciones veganas' },
-  { icono: <IconoManzana size={13}/>, texto: 'Sin gluten' },
+  { icono: <IconoCorazon size={13}/>,   texto: 'Menú bajo en sodio' },
+  { icono: <IconoSemilla size={13}/>,   texto: 'Opciones veganas' },
+  { icono: <IconoManzana size={13}/>,   texto: 'Sin gluten' },
 ];
 
 /* ── Componente ── */
@@ -112,6 +112,10 @@ const ChatCore = ({
   onExpandir,
   onCerrar,
   onMinimizar,
+  // onSugerencia: dispara el mensaje de la sugerencia directamente (sin pasar
+  // por el textarea). Si no se pasa, cae al comportamiento anterior de poner
+  // el texto en el textarea para que el usuario lo envíe manualmente.
+  onSugerencia,
 }) => {
   const mensajesRef = useRef(null);
   const prevChatLen = useRef(chat.length);
@@ -132,6 +136,17 @@ const ChatCore = ({
       el.scrollTop = el.scrollHeight;
     }
   }, [chat, cargando]);
+
+  // Al hacer clic en una sugerencia:
+  // - Si existe onSugerencia (nuevo comportamiento): envía el mensaje directamente.
+  // - Si no (compatibilidad hacia atrás): pone el texto en el textarea.
+  const handleSugerencia = (texto) => {
+    if (onSugerencia) {
+      onSugerencia(texto);
+    } else {
+      onMensajeChange?.({ target: { value: texto } });
+    }
+  };
 
   return (
     <div className={`chatCore ${modoExpandido ? 'chatCore--expandido' : ''}`}>
@@ -194,7 +209,7 @@ const ChatCore = ({
                 <button
                   key={i}
                   className="chatSugerencia"
-                  onClick={() => onMensajeChange?.({ target: { value: s.texto } })}
+                  onClick={() => handleSugerencia(s.texto)}
                 >
                   <span className="chatSugerencia__icono">{s.icono}</span>
                   {s.texto}

@@ -10,7 +10,6 @@ import FondoAnimado from './components/layout/FondoAnimado';
 import PrivateRoute from './components/layout/PrivateRoute';
 import api from './api/axios';
 import useAuth from './hooks/useAuth';
-import useChat from './hooks/useChat';
 
 const UserProfile          = lazy(() => import('./components/profile/UserProfile'));
 const Login                = lazy(() => import('./components/auth/Login'));
@@ -85,7 +84,6 @@ const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '
 
 function AppContent() {
   const { user, checkAuth } = useAuth();
-  const chatProps = useChat();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
@@ -278,7 +276,6 @@ function AppContent() {
                 element={
                   <VistaChatbot
                     abrirFlotante={() => setRobotIAActivo(true)}
-                    chatProps={chatProps}
                   />
                 }
               />
@@ -304,7 +301,7 @@ function AppContent() {
 
         {user && (
           <Suspense fallback={null}>
-            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />
+            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />
           </Suspense>
         )}
 

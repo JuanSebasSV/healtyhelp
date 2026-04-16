@@ -2,19 +2,24 @@
  * useFiltroSalud
  * ──────────────────────────────────────────────────────────────────────────────
  * REGLA DE ORO:
- *   • Sin sesión  → cookies/localStorage SOLO (sin BD). IA no disponible.
+ *   • Sin sesión  → localStorage SOLO (sin BD). IA no disponible.
  *   • Con sesión  → BD es la única fuente de verdad.
- *                   Al detectar usuario, se borran las cookies para que no
- *                   contaminen la sesión actual ni la siguiente cuenta.
+ *                   Al detectar un usuario nuevo, se limpia localStorage para que
+ *                   no contamine la sesión actual ni la siguiente cuenta.
  *
  * MANEJA:
- *   • condiciones  — filtros de dieta/salud (diabetes, vegano, etc.)
- *   • categorias   — tipo de comida (desayuno, almuerzo, cena, postres-snacks)
+ *   • condiciones  — filtros de dieta/salud (multi-selección)
+ *   • categoria    — tipo de comida (RADIO: solo uno a la vez, o vacío = "todas")
  *
  * EXPORTA:
  *   { filtros, toggleFiltro, limpiarFiltros,
- *     categorias, toggleCategoria, limpiarCategorias,
+ *     categoria, setCategoria, limpiarCategoria,
  *     limpiarTodo, listo }
+ *
+ * CACHÉ DE MÓDULO:
+ *   El estado se guarda en variables fuera del hook para sobrevivir
+ *   desmontajes/remontajes del componente (navegación entre vistas).
+ *   Esto evita el parpadeo y las pérdidas de estado al volver a la vista.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -22,74 +27,105 @@ import api from '../api/axios';
 
 // ─── Claves de almacenamiento local (solo para anónimos) ─────────────────────
 const LS_CONDICIONES = 'hh_filtros_condiciones';
-const LS_CATEGORIAS  = 'hh_filtros_categorias';
+const LS_CATEGORIA   = 'hh_filtro_categoria'; // solo un string, no array
+
+// ─── Caché de módulo: sobrevive desmontajes ───────────────────────────────────
+// Guarda el último estado confirmado para el userId activo.
+// Si el componente se desmonta y remonta con el mismo usuario, restaura
+// instantáneamente sin esperar otra petición a la BD.
+let _cache = {
+  uid:        null,
+  filtros:    [],
+  categoria:  '', // '' = "todas"
+  cargado:    false,
+};
 
 // ─── Helpers localStorage (solo anónimos) ────────────────────────────────────
 
-const leerLS = (clave) => {
+const leerLS = (clave, fallback) => {
   try {
     const raw = localStorage.getItem(clave);
-    return raw ? JSON.parse(raw) : [];
+    return raw !== null ? JSON.parse(raw) : fallback;
   } catch {
-    return [];
+    return fallback;
   }
 };
 
 const escribirLS = (clave, valor) => {
   try {
-    // Siempre sobreescribe — resuelve el bug de "primera vez se guarda, después no"
-    localStorage.setItem(clave, JSON.stringify(Array.isArray(valor) ? valor : []));
+    localStorage.setItem(clave, JSON.stringify(valor));
   } catch {
-    // localStorage bloqueado (modo privado extremo) — ignorar silenciosamente
+    // localStorage bloqueado (modo privado extremo) — ignorar
   }
 };
 
 const limpiarLS = () => {
   localStorage.removeItem(LS_CONDICIONES);
-  localStorage.removeItem(LS_CATEGORIAS);
+  localStorage.removeItem(LS_CATEGORIA);
 };
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 const useFiltroSalud = (usuario) => {
-  const [filtros,    setFiltros]    = useState([]); // condiciones
-  const [categorias, setCategorias] = useState([]); // tipo de comida
-  const [listo,      setListo]      = useState(false);
+  const uid = usuario?._id ?? null;
 
-  // Ref para cancelar peticiones obsoletas (evita race conditions)
-  const peticionRef = useRef(null);
-  // Ref para no reaccionar al mismo usuario dos veces
-  const usuarioIdRef = useRef(null);
+  // Restaurar desde caché si es el mismo usuario — evita parpadeo al navegar
+  const cacheActual = _cache.uid === uid && _cache.cargado ? _cache : null;
 
-  // ── Carga inicial ─────────────────────────────────────────────────────────
+  const [filtros,   setFiltros]   = useState(cacheActual?.filtros   ?? []);
+  const [categoria, setCategoria] = useState(cacheActual?.categoria ?? '');
+  const [listo,     setListo]     = useState(!!cacheActual?.cargado);
+
+  const peticionRef  = useRef(null);
+  const usuarioIdRef = useRef(uid);
+
+  // ── Sincronizar caché → state cuando cambia el usuario ────────────────────
   useEffect(() => {
-    const uid = usuario?._id ?? null;
-
-    // Evitar re-ejecución innecesaria si el usuario no cambió
+    // Si el usuario no cambió y ya está cargado, no hacer nada
     if (uid === usuarioIdRef.current && listo) return;
     usuarioIdRef.current = uid;
 
+    // Si hay caché válido para este uid, restaurar sin petición de red
+    if (_cache.uid === uid && _cache.cargado) {
+      setFiltros(_cache.filtros);
+      setCategoria(_cache.categoria);
+      setListo(true);
+      return;
+    }
+
+    // Sin caché: cargar desde fuente de verdad
     setListo(false);
 
     const cargar = async () => {
       if (uid) {
-        // ── Usuario logueado: BD es la fuente de verdad ───────────────────
-        // Borrar cookies/localStorage del usuario anterior ANTES de cargar
-        limpiarLS();
+        // Usuario logueado — limpiar LS del usuario anterior antes de leer BD
+        if (_cache.uid !== uid) limpiarLS();
 
         try {
-          const { data } = await api.get('/recomendaciones/filtros');
-          setFiltros(   data.condiciones ?? []);
-          setCategorias(data.categorias  ?? []);
+          const { data } = await api.get('/chat/filtros');
+          const nuevosFiltros   = data.condiciones ?? [];
+          // El backend puede devolver un array (legacy) o string — normalizamos
+          const rawCat          = data.categorias;
+          const nuevaCategoria  = Array.isArray(rawCat)
+            ? (rawCat[0] ?? '')   // tomar el primero si viene como array legacy
+            : (rawCat ?? '');
+
+          _cache = { uid, filtros: nuevosFiltros, categoria: nuevaCategoria, cargado: true };
+          setFiltros(nuevosFiltros);
+          setCategoria(nuevaCategoria);
         } catch {
-          // Si falla la red, iniciar vacío (no leer cookies contaminadas)
+          // Fallo de red: dejar vacío pero marcar como cargado para no bloquear UI
+          _cache = { uid, filtros: [], categoria: '', cargado: true };
           setFiltros([]);
-          setCategorias([]);
+          setCategoria('');
         }
       } else {
-        // ── Usuario anónimo: leer de localStorage ─────────────────────────
-        setFiltros(   leerLS(LS_CONDICIONES));
-        setCategorias(leerLS(LS_CATEGORIAS));
+        // Usuario anónimo — leer de localStorage
+        const f = leerLS(LS_CONDICIONES, []);
+        const c = leerLS(LS_CATEGORIA,   '');
+        _cache = { uid: null, filtros: f, categoria: c, cargado: true };
+        setFiltros(f);
+        setCategoria(c);
       }
 
       setListo(true);
@@ -97,43 +133,58 @@ const useFiltroSalud = (usuario) => {
 
     cargar();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usuario?._id]);
+  }, [uid]);
 
-  // ── Guardado unificado ────────────────────────────────────────────────────
-  // Recibe los nuevos valores de ambos campos y persiste según el contexto
-  const persistir = useCallback(async ({ nuevasCondiciones, nuevasCategorias }) => {
+  // ── Persistir en BD o localStorage ───────────────────────────────────────
+  const persistir = useCallback(async ({ nuevasCondiciones, nuevaCategoria }) => {
+    // Actualizar caché de módulo inmediatamente
+    _cache = {
+      ..._cache,
+      ...(nuevasCondiciones !== undefined && { filtros:   nuevasCondiciones }),
+      ...(nuevaCategoria    !== undefined && { categoria: nuevaCategoria    }),
+    };
+
     if (!usuario) {
-      // Anónimo: solo localStorage, siempre sobreescribir
+      // Anónimo: solo localStorage
       if (nuevasCondiciones !== undefined) escribirLS(LS_CONDICIONES, nuevasCondiciones);
-      if (nuevasCategorias  !== undefined) escribirLS(LS_CATEGORIAS,  nuevasCategorias);
+      if (nuevaCategoria    !== undefined) escribirLS(LS_CATEGORIA,   nuevaCategoria);
       return;
     }
 
-    // Logueado: guardar en BD (merge parcial, no borra el otro campo)
-    const token = Symbol(); // token único para cancelación
+    // Logueado: guardar en BD
+    // La BD almacena categoria como array para compatibilidad con el motor de recomendaciones.
+    // Convertimos el string radio → array de un elemento (o array vacío si es '').
+    const token = Symbol();
     peticionRef.current = token;
 
     try {
       await api.put('/chat/health-profile', {
         ...(nuevasCondiciones !== undefined && { condiciones: nuevasCondiciones }),
-        ...(nuevasCategorias  !== undefined && { categorias:  nuevasCategorias  }),
+        ...(nuevaCategoria    !== undefined && {
+          // '' = "todas" = sin filtro → array vacío en BD
+          categorias: nuevaCategoria ? [nuevaCategoria] : [],
+        }),
       });
     } catch {
-      // Si la petición falló y sigue siendo la más reciente, revertir estado
+      // Fallo: revertir estado al último confirmado en BD
       if (peticionRef.current === token) {
-        // Releer desde BD para dejar el estado consistente
         try {
-          const { data } = await api.get('/recomendaciones/filtros');
-          setFiltros(   data.condiciones ?? []);
-          setCategorias(data.categorias  ?? []);
+          const { data } = await api.get('/chat/filtros');
+          const revertFiltros   = data.condiciones ?? [];
+          const rawCat          = data.categorias;
+          const revertCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? '') : (rawCat ?? '');
+
+          _cache = { uid, filtros: revertFiltros, categoria: revertCategoria, cargado: true };
+          setFiltros(revertFiltros);
+          setCategoria(revertCategoria);
         } catch {
-          // Sin red: mantener estado local como mejor esfuerzo
+          // Sin red: mantener estado optimista
         }
       }
     }
-  }, [usuario]);
+  }, [usuario, uid]);
 
-  // ── API pública: condiciones ──────────────────────────────────────────────
+  // ── API pública: condiciones (multi-selección) ────────────────────────────
 
   const toggleFiltro = useCallback((id) => {
     setFiltros(prev => {
@@ -150,46 +201,53 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevasCondiciones: [] });
   }, [persistir]);
 
-  // ── API pública: categorías ───────────────────────────────────────────────
+  // ── API pública: categoría (RADIO — solo una o ninguna) ───────────────────
+  // Llamar con un id selecciona ese id (o lo deselecciona si ya estaba).
+  // En la UI esto equivale a un botón de radio donde hacer clic en el activo
+  // lo apaga (vuelve a "todas").
 
-  const toggleCategoria = useCallback((id) => {
-    setCategorias(prev => {
-      const nuevas = prev.includes(id)
-        ? prev.filter(c => c !== id)
-        : [...prev, id];
-      persistir({ nuevasCategorias: nuevas });
-      return nuevas;
+  const seleccionarCategoria = useCallback((id) => {
+    setCategoria(prev => {
+      // Si ya estaba seleccionada, deseleccionar (volver a "todas")
+      const nueva = prev === id ? '' : id;
+      persistir({ nuevaCategoria: nueva });
+      return nueva;
     });
   }, [persistir]);
 
-  const limpiarCategorias = useCallback(() => {
-    setCategorias([]);
-    persistir({ nuevasCategorias: [] });
+  const limpiarCategoria = useCallback(() => {
+    setCategoria('');
+    persistir({ nuevaCategoria: '' });
   }, [persistir]);
 
   // ── Limpiar todo ──────────────────────────────────────────────────────────
 
   const limpiarTodo = useCallback(() => {
     setFiltros([]);
-    setCategorias([]);
-    persistir({ nuevasCondiciones: [], nuevasCategorias: [] });
+    setCategoria('');
+    persistir({ nuevasCondiciones: [], nuevaCategoria: '' });
   }, [persistir]);
 
-  // ── Alias de compatibilidad con el código anterior ────────────────────────
-  // VistaInicio usaba: { filtros, toggleFiltro, limpiar, listo }
-  // Mantenemos 'limpiar' como alias de limpiarFiltros para no romper VistaInicio
+  // ── Compatibilidad hacia atrás ────────────────────────────────────────────
+  // VistaInicio usaba `categorias` (array) y `toggleCategoria`.
+  // Exponemos alias para no romper código existente.
+  // NUEVO comportamiento: categorias es siempre un array de 0 o 1 elementos.
 
   return {
-    // Condiciones (filtro de dieta/salud)
+    // Condiciones (multi-selección)
     filtros,
     toggleFiltro,
     limpiarFiltros,
-    limpiar: limpiarFiltros, // alias de compatibilidad
+    limpiar: limpiarFiltros, // alias legacy
 
-    // Categorías (tipo de comida)
-    categorias,
-    toggleCategoria,
-    limpiarCategorias,
+    // Categoría (radio)
+    categoria,                          // string: '' | 'desayuno' | 'almuerzo' | 'cena' | 'postres-snacks'
+    setCategoria: seleccionarCategoria, // nombre semántico
+    limpiarCategoria,
+
+    // Alias de compatibilidad (VistaInicio usaba `categorias` como array)
+    categorias:     categoria ? [categoria] : [],   // array de 0 o 1 elementos
+    toggleCategoria: seleccionarCategoria,           // mismo comportamiento radio
 
     // Utilidades
     limpiarTodo,
