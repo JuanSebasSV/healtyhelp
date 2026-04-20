@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     min: [18, 'Debes ser mayor de 18 años'],
     max: [100, 'La edad máxima permitida es 100 años']
   },
-  weight: { type: Number, min: 40, max: 150 }, // kg
+  weight: { type: Number, min: 40, max: 300 }, // kg
   height: { type: Number, min: 50, max: 210 }, // cm
   role: {
     type: String,

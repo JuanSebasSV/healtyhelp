@@ -89,6 +89,11 @@ router.put('/profile', protect, async (req, res) => {
     if (weight) user.weight = parseFloat(weight);
     if (height) user.height = parseFloat(height);
 
+    // Recalcular profileComplete cuando se actualiza el perfil
+    if (user.age != null && user.weight != null && user.height != null) {
+      user.profileComplete = true;
+    }
+
     if (password) {
       if (user.googleId && !user.password) {
         return res.status(400).json({ error: 'Las cuentas de Google no pueden cambiar la contraseña' });
@@ -244,8 +249,8 @@ router.post('/complete-profile', protect, async (req, res) => {
 
     if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
       return res.status(400).json({ error: 'Edad inválida (18-100)' });
-    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 150)
-      return res.status(400).json({ error: 'Peso inválido (40-150 kg)' });
+    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 300)
+      return res.status(400).json({ error: 'Peso inválido (40-300 kg)' });
     if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
       return res.status(400).json({ error: 'Altura inválida (50-210 cm)' });
 

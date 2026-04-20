@@ -1,208 +1,345 @@
-/* ModalCompletarPerfil.css — Modo CLARO, alto contraste */
+/* ModalCompletarPerfil.css — Estilo unificado con Register.css */
 
+/* ── Overlay ── */
 .completar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 26, 15, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(5, 18, 8, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 9998;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.35s ease;
   box-sizing: border-box;
 }
 
+/* ── Modal — mismo glass que .authCard ── */
 .completar-modal {
-  background: #ffffff;
-  border: 1.5px solid rgba(26, 77, 46, 0.18);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
   width: 100%;
   max-width: 440px;
-  padding: 2rem;
+  padding: 2.5rem 3rem;
   box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.22),
-    0 4px 16px rgba(26, 77, 46, 0.1);
+    0 16px 48px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   max-height: 90vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   box-sizing: border-box;
+  animation: fadeIn 0.35s ease;
 }
 
-/* ── Header ── */
+/* ── Header (brand) ── */
 .completar-header {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
   margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 2px solid #f0f4f0;
+  text-align: center;
 }
 
+/* Reutiliza .auth-brand de Register */
+.completar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.completar-brand svg {
+  stroke: var(--blanco-puro, #ffffff);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.completar-brand-nombre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--blanco-puro, #ffffff);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.completar-header h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.80);
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+
+.completar-header p {
+  color: rgba(255, 255, 255, 0.60);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Icono decorativo debajo del brand */
 .completar-icono {
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
-  background: linear-gradient(135deg, #1a4d2e, #4f772d);
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.25);
+  margin: 0.4rem auto 0;
 }
-.completar-icono svg { stroke: #ffffff; }
 
-.completar-header h2 {
-  color: #1a4d2e;
-  font-size: 1.2rem;
-  font-family: 'Playfair Display', 'Georgia', serif;
-  font-weight: 700;
-  margin-bottom: 0.3rem;
-  line-height: 1.3;
-}
-.completar-header p {
-  color: #4b5563;
-  font-size: 0.875rem;
-  line-height: 1.5;
+.completar-icono svg {
+  stroke: rgba(255, 255, 255, 0.85);
+  width: 24px;
+  height: 24px;
 }
 
 /* ── Cuerpo ── */
 .completar-body {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Grupo de campo — igual que .formGroup ── */
+.completar-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .completar-grupo label {
   display: block;
-  color: #374151;
-  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.70);
+  font-size: 0.78rem;
   font-weight: 600;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.15rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
-/* Inputs generales */
-.completar-grupo input[type="text"],
-.completar-grupo input[type="email"],
-.completar-grupo input[type="date"],
-.completar-grupo select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: #ffffff;
-  border: 2px solid #c8d8c8;
-  border-radius: 10px;
-  color: #111827;
-  font-size: max(0.95rem, 16px);
-  font-weight: 500;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-.completar-grupo input[type="text"]::placeholder,
-.completar-grupo input[type="email"]::placeholder { color: #9ca3af; }
-.completar-grupo input[type="text"]:focus,
-.completar-grupo input[type="email"]:focus,
-.completar-grupo input[type="date"]:focus,
-.completar-grupo select:focus {
-  border-color: #1a4d2e;
-  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.12);
-  background: #f9fcf9;
-}
-
-.completar-grupo select {
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a4d2e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.9rem center;
-  padding-right: 2.5rem;
-  cursor: pointer;
-}
-
-/* Inputs numéricos */
+/* ── Inputs numéricos — igual que .authForm input ── */
 .completar-grupo .numero-wrapper input {
   width: 100%;
-  padding: 0.75rem 2.4rem 0.75rem 1rem;
-  background: #ffffff;
-  border: 2px solid #c8d8c8;
-  border-radius: 10px;
-  color: #111827;
-  font-size: max(0.95rem, 16px);
-  font-weight: 500;
+  padding: 1rem 2.6rem 1rem 1rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--blanco-puro, #ffffff);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
+  -moz-appearance: textfield;
 }
-.completar-grupo .numero-wrapper input::placeholder { color: #9ca3af; }
+
+.completar-grupo .numero-wrapper input::-webkit-inner-spin-button,
+.completar-grupo .numero-wrapper input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.completar-grupo .numero-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
 .completar-grupo .numero-wrapper input:focus {
-  border-color: #1a4d2e;
-  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.12);
-  background: #f9fcf9;
+  border-color: var(--naranja, #f77f00);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.18);
 }
 
-.completar-grupo .numero-flechas { border-left: 1px solid #d1d5db; }
-.completar-grupo .numero-flechas button { background: #f3f4f6; color: #6b7280; }
-.completar-grupo .numero-flechas button:first-child { border-bottom: 1px solid #d1d5db; }
-.completar-grupo .numero-flechas button:hover { background: #e4f3d8; color: #1a4d2e; }
+/* ── Flechas del input numérico — igual que Register ── */
+.completar-grupo .numero-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
 
+.completar-grupo .numero-flechas {
+  position: absolute;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.completar-grupo .numero-flechas button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 1px 3px;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.completar-grupo .numero-flechas button:hover {
+  color: var(--naranja, #f77f00);
+}
+
+.completar-grupo .numero-flechas button svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+/* ── Error de campo ── */
 .completar-error {
   display: block;
-  color: #dc2626;
-  font-size: 0.8rem;
+  color: #f87171;
+  font-size: 0.80rem;
   font-weight: 500;
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
 }
 
+/* ── Nota informativa — misma paleta que .aviso-inline--naranja ── */
 .completar-nota {
-  color: #6b7280;
-  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.78rem;
   line-height: 1.55;
-  margin-top: 0.25rem;
-  padding: 0.7rem 0.85rem;
-  background: #f0f7ec;
-  border: 1px solid #c8e0b8;
-  border-radius: 8px;
+  margin-top: 0.1rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(247, 127, 0, 0.10);
+  border: 1px solid rgba(247, 127, 0, 0.35);
+  border-radius: 10px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
 }
 
+/* ── Avisos inline — idénticos a Register.css ── */
+.completar-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+.completar-aviso--naranja {
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.40);
+  color: rgba(255, 255, 255, 0.88);
+}
+.completar-aviso--naranja svg   { color: var(--naranja, #f77f00); }
+.completar-aviso--naranja strong{ color: var(--naranja, #f77f00); }
+
+.completar-aviso--rojo {
+  background: rgba(220, 38, 38, 0.10);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+}
+.completar-aviso--rojo svg    { color: #f87171; }
+.completar-aviso--rojo strong { color: #f87171; }
+
+/* ── Botón principal — idéntico a .btn-primario ── */
 .completar-btn {
   width: 100%;
-  padding: 0.95rem;
-  background: #f77f00;
+  padding: 1rem;
+  background: var(--naranja, #f77f00);
+  color: #ffffff;
   border: none;
   border-radius: 12px;
-  color: #ffffff;
-  font-weight: 700;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
-  letter-spacing: 0.01em;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.30);
+  margin-top: 0.25rem;
+  letter-spacing: 0.3px;
 }
+
 .completar-btn:hover:not(:disabled) {
-  background: #d66e00;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(247, 127, 0, 0.4);
+  background: var(--naranja-hover, #e06c00);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(247, 127, 0, 0.40);
 }
-.completar-btn:active:not(:disabled) { transform: translateY(0); }
+
+.completar-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .completar-btn:disabled {
-  background: #e5e7eb;
-  color: #9ca3af;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
+}
+
+/* ── Modo oscuro — misma lógica que Register ── */
+.modo-oscuro .completar-modal {
+  background: rgba(10, 25, 15, 0.60);
+  border-color: rgba(79, 119, 45, 0.35);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.modo-oscuro .completar-brand svg    { stroke: rgba(210, 245, 185, 0.97); }
+.modo-oscuro .completar-brand-nombre { color: rgba(210, 245, 185, 0.97); }
+.modo-oscuro .completar-header h2    { color: rgba(210, 245, 185, 0.80); }
+.modo-oscuro .completar-header p     { color: rgba(200, 230, 185, 0.60); }
+
+.modo-oscuro .completar-grupo .numero-wrapper input {
+  background: rgba(20, 50, 25, 0.55);
+  border-color: rgba(79, 119, 45, 0.40);
+  color: rgba(220, 245, 205, 0.97);
+}
+
+.modo-oscuro .completar-grupo .numero-wrapper input::placeholder {
+  color: rgba(210, 245, 185, 0.55);
+}
+
+.modo-oscuro .completar-grupo .numero-wrapper input:focus {
+  border-color: var(--naranja, #f77f00);
+  background: rgba(25, 60, 30, 0.65);
+}
+
+.modo-oscuro .completar-grupo .numero-flechas button {
+  color: rgba(200, 230, 185, 0.55);
+}
+.modo-oscuro .completar-grupo .numero-flechas button:hover {
+  color: var(--naranja, #f77f00);
+}
+
+.modo-oscuro .completar-aviso--naranja {
+  background: rgba(247, 127, 0, 0.10);
+  border-color: rgba(247, 127, 0, 0.30);
+  color: rgba(200, 230, 185, 0.85);
+}
+
+.modo-oscuro .completar-aviso--rojo {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.28);
+  color: rgba(200, 230, 185, 0.85);
+}
+
+.modo-oscuro .completar-nota {
+  background: rgba(247, 127, 0, 0.08);
+  border-color: rgba(247, 127, 0, 0.25);
+  color: rgba(200, 230, 185, 0.80);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MÓVIL — todos los teléfonos ≤ 768px
-   Misma estrategia: width: calc(100% - 24px) + margin: 0 auto
-   garantiza márgenes en cualquier Android/iOS.
+   MÓVIL ≤ 768px
    ═══════════════════════════════════════════════════════════════ */
 @media screen and (max-width: 768px) {
-
   .completar-overlay {
     padding: 12px;
     align-items: flex-end;
@@ -213,50 +350,36 @@
     width: calc(100% - 24px);
     max-width: calc(100% - 24px);
     margin: 0 auto;
-    margin-bottom: 0;
-    border-radius: 18px 18px 0 0;
+    border-radius: 20px 20px 0 0;
     border-bottom: none;
-    padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
     max-height: 88vh;
-    overflow-y: auto;
   }
 
-  .completar-header {
-    margin-bottom: 1rem;
-    padding-bottom: 0.85rem;
-    gap: 0.65rem;
-    border-bottom: 1.5px solid #f0f4f0;
+  .completar-brand-nombre { font-size: 1.45rem; }
+  .completar-header h2    { font-size: 0.88rem; }
+  .completar-header p     { font-size: 0.76rem; }
+  .completar-icono        { width: 38px; height: 38px; border-radius: 10px; }
+  .completar-icono svg    { width: 19px; height: 19px; }
+
+  .completar-grupo label  { font-size: 0.72rem; }
+
+  .completar-grupo .numero-wrapper input {
+    padding: 0.85rem 2.4rem 0.85rem 0.9rem;
+    font-size: max(0.95rem, 16px);
   }
-  .completar-icono { width: 38px; height: 38px; min-width: 38px; border-radius: 10px; }
-  .completar-icono svg { width: 19px; height: 19px; }
-  .completar-header h2 { font-size: 0.95rem; }
-  .completar-header p { font-size: 0.78rem; }
 
-  .completar-body { gap: 0.75rem; margin-bottom: 1rem; }
-  .completar-grupo label { font-size: 0.78rem; margin-bottom: 0.3rem; }
-
-  .completar-grupo input[type="text"],
-  .completar-grupo input[type="email"],
-  .completar-grupo input[type="date"],
-  .completar-grupo select {
-    padding: 0.8rem 0.9rem;
-  }
-  .completar-grupo select { padding-right: 2.3rem; }
-  .completar-grupo .numero-wrapper input { padding: 0.8rem 2.4rem 0.8rem 0.9rem; }
-
-  .completar-nota { font-size: 0.74rem; padding: 0.6rem 0.75rem; }
+  .completar-nota  { font-size: 0.74rem; padding: 0.6rem 0.75rem; }
   .completar-error { font-size: 0.74rem; }
-
-  .completar-btn { padding: 0.85rem; font-size: 0.95rem; border-radius: 10px; }
+  .completar-btn   { padding: 0.9rem; font-size: 0.95rem; border-radius: 10px; }
 }
 
-/* ═══════════════════════════════════════════════
-   MÓVIL MUY PEQUEÑO — 360px y menos
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   MÓVIL MUY PEQUEÑO ≤ 360px
+   ═══════════════════════════════════════════════════════════════ */
 @media screen and (max-width: 360px) {
   .completar-overlay { padding: 8px; }
-  .completar-modal { width: calc(100% - 16px); max-width: calc(100% - 16px); }
-  .completar-header h2 { font-size: 0.88rem; }
-  .completar-icono { width: 32px; height: 32px; min-width: 32px; }
-  .completar-btn { padding: 0.8rem; font-size: 0.9rem; }
+  .completar-modal   { width: calc(100% - 16px); max-width: calc(100% - 16px); }
+  .completar-brand-nombre { font-size: 1.3rem; }
+  .completar-btn     { padding: 0.8rem; font-size: 0.9rem; }
 }

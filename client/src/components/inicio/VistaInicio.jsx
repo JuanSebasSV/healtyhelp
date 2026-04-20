@@ -26,6 +26,13 @@ const CATEGORIAS = [
   { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e26e6e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
 ];
 
+// NUEVA FUNCIONALIDAD: opciones de filtro por tiempo — misma estructura que CATEGORIAS
+const TIEMPOS = [
+  { id: 'menos15', nombre: 'Menos de 15 min', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: '15a30',   nombre: '15 – 30 min',     icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: 'mas30',   nombre: 'Más de 30 min',   icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+];
+
 const CONDICIONES = [
   { id: 'diabetes',             nombre: 'Diabetes',                      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>' },
   { id: 'hipertension',         nombre: 'Hipertensión',                  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>' },
@@ -46,6 +53,10 @@ const CONDICIONES = [
   { id: 'gastritis',            nombre: 'Gastritis',                     icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>' },
   { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Z"/></svg>' },
 ];
+
+// NUEVA FUNCIONALIDAD: normalización para búsqueda sin tildes
+const normalizarTexto = (texto) =>
+  texto ? texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 
@@ -77,6 +88,9 @@ const VistaInicio = ({
   const [recetaAbierta,     setRecetaAbierta]      = useState(null);
   const [resenaIdDestacada, setResenaIdDestacada]  = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
+  // NUEVA FUNCIONALIDAD: estados de búsqueda y filtro por tiempo
+  const [busqueda,          setBusqueda]           = useState('');
+  const [filtroTiempo,      setFiltroTiempo]       = useState(null);
 
   const thumbRef        = useRef(null);
   const trackRef        = useRef(null);
@@ -128,16 +142,17 @@ const VistaInicio = ({
   // ─── Abrir receta desde prop (notificaciones) ─────────────────────────────
 
   useEffect(() => {
-  console.log('useEffect recetaPendiente:', recetaPendiente, 'recetas.length:', recetas.length);
-  if (!recetaPendiente || !recetas.length) return;
-  const found = recetas.find(r => r._id === recetaPendiente);
-  console.log('found:', found);
-  if (found) {
-    setRecetaAbierta(found);
-    setResenaIdDestacada(null);
-    onRecetaPendienteResuelta?.();
-  }
-}, [recetaPendiente, recetas]);
+    console.log('useEffect recetaPendiente:', recetaPendiente, 'recetas.length:', recetas.length);
+    if (!recetaPendiente || !recetas.length) return;
+    const found = recetas.find(r => r._id === recetaPendiente);
+    console.log('found:', found);
+    if (found) {
+      setRecetaAbierta(found);
+      setResenaIdDestacada(null);
+      onRecetaPendienteResuelta?.();
+    }
+  }, [recetaPendiente, recetas]);
+
   // ─── Carrusel hero ────────────────────────────────────────────────────────
 
   const cambiarImagen = useCallback((idx) => {
@@ -206,13 +221,33 @@ const VistaInicio = ({
     onFiltrosCambiados?.();
   }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
 
+  // NUEVA FUNCIONALIDAD: toggle del filtro de tiempo (desactiva si se pulsa el mismo)
+  const handleFiltroTiempo = useCallback((id) => {
+    setFiltroTiempo(prev => prev === id ? null : id);
+  }, []);
+
   // ─── Filtrado de recetas ──────────────────────────────────────────────────
 
+  // NUEVA FUNCIONALIDAD: filtrado ampliado con búsqueda por texto y tiempo
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
     const okCat   = !categoria || r.cat === categoria;
     const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
-    return okCat && okSalud;
-  }), [recetas, categoria, filtros]);
+
+    // Búsqueda por texto normalizada (sin tildes, case-insensitive)
+    const busquedaLimpia = normalizarTexto(busqueda);
+    const okBusqueda = busqueda.trim() === '' ||
+      normalizarTexto(r.nombre || '').includes(busquedaLimpia) ||
+      normalizarTexto(r.desc   || '').includes(busquedaLimpia);
+
+    // Filtro por tiempo de preparación
+    const t = r.tiempoMinutos || 0;
+    const okTiempo = !filtroTiempo ? true :
+      filtroTiempo === 'menos15' ? (t > 0 && t < 15) :
+      filtroTiempo === '15a30'   ? (t >= 15 && t <= 30) :
+      filtroTiempo === 'mas30'   ? (t > 30) : true;
+
+    return okCat && okSalud && okBusqueda && okTiempo;
+  }), [recetas, categoria, filtros, busqueda, filtroTiempo]);
 
   const totalCondicionesActivas = filtros.length;
 
@@ -305,10 +340,63 @@ const VistaInicio = ({
         })}
       </section>
 
+      {/* Filtro por tiempo — misma fila visual que categorías */}
+      <section className="categorias tiempos-fila">
+        <span className="tiempos-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Tiempo:
+        </span>
+        {TIEMPOS.map(t => (
+          <button
+            key={t.id}
+            className={`catBtn catBtn--tiempo ${filtroTiempo === t.id ? 'activo' : ''}`}
+            onClick={() => handleFiltroTiempo(t.id)}
+          >
+            <span className="catIcono" dangerouslySetInnerHTML={{ __html: t.icono }} />
+            <span>{t.nombre}</span>
+          </button>
+        ))}
+        {filtroTiempo && (
+          <button className="catBtn catBtn--limpiar-tiempo" onClick={() => setFiltroTiempo(null)}>
+            ✕ Limpiar
+          </button>
+        )}
+      </section>
+
+      {/* NUEVA FUNCIONALIDAD: Buscador por nombre o descripción */}
+      <div className="buscador-recetas">
+        <div className="buscador-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Buscar receta por nombre o descripción..."
+            value={busqueda}
+            onChange={e => setBusqueda(e.target.value)}
+            className="buscador-input"
+          />
+          {busqueda && (
+            <button className="buscador-clear" onClick={() => setBusqueda('')} aria-label="Limpiar búsqueda">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          )}
+        </div>
+        {busqueda && (
+          <span className="buscador-conteo">
+            {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
+          </span>
+        )}
+      </div>
+
       {/* ─── Recetas ─── */}
       <section className="recetasGrid">
         <div className="recetasGrid-header">
-          <h2>Recetas Recomendadas</h2>
+          <h2>Explorar Recetas</h2>
           {seleccionadas.length > 0 && (
             <p className="pdf-hint">
               📄 {seleccionadas.length} receta{seleccionadas.length !== 1 ? 's' : ''} seleccionada{seleccionadas.length !== 1 ? 's' : ''} para PDF
