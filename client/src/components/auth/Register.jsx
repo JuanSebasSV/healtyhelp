@@ -11,6 +11,43 @@ import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import './Register.css';
 
+/* ─── Dominios de correo permitidos ──────────────────────────
+   Solo proveedores reales y verificables. Resend puede enviar
+   a cualquier dominio, pero restringimos en el front para evitar
+   correos inventados como pito@pito.com                        */
+const DOMINIOS_PERMITIDOS = new Set([
+  // Google
+  'gmail.com',
+  // Microsoft
+  'hotmail.com', 'hotmail.es', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de',
+  'outlook.com', 'outlook.es', 'live.com', 'live.com.mx', 'live.co.uk',
+  'msn.com',
+  // Yahoo
+  'yahoo.com', 'yahoo.es', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de',
+  'yahoo.com.mx', 'yahoo.com.ar', 'yahoo.com.co',
+  // Apple
+  'icloud.com', 'me.com', 'mac.com',
+  // Otros populares globales
+  'protonmail.com', 'proton.me', 'pm.me',
+  'tutanota.com', 'tuta.io',
+  'zoho.com',
+  'aol.com', 'aol.co.uk',
+  'mail.com', 'email.com', 'gmx.com', 'gmx.de', 'gmx.net',
+  'yandex.com', 'yandex.ru',
+  // Latinoamérica frecuentes
+  'bol.com.br', 'ig.com.br', 'uol.com.br', 'terra.com.br',
+  'hotmail.com.br',
+  // Colombia / España universitarios y corporativos comunes
+  // (agrega los tuyos si necesitas admitir dominios institucionales)
+]);
+
+const esEmailPermitido = (email) => {
+  const partes = email.split('@');
+  if (partes.length !== 2) return false;
+  const dominio = partes[1].toLowerCase();
+  return DOMINIOS_PERMITIDOS.has(dominio);
+};
+
 /* ─── Iconos ─────────────────────────────────────────────── */
 const EyeIcon = ({ open }) =>
   open ? (
@@ -48,16 +85,18 @@ const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
 
 /* ─── Definición de avisos por campo ──────────────────────── */
 const AVISOS = {
-  nombre_caracteres: { titulo: 'Solo letras.',          mensaje: 'El nombre no puede contener números ni símbolos.',                                                    variante: 'naranja' },
-  email_invalido:    { titulo: 'Formato incorrecto.',   mensaje: 'Escribe un correo válido, por ejemplo: usuario@correo.com.',                                          variante: 'naranja' },
-  pass_debil:        { titulo: 'Contraseña débil.',     mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.',                            variante: 'naranja' },
-  passConf_mismatch: { titulo: 'No coinciden.',         mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                                              variante: 'rojo'    },
-  edad_menor:        { titulo: 'Acceso restringido.',   mensaje: 'Healthy Help está diseñado para mayores de 18 años. Si eres menor, consulta a un médico de confianza.', variante: 'naranja' },
-  edad_invalida:     { titulo: 'Edad inválida.',        mensaje: 'Ingresa una edad entre 1 y 120 años.',                                                                variante: 'rojo'    },
-  peso_bajo:         { titulo: 'Peso mínimo 40 kg.',    mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones seguras.',                         variante: 'naranja' },
-  peso_alto:         { titulo: 'Peso fuera de rango.',  mensaje: 'El valor máximo aceptado es 500 kg.',                                                                 variante: 'rojo'    },
-  altura_baja:       { titulo: 'Altura mínima 50 cm.',  mensaje: 'Ingresa una altura válida entre 50 y 300 cm.',                                                        variante: 'naranja' },
-  altura_alta:       { titulo: 'Altura fuera de rango.', mensaje: 'El valor máximo aceptado es 300 cm.',                                                                variante: 'rojo'    },
+  nombre_caracteres:  { titulo: 'Solo letras.',              mensaje: 'El nombre no puede contener números ni símbolos.',                                                    variante: 'naranja' },
+  email_invalido:     { titulo: 'Formato incorrecto.',       mensaje: 'Escribe un correo válido, por ejemplo: usuario@correo.com.',                                          variante: 'naranja' },
+  // ── NUEVO ──
+  email_dominio:      { titulo: 'Proveedor no permitido.',   mensaje: 'Usa un correo de Gmail, Hotmail, Outlook, Yahoo, iCloud u otro proveedor reconocido.',                variante: 'rojo'    },
+  pass_debil:         { titulo: 'Contraseña débil.',         mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.',                            variante: 'naranja' },
+  passConf_mismatch:  { titulo: 'No coinciden.',             mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                                              variante: 'rojo'    },
+  edad_menor:         { titulo: 'Acceso restringido.',       mensaje: 'Healthy Help está diseñado para mayores de 18 años. Si eres menor, consulta a un médico de confianza.', variante: 'naranja' },
+  edad_invalida:      { titulo: 'Edad inválida.',            mensaje: 'Ingresa una edad entre 1 y 120 años.',                                                                variante: 'rojo'    },
+  peso_bajo:          { titulo: 'Peso mínimo 40 kg.',        mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones seguras.',                         variante: 'naranja' },
+  peso_alto:          { titulo: 'Peso fuera de rango.',      mensaje: 'El valor máximo aceptado es 500 kg.',                                                                 variante: 'rojo'    },
+  altura_baja:        { titulo: 'Altura mínima 50 cm.',      mensaje: 'Ingresa una altura válida entre 50 y 300 cm.',                                                        variante: 'naranja' },
+  altura_alta:        { titulo: 'Altura fuera de rango.',    mensaje: 'El valor máximo aceptado es 300 cm.',                                                                 variante: 'rojo'    },
 };
 
 /* ─── Calcula qué aviso mostrar para cada campo ───────────── */
@@ -71,6 +110,8 @@ const calcularAviso = (field, value, datos) => {
     case 'email': {
       if (!value) return null;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'email_invalido';
+      // ── NUEVO: validar dominio ──
+      if (!esEmailPermitido(value)) return 'email_dominio';
       return null;
     }
     case 'pass': {
@@ -160,7 +201,10 @@ const validarCampo = (field, value, datos) => {
     }
     case 'email': {
       if (!value) return 'El correo es requerido';
-      return validateEmail(value) ? '' : 'Correo inválido';
+      if (!validateEmail(value)) return 'Correo inválido';
+      // ── NUEVO: bloquear dominios no reconocidos ──
+      if (!esEmailPermitido(value)) return 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)';
+      return '';
     }
     case 'pass': {
       const r = validatePassword(value);
@@ -204,6 +248,8 @@ const FieldHint = ({ field, value, datos, touched }) => {
     ],
     email: [
       { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), label: 'Formato válido (ejemplo@correo.com)' },
+      // ── NUEVO hint de dominio ──
+      { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && esEmailPermitido(value), label: 'Proveedor reconocido (Gmail, Hotmail…)' },
     ],
     pass: [
       { ok: value && value.length >= 8,        label: 'Mínimo 8 caracteres' },
@@ -299,7 +345,6 @@ const Register = () => {
     // Actualizar aviso inline en tiempo real para todos los campos
     const avisoKey = calcularAviso(field, value, nuevosDatos);
     const extraAvisos = {};
-    // Si cambia la contraseña, recalcular también el aviso de confirmación
     if (field === 'pass') {
       extraAvisos.passConf = calcularAviso('passConf', nuevosDatos.passConf, nuevosDatos);
     }
@@ -311,7 +356,6 @@ const Register = () => {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const error = validarCampo(field, datos[field], datos);
     setErrors((prev) => ({ ...prev, [field]: error }));
-    // Asegurar aviso al salir aunque no haya escrito
     const avisoKey = calcularAviso(field, datos[field], datos);
     setAvisos((prev) => ({ ...prev, [field]: avisoKey }));
   };
@@ -322,6 +366,13 @@ const Register = () => {
 
     const allTouched = Object.keys(datos).reduce((acc, k) => ({ ...acc, [k]: true }), {});
     setTouched(allTouched);
+
+    // ── NUEVO: verificar dominio antes de llamar al backend ──
+    if (datos.email && !esEmailPermitido(datos.email)) {
+      setErrors((prev) => ({ ...prev, email: 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)' }));
+      setAvisos((prev) => ({ ...prev, email: 'email_dominio' }));
+      return;
+    }
 
     const validationErrors = validateRegisterForm(
       datos.nombre, datos.email, datos.pass, datos.passConf, datos.edad
@@ -429,7 +480,7 @@ const Register = () => {
             <NumeroInput
               name="peso"
               value={datos.peso}
-              placeholder="Peso (kg) — opcional"
+              placeholder="Peso (kg)"
               onChange={(e) => handleChange('peso', e.target.value)}
               onBlur={() => handleBlur('peso')}
               min={1}

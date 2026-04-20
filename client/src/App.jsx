@@ -153,7 +153,16 @@ function AppContent() {
   }, [user]);
 
   const resolverTerminos = useCallback(() => {
-    if (user && !user.profileComplete) {
+    if (!user) return;
+    // Calcular igual que el backend: desde los datos reales, no desde el campo cacheado.
+    // Esto evita que el modal aparezca cuando el usuario ya tiene age/weight/height válidos
+    // pero profileComplete quedó en false por desincronización.
+    const profileRealmenteCompleto = (
+      user.age    != null && Number(user.age)    >= 18 &&
+      user.weight != null && Number(user.weight) >= 40 &&
+      user.height != null && Number(user.height) >= 50
+    );
+    if (!profileRealmenteCompleto) {
       setMostrarCompletarPerfil(true);
     }
   }, [user]);
@@ -221,8 +230,8 @@ function AppContent() {
   }, [activeTermsVersion, user, checkAuth, resolverTerminos]);
 
   const handlePerfilCompletado = useCallback(() => {
-    setMostrarCompletarPerfil(false);
-    checkAuth();
+    setMostrarCompletarPerfil(false); // cerrar inmediatamente sin esperar
+    checkAuth();                       // luego refrescar usuario desde BD
   }, [checkAuth]);
 
   const handleGooglePasswordSuccess = useCallback(() => {

@@ -56,6 +56,14 @@ const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizas
 </html>`;
 
 const buildUserResponse = (user) => {
+  // Calcular profileComplete dinámicamente desde los datos reales,
+  // sin confiar en el campo almacenado (puede estar desincronizado).
+  const profileComplete = !!(
+    user.age    != null && user.age    >= 18 && user.age    <= 100 &&
+    user.weight != null && user.weight >= 40 && user.weight <= 300 &&
+    user.height != null && user.height >= 50 && user.height <= 210
+  );
+
   const obj = {
     id:              user._id,
     name:            user.name,
@@ -70,7 +78,7 @@ const buildUserResponse = (user) => {
     height:          user.height,
     termsAccepted:   user.termsAccepted   || false,
     termsVersion:    user.termsVersion    || '',
-    profileComplete: user.profileComplete || false,
+    profileComplete,
     createdAt:       user.createdAt
   };
   if (user.password !== undefined) obj.hasPassword = !!user.password;
@@ -130,11 +138,22 @@ exports.register = async (req, res) => {
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
+    const pesoNum  = weight  ? parseFloat(weight)  : null;
+    const altNum   = height  ? parseFloat(height)  : null;
+
+    // profileComplete = true solo si age, weight Y height están presentes y son válidos
+    const profileComplete = !!(
+      edadNum >= 18 &&
+      pesoNum  && pesoNum  >= 40 && pesoNum  <= 300 &&
+      altNum   && altNum   >= 50 && altNum   <= 210
+    );
+
     await User.create({
       name, email, password,
       age: edadNum,
-      ...(weight && { weight: parseFloat(weight) }),
-      ...(height && { height: parseFloat(height) }),
+      ...(pesoNum && { weight: pesoNum }),
+      ...(altNum  && { height: altNum  }),
+      profileComplete,
       isVerified:         false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),
       verificationExpire: Date.now() + 15 * 60 * 1000
@@ -197,6 +216,15 @@ exports.verifyEmail = async (req, res) => {
     user.isVerified         = true;
     user.verificationCode   = undefined;
     user.verificationExpire = undefined;
+
+    // Recalcular profileComplete con validación de rangos completa,
+    // por si quedó en false aunque los datos ya existían.
+    user.profileComplete = !!(
+      user.age    != null && user.age    >= 18 && user.age    <= 100 &&
+      user.weight != null && user.weight >= 40 && user.weight <= 300 &&
+      user.height != null && user.height >= 50 && user.height <= 210
+    );
+
     await user.save({ validateBeforeSave: false });
 
     const token = generateToken(user._id);
@@ -243,6 +271,26 @@ exports.acceptTerms = async (req, res) => {
 // COMPLETAR PERFIL
 exports.completeProfile = async (req, res) => {
   try {
+    // Verificar estado real en BD antes de procesar
+    const userActual = await User.findById(req.user._id);
+    if (!userActual) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Si ya tiene los 3 campos válidos, solo corregir profileComplete y responder
+    const yaCompleto = (
+      userActual.age    != null && userActual.age    >= 18 && userActual.age    <= 100 &&
+      userActual.weight != null && userActual.weight >= 40 && userActual.weight <= 300 &&
+      userActual.height != null && userActual.height >= 50 && userActual.height <= 210
+    );
+
+    if (yaCompleto) {
+      if (!userActual.profileComplete) {
+        userActual.profileComplete = true;
+        await userActual.save({ validateBeforeSave: false });
+      }
+      return res.json({ success: true, user: buildUserResponse(userActual) });
+    }
+
+    // Flujo normal: validar y guardar los datos enviados
     const { age, weight, height } = req.body;
 
     const edadNum = parseInt(age, 10);
@@ -251,8 +299,8 @@ exports.completeProfile = async (req, res) => {
 
     if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
       return res.status(400).json({ error: 'Edad válida entre 18 y 100' });
-    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 150)
-      return res.status(400).json({ error: 'Peso válido entre 40 y 150 kg' });
+    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 300)
+      return res.status(400).json({ error: 'Peso válido entre 40 y 300 kg' });
     if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
       return res.status(400).json({ error: 'Altura válida entre 50 y 210 cm' });
 
