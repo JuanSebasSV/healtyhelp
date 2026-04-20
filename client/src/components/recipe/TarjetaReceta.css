@@ -215,6 +215,39 @@
 .modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }
 
 /* =====================================================
+   NUEVA FUNCIONALIDAD: Badge de tiempo de preparación
+   ===================================================== */
+.tarjeta-tiempo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(45, 106, 82, 0.2);
+  border: 1px solid rgba(45, 106, 82, 0.35);
+  border-radius: 50px;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+}
+
+.tarjeta-tiempo svg {
+  stroke: rgba(110, 231, 183, 0.85);
+  flex-shrink: 0;
+}
+
+.modo-oscuro .tarjeta-tiempo {
+  color: rgba(180, 220, 150, 0.7);
+  background: rgba(78, 158, 122, 0.12);
+  border-color: rgba(78, 158, 122, 0.25);
+}
+
+.modo-oscuro .tarjeta-tiempo svg {
+  stroke: rgba(110, 231, 183, 0.7);
+}
+
+/* =====================================================
    RESPONSIVE MÓVIL
    ===================================================== */
 @media (max-width: 900px) {
@@ -286,6 +319,11 @@
   }
 
   .btnFav svg { width: 14px; height: 14px; }
+
+  .tarjeta-tiempo {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+  }
 }
 
 @media (max-width: 360px) {
