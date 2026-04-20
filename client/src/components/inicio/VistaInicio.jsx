@@ -340,10 +340,10 @@ const VistaInicio = ({
         })}
       </section>
 
-      {/* NUEVA FUNCIONALIDAD: Filtro por tiempo — misma fila visual que categorías */}
+      {/* Filtro por tiempo — misma fila visual que categorías */}
       <section className="categorias tiempos-fila">
         <span className="tiempos-label">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>
           Tiempo:
