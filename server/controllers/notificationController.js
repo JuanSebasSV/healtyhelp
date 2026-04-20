@@ -1,5 +1,5 @@
-const Notification = require('../models/Notification');
-const User         = require('../models/User');
+const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 // ─────────────────────────────────────────────
 // GET /api/notifications
@@ -12,12 +12,12 @@ exports.getMisNotificaciones = async (req, res) => {
       .limit(30)
       .lean();
 
-    const noLeidas = notifs.filter(n => !n.leida).length;
+    const noLeidas = notifs.filter((n) => !n.leida).length;
 
     res.json({ success: true, notificaciones: notifs, noLeidas });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error obteniendo notificaciones' });
+    res.status(500).json({ error: "Error obteniendo notificaciones" });
   }
 };
 
@@ -29,11 +29,11 @@ exports.leerTodas = async (req, res) => {
   try {
     await Notification.updateMany(
       { userId: req.user._id, leida: false },
-      { $set: { leida: true } }
+      { $set: { leida: true } },
     );
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Error marcando notificaciones' });
+    res.status(500).json({ error: "Error marcando notificaciones" });
   }
 };
 
@@ -46,12 +46,13 @@ exports.leerUna = async (req, res) => {
     const notif = await Notification.findOneAndUpdate(
       { _id: req.params.id, userId: req.user._id },
       { $set: { leida: true } },
-      { new: true }
+      { new: true },
     );
-    if (!notif) return res.status(404).json({ error: 'Notificación no encontrada' });
+    if (!notif)
+      return res.status(404).json({ error: "Notificación no encontrada" });
     res.json({ success: true, notificacion: notif });
   } catch (error) {
-    res.status(500).json({ error: 'Error marcando notificación' });
+    res.status(500).json({ error: "Error marcando notificación" });
   }
 };
 
@@ -67,7 +68,7 @@ exports.contarNoLeidas = async (req, res) => {
     });
     res.json({ success: true, noLeidas: count });
   } catch (error) {
-    res.status(500).json({ error: 'Error contando notificaciones' });
+    res.status(500).json({ error: "Error contando notificaciones" });
   }
 };
 
@@ -78,28 +79,32 @@ exports.contarNoLeidas = async (req, res) => {
 // ─────────────────────────────────────────────
 exports.enviarMensaje = async (req, res) => {
   try {
-    const { userId, asunto = '', mensaje } = req.body;
+    const { userId, asunto = "", mensaje } = req.body;
 
-    if (!userId)  return res.status(400).json({ error: 'userId es obligatorio' });
-    if (!mensaje?.trim()) return res.status(400).json({ error: 'El mensaje no puede estar vacío' });
-    if (mensaje.trim().length > 1000) return res.status(400).json({ error: 'Máximo 1000 caracteres' });
+    if (!userId)
+      return res.status(400).json({ error: "userId es obligatorio" });
+    if (!mensaje?.trim())
+      return res.status(400).json({ error: "El mensaje no puede estar vacío" });
+    if (mensaje.trim().length > 1000)
+      return res.status(400).json({ error: "Máximo 1000 caracteres" });
 
     const destino = await User.findById(userId);
-    if (!destino) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!destino)
+      return res.status(404).json({ error: "Usuario no encontrado" });
 
     await Notification.create({
-      userId:    destino._id,
-      type:      'message',
-      adminId:   req.user._id,
+      userId: destino._id,
+      type: "message",
+      adminId: req.user._id,
       adminName: req.user.name,
-      asunto:    asunto.trim().slice(0, 120),
-      mensaje:   mensaje.trim(),
+      asunto: asunto.trim().slice(0, 120),
+      mensaje: mensaje.trim(),
     });
 
-    res.status(201).json({ success: true, message: 'Mensaje enviado' });
+    res.status(201).json({ success: true, message: "Mensaje enviado" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error enviando mensaje' });
+    res.status(500).json({ error: "Error enviando mensaje" });
   }
 };
 
@@ -108,7 +113,7 @@ exports.enviarMensaje = async (req, res) => {
 // Crea una notificación de tipo 'reply'
 // ─────────────────────────────────────────────
 exports.crearNotifRespuesta = async ({
-  destinatarioId,   // ObjectId del autor del comentario original
+  destinatarioId, // ObjectId del autor del comentario original
   fromUserId,
   fromUserName,
   recetaId,
@@ -121,29 +126,34 @@ exports.crearNotifRespuesta = async ({
 
   try {
     await Notification.create({
-      userId:         destinatarioId,
-      type:           'reply',
+      userId: destinatarioId,
+      type: "reply",
       fromUserId,
       fromUserName,
       recetaId,
       recetaNombre,
       resenaId,
-      respuestaTexto: respuestaTexto?.slice(0, 120) || '',
+      respuestaTexto: respuestaTexto?.slice(0, 120) || "",
     });
   } catch (err) {
     // No interrumpir el flujo principal si falla la notificación
-    console.error('Error creando notificación de respuesta:', err.message);
+    console.error("Error creando notificación de respuesta:", err.message);
   }
 };
 
-exports.crearNotifNuevaReceta = async ({ recetaId, recetaNombre, recetaCat, recetaSalud }) => {
+exports.crearNotifNuevaReceta = async ({
+  recetaId,
+  recetaNombre,
+  recetaCat,
+  recetaSalud,
+}) => {
   try {
-    const usuarios = await User.find({}, '_id').lean();
+    const usuarios = await User.find({}, "_id").lean();
     if (!usuarios.length) return;
 
-    const notifs = usuarios.map(u => ({
-      userId:      u._id,
-      type:        'new_recipe',
+    const notifs = usuarios.map((u) => ({
+      userId: u._id,
+      type: "new_recipe",
       recetaId,
       recetaNombre,
       recetaCat,
@@ -152,14 +162,14 @@ exports.crearNotifNuevaReceta = async ({ recetaId, recetaNombre, recetaCat, rece
 
     await Notification.insertMany(notifs, { ordered: false });
   } catch (err) {
-    console.error('Error creando notificaciones de nueva receta:', err.message);
+    console.error("Error creando notificaciones de nueva receta:", err.message);
   }
 };
 
 exports.limpiarNotifHuerfanas = async (req, res) => {
   try {
-    const Recipe = require('../models/Recipe');
-    const notifs = await Notification.find({ type: 'new_recipe' });
+    const Recipe = require("../models/Recipe");
+    const notifs = await Notification.find({ type: "new_recipe" });
     let borradas = 0;
     for (const n of notifs) {
       const existe = await Recipe.findById(n.recetaId);
@@ -170,6 +180,20 @@ exports.limpiarNotifHuerfanas = async (req, res) => {
     }
     res.json({ success: true, borradas });
   } catch (error) {
-    res.status(500).json({ error: 'Error limpiando notificaciones' });
+    res.status(500).json({ error: "Error limpiando notificaciones" });
+  }
+};
+
+exports.eliminarUna = async (req, res) => {
+  try {
+    const notif = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
+    if (!notif)
+      return res.status(404).json({ error: "Notificación no encontrada" });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Error eliminando notificación" });
   }
 };

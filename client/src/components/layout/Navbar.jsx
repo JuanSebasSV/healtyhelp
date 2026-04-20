@@ -131,6 +131,17 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
       setNoLeidas(0);
     } catch { /* silencioso */ }
   }, []);
+  
+  const handleEliminarNotif = useCallback(async (id) => {
+  try {
+    await api.delete(`/notifications/${id}`);
+    setNotificaciones(prev => prev.filter(n => n._id !== id));
+    setNoLeidas(prev => {
+      const eraNoLeida = notificaciones.find(n => n._id === id && !n.leida);
+      return eraNoLeida ? Math.max(0, prev - 1) : prev;
+    });
+  } catch { /* silencioso */ }
+}, [notificaciones]);
 
   const handleLeerUna = useCallback(async (id) => {
     try {
@@ -201,6 +212,7 @@ const handleNavNotifMovil = useCallback((url) => {
                 cargando={cargandoNotifs}
                 onLeerTodas={handleLeerTodas}
                 onLeerUna={handleLeerUna}
+                onEliminar={handleEliminarNotif}
                 onCerrar={handleCerrarPanel}
                 onNavegar={handleNavNotif}
               />
@@ -298,6 +310,7 @@ const handleNavNotifMovil = useCallback((url) => {
                   cargando={cargandoNotifs}
                   onLeerTodas={handleLeerTodas}
                   onLeerUna={handleLeerUna}
+                  onEliminar={handleEliminarNotif}
                   onCerrar={handleCerrarPanel}
                   onNavegar={handleNavNotifMovil}
                   esMobil={true}
