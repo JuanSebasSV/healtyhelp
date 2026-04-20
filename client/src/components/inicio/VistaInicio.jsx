@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
@@ -49,13 +49,22 @@ const CONDICIONES = [
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 
-const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, onFiltrosCambiados }) => {
+const VistaInicio = ({
+  recetas,
+  cargandoRecetas,
+  toggleFav,
+  favoritos,
+  usuario,
+  onFiltrosCambiados,
+  recetaPendiente,
+  onRecetaPendienteResuelta,
+}) => {
   const {
     filtros,
     toggleFiltro,
     limpiarFiltros,
-    categoria,          // string radio: '' | 'desayuno' | 'almuerzo' | 'cena' | 'postres-snacks'
-    setCategoria,       // función radio
+    categoria,
+    setCategoria,
     limpiarCategoria,
     limpiarTodo,
     listo,
@@ -77,7 +86,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
   const intervaloRef    = useRef(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
@@ -117,21 +125,19 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
-  // ─── Abrir receta desde URL ───────────────────────────────────────────────
+  // ─── Abrir receta desde prop (notificaciones) ─────────────────────────────
 
   useEffect(() => {
-    if (!recetas.length) return;
-    const p = new URLSearchParams(location.search);
-    const rid = p.get('receta');
-    if (!rid) return;
-    const found = recetas.find(r => r._id === rid);
-    if (found) {
-      setRecetaAbierta(found);
-      setResenaIdDestacada(p.get('resena') || null);
-      navigate('/', { replace: true });
-    }
-  }, [location.search, recetas]);
-
+  console.log('useEffect recetaPendiente:', recetaPendiente, 'recetas.length:', recetas.length);
+  if (!recetaPendiente || !recetas.length) return;
+  const found = recetas.find(r => r._id === recetaPendiente);
+  console.log('found:', found);
+  if (found) {
+    setRecetaAbierta(found);
+    setResenaIdDestacada(null);
+    onRecetaPendienteResuelta?.();
+  }
+}, [recetaPendiente, recetas]);
   // ─── Carrusel hero ────────────────────────────────────────────────────────
 
   const cambiarImagen = useCallback((idx) => {
@@ -179,7 +185,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
     }
   };
 
-  // ─── Handlers de filtros (notifican al padre si existe onFiltrosCambiados) ─
+  // ─── Handlers de filtros ──────────────────────────────────────────────────
 
   const handleToggleFiltro = useCallback((id) => {
     toggleFiltro(id);
@@ -191,29 +197,23 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
     onFiltrosCambiados?.();
   }, [limpiarTodo, onFiltrosCambiados]);
 
-  // ─── Manejo del click en botón de categoría (comportamiento RADIO) ────────
-  //   • Click en "Todas"       → limpiar categoría ('' = sin filtro)
-  //   • Click en una opción    → seleccionar esa (deselecciona la anterior)
-  //   • Click en la ya activa  → deseleccionar (volver a "todas")
   const handleCategoria = useCallback((catId) => {
     if (catId === 'todas') {
       limpiarCategoria();
     } else {
-      setCategoria(catId); // el hook hace radio internamente
+      setCategoria(catId);
     }
     onFiltrosCambiados?.();
   }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
 
   // ─── Filtrado de recetas ──────────────────────────────────────────────────
+
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
-    // Categoría radio: '' = mostrar todas
     const okCat   = !categoria || r.cat === categoria;
-    // Condiciones: multi-selección, la receta debe cumplir TODAS
     const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
     return okCat && okSalud;
   }), [recetas, categoria, filtros]);
 
-  // Badge del botón de filtro: SOLO condiciones (la categoría tiene sus propios botones visibles)
   const totalCondicionesActivas = filtros.length;
 
   return (
@@ -246,7 +246,6 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
           </svg>
           ¡Busca tu Tipo de Dieta Aquí!
-          {/* Badge muestra SOLO condiciones — la categoría tiene sus botones visuales propios */}
           {totalCondicionesActivas > 0 && (
             <span className="filtroModalBadge">{totalCondicionesActivas}</span>
           )}
@@ -289,11 +288,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, usuario, 
         </div>
       )}
 
-      {/* ─── Categorías (RADIO: solo una activa a la vez) ─────────────────────
-          Se marca como activo:
-            - "Todas" si no hay categoría seleccionada (categoria === '')
-            - La categoría cuyo id coincide con el string `categoria`
-      ── */}
+      {/* ─── Categorías ─── */}
       <section className="categorias">
         {CATEGORIAS.map(cat => {
           const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;

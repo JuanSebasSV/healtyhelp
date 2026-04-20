@@ -97,6 +97,8 @@ function AppContent() {
   const [robotIAActivo, setRobotIAActivo]         = useState(false);
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
+  const [recetaPendiente, setRecetaPendiente] = useState(null);
+
 
   const [versionFiltros,         setVersionFiltros]         = useState(0);
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
@@ -244,7 +246,11 @@ function AppContent() {
     <Router>
       <div className="App">
         <FondoAnimado />
-        <Navbar modoOscuro={modoOscuro} toggleModoOscuro={toggleModoOscuro} />
+        <Navbar
+          modoOscuro={modoOscuro}
+          toggleModoOscuro={toggleModoOscuro}
+          onAbrirReceta={setRecetaPendiente}
+        />
 
         <main className="contenido-principal">
           <Suspense fallback={null}>
@@ -254,6 +260,8 @@ function AppContent() {
                 element={
                   <VistaInicio
                     recetas={recetas}
+                    recetaPendiente={recetaPendiente}
+                    onRecetaPendienteResuelta={() => setRecetaPendiente(null)}
                     cargandoRecetas={cargandoRecetas}
                     toggleFav={toggleFav}
                     favoritos={favoritos}

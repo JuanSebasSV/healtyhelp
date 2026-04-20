@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ['reply', 'message'],
+      enum: ['reply', 'message', 'new_recipe'],
       required: true,
     },
 
@@ -45,6 +45,8 @@ const notificationSchema = new mongoose.Schema(
     adminName: { type: String, default: '' },
     mensaje:   { type: String, default: '', maxlength: 1000 },
     asunto:    { type: String, default: '', maxlength: 120 },
+    recetaCat:   { type: String, default: '' },
+    recetaSalud: { type: [String], default: [] },
   },
   { timestamps: true }
 );

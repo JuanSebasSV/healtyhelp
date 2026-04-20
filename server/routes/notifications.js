@@ -8,6 +8,7 @@ const {
   leerUna,
   contarNoLeidas,
   enviarMensaje,
+  limpiarNotifHuerfanas,
 } = require('../controllers/notificationController');
 
 // Todas las rutas requieren estar autenticado
@@ -17,6 +18,7 @@ router.get ('/',              getMisNotificaciones);
 router.get ('/no-leidas',     contarNoLeidas);
 router.put ('/leer-todas',    leerTodas);
 router.put ('/:id/leer',      leerUna);
+router.delete('/limpiar-huerfanas', admin, limpiarNotifHuerfanas);
 
 // Solo admins pueden enviar mensajes directos
 router.post('/mensaje', admin, enviarMensaje);
