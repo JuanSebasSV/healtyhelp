@@ -4,11 +4,14 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #8f6f3b;
-  border: 1.5px solid #ddd5c0;
-  /* BORRA ESTA LÍNEA: border-left: 5px solid #2d6a52; */
+  background: #fffbf7;
+  border: 1.5px solid #c0ddda;
   box-shadow: 0 2px 14px rgba(80, 60, 20, 0.08);
   transition: all 0.3s ease;
+}
+
+.tarjetaReceta{
+  border: #000000;
 }
 
 /* CREA LA FRANJA VERDE AQUÍ */
@@ -19,7 +22,7 @@
   left: 0;
   width: 5px; /* El grosor que quieres */
   height: 100%;
-  background-color: #2d6a52;
+  background-color: #2ebe84;
   z-index: 10; /* Para que esté por encima de la info */
   pointer-events: none;
 }
@@ -79,8 +82,11 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #2d6a52, #f77f00);
+  background: linear-gradient(90deg, #2ebe84, #ececec);
   z-index: 2;
+}
+.modo-oscuro .tarjetaImg::before {
+  background: linear-gradient(90deg, #2ebe84, #000000);
 }
  
 /* ── Botón favorito ── */
@@ -129,7 +135,7 @@
   flex-direction: column;
   flex: 1;
   gap: 0.45rem;
-  background: #f5f0e8;
+  background: transparent;
 }
  
 .modo-oscuro .tarjetaInfo { background: #1e1a12; }

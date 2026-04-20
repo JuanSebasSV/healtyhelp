@@ -71,7 +71,7 @@ const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccio
       <div
         className={`tarjetaReceta${seleccionada ? ' tarjeta-seleccionada' : ''}`}
         onClick={abrirDetalle}
-      >
+          >
         <div className="tarjetaImg">
           <img src={receta.img} alt={receta.nombre} loading="lazy" decoding="async" />
 

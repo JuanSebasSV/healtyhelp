@@ -148,6 +148,9 @@
   gap: 0;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
+.modo-oscuro .stats-card {
+  background: #0000009b;
+}
 
 .stat-item {
   display: flex;
@@ -182,6 +185,9 @@
   line-height: 1;
   letter-spacing: -0.5px;
 }
+.modo-oscuro .stat-num{
+  color: #16a34a;
+}
 
 .stat-label {
   font-size: 0.72rem;
@@ -189,71 +195,14 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+.modo-oscuro .stat-label{
+  color: #ffffff;
+}
 
 .stat-divider {
   height: 1px;
   background: rgba(0,0,0,0.06);
   margin: 0 0.5rem;
-}
-
-/* ── Tip card ────────────────────────────────────── */
-.tip-card {
-  position: relative;
-  background: #ffffff;
-  border: 1px solid rgba(45, 106, 79, 0.2);
-  border-left: 4px solid #2d6a4f;
-  border-radius: 18px;
-  padding: 1.2rem 1.1rem 1.4rem;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-
-.tip-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.75rem;
-}
-
-.tip-icono-wrap {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(45, 106, 79, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #2d6a4f;
-  flex-shrink: 0;
-}
-
-.tip-titulo {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #2d6a4f;
-}
-
-.tip-texto {
-  font-size: 0.88rem;
-  color: #797979 !important;
-  line-height: 1.6;
-  font-style: italic;
-  margin: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.tip-deco {
-  position: absolute;
-  bottom: -20px;
-  right: -20px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: rgba(45, 106, 79, 0.06);
-  pointer-events: none;
 }
 
 /* ── Tip card ────────────────────────────────────── */
@@ -277,12 +226,16 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(76,175,130,0.25);
+  background: rgba(45, 106, 79, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primario, #4caf82);
+  color: #2d6a4f;
   flex-shrink: 0;
+}
+.modo-oscuro .tip-icono-wrap{
+  background: #020202;
+  color: #33a873 !important;
 }
 
 .tip-titulo {
@@ -290,17 +243,23 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-primario, #4caf82);
+  color: #2d6a4f;
+}
+.modo-oscuro .tip-titulo{
+  color: #22c55e;
 }
 
 .tip-texto {
   font-size: 0.88rem;
-  color: rgba(255,255,255,0.75);
+  color: #797979 !important;
   line-height: 1.6;
   font-style: italic;
   margin: 0;
   position: relative;
   z-index: 1;
+}
+.modo-oscuro .tip-texto{
+  color: white !important;
 }
 
 .tip-deco {
@@ -310,7 +269,7 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: rgba(76,175,130,0.1);
+  background: rgba(45, 106, 79, 0.06);
   pointer-events: none;
 }
 
@@ -786,7 +745,7 @@
   margin-bottom: 3.5rem;
   
 }
-.modo-oscuro .recetasGrid h2 { color: rgba(210, 235, 195, 0.95); }
+.modo-oscuro .recetasGrid h2 { color: rgba(255, 255, 255, 0.95); }
 
 .sinResultados {
   text-align: center;
@@ -805,7 +764,8 @@
 
 /* ── Widget lateral genérico ── */
 .widget-lateral {
-  background: #ffffff;
+  background: linear-gradient(135deg, rgba(76,175,130,0.15) 0%, rgba(45,122,87,0.08) 100%);
+
   border: 1.5px solid #c8d4cf;
   border-radius: 14px;
   padding: 1rem 1.1rem;
@@ -822,12 +782,14 @@
   text-transform: uppercase;
   color: #4D9E7A;
   margin-bottom: 0.85rem;
+
 }
 
 .widget-lateral__header svg { flex-shrink: 0; }
 
 /* Lista de items con botón */
 .widget-lateral__lista {
+  
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
@@ -1149,9 +1111,9 @@
     height: 30%;
     top: 0;
     transform: translateY(calc(var(--scroll-pct, 0) * 233%));
-    background: linear-gradient(180deg, #86efac 0%, #4ade80 20%, #22c55e 50%, #16a34a 70%, #22c55e 85%, #4ade80 100%);
+    background: linear-gradient(180deg, rgb(192, 192, 192));
     border-radius: 999px;
-    box-shadow: 0 0 10px 3px rgba(74, 222, 128, 0.85), 0 0 24px 5px rgba(34, 197, 94, 0.55), 0 0 40px 8px rgba(22, 163, 74, 0.3);
+    box-shadow: 0 0 5px 2px 0 0 24px 5px rgba(212, 224, 216, 0.55), 0 0 40px 8px rgba(175, 200, 184, 0.3);
     transition: transform 0.06s linear;
     cursor: grab;
     pointer-events: auto;

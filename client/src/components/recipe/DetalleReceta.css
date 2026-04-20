@@ -83,16 +83,13 @@
 }
 
 
-
-
-
 .modalDesc {
   color: rgba(255, 255, 255, 0.75);
   font-size: 1rem;
   margin-bottom: 2rem;
   line-height: 1.65;
 }
-
+/* ============ TIEMPO============ */
 .detalle-tiempo {
   display: inline-flex;
   align-items: center;

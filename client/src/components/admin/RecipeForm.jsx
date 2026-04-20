@@ -302,7 +302,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
             <div className="form-group">
             <label>Tiempo (minutos)</label>
             <NumeroInput name="tiempoMinutos" value={formData.tiempoMinutos} onChange={handleChange} min={0} max={999} step={5} placeholder="Ej: 30" />
-          </div>
+            </div>
             <div className="form-group">
               <label>Puntuación (0-5)</label>
               <NumeroInput

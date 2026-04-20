@@ -97,7 +97,6 @@ const VistaChatbot = ({ abrirFlotante, chatProps }) => {
             ))}
           </div>
 
-
         </aside>
 
         <div className="vistaChatbot__chat">
