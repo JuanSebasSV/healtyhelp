@@ -1,6 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import useChatStore from '../../hooks/useChatStore';
 import ChatCore from '../inicio/ChatCore';
 import './VistaChatbot.css';
+
+// ─── CAMBIOS RESPECTO A LA VERSIÓN ANTERIOR ───────────────────────────────────
+//
+// Ya no depende de chatProps pasado desde App.
+// Ahora llama directamente a useChatStore, que comparte el mismo estado de
+// módulo que RobotIA. El historial es idéntico en ambas vistas — al expandir
+// o minimizar, la conversación continúa exactamente donde estaba.
 
 /* ── SVGs del panel lateral ───────────────────────────────── */
 const IconoHoja = ({ size = 20 }) => (
@@ -50,17 +58,28 @@ const IconoChispa = ({ size = 14 }) => (
 );
 
 const capacidades = [
-  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',    desc: 'Diabetes, hipertensión, colesterol' },
-  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',       desc: 'Vegano, keto, paleo, celíaco' },
-  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',     desc: 'Ingredientes y sustitutos' },
-  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias', desc: 'Gluten, lactosa, frutos secos' },
-  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',   desc: 'Basados en tu perfil de salud' },
+  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',      desc: 'Diabetes, hipertensión, colesterol' },
+  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',         desc: 'Vegano, keto, paleo, celíaco' },
+  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',       desc: 'Ingredientes y sustitutos' },
+  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias',   desc: 'Gluten, lactosa, frutos secos' },
+  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',     desc: 'Basados en tu perfil de salud' },
 ];
 
 /* ── Componente ──────────────────────────────────────────── */
-// ✅ Recibe chatProps desde App — mismo historial que RobotIA
-const VistaChatbot = ({ abrirFlotante, chatProps }) => {
+
+const VistaChatbot = ({ abrirFlotante }) => {
   const navigate = useNavigate();
+
+  // Mismo store que RobotIA — historial compartido automáticamente
+  const {
+    chat,
+    cargando,
+    mensaje,
+    onMensajeChange,
+    onEnviar,
+    onKeyPress,
+    enviarTextoDirecto,
+  } = useChatStore();
 
   const handleMinimizar = () => {
     abrirFlotante?.();
@@ -96,14 +115,23 @@ const VistaChatbot = ({ abrirFlotante, chatProps }) => {
               </div>
             ))}
           </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
         </aside>
 
         <div className="vistaChatbot__chat">
           <ChatCore
             modoExpandido={true}
+            chat={chat}
+            cargando={cargando}
+            mensaje={mensaje}
+            onMensajeChange={onMensajeChange}
+            onEnviar={onEnviar}
+            onKeyPress={onKeyPress}
             onMinimizar={handleMinimizar}
-            {...chatProps}
+            onSugerencia={enviarTextoDirecto}
           />
         </div>
 

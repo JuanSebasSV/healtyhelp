@@ -10,7 +10,6 @@ import FondoAnimado from './components/layout/FondoAnimado';
 import PrivateRoute from './components/layout/PrivateRoute';
 import api from './api/axios';
 import useAuth from './hooks/useAuth';
-import useChat from './hooks/useChat';
 
 const UserProfile          = lazy(() => import('./components/profile/UserProfile'));
 const Login                = lazy(() => import('./components/auth/Login'));
@@ -85,7 +84,6 @@ const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '
 
 function AppContent() {
   const { user, checkAuth } = useAuth();
-  const chatProps = useChat();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
@@ -99,7 +97,10 @@ function AppContent() {
   const [robotIAActivo, setRobotIAActivo]         = useState(false);
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
+  const [recetaPendiente, setRecetaPendiente] = useState(null);
 
+
+  const [versionFiltros,         setVersionFiltros]         = useState(0);
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
@@ -245,7 +246,11 @@ function AppContent() {
     <Router>
       <div className="App">
         <FondoAnimado />
-        <Navbar modoOscuro={modoOscuro} toggleModoOscuro={toggleModoOscuro} />
+        <Navbar
+          modoOscuro={modoOscuro}
+          toggleModoOscuro={toggleModoOscuro}
+          onAbrirReceta={setRecetaPendiente}
+        />
 
         <main className="contenido-principal">
           <Suspense fallback={null}>
@@ -255,11 +260,15 @@ function AppContent() {
                 element={
                   <VistaInicio
                     recetas={recetas}
+                    recetaPendiente={recetaPendiente}
+                    onRecetaPendienteResuelta={() => setRecetaPendiente(null)}
                     cargandoRecetas={cargandoRecetas}
                     toggleFav={toggleFav}
                     favoritos={favoritos}
                     cambiarCategoria={cambiarCategoria}
                     categoriaActiva={categoriaActiva}
+                    usuario={user}
+                    onFiltrosCambiados={() => setVersionFiltros(v => v + 1)}
                   />
                 }
               />
@@ -275,11 +284,10 @@ function AppContent() {
                 element={
                   <VistaChatbot
                     abrirFlotante={() => setRobotIAActivo(true)}
-                    chatProps={chatProps}
                   />
                 }
               />
-              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
+              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} versionFiltros={versionFiltros} /></PrivateRoute>} />
               <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
               <Route path="/favoritos"   element={
                 <PrivateRoute>
@@ -301,7 +309,7 @@ function AppContent() {
 
         {user && (
           <Suspense fallback={null}>
-            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />
+            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />
           </Suspense>
         )}
 

@@ -4,6 +4,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
   background: #fffbf7;
   border: 1.5px solid #c0ddda;
   box-shadow: 0 2px 14px rgba(80, 60, 20, 0.08);
@@ -12,6 +13,24 @@
 
 .tarjetaReceta{
   border: #000000;
+=======
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+  border-left: 4px solid var(--naranja);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  contain: layout style;
+}
+
+.tarjetaReceta:hover {
+  will-change: transform;
+  transform: translateY(-10px) scale(1.015);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(247, 127, 0, 0.35);
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 }
 
 /* CREA LA FRANJA VERDE AQUÍ */
@@ -42,25 +61,45 @@
   border-left-color: #6ee7b7;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 /* ── Imagen ── */
 .tarjetaImg {
   position: relative;
   height: 200px;
   overflow: hidden;
   flex-shrink: 0;
+  /* FIX: min-height evita el layout shift cuando la imagen carga */
+  min-height: 220px;
+  background: rgba(255, 255, 255, 0.06);
 }
  
 .tarjetaImg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+<<<<<<< HEAD
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   filter: saturate(1.05);
+=======
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  filter: brightness(0.92) saturate(1.08);
+  /* FIX: evita el parpadeo al cargar la imagen */
+  display: block;
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 }
  
 .tarjetaReceta:hover .tarjetaImg img {
+<<<<<<< HEAD
   transform: scale(1.06);
+=======
+  will-change: transform;
+  transform: scale(1.08);
+  filter: brightness(1) saturate(1.15);
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 }
  
 .tarjetaImg::after {
@@ -85,6 +124,7 @@
   background: linear-gradient(90deg, #2ebe84, #ececec);
   z-index: 2;
 }
+<<<<<<< HEAD
 .modo-oscuro .tarjetaImg::before {
   background: linear-gradient(90deg, #2ebe84, #000000);
 }
@@ -100,6 +140,48 @@
   border: none;
   background: rgba(245, 240, 232, 0.92);
   backdrop-filter: blur(8px);
+=======
+
+/* ── Skeleton loader mientras carga la imagen ── */
+.tarjetaImg--cargando {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+.tarjetaImg--cargando img {
+  opacity: 0;
+}
+
+.tarjetaImg--cargada img {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Botón favorito ── */
+.btnFav {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  /* FIX: backdrop-filter solo en desktop (muy costoso en móvil) */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
   cursor: pointer;
   transition: all 0.22s ease;
   display: flex;
@@ -127,8 +209,13 @@
 .btnFav:hover svg { stroke: var(--rojo); }
 .btnFav.activo    { background: #fff0ec; }
 .btnFav.activo svg { fill: var(--rojo); stroke: var(--rojo); }
+<<<<<<< HEAD
  
 /* ── Info ── */
+=======
+
+/* ── Info de la tarjeta ── */
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 .tarjetaInfo {
   padding: 1rem 1.1rem 0.9rem 1.1rem;
   display: flex;
@@ -197,6 +284,7 @@
   font-weight: 600;
   color: #a89068;
 }
+<<<<<<< HEAD
  
 .modo-oscuro .tarjeta-prom-txt { color: #6e5838; }
  
@@ -207,8 +295,101 @@
  
   .tarjetaInfo {
     padding: 0.7rem 0.75rem;
+=======
+.modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }
+
+/* =====================================================
+   NUEVA FUNCIONALIDAD: Badge de tiempo de preparación
+   ===================================================== */
+.tarjeta-tiempo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(45, 106, 82, 0.2);
+  border: 1px solid rgba(45, 106, 82, 0.35);
+  border-radius: 50px;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+}
+
+.tarjeta-tiempo svg {
+  stroke: rgba(110, 231, 183, 0.85);
+  flex-shrink: 0;
+}
+
+.modo-oscuro .tarjeta-tiempo {
+  color: rgba(180, 220, 150, 0.7);
+  background: rgba(78, 158, 122, 0.12);
+  border-color: rgba(78, 158, 122, 0.25);
+}
+
+.modo-oscuro .tarjeta-tiempo svg {
+  stroke: rgba(110, 231, 183, 0.7);
+}
+
+/* =====================================================
+   RESPONSIVE MÓVIL
+   ===================================================== */
+@media (max-width: 900px) {
+  .tarjetaReceta {
+    padding: 0.4rem;
+    gap: 0.4rem;
+    /* FIX: en móvil, backdrop-filter en las tarjetas es muy
+       costoso y causa el bugeo visual. Se reemplaza por un
+       fondo sólido semitransparente que no requiere GPU extra. */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(20, 55, 30, 0.75);
+    /* FIX: hover desactivado en móvil (no hay cursor, no tiene sentido
+       y el translateY causa repaints innecesarios) */
+    transition: none;
+  }
+
+  /* FIX: deshabilitar completamente el hover en touch */
+  .tarjetaReceta:hover {
+    transform: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .tarjetaImg {
+    height: 130px;
+    min-height: 130px;
+    border-radius: 8px;
+  }
+
+  /* FIX: skeleton más pequeño en móvil */
+  .tarjetaImg--cargando {
+    min-height: 130px;
+  }
+
+  .tarjetaInfo {
+    padding: 0.5rem 0.5rem 0.5rem 0.65rem;
+    gap: 0.25rem;
+    /* FIX: quitar backdrop-filter del info también */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(10, 30, 15, 0.6);
+  }
+
+  .tarjetaInfo h3 {
+    font-size: 0.82rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+
+  .tarjetaInfo p { display: none; }
+  .estrella-ico { font-size: 0.72rem; }
+  .tarjeta-prom-txt { font-size: 0.67rem; }
+  .tarjetaPuntuacion {
+    padding-top: 0.4rem;
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
     gap: 0.3rem;
   }
+<<<<<<< HEAD
  
   .tarjetaInfo h3 {
     font-size: 0.8rem;
@@ -273,10 +454,40 @@
   .tarjeta-tiempo {
     font-size: 0.62rem;
     padding: 0.1rem 0.4rem;
+=======
+
+  .btnFav {
+    width: 28px;
+    height: 28px;
+    top: 0.4rem;
+    right: 0.4rem;
+    border-radius: 8px;
+    /* FIX: sin blur en botones sobre móvil */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .btnFav svg { width: 14px; height: 14px; }
+
+  .tarjeta-tiempo {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .tarjetaImg { height: 180px; min-height: 180px; }
+  .tarjetaInfo h3 { font-size: 0.9rem; }
+  .tarjetaInfo p {
+    font-size: 0.82rem;
+    -webkit-line-clamp: 3;
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
   }
 }
  
 
+/* ── Botón seleccionar ── */
 .btnSeleccionar {
   position: absolute;
   bottom: 0.85rem;
@@ -320,4 +531,16 @@
 }
 .btnSeleccionar.activo svg { stroke: #4ade80; }
 
+<<<<<<< HEAD
 .tarjeta-seleccionada { outline: 2px solid #16a34a; }
+=======
+@media (max-width: 900px) {
+  .btnSeleccionar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.tarjeta-seleccionada { outline: 2px solid #16a34a; }
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685

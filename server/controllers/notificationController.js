@@ -135,3 +135,41 @@ exports.crearNotifRespuesta = async ({
     console.error('Error creando notificación de respuesta:', err.message);
   }
 };
+
+exports.crearNotifNuevaReceta = async ({ recetaId, recetaNombre, recetaCat, recetaSalud }) => {
+  try {
+    const usuarios = await User.find({}, '_id').lean();
+    if (!usuarios.length) return;
+
+    const notifs = usuarios.map(u => ({
+      userId:      u._id,
+      type:        'new_recipe',
+      recetaId,
+      recetaNombre,
+      recetaCat,
+      recetaSalud: recetaSalud || [],
+    }));
+
+    await Notification.insertMany(notifs, { ordered: false });
+  } catch (err) {
+    console.error('Error creando notificaciones de nueva receta:', err.message);
+  }
+};
+
+exports.limpiarNotifHuerfanas = async (req, res) => {
+  try {
+    const Recipe = require('../models/Recipe');
+    const notifs = await Notification.find({ type: 'new_recipe' });
+    let borradas = 0;
+    for (const n of notifs) {
+      const existe = await Recipe.findById(n.recetaId);
+      if (!existe) {
+        await Notification.deleteOne({ _id: n._id });
+        borradas++;
+      }
+    }
+    res.json({ success: true, borradas });
+  } catch (error) {
+    res.status(500).json({ error: 'Error limpiando notificaciones' });
+  }
+};

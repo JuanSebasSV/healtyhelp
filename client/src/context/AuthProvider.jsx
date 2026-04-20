@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    // Verificar expiración del token localmente
+    // Verificar expiración del token localmente antes de ir al servidor
     try {
       const decoded = jwtDecode(token);
       if (decoded.exp * 1000 < Date.now()) {
@@ -41,8 +41,12 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.get('/auth/me');
       setUser(data.user);
     } catch (error) {
-      // 401 = usuario no existe o token inválido → cerrar sesión
-      if (error.response?.status === 401 || error.response?.status === 404) {
+      if (error.sinConexion) {
+        // Backend no disponible: mantener sesión local para no desloguear
+        // al usuario por un problema de red temporal
+        console.warn('[Auth] Backend no disponible, manteniendo sesión local.');
+      } else if (error.response?.status === 401 || error.response?.status === 404) {
+        // El usuario ya no existe o el token es inválido → cerrar sesión
         limpiarSesion();
       }
     } finally {
@@ -56,7 +60,6 @@ export const AuthProvider = ({ children }) => {
   }, [checkAuth]);
 
   // Verificar cada 2 minutos que el usuario sigue existiendo
-  // Esto detecta cuando la cuenta fue eliminada desde otra ventana
   useEffect(() => {
     const intervalo = setInterval(() => {
       const token = localStorage.getItem('token');
@@ -69,7 +72,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === 'token' && !e.newValue) {
-        // Token fue eliminado desde otra pestaña → cerrar sesión
         setUser(null);
       }
     };
@@ -80,7 +82,6 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const { data } = await api.post('/auth/register', userData);
-      // No guardar token — requiere verificación de email primero
       if (data.needsVerification) {
         return { success: true, needsVerification: true, email: data.email };
       }
@@ -90,12 +91,19 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: true };
     } catch (error) {
+      // ✅ FIX: mensaje claro cuando el backend no está corriendo
+      if (error.sinConexion) {
+        return {
+          success: false,
+          error: 'No se puede conectar al servidor. Verifica que el backend esté corriendo.',
+        };
+      }
       const err = error.response?.data;
       return {
         success: false,
         error: err?.error || 'Error en registro',
         needsVerification: err?.needsVerification,
-        email: err?.email
+        email: err?.email,
       };
     }
   };
@@ -107,6 +115,12 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return { success: true };
     } catch (error) {
+      if (error.sinConexion) {
+        return {
+          success: false,
+          error: 'No se puede conectar al servidor. Verifica que el backend esté corriendo.',
+        };
+      }
       const err = error.response?.data;
       return {
         success: false,
@@ -115,7 +129,7 @@ export const AuthProvider = ({ children }) => {
         lockUntil: err?.lockUntil,
         needsVerification: err?.needsVerification,
         email: err?.email,
-        attemptsLeft: err?.attemptsLeft
+        attemptsLeft: err?.attemptsLeft,
       };
     }
   };
@@ -127,6 +141,9 @@ export const AuthProvider = ({ children }) => {
       await api.post('/auth/forgot-password', { email });
       return { success: true };
     } catch (error) {
+      if (error.sinConexion) {
+        return { success: false, error: 'Sin conexión al servidor.' };
+      }
       return { success: false, error: error.response?.data?.error };
     }
   };
@@ -137,6 +154,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
       return { success: true };
     } catch (error) {
+      if (error.sinConexion) {
+        return { success: false, error: 'Sin conexión al servidor.' };
+      }
       return { success: false, error: error.response?.data?.error };
     }
   };

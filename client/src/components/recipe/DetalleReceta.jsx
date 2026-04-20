@@ -37,6 +37,7 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada 
           <img src={receta.img} alt={receta.nombre} className="modalImg" loading="lazy" decoding="async" />
           <h2>{receta.nombre}</h2>
 
+<<<<<<< HEAD
           {/* Tiempo debajo del título */}
         {receta.tiempoMinutos > 0 && (
           <div className="detalle-tiempo">
@@ -55,6 +56,24 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada 
         )}
 
         <p className="modalDesc">{receta.desc}</p>
+=======
+          {/* NUEVA FUNCIONALIDAD: tiempo de preparación debajo del título */}
+          {receta.tiempoMinutos > 0 && (
+            <div className="detalle-tiempo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Tiempo de preparación:&nbsp;
+              <strong>
+                {receta.tiempoMinutos < 60
+                  ? `${receta.tiempoMinutos} min`
+                  : `${Math.floor(receta.tiempoMinutos / 60)}h${receta.tiempoMinutos % 60 > 0 ? ` ${receta.tiempoMinutos % 60}min` : ''}`}
+              </strong>
+            </div>
+          )}
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 
           <p className="modalDesc">{receta.desc}</p>
 

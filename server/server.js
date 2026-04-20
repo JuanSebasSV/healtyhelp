@@ -32,18 +32,17 @@ app.use(hpp());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 500,
   message: 'Demasiadas peticiones, intenta en 15 minutos'
 });
 app.use('/api/', limiter);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 20 : 100,
+  max: process.env.NODE_ENV === 'production' ? 20 : 200,
   message: 'Demasiados intentos de login, espera 15 minutos'
 });
 app.use('/api/auth/login', authLimiter);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

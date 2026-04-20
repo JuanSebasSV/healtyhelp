@@ -1,6 +1,6 @@
 const Recipe   = require('../models/Recipe');
 const AdminLog = require('../models/AdminLog');
-const { crearNotifRespuesta } = require('./notificationController');
+const { crearNotifRespuesta, crearNotifNuevaReceta } = require('./notificationController');
 
 // ─────────────────────────────────────────────
 // 📊 Obtener todas las recetas
@@ -55,6 +55,12 @@ exports.createRecipe = async (req, res) => {
       action:   'CREATE_RECIPE',
       metadata: { recipeName: recipe.nombre, recipeId: recipe._id },
     });
+    crearNotifNuevaReceta({
+    recetaId:     recipe._id,
+    recetaNombre: recipe.nombre,
+    recetaCat:    recipe.cat,
+    recetaSalud:  recipe.salud,
+});
     res.status(201).json({ success: true, message: 'Receta creada correctamente', recipe });
   } catch (error) {
     res.status(500).json({ error: 'Error creando receta', details: error.message });
@@ -82,6 +88,11 @@ exports.deleteRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findByIdAndDelete(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    // Eliminar notificaciones huérfanas de esta receta
+    const Notification = require('../models/Notification');
+    await Notification.deleteMany({ recetaId: req.params.id });
+
     await AdminLog.create({
       adminId:  req.user._id,
       action:   'DELETE_RECIPE',
@@ -136,6 +147,18 @@ exports.importRecipes = async (req, res) => {
       result = { created: created.length };
     }
     await AdminLog.create({ adminId: req.user._id, action: 'IMPORT_RECIPES', metadata: result });
+    // ── Notificar a todos los usuarios sobre las recetas importadas ──
+    if (result.created > 0) {
+  const todas = await Recipe.find().sort({ createdAt: -1 }).limit(result.created).select('_id nombre cat salud').lean();
+  for (const r of todas) {
+    await crearNotifNuevaReceta({
+      recetaId:     r._id,
+      recetaNombre: r.nombre,
+      recetaCat:    r.cat,
+      recetaSalud:  r.salud,
+    });
+  }
+}
     res.json({ success: true, message: `${result.created} recetas importadas`, result });
   } catch (error) {
     res.status(500).json({ error: 'Error importando recetas', details: error.message });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
@@ -39,12 +39,20 @@ const normalizarTexto = (texto) => {
 };
 
 
+// 'todas' es solo UI — no se persiste en BD ni localStorage
 const CATEGORIAS = [
   { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
   { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
   { id: 'almuerzo',       nombre: 'Almuerzo',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg>' },
   { id: 'cena',           nombre: 'Cena',              icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>' },
   { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e26e6e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
+];
+
+// NUEVA FUNCIONALIDAD: opciones de filtro por tiempo — misma estructura que CATEGORIAS
+const TIEMPOS = [
+  { id: 'menos15', nombre: 'Menos de 15 min', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: '15a30',   nombre: '15 – 30 min',     icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: 'mas30',   nombre: 'Más de 30 min',   icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
 ];
 
 const CONDICIONES = [
@@ -68,20 +76,41 @@ const CONDICIONES = [
   { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Z"/></svg>' },
 ];
 
+
+
 // ─── Componente ───────────────────────────────────────────────────────────────
 
-const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva, usuario }) => {
-  const { filtros, toggleFiltro, limpiar, listo } = useFiltroSalud(usuario);
+const VistaInicio = ({
+  recetas,
+  cargandoRecetas,
+  toggleFav,
+  favoritos,
+  usuario,
+  onFiltrosCambiados,
+  recetaPendiente,
+  onRecetaPendienteResuelta,
+}) => {
+  const {
+    filtros,
+    toggleFiltro,
+    limpiarFiltros,
+    categoria,
+    setCategoria,
+    limpiarCategoria,
+    limpiarTodo,
+    listo,
+  } = useFiltroSalud(usuario);
 
   const [filtroAbierto,     setFiltroAbierto]     = useState(false);
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
-  const [busqueda, setBusqueda] = useState('');
-  const [filtroTiempo, setFiltroTiempo] = useState(null);
   const [recetaAbierta,     setRecetaAbierta]      = useState(null);
   const [resenaIdDestacada, setResenaIdDestacada]  = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
+  // NUEVA FUNCIONALIDAD: estados de búsqueda y filtro por tiempo
+  const [busqueda,          setBusqueda]           = useState('');
+  const [filtroTiempo,      setFiltroTiempo]       = useState(null);
 
   const thumbRef        = useRef(null);
   const trackRef        = useRef(null);
@@ -91,7 +120,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   const intervaloRef    = useRef(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
+  const location  = useLocation();
 
   useEffect(() => {
     HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
@@ -131,20 +160,19 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
-  // ─── Abrir receta desde URL ───────────────────────────────────────────────
+  // ─── Abrir receta desde prop (notificaciones) ─────────────────────────────
 
   useEffect(() => {
-    if (!recetas.length) return;
-    const p = new URLSearchParams(location.search);
-    const rid = p.get('receta');
-    if (!rid) return;
-    const found = recetas.find(r => r._id === rid);
+    console.log('useEffect recetaPendiente:', recetaPendiente, 'recetas.length:', recetas.length);
+    if (!recetaPendiente || !recetas.length) return;
+    const found = recetas.find(r => r._id === recetaPendiente);
+    console.log('found:', found);
     if (found) {
       setRecetaAbierta(found);
-      setResenaIdDestacada(p.get('resena') || null);
-      navigate('/', { replace: true });
+      setResenaIdDestacada(null);
+      onRecetaPendienteResuelta?.();
     }
-  }, [location.search, recetas]);
+  }, [recetaPendiente, recetas]);
 
   // ─── Carrusel hero ────────────────────────────────────────────────────────
 
@@ -193,39 +221,56 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     }
   };
 
-  // ─── Filtro ───────────────────────────────────────────────────────────────
+  // ─── Handlers de filtros ──────────────────────────────────────────────────
 
-// ─── Lógica de Filtrado Optimizada ──────────────────────────────────────────
+  const handleToggleFiltro = useCallback((id) => {
+    toggleFiltro(id);
+    onFiltrosCambiados?.();
+  }, [toggleFiltro, onFiltrosCambiados]);
 
-const recetasFiltradas = useMemo(() => {
-  return recetas.filter(r => {
-    // 1. Categoría (Almuerzo, Desayuno, etc.)
-    const coincideCategoria = categoriaActiva === 'todas' || r.cat === categoriaActiva;
-    
-    // 2. Búsqueda por texto (Normalizada sin tildes)
+  const handleLimpiarTodo = useCallback(() => {
+    limpiarTodo();
+    onFiltrosCambiados?.();
+  }, [limpiarTodo, onFiltrosCambiados]);
+
+  const handleCategoria = useCallback((catId) => {
+    if (catId === 'todas') {
+      limpiarCategoria();
+    } else {
+      setCategoria(catId);
+    }
+    onFiltrosCambiados?.();
+  }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
+
+  // NUEVA FUNCIONALIDAD: toggle del filtro de tiempo (desactiva si se pulsa el mismo)
+  const handleFiltroTiempo = useCallback((id) => {
+    setFiltroTiempo(prev => prev === id ? null : id);
+  }, []);
+
+  // ─── Filtrado de recetas ──────────────────────────────────────────────────
+
+  // NUEVA FUNCIONALIDAD: filtrado ampliado con búsqueda por texto y tiempo
+  const recetasFiltradas = useMemo(() => recetas.filter(r => {
+    const okCat   = !categoria || r.cat === categoria;
+    const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
+
+    // Búsqueda por texto normalizada (sin tildes, case-insensitive)
     const busquedaLimpia = normalizarTexto(busqueda);
-    const coincideBusqueda = busqueda.trim() === '' ||
-      normalizarTexto(r.nombre || "").includes(busquedaLimpia) ||
-      normalizarTexto(r.desc || "").includes(busquedaLimpia);
+    const okBusqueda = busqueda.trim() === '' ||
+      normalizarTexto(r.nombre || '').includes(busquedaLimpia) ||
+      normalizarTexto(r.desc   || '').includes(busquedaLimpia);
 
-    // 3. Filtros de Salud (Diabetes, Hipertensión, etc.)
-    const coincideSalud = filtros.length === 0 ||
-      filtros.every(f => (r.salud || []).includes(f));
-
-    // 4. Filtro por Tiempo de preparación
+    // Filtro por tiempo de preparación
     const t = r.tiempoMinutos || 0;
-    const coincideTiempo = !filtroTiempo ? true :
+    const okTiempo = !filtroTiempo ? true :
       filtroTiempo === 'menos15' ? (t > 0 && t < 15) :
       filtroTiempo === '15a30'   ? (t >= 15 && t <= 30) :
       filtroTiempo === 'mas30'   ? (t > 30) : true;
 
-    // Solo si cumple las 4 condiciones, la receta se muestra
-    return coincideCategoria && coincideBusqueda && coincideSalud && coincideTiempo;
-  });
-}, [recetas, categoriaActiva, busqueda, filtros, filtroTiempo]); 
-// ^ IMPORTANTE: Añadimos todas las dependencias para que el filtro se actualice al cambiar cualquier valor.
+    return okCat && okSalud && okBusqueda && okTiempo;
+  }), [recetas, categoria, filtros, busqueda, filtroTiempo]);
 
-
+  const totalCondicionesActivas = filtros.length;
 
   return (
     <div className="vistaInicio ">

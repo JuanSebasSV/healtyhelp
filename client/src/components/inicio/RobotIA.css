@@ -77,7 +77,6 @@
   display: flex;
   flex-direction: column;
   animation: chatEntrada 0.35s cubic-bezier(0.22,1,0.36,1);
-  /* Borde con gradiente vivo */
   border-radius: 22px;
   padding: 1.5px;
   background: linear-gradient(
@@ -98,7 +97,6 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* El chatCore dentro del panel flotante */
 .robotChat .chatCore {
   flex: 1;
   display: flex;
@@ -120,7 +118,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: none;
 }
 
-/* ── Orbes decorativos (solo flotante) ───────────────────── */
+/* ── Orbes decorativos (solo flotante, solo desktop) ─────── */
 .chatOrbes {
   position: absolute;
   inset: 0;
@@ -133,6 +131,8 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 .chatOrbe {
   position: absolute;
   border-radius: 50%;
+  /* FIX: filter: blur() en elementos animados es el peor caso
+     posible para rendimiento. Se reduce drásticamente el blur. */
   filter: blur(40px);
   opacity: 0.25;
 }
@@ -295,9 +295,10 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: rgba(107,158,74,0.3) transparent;
+  /* FIX: momentum scroll en iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* max-height solo para el flotante, no afecta la vista expandida */
 .robotChat .robotMensajes {
   max-height: 300px;
 }
@@ -352,7 +353,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   line-height: 1.5;
 }
 
-/* Chips de sugerencias */
 .chatSugerencias {
   display: flex;
   flex-direction: column;
@@ -596,10 +596,15 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     height: 50px;
     bottom: 1rem;
     right: 1rem;
-    animation: none; /* ahorra batería */
+    animation: none;
   }
 
-  .robotBoton::before { inset: -2px; }
+  /* FIX: el ::before con conic-gradient rotando es costoso en móvil */
+  .robotBoton::before {
+    inset: -2px;
+    animation: none;
+    opacity: 0.5;
+  }
 
   .robotBoton svg { width: 22px; height: 22px; }
 
@@ -611,6 +616,20 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     max-width: none;
     max-height: 56vh;
     padding: 1.5px;
+  }
+
+  /* FIX: en móvil, el chatCore usa backdrop-filter: blur(28px)
+     que es extremadamente costoso. Se reemplaza por fondo sólido. */
+  .robotChat .chatCore {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(6, 18, 10, 0.97);
+  }
+
+  /* FIX: los orbes con filter:blur() animados son el mayor
+     problema de rendimiento del chat en móvil. Se desactivan. */
+  .chatOrbes {
+    display: none;
   }
 
   .robotChat .robotHeader { padding: 0.75rem 0.9rem; }
@@ -642,4 +661,15 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     bottom: 4rem;
     max-height: 52vh;
   }
+}
+
+/* Respeta preferencia del sistema de no animar */
+@media (prefers-reduced-motion: reduce) {
+  .robotBoton { animation: none; }
+  .robotBoton::before { animation: none; }
+  .chatOrbe--1,
+  .chatOrbe--2,
+  .chatOrbe--3 { animation: none; }
+  .chatBienvenida__hoja { animation: none; }
+  .robotHeader__pulse { animation: none; }
 }

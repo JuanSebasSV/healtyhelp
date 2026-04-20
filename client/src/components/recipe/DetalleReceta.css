@@ -103,6 +103,25 @@
   margin-bottom: 1rem;
 }
 
+<<<<<<< HEAD
+=======
+/* =====================================================
+   NUEVA FUNCIONALIDAD: Tiempo de preparación en detalle
+   ===================================================== */
+.detalle-tiempo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(45, 106, 82, 0.2);
+  border: 1px solid rgba(45, 106, 82, 0.35);
+  border-radius: 50px;
+  padding: 0.3rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 .detalle-tiempo svg {
   stroke: rgba(110, 231, 183, 0.85);
   flex-shrink: 0;
@@ -113,10 +132,14 @@
   font-weight: 700;
 }
 
+<<<<<<< HEAD
 /* ── Secciones ── */
 .modalSeccion {
   margin-bottom: 2rem;
 }
+=======
+.modalSeccion { margin-bottom: 2rem; }
+>>>>>>> 502ba8216358b974f48b87efcd4d77883296f685
 
 .modalSeccion h3 {
   color: var(--naranja);

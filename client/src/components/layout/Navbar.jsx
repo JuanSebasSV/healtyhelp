@@ -72,7 +72,7 @@ const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
 BtnCampana.displayName = 'BtnCampana';
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
-const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
+const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta }) => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -148,15 +148,28 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
   }, [navigate]);
 
   const handleNavNotif = useCallback((url) => {
-    setPanelAbierto(false);
+  console.log('handleNavNotif llamado con:', url);
+  console.log('onAbrirReceta es:', onAbrirReceta);
+  setPanelAbierto(false);
+  const match = url.match(/[?&]receta=([^&]+)/);
+  console.log('match resultado:', match);
+  if (match && onAbrirReceta) {
+    onAbrirReceta(match[1]);
+  } else {
     navigate(url);
-  }, [navigate]);
+  }
+}, [navigate, onAbrirReceta]);
 
-  const handleNavNotifMovil = useCallback((url) => {
-    setPanelAbierto(false);
-    setMenuAbierto(false);
+const handleNavNotifMovil = useCallback((url) => {
+  setPanelAbierto(false);
+  setMenuAbierto(false);
+  const match = url.match(/[?&]receta=([^&]+)/);
+  if (match && onAbrirReceta) {
+    onAbrirReceta(match[1]);
+  } else {
     navigate(url);
-  }, [navigate]);
+  }
+}, [navigate, onAbrirReceta]);
 
   const handleCerrarSesion = useCallback(() => {
     logout();
@@ -281,7 +294,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
           </li>
 
           {/* Panel notificaciones — móvil */}
-          {panelAbierto && (
+          {panelAbierto && window.innerWidth <= 768 && (
             <div className="pn-modal-movil" onClick={handleCerrarPanel}>
               <div className="pn-modal-movil__contenido" onClick={e => e.stopPropagation()}>
                 <PanelNotificaciones

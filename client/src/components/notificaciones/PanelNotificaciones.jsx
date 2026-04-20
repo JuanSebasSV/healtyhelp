@@ -4,6 +4,8 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './PanelNotificaciones.css';
 
+console.log('PanelNotificaciones CARGADO');
+
 /* ── Íconos ── */
 const IcoReply = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -32,6 +34,14 @@ const IcoBell = () => (
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
     <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+);
+
+const IcoReceta = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"/>
+    <path d="M7 21h10"/><path d="M12 11v10"/>
   </svg>
 );
 
@@ -73,14 +83,16 @@ const PanelNotificaciones = ({
 
   // Cerrar al hacer clic fuera
   useEffect(() => {
-    const handleClick = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) {
-        onCerrar();
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [onCerrar]);
+  const handleClick = (e) => {
+    const dentroDelPanel = panelRef.current && panelRef.current.contains(e.target);
+    console.log('mousedown - dentro del panel:', dentroDelPanel, e.target);
+    if (!dentroDelPanel) {
+      onCerrar();
+    }
+  };
+  document.addEventListener('mousedown', handleClick);
+  return () => document.removeEventListener('mousedown', handleClick);
+}, [onCerrar]);
 
   // Cerrar con Escape
   useEffect(() => {
@@ -97,16 +109,22 @@ const PanelNotificaciones = ({
     return txt.value;
   };
 
-  const handleClickItem = (n) => {
-    if (!n.leida) onLeerUna(n._id);
-    if (n.type === 'reply' && n.recetaId) {
-      onCerrar();
-      const url = n.resenaId
-        ? `/?receta=${n.recetaId}&resena=${n.resenaId}`
-        : `/?receta=${n.recetaId}`;
-      onNavegar?.(url);
-    }
-  };
+ const handleClickItem = (n) => {
+  console.log('click notif:', n.type, n.recetaId, n);
+  if (!n.leida) onLeerUna(n._id);
+  if (n.type === 'reply' && n.recetaId) {
+    onCerrar();
+    const url = n.resenaId
+      ? `/?receta=${n.recetaId}&resena=${n.resenaId}`
+      : `/?receta=${n.recetaId}`;
+    onNavegar?.(url);
+  }
+  if (n.type === 'new_recipe' && n.recetaId) {
+    console.log('entrando a new_recipe, llamando onNavegar con:', `/?receta=${n.recetaId}`);
+    onCerrar();
+    onNavegar?.(`/?receta=${n.recetaId}`);
+  }
+};
 
   return (
     <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
@@ -155,7 +173,7 @@ const PanelNotificaciones = ({
           notificaciones.map(n => (
             <div
               key={n._id}
-              className={`pn-item ${!n.leida ? 'no-leida' : ''} pn-tipo-${n.type} ${n.type === 'reply' && n.recetaId ? 'pn-clickable' : ''}`}
+              className={`pn-item ${!n.leida ? 'no-leida' : ''} pn-tipo-${n.type} ${(n.type === 'reply' || n.type === 'new_recipe') && n.recetaId ? 'pn-clickable' : ''}`}
               onClick={() => handleClickItem(n)}
             >
               {/* Indicador de no leída */}
@@ -163,7 +181,9 @@ const PanelNotificaciones = ({
 
               {/* Ícono de tipo */}
               <div className={`pn-icono pn-icono--${n.type}`}>
-                {n.type === 'reply' ? <IcoReply /> : <IcoMessage />}
+                {n.type === 'reply'      ? <IcoReply />  :
+                 n.type === 'new_recipe' ? <IcoReceta /> :
+                           <IcoMessage />}
               </div>
 
               {/* Contenido */}
@@ -177,6 +197,28 @@ const PanelNotificaciones = ({
                     {n.respuestaTexto && (
                       <p className="pn-preview">"{decodificar(n.respuestaTexto)}"</p>
                     )}
+                  </>
+                ) : n.type === 'new_recipe' ? (
+                  <>
+                    <p className="pn-texto">
+                       <strong>Nueva receta disponible</strong>
+                    </p>
+                    <p className="pn-preview">
+                      <em>{n.recetaNombre}</em>
+                      {n.recetaCat && ` · ${n.recetaCat}`}
+                      {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(', ')}`}
+                    </p>
+                  </>
+) : n.type === 'new_recipe' ? (
+                  <>
+                    <p className="pn-texto">
+                       <strong>Nueva receta disponible</strong>
+                    </p>
+                    <p className="pn-preview">
+                      <em>{n.recetaNombre}</em>
+                      {n.recetaCat && ` · ${n.recetaCat}`}
+                      {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(', ')}`}
+                    </p>
                   </>
                 ) : (
                   <>

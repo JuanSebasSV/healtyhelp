@@ -79,9 +79,11 @@ const DRAFT_KEY = 'recipe_form_draft';
 
 const NUTRI_VACIA = { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 };
 
+// NUEVA FUNCIONALIDAD: tiempoMinutos añadido al estado inicial
 const FORM_INICIAL = {
   nombre: '', desc: '', img: '', cat: 'almuerzo',
   salud: [], puntos: 0, ingredientes: [''], pasos: [''],
+  tiempoMinutos: 0,
   nutri: { ...NUTRI_VACIA },
 };
 
@@ -141,9 +143,8 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     nutri: { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 }
   });
 
-  const [loading, setLoading] = useState(false);
-  const [showAdvancedNutri, setShowAdvancedNutri] = useState(false);
-  const DRAFT_KEY = 'recipe_form_draft';
+
+ 
 
   // Recuperar borrador solo al crear (no al editar)
   useEffect(() => {
@@ -156,6 +157,9 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     return { ...FORM_INICIAL, nutri: { ...NUTRI_VACIA } };
   });
 
+  const [loading,           setLoading]           = useState(false);
+  const [showAdvancedNutri, setShowAdvancedNutri] = useState(false);
+  const DRAFT_KEY = 'recipe_form_draft';
 
   // Cargar datos de la receta al editar
   useEffect(() => {
@@ -163,9 +167,10 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     setFormData({
       ...recipe,
       // BUGFIX: garantizar que campos numéricos nunca sean undefined
-      puntos:      recipe.puntos      ?? 0,
-      ingredientes: recipe.ingredientes?.length ? recipe.ingredientes : [''],
-      pasos:        recipe.pasos?.length        ? recipe.pasos        : [''],
+      puntos:        recipe.puntos        ?? 0,
+      tiempoMinutos: recipe.tiempoMinutos ?? 0,
+      ingredientes:  recipe.ingredientes?.length ? recipe.ingredientes : [''],
+      pasos:         recipe.pasos?.length        ? recipe.pasos        : [''],
       nutri: { ...NUTRI_VACIA, ...(recipe.nutri || {}) },
     });
   }, [recipe]);
@@ -298,6 +303,17 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
                   <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                 ))}
               </select>
+            </div>
+            {/* NUEVA FUNCIONALIDAD: campo Tiempo de preparación */}
+            <div className="form-group">
+              <label>Tiempo (minutos)</label>
+              <NumeroInput
+                name="tiempoMinutos"
+                value={formData.tiempoMinutos ?? 0}
+                onChange={handleChange}
+                min={0} max={999} step={5}
+                placeholder="Ej: 30"
+              />
             </div>
             <div className="form-group">
             <label>Tiempo (minutos)</label>

@@ -12,6 +12,9 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
+  /* FIX: GPU compositing para el navbar sticky (evita repaint al scroll) */
+  transform: translateZ(0);
+  will-change: auto;
 }
 .nav-icon {
   display: none;
@@ -38,7 +41,6 @@
   transition: var(--transicion);
 }
 
-/* Hover en el logo completo — escala ambos y pone naranja */
 .navLogo:hover {
   transform: scale(1.07);
 }
@@ -49,18 +51,15 @@
   justify-content: center;
 }
 
-/* MODO CLARO - Logo blanco */
-.logoIcono svg { 
+.logoIcono svg {
   stroke: var(--blanco-puro) !important;
-  transition: var(--transicion); 
+  transition: var(--transicion);
 }
 
-/* Al hover del logo completo, el ícono se pone naranja */
-.navLogo:hover .logoIcono svg { 
+.navLogo:hover .logoIcono svg {
   stroke: var(--naranja) !important;
 }
 
-/* Texto SIEMPRE blanco, se pone naranja en hover del logo */
 .logoTexto {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
@@ -74,7 +73,7 @@
   color: var(--naranja) !important;
 }
 
-.modo-oscuro .logoTexto { 
+.modo-oscuro .logoTexto {
   color: var(--blanco-puro) !important;
 }
 
@@ -97,7 +96,6 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
   display: block;
-  /* Evitar que el sistema operativo sobreescriba */
   -webkit-appearance: none;
   appearance: none;
   opacity: 1 !important;
@@ -241,7 +239,7 @@
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; padding-left: 0.5rem; }
 .navMenu li.navUsuario::after { display: none; }
 
-/* ── Admin btn (SVG centrado) ── */
+/* ── Admin btn ── */
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   backdrop-filter: blur(10px);
@@ -254,10 +252,9 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.4rem !important;
+  position: relative;
 }
-.nav-admin-btn svg {
-  flex-shrink: 0;
-}
+.nav-admin-btn svg { flex-shrink: 0; }
 .nav-admin-btn:hover {
   background: rgba(129, 140, 248, 0.32) !important;
   border-color: rgba(129, 140, 248, 0.65) !important;
@@ -279,18 +276,19 @@
   .navMenu {
     position: absolute;
     top: 100%; left: 0; right: 0;
+    /* FIX: en móvil, blur(32px) en el menú desplegable provoca
+       un repaint enorme cada vez que se abre. Se reemplaza
+       por un fondo sólido opaco que no requiere composición extra. */
     background: linear-gradient(
       160deg,
-      rgba(26, 77, 46, 0.97) 0%,
-      rgba(20, 58, 35, 0.99) 60%,
-      rgba(15, 45, 28, 1) 100%
+      rgba(22, 65, 38, 0.99) 0%,
+      rgba(16, 50, 29, 1) 60%,
+      rgba(12, 38, 22, 1) 100%
     );
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
     flex-direction: column;
     align-items: center;
     padding: 1rem 0 1.25rem;
@@ -302,14 +300,12 @@
     z-index: 999;
   }
 
-  /* Wrapper centrado que contiene todos los items */
   .navMenu {
     align-items: center;
     background-color: rgb(255, 51, 0);
    
   }
 
-  /* Items con SVG — desplazados a la derecha del centro */
   .navMenu li {
     font-size: 0.95rem;
     font-weight: 600;
@@ -329,7 +325,6 @@
    
   }
 
-  /* SVG fijo 20x20 */
   .navMenu li > svg {
     width: 20px !important;
     height: 20px !important;
@@ -340,7 +335,6 @@
     
   }
 
-  /* Admin Panel en móvil — igual que los demás items */
   .navMenu li.nav-admin-btn {
     all: unset !important;
     display: flex !important;
@@ -375,7 +369,6 @@
     stroke: var(--blanco-puro) !important;
   }
 
-  /* navUsuario en móvil — centrado igual que modo noche */
   .navMenu li.navUsuario {
     all: unset !important;
     display: flex !important;
@@ -389,7 +382,6 @@
     cursor: pointer !important;
   }
 
-  /* El contenedor interno navUsuario — solo lo necesario */
   .navMenu .navUsuario {
     display: flex !important;
     align-items: center !important;
@@ -399,6 +391,9 @@
     background: rgba(255, 255, 255, 0.1) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 50px !important;
+    /* FIX: sin blur en el usuario dentro del menú móvil */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .navMenu .nav-nombre {
@@ -408,7 +403,6 @@
     white-space: nowrap !important;
   }
 
-  /* Tema e items centrados — override total, independientes del flujo */
   .navMenu li.navMenu-tema,
   .navMenu li.navMenu-centrado {
     all: unset !important;
@@ -450,16 +444,24 @@
   .modo-oscuro .navMenu {
     background: linear-gradient(
       160deg,
-      rgba(5, 15, 8, 0.99) 0%,
-      rgba(8, 22, 12, 1) 60%,
-      rgba(3, 10, 6, 1) 100%
+      rgba(4, 12, 6, 1) 0%,
+      rgba(6, 18, 10, 1) 60%,
+      rgba(2, 8, 4, 1) 100%
     );
     border-bottom-color: rgba(79, 119, 45, 0.25);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(79, 119, 45, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   }
 
   .modo-oscuro .navMenu li {
     border-bottom-color: rgba(79, 119, 45, 0.15);
+  }
+
+  /* FIX: quitar blur de botones dentro del menú móvil */
+  .navMenu .btn-primario,
+  .navMenu .btn-secundario,
+  .navMenu .btnTema {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 
@@ -467,17 +469,23 @@
    MENÚ MÓVIL — elementos nuevos
    ============================================================ */
 
-/* Overlay oscuro detrás del menú */
 .navOverlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+  /* FIX: blur del overlay también cuesta mucho en móvil.
+     Se mantiene solo en dispositivos que lo soporten bien. */
   backdrop-filter: blur(4px);
   z-index: 998;
   animation: fadeIn 0.25s ease;
 }
 
-/* Hamburguesa → X al abrir */
+@supports not (backdrop-filter: blur(1px)) {
+  .navOverlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
 .navHamburguesa {
   gap: 6px;
 }
@@ -500,7 +508,6 @@
   padding-top: 0.25rem !important;
 }
 
-/* Ocultar header cuando no tiene contenido */
 .navMenu-header:empty {
   display: none !important;
 }
@@ -521,7 +528,6 @@
   stroke: var(--naranja);
 }
 
-/* Usuario en el header */
 .navMenu-usuario {
   display: flex;
   align-items: center;
@@ -656,7 +662,7 @@
   padding: 0.85rem;
 }
 
-/* Modo oscuro ajustes */
+/* Modo oscuro */
 .modo-oscuro .navMenu-usuario-email {
   color: rgba(180, 220, 160, 0.45);
 }
@@ -669,18 +675,14 @@
   color: rgba(200, 230, 180, 0.8) !important;
 }
 
-/* Garantizar visibilidad de las rayas del hamburguesa en todos los modos */
+/* Hamburguesa siempre visible */
 nav .navHamburguesa span,
 .nav .navHamburguesa span {
   background-color: #ffffff !important;
   opacity: 1 !important;
 }
 
-/* Badge de imágenes pendientes en el botón Admin Panel */
-.nav-admin-btn {
-  position: relative;
-}
- 
+/* Badge Admin */
 .nav-badge-pendientes {
   position: absolute;
   top: -6px;
@@ -688,7 +690,7 @@ nav .navHamburguesa span,
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
-  background: #f97316;          /* naranja llamativo */
+  background: #f97316;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -698,15 +700,15 @@ nav .navHamburguesa span,
   justify-content: center;
   line-height: 1;
   box-shadow: 0 0 0 2px var(--color-fondo, #fff);
-  /* Pulso para llamar la atención */
   animation: badge-pulso 2s ease-in-out infinite;
   pointer-events: none;
 }
- 
+
 @keyframes badge-pulso {
   0%, 100% { transform: scale(1);    box-shadow: 0 0 0 2px var(--color-fondo, #fff); }
   50%       { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(249,115,22,.3); }
 }
+
 /* ════════════════════════════════
    CAMPANA DE NOTIFICACIONES
 ════════════════════════════════ */
@@ -715,8 +717,6 @@ nav .navHamburguesa span,
   position: relative;
   display: flex;
   align-items: center;
-  /* En desktop se queda entre el logo y la hamburguesa;
-     en pantallas grandes se reordena al final (ver orden flex) */
   order: 3;
 }
 
@@ -746,15 +746,14 @@ nav .navHamburguesa span,
 }
 
 @keyframes campana-ring {
-  0%   { transform: rotate(0);   }
+  0%   { transform: rotate(0);    }
   20%  { transform: rotate(12deg);  }
   40%  { transform: rotate(-10deg); }
-  60%  { transform: rotate(8deg);  }
-  80%  { transform: rotate(-6deg); }
-  100% { transform: rotate(0);   }
+  60%  { transform: rotate(8deg);   }
+  80%  { transform: rotate(-6deg);  }
+  100% { transform: rotate(0);    }
 }
 
-/* Badge número de no leídas */
 .nav-notif-badge {
   position: absolute;
   top: -3px;
@@ -780,21 +779,15 @@ nav .navHamburguesa span,
   to   { transform: scale(1);   opacity: 1; }
 }
 
-/* Campana desktop: oculta en móvil */
 .nav-notif-wrap--desktop {
   display: flex;
 }
 
-/* Campana dentro del menú móvil: oculta en desktop */
 .nav-notif-btn--movil {
   display: none;
 }
 
-/* Reordenar en desktop para que la campana quede a la derecha del menú */
 @media (min-width: 769px) {
-  .navContenedor {
-    /* logo | menú | campana | hamburguesa (oculto en desktop) */
-  }
   .nav-notif-wrap {
     order: 4;
   }
@@ -803,7 +796,6 @@ nav .navHamburguesa span,
   }
 }
 
-/* En móvil la campana queda dentro del menú hamburguesa */
 @media (max-width: 768px) {
   .nav-notif-wrap--desktop {
     display: none !important;
@@ -816,6 +808,7 @@ nav .navHamburguesa span,
     margin-left: auto;
   }
 }
+
 /* ════════════════════════════════════════════════════
    MODAL NOTIFICACIONES — solo móvil
 ════════════════════════════════════════════════════ */
@@ -832,8 +825,9 @@ nav .navHamburguesa span,
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    /* FIX: sin blur en el overlay del modal de notificaciones */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     animation: pn-modal-fade 0.2s ease;
     padding: 1rem;
   }
@@ -854,7 +848,6 @@ nav .navHamburguesa span,
     to   { transform: translateY(0)    scale(1);    opacity: 1; }
   }
 
-  /* En móvil el panel no es absolute sino block */
   .pn-modal-movil .pn-panel {
     position: static !important;
     width: 100% !important;
@@ -864,7 +857,6 @@ nav .navHamburguesa span,
   }
 }
 
-/* Fila tema + campana en móvil */
 @media (max-width: 968px) {
   .navMenu li.navMenu-tema {
     gap: 1rem !important;

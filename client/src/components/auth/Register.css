@@ -175,3 +175,251 @@
     padding: 2rem 1.25rem;
   }
 }
+
+/* ── Agregar esto a Register.css ────────────────────────────
+   Pega este bloque al final de tu archivo Register.css
+   ──────────────────────────────────────────────────────── */
+
+/* Lista de hints de validación en tiempo real */
+.field-hints {
+  list-style: none;
+  margin: 4px 0 2px 2px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field-hints li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+/* Estado pendiente: gris */
+.hint-pending {
+  color: #9ca3af;
+}
+
+/* Estado ok: verde */
+.hint-ok {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+/* Input válido: borde verde sutil */
+input.inputOk {
+  border-color: #22c55e !important;
+  outline-color: #22c55e !important;
+}
+
+/* Error general de conexión */
+.errorGeneral {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: #dc2626;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AVISO INLINE — Menor de edad (reemplaza el modal de pantalla completa)
+   ═══════════════════════════════════════════════════════════════ */
+
+.aviso-menor {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.40);
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+.aviso-menor svg {
+  color: var(--naranja, #f77f00);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.aviso-menor strong {
+  color: var(--naranja, #f77f00);
+}
+
+.modo-oscuro .aviso-menor {
+  background: rgba(247, 127, 0, 0.10);
+  border-color: rgba(247, 127, 0, 0.30);
+  color: rgba(200, 230, 185, 0.85);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INPUT WRAPPER — Contraseña con ojo
+   ═══════════════════════════════════════════════════════════════ */
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding-right: 3rem !important;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 0.85rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.eyeButton:hover {
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.modo-oscuro .eyeButton       { color: rgba(200, 230, 185, 0.55); }
+.modo-oscuro .eyeButton:hover { color: rgba(200, 230, 185, 0.90); }
+
+/* ═══════════════════════════════════════════════════════════════
+   NUMERO INPUT — Flechas arriba/abajo
+   ═══════════════════════════════════════════════════════════════ */
+
+.numero-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.numero-wrapper input[type='number']::-webkit-inner-spin-button,
+.numero-wrapper input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.numero-wrapper input[type='number'] { -moz-appearance: textfield; }
+
+.numero-flechas {
+  position: absolute;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.numero-flechas button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 1px 3px;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.numero-flechas button:hover { color: var(--naranja, #f77f00); }
+
+.numero-flechas button svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+.modo-oscuro .numero-flechas button       { color: rgba(200, 230, 185, 0.55); }
+.modo-oscuro .numero-flechas button:hover { color: var(--naranja, #f77f00);   }
+
+/* ═══════════════════════════════════════════════════════════════
+   BOTÓN PRIMARIO — Registrarse
+   ═══════════════════════════════════════════════════════════════ */
+
+.btn-primario {
+  width: 100%;
+  padding: 1rem;
+  background: var(--naranja, #f77f00);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(247, 127, 0, 0.30);
+  margin-top: 0.25rem;
+  letter-spacing: 0.3px;
+}
+
+.btn-primario:hover:not(:disabled) {
+  background: var(--naranja-hover, #e06c00);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(247, 127, 0, 0.40);
+}
+
+.btn-primario:active:not(:disabled) { transform: translateY(0); }
+
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* ═══════════════════════════════════════════════════════════════
+   AVISO INLINE — Sistema unificado (reemplaza aviso-menor)
+   Variantes: naranja (advertencia), rojo (error)
+   ═══════════════════════════════════════════════════════════════ */
+
+.aviso-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Variante naranja — advertencia */
+.aviso-inline--naranja {
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.40);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--naranja svg { color: var(--naranja, #f77f00); }
+.aviso-inline--naranja strong { color: var(--naranja, #f77f00); }
+
+/* Variante rojo — error */
+.aviso-inline--rojo {
+  background: rgba(220, 38, 38, 0.10);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--rojo svg { color: #f87171; }
+.aviso-inline--rojo strong { color: #f87171; }
+
+/* Modo oscuro */
+.modo-oscuro .aviso-inline--naranja {
+  background: rgba(247, 127, 0, 0.10);
+  border-color: rgba(247, 127, 0, 0.30);
+  color: rgba(200, 230, 185, 0.85);
+}
+.modo-oscuro .aviso-inline--rojo {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.28);
+  color: rgba(200, 230, 185, 0.85);
+}

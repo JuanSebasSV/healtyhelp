@@ -41,7 +41,6 @@
   opacity: 0;
   transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  will-change: opacity;
   backface-visibility: hidden;
 }
 
@@ -50,6 +49,7 @@
 .hero-capa--activa {
   opacity: 1;
   z-index: 2;
+  will-change: opacity;
 }
 
 .hero-gradiente {
@@ -1124,4 +1124,171 @@
     transition: none;
     cursor: grabbing;
   }
+}
+/* =====================================================
+   NUEVA FUNCIONALIDAD: Fila de filtro por tiempo
+   ===================================================== */
+
+/* Separador visual entre la fila de categorías y la de tiempos */
+.tiempos-fila {
+  margin-top: -1rem;      /* se acerca a las categorías para agruparlas visualmente */
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+}
+
+/* Etiqueta "Tiempo:" a la izquierda de los botones */
+.tiempos-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding-right: 0.25rem;
+  user-select: none;
+}
+.tiempos-label svg { stroke: rgba(255, 255, 255, 0.45); flex-shrink: 0; }
+.modo-oscuro .tiempos-label { color: rgba(180, 220, 150, 0.5); }
+.modo-oscuro .tiempos-label svg { stroke: rgba(180, 220, 150, 0.35); }
+
+/* Los botones de tiempo heredan todo de .catBtn
+   Solo se reduce un poco el padding para que sean
+   visualmente más compactos que las categorías */
+.catBtn--tiempo {
+  padding: 0.3rem 0.9rem;
+  font-size: 0.82rem;
+  /* tono azul-verde sutil para diferenciarlos de las categorías
+     sin romper la paleta del diseño original */
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.catBtn--tiempo.activo {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2);
+  color: var(--blanco-puro);
+}
+
+.catBtn--tiempo.activo .catIcono svg { stroke: rgba(186, 230, 253, 0.9); }
+
+.modo-oscuro .catBtn--tiempo {
+  background: rgba(10, 25, 35, 0.5);
+  border-color: rgba(56, 150, 200, 0.25);
+}
+.modo-oscuro .catBtn--tiempo.activo {
+  background: rgba(56, 150, 200, 0.25);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+/* Botón "✕ Limpiar" — discreto, no compite visualmente */
+.catBtn--limpiar-tiempo {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.45);
+  gap: 0.3rem;
+}
+.catBtn--limpiar-tiempo:hover {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: rgba(255, 180, 180, 0.9);
+  transform: none;
+  box-shadow: none;
+}
+.modo-oscuro .catBtn--limpiar-tiempo { border-color: rgba(255, 255, 255, 0.1); }
+
+/* =====================================================
+   NUEVA FUNCIONALIDAD: Buscador
+   ===================================================== */
+
+.buscador-recetas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.buscador-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 580px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 0.7rem 1.2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.buscador-input-wrap:focus-within {
+  border-color: rgba(247, 127, 0, 0.55);
+  box-shadow: 0 4px 20px rgba(247, 127, 0, 0.18);
+}
+
+.buscador-input-wrap svg {
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+  stroke: rgba(255, 255, 255, 0.45);
+}
+
+.buscador-input-wrap:focus-within svg {
+  stroke: rgba(247, 127, 0, 0.7);
+}
+
+.buscador-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.92rem;
+  color: var(--blanco-puro);
+}
+
+.buscador-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+
+.buscador-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+  stroke: rgba(255, 255, 255, 0.4);
+  transition: stroke 0.2s;
+}
+.buscador-clear svg { stroke: rgba(255, 255, 255, 0.4); transition: stroke 0.2s; }
+.buscador-clear:hover svg { stroke: rgba(220, 38, 38, 0.8); }
+
+.buscador-conteo {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+.modo-oscuro .buscador-input-wrap {
+  background: rgba(10, 25, 15, 0.6);
+  border-color: rgba(79, 119, 45, 0.3);
+}
+.modo-oscuro .buscador-input-wrap:focus-within {
+  border-color: rgba(247, 127, 0, 0.5);
+}
+.modo-oscuro .buscador-input { color: rgba(210, 240, 190, 0.9); }
+.modo-oscuro .buscador-input::placeholder { color: rgba(150, 190, 130, 0.35); }
+
+/* Responsive */
+@media (max-width: 767px) {
+  .tiempos-fila { margin-top: -0.5rem; }
+  .catBtn--tiempo { padding: 0.25rem 0.7rem; font-size: 0.77rem; }
+  .buscador-input-wrap { padding: 0.6rem 1rem; }
+  .buscador-input { font-size: 0.85rem; }
 }
