@@ -21,7 +21,7 @@ app.use(cors({
     'https://healtyhelp11.onrender.com'
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -96,6 +96,13 @@ app.use('/api/recomendaciones', require('./routes/recomendaciones'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'API funcionando correctamente ✅' });
+});
+
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'JSON inválido en el cuerpo de la petición' });
+  }
+  next(err);
 });
 
 // Error handler global

@@ -55,7 +55,9 @@ router.get('/me', protect, async (req, res) => {
         termsVersion:       user.termsVersion    || '',
         profileComplete:    user.profileComplete  || false,
         activeTermsVersion: activeVersion,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        autoLogoutEnabled: user.autoLogoutEnabled ?? false,
+        autoLogoutMinutes: user.autoLogoutMinutes ?? 15,
       }
     });
   } catch (error) {
@@ -276,6 +278,49 @@ router.post('/complete-profile', protect, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Error al completar perfil' });
+  }
+});
+
+
+// ACTUALIZAR PREFERENCIAS DE SESIÓN (cierre automático)
+router.patch('/preferences', protect, async (req, res) => {
+  try {
+    const { autoLogoutEnabled, autoLogoutMinutes } = req.body;
+
+    const update = {};
+
+    if (typeof autoLogoutEnabled === 'boolean') {
+      update.autoLogoutEnabled = autoLogoutEnabled;
+    }
+
+    if (autoLogoutMinutes !== undefined) {
+      const mins = parseInt(autoLogoutMinutes, 10);
+      if (isNaN(mins) || mins < 1 || mins > 480) {
+        return res.status(400).json({ error: 'Los minutos deben estar entre 1 y 480' });
+      }
+      update.autoLogoutMinutes = mins;
+    }
+
+    if (Object.keys(update).length === 0) {
+      return res.status(400).json({ error: 'No se enviaron preferencias válidas' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: update },
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      success: true,
+      preferences: {
+        autoLogoutEnabled: user.autoLogoutEnabled,
+        autoLogoutMinutes: user.autoLogoutMinutes,
+      },
+    });
+  } catch (error) {
+    console.error('Error al actualizar preferencias:', error);
+    res.status(500).json({ error: 'Error al actualizar preferencias' });
   }
 });
 

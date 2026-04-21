@@ -382,11 +382,13 @@
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 0.6rem 0 !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
-    cursor: pointer !important;
+    padding: 0.75rem 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-bottom: none !important;
+    cursor: default !important;
     transition: var(--transicion) !important;
     box-sizing: border-box !important;
+    margin-top: 0.25rem !important;
   }
 
   .navMenu-header {
@@ -791,13 +793,16 @@ nav .navHamburguesa span,
 @media (max-width: 968px) {
   .pn-modal-movil {
     display: flex;
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: none !important;
     background: rgba(0, 0, 0, 0.65);
-    /* FIX: sin blur en el overlay del modal de notificaciones */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     animation: pn-modal-fade 0.2s ease;
@@ -851,5 +856,332 @@ nav .navHamburguesa span,
     background: rgba(255, 255, 255, 0.14);
     border-color: rgba(255, 255, 255, 0.25);
     color: var(--blanco-puro);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   AUTO-LOGOUT — Toggle switch, Dropdown desktop, Modal mobile
+════════════════════════════════════════════════════════════════ */
+
+/* ── Toggle switch ──────────────────────────────────────────── */
+.al-toggle {
+  position: relative !important;
+  display: inline-block !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 24px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  cursor: pointer !important;
+  transition: background 0.25s ease, border-color 0.25s ease !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  pointer-events: all !important;
+  z-index: 10 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  isolation: isolate !important;
+}
+
+.al-toggle--on {
+  background: #3b82f6 !important;
+  border-color: #2563eb !important;
+}
+
+.al-toggle--loading {
+  opacity: 0.55;
+  cursor: not-allowed !important;
+}
+
+.al-toggle__thumb {
+  all: unset !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 3px !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+  transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  content: none !important;
+}
+
+.al-toggle--on .al-toggle__thumb {
+  left: calc(100% - 19px);
+}
+
+/* Garantizar pointer-events en todo el dropdown y modal */
+.al-dropdown,
+.al-dropdown * {
+  pointer-events: all !important;
+}
+
+.al-modal__toggle-row,
+.al-modal__toggle-row * {
+  pointer-events: all !important;
+}
+
+/* ── Dropdown desktop (hover sobre "Cerrar Sesión") ─────────── */
+.al-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.al-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  min-width: 240px;
+  background: rgba(18, 52, 30, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  z-index: 1100;
+  animation: al-dropdown-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modo-oscuro .al-dropdown {
+  background: rgba(20, 20, 20, 0.97);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes al-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Botón "Cerrar Sesión" dentro del dropdown */
+.al-dropdown__logout-btn {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 10px;
+  color: #fca5a5 !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  text-align: left;
+}
+
+/* SVG del botón logout dentro del dropdown — stroke explícito */
+.al-dropdown__logout-btn svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  flex-shrink: 0;
+  opacity: 1 !important;
+}
+
+.al-dropdown__logout-btn:hover {
+  background: rgba(220, 38, 38, 0.24);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+/* Separador */
+.al-dropdown__divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 0;
+}
+
+/* Fila toggle */
+.al-dropdown__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+}
+
+.al-dropdown__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.al-dropdown__label-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+}
+
+.al-dropdown__label-sub {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Modal confirmación (mobile / táctil) ───────────────────── */
+.al-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  animation: al-overlay-in 0.2s ease;
+}
+
+@keyframes al-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.al-modal {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(18, 52, 30, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: al-modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modo-oscuro .al-modal {
+  background: rgba(20, 20, 20, 0.98);
+}
+
+@keyframes al-modal-in {
+  from { transform: translateY(30px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+.al-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.al-modal__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* SVG del ícono del modal — stroke explícito */
+.al-modal__icon svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+
+.al-modal__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  margin: 0;
+}
+
+/* Fila toggle dentro del modal */
+.al-modal__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.al-modal__toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.al-modal__toggle-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.al-modal__toggle-sub {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Botones del modal */
+.al-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.al-modal__btn-cancelar {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.al-modal__btn-cancelar:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.al-modal__btn-confirmar {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(220, 38, 38, 0.18);
+  border: 1.5px solid rgba(220, 38, 38, 0.4);
+  border-radius: 12px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.al-modal__btn-confirmar:hover {
+  background: rgba(220, 38, 38, 0.3);
+  border-color: rgba(220, 38, 38, 0.6);
+}
+
+/* En desktop el modal siempre se centra (no pegado abajo) */
+@media (min-width: 769px) {
+  .al-modal-overlay {
+    align-items: center;
   }
 }

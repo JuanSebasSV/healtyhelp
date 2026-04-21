@@ -5,10 +5,8 @@ import api from '../../api/axios';
 import './Navbar.css';
 import PanelNotificaciones from '../notificaciones/PanelNotificaciones';
 
-// Poll de notificaciones cada 60 s
 const NOTIF_INTERVAL = 60_000;
 
-// ── Iconos estáticos memoizados ───────────────────────────────────────────────
 const IcoCampana = memo(() => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +51,30 @@ const IcoLock = memo(() => (
 ));
 IcoLock.displayName = 'IcoLock';
 
-// ── Botón campana memoizado ───────────────────────────────────────────────────
+const IcoCerrarSesion = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+));
+IcoCerrarSesion.displayName = 'IcoCerrarSesion';
+
+const ToggleSwitch = memo(({ enabled, onChange, loading = false }) => (
+  <div
+    className={`al-toggle${enabled ? ' al-toggle--on' : ''}${loading ? ' al-toggle--loading' : ''}`}
+    onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (!loading) onChange(e);
+    }}
+  >
+    <span className="al-toggle__thumb" />
+  </div>
+));
+ToggleSwitch.displayName = 'ToggleSwitch';
+
 const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
   <button
     className={`nav-notif-btn${extraClass ? ` ${extraClass}` : ''}`}
@@ -71,30 +92,48 @@ const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
 ));
 BtnCampana.displayName = 'BtnCampana';
 
-// ── Navbar ────────────────────────────────────────────────────────────────────
 const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta }) => {
-  const { user, logout, isAdmin } = useAuth();
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const { user, logout, isAdmin, updateAutoLogout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [menuAbierto,    setMenuAbierto]    = useState(false);
-  const [panelAbierto,   setPanelAbierto]   = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [panelAbierto, setPanelAbierto] = useState(false);
+  const [modalNotifAbierto, setModalNotifAbierto] = useState(false);
   const [notificaciones, setNotificaciones] = useState([]);
-  const [noLeidas,       setNoLeidas]       = useState(0);
+  const [noLeidas, setNoLeidas] = useState(0);
   const [cargandoNotifs, setCargandoNotifs] = useState(false);
+  const [dropdownAbierto, setDropdownAbierto] = useState(false);
+  const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
+  const [autoLogout, setAutoLogout] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
+  const [esTactil, setEsTactil] = useState(false);
+
+  const dropdownTimerRef = useRef(null);
+  const dropdownRef = useRef(null);
   const notifIntervalRef = useRef(null);
 
-  // ── Fetch notificaciones ─────────────────────────────────────────────────
+  useEffect(() => {
+    setAutoLogout(user?.autoLogoutEnabled ?? false);
+  }, [user?.autoLogoutEnabled]);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)');
+    setEsTactil(mq.matches);
+    const handler = (e) => setEsTactil(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const fetchNotificaciones = useCallback(async () => {
     if (!user) return;
     try {
       const { data } = await api.get('/notifications');
       setNotificaciones(data.notificaciones || []);
       setNoLeidas(data.noLeidas || 0);
-    } catch { /* silencioso */ }
+    } catch { }
   }, [user]);
 
-  // Poll
   useEffect(() => {
     if (!user) return;
     let activo = true;
@@ -107,7 +146,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     };
   }, [user, fetchNotificaciones]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleAbrirPanel = useCallback(() => {
     setPanelAbierto(v => {
       const nuevoEstado = !v;
@@ -119,14 +157,21 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     });
   }, [fetchNotificaciones]);
 
+  const handleAbrirModalNotif = useCallback(() => {
+    setCargandoNotifs(true);
+    fetchNotificaciones().finally(() => setCargandoNotifs(false));
+    setModalNotifAbierto(true);
+  }, [fetchNotificaciones]);
+
   const handleCerrarPanel = useCallback(() => setPanelAbierto(false), []);
+  const handleCerrarModalNotif = useCallback(() => setModalNotifAbierto(false), []);
 
   const handleLeerTodas = useCallback(async () => {
     try {
       await api.put('/notifications/leer-todas');
       setNotificaciones(prev => prev.map(n => ({ ...n, leida: true })));
       setNoLeidas(0);
-    } catch { /* silencioso */ }
+    } catch { }
   }, []);
 
   const handleEliminarNotif = useCallback(async (id) => {
@@ -137,22 +182,19 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
         if (eraNoLeida) setNoLeidas(c => Math.max(0, c - 1));
         return prev.filter(n => n._id !== id);
       });
-    } catch { /* silencioso */ }
+    } catch { }
   }, []);
 
-  // Marcar una como leída y actualizar el contador local
   const handleLeerUna = useCallback(async (id) => {
-    // Actualizamos optimistamente primero para que el badge desaparezca de inmediato
     setNotificaciones(prev => {
       const notif = prev.find(n => n._id === id);
       if (!notif || notif.leida) return prev;
       setNoLeidas(c => Math.max(0, c - 1));
       return prev.map(n => n._id === id ? { ...n, leida: true } : n);
     });
-    // Luego sincronizamos con el servidor
     try {
       await api.put(`/notifications/${id}/leer`);
-    } catch { /* silencioso — ya actualizamos localmente */ }
+    } catch { }
   }, []);
 
   const handleNavigate = useCallback((ruta) => {
@@ -160,18 +202,12 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     setMenuAbierto(false);
   }, [navigate]);
 
-  // Extrae parámetros de la URL de notificación y los pasa a onAbrirReceta
   const _procesarUrlNotif = useCallback((url) => {
-    const recetaMatch   = url.match(/[?&]receta=([^&]+)/);
-    const resenaMatch   = url.match(/[?&]resena=([^&]+)/);
+    const recetaMatch = url.match(/[?&]receta=([^&]+)/);
+    const resenaMatch = url.match(/[?&]resena=([^&]+)/);
     const respuestaMatch = url.match(/[?&]respuesta=([^&]+)/);
-
     if (recetaMatch && onAbrirReceta) {
-      onAbrirReceta(
-        recetaMatch[1],
-        resenaMatch?.[1]   || null,
-        respuestaMatch?.[1] || null,
-      );
+      onAbrirReceta(recetaMatch[1], resenaMatch?.[1] || null, respuestaMatch?.[1] || null);
     } else {
       navigate(url);
     }
@@ -183,19 +219,61 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
   }, [_procesarUrlNotif]);
 
   const handleNavNotifMovil = useCallback((url) => {
-    setPanelAbierto(false);
+    setModalNotifAbierto(false);
     setMenuAbierto(false);
     _procesarUrlNotif(url);
   }, [_procesarUrlNotif]);
 
-  const handleCerrarSesion = useCallback(() => {
+  const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
+
+  const handleToggleAutoLogout = useCallback(async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (toggleLoading) return;
+    const nuevoValor = !autoLogout;
+    setAutoLogout(nuevoValor);
+    setToggleLoading(true);
+    const result = await updateAutoLogout(nuevoValor);
+    if (!result?.success) setAutoLogout(!nuevoValor);
+    setToggleLoading(false);
+  }, [autoLogout, toggleLoading, updateAutoLogout]);
+
+  const handleMouseEnterDropdown = useCallback(() => {
+    clearTimeout(dropdownTimerRef.current);
+    setDropdownAbierto(true);
+  }, []);
+
+  const handleMouseLeaveDropdown = useCallback(() => {
+    dropdownTimerRef.current = setTimeout(() => setDropdownAbierto(false), 300);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownAbierto(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const ejecutarCerrarSesion = useCallback(() => {
     logout();
     setMenuAbierto(false);
+    setDropdownAbierto(false);
+    setModalCerrarAbierto(false);
     navigate('/');
   }, [logout, navigate]);
 
+  const handleCerrarSesionDesktop = useCallback(() => {
+    ejecutarCerrarSesion();
+  }, [ejecutarCerrarSesion]);
+
+  const handleCerrarSesionMobile = useCallback(() => {
+    setModalCerrarAbierto(true);
+  }, []);
+
   const handleToggleMenu = useCallback(() => setMenuAbierto(v => !v), []);
-  const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
 
   return (
     <nav className="nav">
@@ -206,7 +284,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
           <span className="logoTexto">Healthy Help</span>
         </div>
 
-        {/* Campana — desktop */}
         {user && (
           <div className="nav-notif-wrap nav-notif-wrap--desktop">
             <BtnCampana noLeidas={noLeidas} onClick={handleAbrirPanel} />
@@ -295,34 +372,14 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
               {modoOscuro ? <IcoSol /> : <IcoLuna />}
             </button>
 
-            {/* Campana — móvil */}
             {user && (
               <BtnCampana
                 noLeidas={noLeidas}
-                onClick={handleAbrirPanel}
+                onClick={handleAbrirModalNotif}
                 extraClass="nav-notif-btn--movil"
               />
             )}
           </li>
-
-          {/* Panel notificaciones — móvil */}
-          {panelAbierto && window.innerWidth <= 768 && (
-            <div className="pn-modal-movil" onClick={handleCerrarPanel}>
-              <div className="pn-modal-movil__contenido" onClick={e => e.stopPropagation()}>
-                <PanelNotificaciones
-                  notificaciones={notificaciones}
-                  noLeidas={noLeidas}
-                  cargando={cargandoNotifs}
-                  onLeerTodas={handleLeerTodas}
-                  onLeerUna={handleLeerUna}
-                  onEliminar={handleEliminarNotif}
-                  onCerrar={handleCerrarPanel}
-                  onNavegar={handleNavNotifMovil}
-                  esMobil={true}
-                />
-              </div>
-            </div>
-          )}
 
           {user ? (
             <>
@@ -348,10 +405,59 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
                 </div>
                 <span className="nav-nombre">{user.name?.split(' ')[0]}</span>
               </li>
-              <li className="navMenu-centrado">
-                <button className="btn-secundario" onClick={handleCerrarSesion}>
-                  Cerrar Sesión
-                </button>
+
+              <li className="navMenu-centrado" onClick={e => e.stopPropagation()}>
+                {!esTactil ? (
+                  <div
+                    className="al-dropdown-wrap"
+                    ref={dropdownRef}
+                    onMouseEnter={handleMouseEnterDropdown}
+                    onMouseLeave={handleMouseLeaveDropdown}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button
+                      className="btn-secundario al-btn-trigger"
+                      onClick={handleCerrarSesionDesktop}
+                    >
+                      Cerrar Sesión
+                    </button>
+
+                    {dropdownAbierto && (
+                      <div className="al-dropdown">
+                        <button
+                          className="al-dropdown__logout-btn"
+                          onClick={handleCerrarSesionDesktop}
+                        >
+                          <IcoCerrarSesion />
+                          Cerrar Sesión
+                        </button>
+                        <div className="al-dropdown__divider" />
+                        <div className="al-dropdown__row">
+                          <div className="al-dropdown__label">
+                            <span className="al-dropdown__label-title">Cierre automático</span>
+                            <span className="al-dropdown__label-sub">
+                              {autoLogout
+                                ? `Activo · ${user?.autoLogoutMinutes ?? 15} min de inactividad`
+                                : 'Al cerrar ventana o inactividad'}
+                            </span>
+                          </div>
+                          <ToggleSwitch
+                            enabled={autoLogout}
+                            onChange={handleToggleAutoLogout}
+                            loading={toggleLoading}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    className="btn-secundario"
+                    onClick={handleCerrarSesionMobile}
+                  >
+                    Cerrar Sesión
+                  </button>
+                )}
               </li>
             </>
           ) : (
@@ -364,6 +470,83 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
 
         </ul>
       </div>
+
+      {modalNotifAbierto && (
+        <div
+          onClick={handleCerrarModalNotif}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            background: 'rgba(0,0,0,0.65)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '420px' }}>
+            <PanelNotificaciones
+              notificaciones={notificaciones}
+              noLeidas={noLeidas}
+              cargando={cargandoNotifs}
+              onLeerTodas={handleLeerTodas}
+              onLeerUna={handleLeerUna}
+              onEliminar={handleEliminarNotif}
+              onCerrar={handleCerrarModalNotif}
+              onNavegar={handleNavNotifMovil}
+              esMobil={true}
+            />
+          </div>
+        </div>
+      )}
+
+      {modalCerrarAbierto && (
+        <div className="al-modal-overlay" onClick={() => setModalCerrarAbierto(false)}>
+          <div className="al-modal" onClick={e => e.stopPropagation()}>
+            <div className="al-modal__header">
+              <div className="al-modal__icon">
+                <IcoCerrarSesion />
+              </div>
+              <h3 className="al-modal__title">¿Cerrar sesión?</h3>
+            </div>
+
+            <div className="al-modal__toggle-row">
+              <div className="al-modal__toggle-label">
+                <span className="al-modal__toggle-title">Cierre automático de sesión</span>
+                <span className="al-modal__toggle-sub">
+                  {autoLogout
+                    ? `Activo · ${user?.autoLogoutMinutes ?? 15} min de inactividad`
+                    : 'Al cerrar ventana o por inactividad'}
+                </span>
+              </div>
+              <ToggleSwitch
+                enabled={autoLogout}
+                onChange={handleToggleAutoLogout}
+                loading={toggleLoading}
+              />
+            </div>
+
+            <div className="al-modal__actions">
+              <button
+                className="al-modal__btn-cancelar"
+                onClick={() => setModalCerrarAbierto(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="al-modal__btn-confirmar"
+                onClick={ejecutarCerrarSesion}
+              >
+                Sí, cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

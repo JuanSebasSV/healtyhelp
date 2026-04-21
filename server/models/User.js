@@ -49,13 +49,9 @@ const userSchema = new mongoose.Schema({
   termsVersion:    { type: String, default: '' },
 
   // ── Perfil de salud ──
-  // 'condiciones' : filtros de dieta/salud (diabetes, vegano, etc.)
-  // 'categorias'  : filtro de tipo de comida (desayuno, almuerzo, cena, postres-snacks)
-  // 'alergias'    : ingredientes que el usuario no puede consumir
-  // 'preferencias': preferencias generales (texto libre)
   healthProfile: {
     condiciones:  { type: [String], default: [] },
-    categorias:   { type: [String], default: [] }, // ← NUEVO
+    categorias:   { type: [String], default: [] },
     alergias:     { type: [String], default: [] },
     preferencias: { type: [String], default: [] }
   },
@@ -65,10 +61,17 @@ const userSchema = new mongoose.Schema({
 
   // ── Sistema de baneo ──
   baneado:        { type: Boolean, default: false },
-  baneadoHasta:   { type: Date,    default: null },   // null = permanente
+  baneadoHasta:   { type: Date,    default: null },
   baneadoMotivo:  { type: String,  default: '' },
   baneadoPor:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   baneadoEn:      { type: Date,    default: null },
+
+  // ── Cierre de sesión automático ──
+  // autoLogoutEnabled : si el usuario tiene activa la opción
+  // autoLogoutMinutes : minutos de inactividad antes de cerrar sesión (default 15)
+  autoLogoutEnabled: { type: Boolean, default: false },
+  autoLogoutMinutes: { type: Number,  default: 15, min: 1, max: 480 },
+
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
