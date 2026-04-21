@@ -119,6 +119,7 @@ exports.crearNotifRespuesta = async ({
   recetaId,
   recetaNombre,
   resenaId,
+  respuestaId,    // _id de la respuesta nueva — necesario para el deep-link
   respuestaTexto,
 }) => {
   // No notificar si alguien se responde a sí mismo
@@ -133,6 +134,7 @@ exports.crearNotifRespuesta = async ({
       recetaId,
       recetaNombre,
       resenaId,
+      respuestaId,  // ← guardado para que el frontend pueda hacer scroll directo
       respuestaTexto: respuestaTexto?.slice(0, 120) || "",
     });
   } catch (err) {

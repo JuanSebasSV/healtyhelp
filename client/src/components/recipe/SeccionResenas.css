@@ -574,7 +574,43 @@
 
 .sr-resp-lista { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.35rem; }
 
-.sr-resp-item { display: flex; gap: 0.6rem; align-items: flex-start; }
+/* ── Hilo visual de conversación ─────────────────────────────── */
+.sr-resp-item {
+  position: relative;
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  padding: 0.65rem 0;
+}
+
+/* Indentación por profundidad */
+.sr-resp-item--depth-1 { margin-left: 2.2rem; }
+.sr-resp-item--depth-2 { margin-left: 3.8rem; }
+.sr-resp-item--depth-3 { margin-left: 5rem; }
+
+/* Línea vertical de hilo (solo depth > 0) */
+.sr-resp-hilo {
+  position: absolute;
+  left: -1.15rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Destacada desde notificación */
+.sr-resp-item--destacada {
+  background: rgba(79, 119, 45, 0.08);
+  border-radius: 8px;
+  padding-left: 0.5rem;
+  animation: sr-resp-pulse-highlight 1.8s ease-out;
+}
+
+@keyframes sr-resp-pulse-highlight {
+  0%   { background: rgba(79, 119, 45, 0.22); }
+  100% { background: rgba(79, 119, 45, 0.08); }
+}
 
 .sr-resp-avatar {
   width: 30px;
@@ -718,6 +754,89 @@
 }
 .sr-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
 .sr-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
+
+/* ── Chip de mención (cita al responder) ─────────────────────── */
+.sr-mencion-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  background: rgba(107, 158, 74, 0.08);
+  border-left: 2px solid rgba(107, 158, 74, 0.5);
+  border-radius: 0 4px 4px 0;
+  padding: 0.2rem 0.55rem;
+  margin-bottom: 0.35rem;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sr-mencion-chip__autor {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(167, 213, 136, 0.9);
+  white-space: nowrap;
+}
+
+.sr-mencion-chip__preview {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+  font-style: italic;
+}
+
+/* ── Botón responder inline (dentro de cada respuesta) ───────── */
+.sr-btn-responder--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+.sr-btn-responder--inline:hover {
+  color: rgba(167, 213, 136, 0.9);
+}
+
+/* ── Formulario de respuesta inline ──────────────────────────── */
+.sr-resp-form--inline {
+  margin-top: 0.5rem;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* ── Indicador "respondiendo a" sobre el textarea ────────────── */
+.sr-resp-citando {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin-bottom: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(107, 158, 74, 0.07);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.sr-resp-citando__nombre {
+  color: rgba(167, 213, 136, 0.85);
+  font-weight: 600;
+}
+
+/* ── Contador de caracteres ──────────────────────────────────── */
+.sr-resp-contador {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.25);
+  margin-right: auto;
+}
 
 @media (max-width: 767px) {
   .sr-texto  { padding-left: 0; }

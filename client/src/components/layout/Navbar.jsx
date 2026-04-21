@@ -5,7 +5,7 @@ import api from '../../api/axios';
 import './Navbar.css';
 import PanelNotificaciones from '../notificaciones/PanelNotificaciones';
 
-// Poll de notificaciones cada 60 s — reduce carga al servidor
+// Poll de notificaciones cada 60 s
 const NOTIF_INTERVAL = 60_000;
 
 // ── Iconos estáticos memoizados ───────────────────────────────────────────────
@@ -74,8 +74,8 @@ BtnCampana.displayName = 'BtnCampana';
 // ── Navbar ────────────────────────────────────────────────────────────────────
 const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta }) => {
   const { user, logout, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
   const [menuAbierto,    setMenuAbierto]    = useState(false);
   const [panelAbierto,   setPanelAbierto]   = useState(false);
@@ -84,7 +84,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
   const [cargandoNotifs, setCargandoNotifs] = useState(false);
   const notifIntervalRef = useRef(null);
 
-  // ── Fetch notificaciones — estable ───────────────────────────────────────
+  // ── Fetch notificaciones ─────────────────────────────────────────────────
   const fetchNotificaciones = useCallback(async () => {
     if (!user) return;
     try {
@@ -94,16 +94,13 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     } catch { /* silencioso */ }
   }, [user]);
 
-  // Poll — protegido contra doble-mount
+  // Poll
   useEffect(() => {
     if (!user) return;
     let activo = true;
-
     const poll = () => { if (activo) fetchNotificaciones(); };
-
     poll();
     notifIntervalRef.current = setInterval(poll, NOTIF_INTERVAL);
-
     return () => {
       activo = false;
       clearInterval(notifIntervalRef.current);
@@ -131,26 +128,31 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
       setNoLeidas(0);
     } catch { /* silencioso */ }
   }, []);
-  
-  const handleEliminarNotif = useCallback(async (id) => {
-  try {
-    await api.delete(`/notifications/${id}`);
-    setNotificaciones(prev => prev.filter(n => n._id !== id));
-    setNoLeidas(prev => {
-      const eraNoLeida = notificaciones.find(n => n._id === id && !n.leida);
-      return eraNoLeida ? Math.max(0, prev - 1) : prev;
-    });
-  } catch { /* silencioso */ }
-}, [notificaciones]);
 
+  const handleEliminarNotif = useCallback(async (id) => {
+    try {
+      await api.delete(`/notifications/${id}`);
+      setNotificaciones(prev => {
+        const eraNoLeida = prev.find(n => n._id === id && !n.leida);
+        if (eraNoLeida) setNoLeidas(c => Math.max(0, c - 1));
+        return prev.filter(n => n._id !== id);
+      });
+    } catch { /* silencioso */ }
+  }, []);
+
+  // Marcar una como leída y actualizar el contador local
   const handleLeerUna = useCallback(async (id) => {
+    // Actualizamos optimistamente primero para que el badge desaparezca de inmediato
+    setNotificaciones(prev => {
+      const notif = prev.find(n => n._id === id);
+      if (!notif || notif.leida) return prev;
+      setNoLeidas(c => Math.max(0, c - 1));
+      return prev.map(n => n._id === id ? { ...n, leida: true } : n);
+    });
+    // Luego sincronizamos con el servidor
     try {
       await api.put(`/notifications/${id}/leer`);
-      setNotificaciones(prev =>
-        prev.map(n => n._id === id ? { ...n, leida: true } : n)
-      );
-      setNoLeidas(prev => Math.max(0, prev - 1));
-    } catch { /* silencioso */ }
+    } catch { /* silencioso — ya actualizamos localmente */ }
   }, []);
 
   const handleNavigate = useCallback((ruta) => {
@@ -158,29 +160,33 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     setMenuAbierto(false);
   }, [navigate]);
 
-  const handleNavNotif = useCallback((url) => {
-  console.log('handleNavNotif llamado con:', url);
-  console.log('onAbrirReceta es:', onAbrirReceta);
-  setPanelAbierto(false);
-  const match = url.match(/[?&]receta=([^&]+)/);
-  console.log('match resultado:', match);
-  if (match && onAbrirReceta) {
-    onAbrirReceta(match[1]);
-  } else {
-    navigate(url);
-  }
-}, [navigate, onAbrirReceta]);
+  // Extrae parámetros de la URL de notificación y los pasa a onAbrirReceta
+  const _procesarUrlNotif = useCallback((url) => {
+    const recetaMatch   = url.match(/[?&]receta=([^&]+)/);
+    const resenaMatch   = url.match(/[?&]resena=([^&]+)/);
+    const respuestaMatch = url.match(/[?&]respuesta=([^&]+)/);
 
-const handleNavNotifMovil = useCallback((url) => {
-  setPanelAbierto(false);
-  setMenuAbierto(false);
-  const match = url.match(/[?&]receta=([^&]+)/);
-  if (match && onAbrirReceta) {
-    onAbrirReceta(match[1]);
-  } else {
-    navigate(url);
-  }
-}, [navigate, onAbrirReceta]);
+    if (recetaMatch && onAbrirReceta) {
+      onAbrirReceta(
+        recetaMatch[1],
+        resenaMatch?.[1]   || null,
+        respuestaMatch?.[1] || null,
+      );
+    } else {
+      navigate(url);
+    }
+  }, [navigate, onAbrirReceta]);
+
+  const handleNavNotif = useCallback((url) => {
+    setPanelAbierto(false);
+    _procesarUrlNotif(url);
+  }, [_procesarUrlNotif]);
+
+  const handleNavNotifMovil = useCallback((url) => {
+    setPanelAbierto(false);
+    setMenuAbierto(false);
+    _procesarUrlNotif(url);
+  }, [_procesarUrlNotif]);
 
   const handleCerrarSesion = useCallback(() => {
     logout();
@@ -189,7 +195,6 @@ const handleNavNotifMovil = useCallback((url) => {
   }, [logout, navigate]);
 
   const handleToggleMenu = useCallback(() => setMenuAbierto(v => !v), []);
-
   const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
 
   return (

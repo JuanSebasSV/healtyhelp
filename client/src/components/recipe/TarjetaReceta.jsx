@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, memo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import DetalleReceta from './DetalleReceta';
 import ModalNutricionDetallada from './ModalNutricionDetallada';
 import './TarjetaReceta.css';
@@ -38,8 +38,15 @@ const IconoCorazon = memo(() => (
   </svg>
 ));
 
-const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccionar }) => {
+const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccionar, resenaIdDestacada, respuestaIdDestacada, autoAbrir }) => {
   const [vista, setVista] = useState(null);
+
+  // Abrir automáticamente si esta tarjeta fue referenciada desde una notificación
+  useEffect(() => {
+    if (autoAbrir) {
+      setVista('detalle');
+    }
+  }, [autoAbrir]);
 
   const prom  = receta.puntosProm   || 0;
   const total = receta.totalResenas || 0;
@@ -71,6 +78,7 @@ const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccio
       <div
         className={`tarjetaReceta${seleccionada ? ' tarjeta-seleccionada' : ''}`}
         onClick={abrirDetalle}
+        style={{ scrollMarginTop: '80px' }}
       >
         <div className="tarjetaImg">
           <img src={receta.img} alt={receta.nombre} loading="lazy" decoding="async" />
@@ -136,6 +144,8 @@ const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccio
           receta={receta}
           cerrar={cerrarVista}
           abrirNutricion={abrirNutricion}
+          resenaIdDestacada={resenaIdDestacada}
+          respuestaIdDestacada={respuestaIdDestacada}
         />
       )}
 

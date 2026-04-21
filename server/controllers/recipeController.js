@@ -544,6 +544,7 @@ exports.responderResena = async (req, res) => {
       recetaId:       recipe._id,
       recetaNombre:   recipe.nombre,
       resenaId:       resena._id,
+      respuestaId:    nueva._id,   // ← deep-link directo al comentario
       respuestaTexto: texto.trim(),
     }); // fire-and-forget — no await para no bloquear la respuesta
     res.status(201).json({

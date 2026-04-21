@@ -97,9 +97,9 @@ function AppContent() {
   const [robotIAActivo, setRobotIAActivo]         = useState(false);
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
+  // recetaPendiente guarda { recetaId, resenaId, respuestaId } cuando se navega
+  // desde una notificación. VistaInicio lo consume para auto-abrir la tarjeta correcta.
   const [recetaPendiente, setRecetaPendiente] = useState(null);
-
-
   const [versionFiltros,         setVersionFiltros]         = useState(0);
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
@@ -243,6 +243,13 @@ function AppContent() {
   const toggleRobotIA    = useCallback(() => setRobotIAActivo(prev => !prev), []);
   const cambiarCategoria = useCallback((cat) => setCategoriaActiva(cat), []);
 
+  // Navbar llama este handler con (recetaId, resenaId, respuestaId) al navegar
+  // desde una notificación. Guardamos el objeto completo para que VistaInicio
+  // pueda auto-abrir la tarjeta correcta y hacer scroll hasta el comentario.
+  const handleAbrirReceta = useCallback((recetaId, resenaId = null, respuestaId = null) => {
+    setRecetaPendiente({ recetaId, resenaId, respuestaId });
+  }, []);
+
   const toggleFav = useCallback((recetaId) => {
     setFavoritos(prev =>
       prev.includes(recetaId)
@@ -258,7 +265,7 @@ function AppContent() {
         <Navbar
           modoOscuro={modoOscuro}
           toggleModoOscuro={toggleModoOscuro}
-          onAbrirReceta={setRecetaPendiente}
+          onAbrirReceta={handleAbrirReceta}
         />
 
         <main className="contenido-principal">

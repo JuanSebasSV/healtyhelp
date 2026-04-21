@@ -36,7 +36,8 @@ const notificationSchema = new mongoose.Schema(
     // Contexto de la receta/comentario
     recetaId:     { type: mongoose.Schema.Types.ObjectId, ref: 'Recipe', default: null },
     recetaNombre: { type: String, default: '' },
-    resenaId:     { type: mongoose.Schema.Types.ObjectId, default: null },
+    resenaId:       { type: mongoose.Schema.Types.ObjectId, default: null },
+    respuestaId:    { type: mongoose.Schema.Types.ObjectId, default: null }, // deep-link directo a la respuesta
     respuestaTexto: { type: String, default: '' }, // preview de la respuesta
 
     // ── Campos para type='message' ──

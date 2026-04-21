@@ -13,7 +13,7 @@ const IconoCerrar = memo(() => (
 ));
 IconoCerrar.displayName = 'IconoCerrar';
 
-const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada }) => {
+const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada, respuestaIdDestacada }) => {
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -74,6 +74,7 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada 
               user={user}
               isAuthenticated={isAuthenticated}
               resenaIdDestacada={resenaIdDestacada}
+              respuestaIdDestacada={respuestaIdDestacada}
             />
           </div>
         </div>

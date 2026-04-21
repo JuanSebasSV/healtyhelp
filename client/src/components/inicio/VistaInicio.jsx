@@ -85,8 +85,9 @@ const VistaInicio = ({
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
-  const [recetaAbierta,     setRecetaAbierta]      = useState(null);
-  const [resenaIdDestacada, setResenaIdDestacada]  = useState(null);
+  const [recetaAbierta,       setRecetaAbierta]       = useState(null);
+  const [resenaIdDestacada,   setResenaIdDestacada]   = useState(null);
+  const [respuestaIdDestacada, setRespuestaIdDestacada] = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
   // NUEVA FUNCIONALIDAD: estados de búsqueda y filtro por tiempo
   const [busqueda,          setBusqueda]           = useState('');
@@ -142,13 +143,14 @@ const VistaInicio = ({
   // ─── Abrir receta desde prop (notificaciones) ─────────────────────────────
 
   useEffect(() => {
-    console.log('useEffect recetaPendiente:', recetaPendiente, 'recetas.length:', recetas.length);
     if (!recetaPendiente || !recetas.length) return;
-    const found = recetas.find(r => r._id === recetaPendiente);
-    console.log('found:', found);
+    // recetaPendiente es { recetaId, resenaId, respuestaId }
+    const id    = recetaPendiente.recetaId ?? recetaPendiente; // compat. si llega string
+    const found = recetas.find(r => r._id === id || r._id?.toString() === id?.toString());
     if (found) {
       setRecetaAbierta(found);
-      setResenaIdDestacada(null);
+      setResenaIdDestacada(recetaPendiente.resenaId    ?? null);
+      setRespuestaIdDestacada(recetaPendiente.respuestaId ?? null);
       onRecetaPendienteResuelta?.();
     }
   }, [recetaPendiente, recetas]);
@@ -419,6 +421,9 @@ const VistaInicio = ({
                 esFav={favoritos.includes(receta._id)}
                 seleccionada={seleccionadas.includes(receta._id)}
                 onSeleccionar={toggleSeleccion}
+                autoAbrir={recetaAbierta?._id === receta._id && !!recetaPendiente}
+                resenaIdDestacada={recetaAbierta?._id === receta._id ? resenaIdDestacada : undefined}
+                respuestaIdDestacada={recetaAbierta?._id === receta._id ? respuestaIdDestacada : undefined}
               />
             ))}
           </div>
@@ -458,8 +463,9 @@ const VistaInicio = ({
       {recetaAbierta && (
         <DetalleReceta
           receta={recetaAbierta}
-          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); }}
+          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); setRespuestaIdDestacada(null); }}
           resenaIdDestacada={resenaIdDestacada}
+          respuestaIdDestacada={respuestaIdDestacada}
         />
       )}
 
