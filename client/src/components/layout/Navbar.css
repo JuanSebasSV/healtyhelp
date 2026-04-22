@@ -382,13 +382,11 @@
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 0.75rem 0 !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-bottom: none !important;
-    cursor: default !important;
+    padding: 0.6rem 0 !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    cursor: pointer !important;
     transition: var(--transicion) !important;
     box-sizing: border-box !important;
-    margin-top: 0.25rem !important;
   }
 
   .navMenu-header {
@@ -460,9 +458,6 @@
   }
 }
 
-.navHamburguesa {
-  gap: 6px;
-}
 .navHamburguesa.abierto span:nth-child(1) {
   transform: translateY(8.5px) rotate(45deg);
 }
@@ -793,16 +788,13 @@ nav .navHamburguesa span,
 @media (max-width: 968px) {
   .pn-modal-movil {
     display: flex;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    z-index: 9999 !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transform: none !important;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
     background: rgba(0, 0, 0, 0.65);
+    /* FIX: sin blur en el overlay del modal de notificaciones */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     animation: pn-modal-fade 0.2s ease;
@@ -861,64 +853,11 @@ nav .navHamburguesa span,
 
 /* ════════════════════════════════════════════════════════════════
    AUTO-LOGOUT — Toggle switch, Dropdown desktop, Modal mobile
+   Pegar al final de Navbar.css
 ════════════════════════════════════════════════════════════════ */
 
 /* ── Toggle switch ──────────────────────────────────────────── */
-.al-toggle {
-  position: relative !important;
-  display: inline-block !important;
-  width: 44px !important;
-  min-width: 44px !important;
-  height: 24px !important;
-  border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.18) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
-  cursor: pointer !important;
-  transition: background 0.25s ease, border-color 0.25s ease !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
-  pointer-events: all !important;
-  z-index: 10 !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  isolation: isolate !important;
-}
-
-.al-toggle--on {
-  background: #3b82f6 !important;
-  border-color: #2563eb !important;
-}
-
-.al-toggle--loading {
-  opacity: 0.55;
-  cursor: not-allowed !important;
-}
-
-.al-toggle__thumb {
-  all: unset !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 3px !important;
-  transform: translateY(-50%) !important;
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-  background: #ffffff !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
-  transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  pointer-events: none !important;
-  flex-shrink: 0 !important;
-  display: block !important;
-  box-sizing: border-box !important;
-  content: none !important;
-}
-
-.al-toggle--on .al-toggle__thumb {
-  left: calc(100% - 19px);
-}
+/* (ver bloque de protección más abajo para estilos con !important) */
 
 /* Garantizar pointer-events en todo el dropdown y modal */
 .al-dropdown,
@@ -937,11 +876,17 @@ nav .navHamburguesa span,
   display: inline-flex;
 }
 
+.al-btn-trigger {
+  /* hereda btn-secundario — sin cambios adicionales */
+}
+
 .al-dropdown {
   position: absolute;
-  top: calc(100% + 2px);
+  top: calc(100% + 10px);
   right: 0;
-  min-width: 240px;
+  /* FIX: width fijo en vez de min-width — evita que el dropdown se achique
+     cuando el subtítulo cambia de texto largo a texto corto */
+  width: 260px;
   background: rgba(18, 52, 30, 0.97);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -950,6 +895,8 @@ nav .navHamburguesa span,
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   padding: 6px;
   z-index: 1100;
+  will-change: opacity, transform;
+  contain: layout style;
   animation: al-dropdown-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -965,8 +912,6 @@ nav .navHamburguesa span,
 
 /* Botón "Cerrar Sesión" dentro del dropdown */
 .al-dropdown__logout-btn {
-  all: unset;
-  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
@@ -975,7 +920,7 @@ nav .navHamburguesa span,
   background: rgba(220, 38, 38, 0.12);
   border: 1px solid rgba(220, 38, 38, 0.25);
   border-radius: 10px;
-  color: #fca5a5 !important;
+  color: #fca5a5;
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
@@ -983,12 +928,9 @@ nav .navHamburguesa span,
   text-align: left;
 }
 
-/* SVG del botón logout dentro del dropdown — stroke explícito */
 .al-dropdown__logout-btn svg {
-  stroke: #fca5a5 !important;
-  fill: none !important;
+  stroke: #fca5a5;
   flex-shrink: 0;
-  opacity: 1 !important;
 }
 
 .al-dropdown__logout-btn:hover {
@@ -1010,6 +952,8 @@ nav .navHamburguesa span,
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.55rem 0.75rem;
+  /* FIX: altura mínima fija para que el texto corto/largo no cambie el tamaño */
+  min-height: 52px;
 }
 
 .al-dropdown__label {
@@ -1018,6 +962,8 @@ nav .navHamburguesa span,
   gap: 2px;
   flex: 1;
   min-width: 0;
+  /* FIX: ancho mínimo para absorber cambios de texto sin colapsar */
+  width: 0;
 }
 
 .al-dropdown__label-title {
@@ -1033,6 +979,10 @@ nav .navHamburguesa span,
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* FIX: display block con altura fija para que el colapso de texto
+     no cambie el alto del dropdown */
+  display: block;
+  min-height: 1em;
 }
 
 /* ── Modal confirmación (mobile / táctil) ───────────────────── */
@@ -1042,7 +992,7 @@ nav .navHamburguesa span,
   z-index: 2100;
   background: rgba(0, 0, 0, 0.65);
   display: flex;
-  align-items: flex-end;
+  align-items: flex-end;        /* desliza desde abajo en mobile */
   justify-content: center;
   padding: 1rem;
   animation: al-overlay-in 0.2s ease;
@@ -1092,11 +1042,8 @@ nav .navHamburguesa span,
   flex-shrink: 0;
 }
 
-/* SVG del ícono del modal — stroke explícito */
 .al-modal__icon svg {
-  stroke: #fca5a5 !important;
-  fill: none !important;
-  opacity: 1 !important;
+  stroke: #fca5a5;
 }
 
 .al-modal__title {
@@ -1117,6 +1064,10 @@ nav .navHamburguesa span,
   border-radius: 12px;
   padding: 0.85rem 1rem;
   margin-bottom: 1.25rem;
+  /* FIX: altura mínima fija — el texto del subtítulo cambia entre estados
+     (texto largo OFF vs texto corto ON) y sin esto la fila se encoge */
+  min-height: 64px;
+  box-sizing: border-box;
 }
 
 .al-modal__toggle-label {
@@ -1125,6 +1076,8 @@ nav .navHamburguesa span,
   gap: 3px;
   flex: 1;
   min-width: 0;
+  /* FIX: ancho fijo para que el texto corto no colapse el flex */
+  width: 0;
 }
 
 .al-modal__toggle-title {
@@ -1136,6 +1089,12 @@ nav .navHamburguesa span,
 .al-modal__toggle-sub {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.45);
+  /* FIX: altura mínima para que el texto corto no colapse la fila */
+  display: block;
+  min-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Botones del modal */
@@ -1184,4 +1143,116 @@ nav .navHamburguesa span,
   .al-modal-overlay {
     align-items: center;
   }
+}
+
+/* ── Toggle switch — protección total contra herencia del navMenu ── */
+.al-toggle,
+.al-toggle:hover,
+.al-toggle:focus {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  min-width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: background 0.28s ease, border-color 0.28s ease;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+  pointer-events: all !important;
+  z-index: 10;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  isolation: isolate;
+}
+
+.al-toggle--on,
+.al-toggle--on:hover {
+  background: #3b82f6 !important;
+  border-color: #2563eb !important;
+}
+
+.al-toggle--loading {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Thumb: círculo blanco animado */
+.al-toggle__thumb {
+  all: unset !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 3px !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35) !important;
+  /* Deslizamiento con rebote leve + estiramiento */
+  transition:
+    left         0.26s cubic-bezier(0.34, 1.4, 0.64, 1),
+    width        0.18s ease,
+    border-radius 0.18s ease !important;
+  pointer-events: none !important;
+  will-change: left !important;
+}
+
+/* Estiramiento al presionar (apagado → encendido) */
+.al-toggle:active .al-toggle__thumb {
+  width: 20px !important;
+  border-radius: 10px !important;
+}
+
+/* Thumb en posición ON */
+.al-toggle--on .al-toggle__thumb {
+  left: calc(100% - 19px) !important;
+}
+
+/* Estiramiento al presionar (encendido → apagado) */
+.al-toggle--on:active .al-toggle__thumb {
+  left: calc(100% - 23px) !important;
+  width: 20px !important;
+  border-radius: 10px !important;
+}
+
+/* ── Neutralizar herencia de SVGs del navMenu en el dropdown ── */
+.al-dropdown__logout-btn svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+.al-modal__icon svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+
+/* ── FIX: contexto de posicionamiento para el dropdown ── */
+/* navMenu-centrado necesita position: relative para anclar el dropdown absoluto */
+/* Sin esto el dropdown se posiciona relativo al navMenu y puede causar reflow */
+@media (min-width: 969px) {
+  li.navMenu-centrado {
+    position: relative;
+  }
+}
+
+/* ── Punto de admin sobre avatar ── */
+.nav-admin-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--naranja, #f77f00);
+  border: 1.5px solid rgba(26, 77, 46, 0.9);
 }
