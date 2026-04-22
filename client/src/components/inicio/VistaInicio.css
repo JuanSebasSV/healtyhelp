@@ -519,6 +519,30 @@
 
 .recetasGrid { animation: fadeIn 0.6s ease; }
 
+@media (max-width: 767px) {
+  .recetasGrid .grid {
+    display: grid;
+    grid-template-columns: 1fr !important; /* Fuerza una sola columna */
+    gap: 20px; 
+    padding-left: 3rem;
+    padding-right: 3rem;    
+    
+  }
+
+  /* Opcional: ajustar el encabezado si es necesario */
+  .recetasGrid-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+ 
+ 
+}
+
 .recetasCargando {
   display: flex;
   flex-direction: column;
@@ -843,7 +867,7 @@
   padding-right: 0.25rem;
   user-select: none;
 }
-.tiempos-label svg { stroke: rgba(255, 255, 255, 0.45); flex-shrink: 0; }
+.tiempos-label svg { stroke: rgba(255, 255, 255, 0.45); flex-shrink: 0; width: 25px; height: auto; }
 .modo-oscuro .tiempos-label { color: rgba(180, 220, 150, 0.5); }
 .modo-oscuro .tiempos-label svg { stroke: rgba(180, 220, 150, 0.35); }
 
