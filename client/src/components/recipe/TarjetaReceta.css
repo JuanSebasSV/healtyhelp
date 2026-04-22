@@ -251,51 +251,7 @@
    RESPONSIVE MÓVIL
    ===================================================== */
 @media (max-width: 900px) {
-  .tarjetaReceta {
-    padding: 0.4rem;
-    gap: 0.4rem;
-    /* FIX: en móvil, backdrop-filter en las tarjetas es muy
-       costoso y causa el bugeo visual. Se reemplaza por un
-       fondo sólido semitransparente que no requiere GPU extra. */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(20, 55, 30, 0.75);
-    /* FIX: hover desactivado en móvil (no hay cursor, no tiene sentido
-       y el translateY causa repaints innecesarios) */
-    transition: none;
-  }
-
-  /* FIX: deshabilitar completamente el hover en touch */
-  .tarjetaReceta:hover {
-    transform: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
-  }
-
-  .tarjetaImg {
-    height: 130px;
-    min-height: 130px;
-    border-radius: 8px;
-  }
-
-  /* FIX: skeleton más pequeño en móvil */
-  .tarjetaImg--cargando {
-    min-height: 130px;
-  }
-
-  .tarjetaInfo {
-    padding: 0.5rem 0.5rem 0.5rem 0.65rem;
-    gap: 0.25rem;
-    /* FIX: quitar backdrop-filter del info también */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(10, 30, 15, 0.6);
-  }
-
-  .tarjetaInfo h3 {
-    font-size: 0.82rem;
-    margin-bottom: 0.25rem;
-    line-height: 1.2;
-  }
+ 
 
   .tarjetaInfo p { display: none; }
   .estrella-ico { font-size: 0.72rem; }
@@ -324,8 +280,56 @@
     font-size: 0.62rem;
     padding: 0.1rem 0.4rem;
   }
-}
 
+
+  /* La tarjeta completa */
+  .tarjetaReceta {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    overflow: hidden;
+    height: auto !important; /* Permite que crezca según el texto */
+    margin-bottom: 10px;
+  }
+
+  /* La imagen para que no ocupe toda la pantalla */
+  .tarjetaImg {
+    height: 220px; /* Altura fija para que el resto sea texto */
+    width: 100%;
+  }
+
+  .tarjetaImg img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Donde está el título y la descripción */
+  .tarjetaInfo {
+    padding: 1.5rem; /* Espacio interno para que el texto no toque los bordes */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tarjetaInfo h3 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  /* ESTO ES CLAVE: Mostrar la descripción completa */
+  .tarjetaInfo p {
+    display: block !important; /* Por si tenías un limitador de líneas */
+    -webkit-line-clamp: unset !important; 
+    max-height: none !important;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #e0e0e0; /* Un gris muy claro para lectura */
+    margin: 0.5rem 0;
+  }
+
+}
 @media (max-width: 360px) {
   .tarjetaImg { height: 180px; min-height: 180px; }
   .tarjetaInfo h3 { font-size: 0.9rem; }
