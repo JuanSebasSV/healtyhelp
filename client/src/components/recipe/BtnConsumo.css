@@ -1,4 +1,4 @@
-/* ── Wrapper ── */
+/*Wrapper*/
 .btnConsumo-wrapper {
   position: relative;
   margin: 1.25rem 0;
@@ -10,7 +10,7 @@
   gap: 0.5rem;
 }
 
-/* ── Botón principal ── */
+/*Botón principal*/
 .btnConsumo {
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@
   border-color: var(--rojo-eliminar);
 }
 
-/* ── Animación de señalado: pulso + brillo para llamar la atención ── */
+/*Animación de señalado: pulso + brillo para llamar la atención*/
 .btnConsumo--señalar {
   animation: consumoSeñalar 2.2s ease forwards;
 }
@@ -81,7 +81,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── Botón ? ── */
+/*Botón ?*/
 .btnConsumo-help {
   width: 32px;
   height: 32px;
@@ -104,7 +104,7 @@
   color: var(--blanco);
 }
 
-/* ── Nubecita tooltip ── */
+/*Nubecita tooltip*/
 /* Posicionada encima del botón, con la cola apuntando hacia él */
 .btnConsumo-tooltip {
   position: absolute;

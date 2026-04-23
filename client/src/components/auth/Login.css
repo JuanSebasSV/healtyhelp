@@ -1,7 +1,7 @@
-/* ============================================
+/*
    Login.css — Página de inicio de sesión
    Glassmorphism coherente con ForgotPassword.css
-   ============================================ */
+   */
 
 .login-page {
   min-height: 100vh;
@@ -35,7 +35,7 @@
   }
 }
 
-/* ── Header ── */
+/*  Header  */
 .login-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -63,7 +63,7 @@
   font-size: 0.95rem;
 }
 
-/* ── Formulario ── */
+/*  Formulario  */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@
   opacity: 0.6;
 }
 
-/* ── Password input wrapper ── */
+/*  Password input wrapper  */
 .password-input-wrapper {
   position: relative;
   display: flex;
@@ -150,14 +150,14 @@
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
 }
 
-/* ── Error message ── */
+/*  Error message  */
 .error-message {
   color: var(--rojo-texto);
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
 
-/* ── Lock warning ── */
+/*  Lock warning  */
 .lock-warning {
   background: rgba(220, 38, 38, 0.15);
   border: 1.5px solid rgba(220, 38, 38, 0.4);
@@ -178,7 +178,7 @@
   flex-shrink: 0;
 }
 
-/* ── Buttons ── */
+/*  Buttons  */
 .btn-primary {
   padding: 1rem;
   background: linear-gradient(135deg, var(--naranja) 0%, var(--naranja-medio) 100%);
@@ -210,7 +210,7 @@
   opacity: 0.5;
 }
 
-/* ── Divider ── */
+/*  Divider  */
 .divider {
   display: flex;
   align-items: center;
@@ -228,7 +228,7 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* ── Google button ── */
+/*  Google button  */
 .btn-google {
   padding: 1rem;
   background: rgba(255, 255, 255, 0.15);
@@ -262,7 +262,7 @@
   cursor: not-allowed;
 }
 
-/* ── Footer ── */
+/*  Footer  */
 .login-footer {
   margin-top: 2rem;
   text-align: center;
@@ -298,7 +298,7 @@
   text-decoration: underline;
 }
 
-/* ── Modo oscuro ── */
+/*  Modo oscuro  */
 .modo-oscuro .login-container {
   background: rgba(10, 25, 15, 0.6);
   border-color: rgba(79, 119, 45, 0.35);
@@ -368,7 +368,7 @@
   color: rgba(200, 230, 185, 0.75);
 }
 
-/* ── Responsive ── */
+/*  Responsive  */
 @media (max-width: 640px) {
   .login-container {
     padding: 2.5rem 1.5rem;

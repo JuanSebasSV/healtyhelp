@@ -50,7 +50,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* ── Gráfica dona (MÁS GRANDE) ── */
+/*Gráfica dona (MÁS GRANDE)*/
 .resumen-chart {
   width: 240px;
   height: 240px;
@@ -82,7 +82,7 @@
   flex-shrink: 0;
 }
 
-/* ── Acordeón ── */
+/*Acordeón*/
 .resumen-acordeon {
   display: flex;
   flex-direction: column;
@@ -152,7 +152,7 @@
   font-size: 0.9rem;
 }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 968px) {
   .resumen-chart {
     width: 200px;

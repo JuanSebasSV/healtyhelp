@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './SeccionResenas.css';
 
-// ── Componente de icono genérico ──────────────────────────────────────────────
+//Componente de icono genérico 
 const Icon = memo(({ d, size = 16, viewBox = '0 0 24 24', className = '', style = {} }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +58,7 @@ IcoLoader.displayName = 'IcoLoader';
 const IcoEmptyReviews = memo(({ size }) => <Icon size={size} d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></>}/>);
 IcoEmptyReviews.displayName = 'IcoEmptyReviews';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+//Helpers 
 const formatFecha = (f) =>
   new Date(f).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
 
@@ -68,7 +68,7 @@ const ESTRELLAS = [1, 2, 3, 4, 5];
 const getIniciales = (name = '') =>
   name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?';
 
-// ── Estrellas ─────────────────────────────────────────────────────────────────
+//Estrellas 
 const Estrellas = memo(({ valor, onChange, readonly = false }) => {
   const [hover, setHover] = useState(0);
   return (
@@ -87,7 +87,7 @@ const Estrellas = memo(({ valor, onChange, readonly = false }) => {
 });
 Estrellas.displayName = 'Estrellas';
 
-// ── ImagenResena ──────────────────────────────────────────────────────────────
+//ImagenResena 
 const ImagenResena = memo(({ imagen, esPropia }) => {
   if (!imagen?.estado || imagen.estado === 'rechazada') return null;
   if (imagen.estado === 'pendiente' && !esPropia) return null;
@@ -113,7 +113,7 @@ const ImagenResena = memo(({ imagen, esPropia }) => {
 });
 ImagenResena.displayName = 'ImagenResena';
 
-// ── SelectorImagen ────────────────────────────────────────────────────────────
+//SelectorImagen 
 const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
   const inputRef = useRef(null);
 
@@ -164,7 +164,7 @@ const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
 });
 SelectorImagen.displayName = 'SelectorImagen';
 
-// ── Chip de mención (referencia a respuesta citada) ───────────────────────────
+//Chip de mención (referencia a respuesta citada) 
 const MencionChip = memo(({ nombre, texto }) => {
   if (!nombre) return null;
   const preview = texto ? texto.slice(0, 60) + (texto.length > 60 ? '…' : '') : null;
@@ -177,7 +177,7 @@ const MencionChip = memo(({ nombre, texto }) => {
 });
 MencionChip.displayName = 'MencionChip';
 
-// ── Un item de respuesta (recursivo) ──────────────────────────────────────────
+//Un item de respuesta (recursivo) 
 const RespuestaItem = memo(({
   rp,
   depth,
@@ -341,7 +341,7 @@ const RespuestaItem = memo(({
 });
 RespuestaItem.displayName = 'RespuestaItem';
 
-// ── SeccionRespuestas — árbol plano con referencias visuales ──────────────────
+//SeccionRespuestas — árbol plano con referencias visuales 
 //
 // La estrategia: el backend devuelve un array plano de respuestas, cada una
 // puede tener parentRespuestaId + parentUserName + parentTexto.
@@ -495,14 +495,14 @@ const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user
 });
 SeccionRespuestas.displayName = 'SeccionRespuestas';
 
-// ── Helper: ¿es la reseña del usuario actual? ─────────────────────────────────
+//Helper: ¿es la reseña del usuario actual? 
 const esDelUsuario = (r, user) =>
   user && (
     r.userId?.toString() === user._id?.toString() ||
     r.userId?.toString() === user.id?.toString()
   );
 
-// ── SeccionResenas ────────────────────────────────────────────────────────────
+//SeccionResenas 
 // Compara dos IDs de MongoDB de forma segura (string vs ObjectId vs undefined)
 const idIgual = (a, b) => a && b && String(a) === String(b);
 
@@ -527,7 +527,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
 
   const resenaDestacadaRef = useRef(null);
 
-  // ── Buscar página correcta para el deep-link ──────────────────────────────
+  //Buscar página correcta para el deep-link 
   // Cuando hay respuestaIdDestacada o resenaIdDestacada, consultamos todas las
   // páginas hasta encontrar la reseña que la contiene y saltamos a esa página.
   useEffect(() => {
@@ -585,7 +585,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receta._id, respuestaIdDestacada, resenaIdDestacada]);
 
-  // ── Scroll a reseña destacada (cuando carga termina y hay ref) ────────────
+  //Scroll a reseña destacada (cuando carga termina y hay ref) 
   useEffect(() => {
     if (!resenaIdDestacada || cargandoRes || buscandoPagina || !resenaDestacadaRef.current) return;
     const t = setTimeout(() => {

@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-// ── Helpers (mismas claves que App.jsx) ────────────────────────────────────
+//Helpers 
 const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
 const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
 const TERMS_VERSION_KEY  = 'hh_terms_version';
@@ -19,7 +19,7 @@ const RUTAS_LIBRES = [
   '/google-callback', '/verificar-email', '/contacto',
 ];
 
-// ── Componente ──────────────────────────────────────────────────────────────
+//Componente 
 const PrivateRoute = ({ children, requireAdmin = false }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -44,15 +44,12 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   if (esRutaLibre) return children;
 
   // 5. ¿Aceptó cookies?
-  //    Si no, redirigir a "/" donde App.jsx mostrará ModalCookies
   const cookiesOk = getPersisted(COOKIE_CONSENT_KEY) === 'accepted';
   if (!cookiesOk) {
     return <Navigate to="/" replace />;
   }
 
   // 6. ¿Aceptó los términos?
-  //    Fuente de verdad = BD (user.termsAccepted)
-  //    Si por algún motivo el user no trae ese campo, caer en la cookie local
   const terminosOk =
     user.termsAccepted === true ||
     getPersisted(TERMS_ACCEPTED_KEY) === 'true';
@@ -62,7 +59,6 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   }
 
   // 7. ¿La versión de los términos que aceptó es la vigente?
-  //    user.activeTermsVersion lo inyecta getMe() desde el servidor
   const serverVersion = user.activeTermsVersion;
   if (serverVersion && user.termsVersion !== serverVersion) {
     // Términos desactualizados → volver a "/" donde App.jsx mostrará ModalTerminos

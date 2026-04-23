@@ -1,8 +1,8 @@
 import jsPDF from 'jspdf';
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // Constantes de diseño
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 const W      = 210;
 const H      = 297;
 const MG     = 14;
@@ -20,9 +20,9 @@ const GRIS_BG     = [246, 248, 246];
 const BLANCO      = [255, 255, 255];
 const NEGRO       = [0,   0,   0];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // Helpers básicos
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 const fmt    = (v, u = '') => (v != null && v > 0 ? `${v}${u}` : null);
 const rgb    = (doc, ...c) => doc.setTextColor(...c);
 const fill   = (doc, ...c) => doc.setFillColor(...c);
@@ -68,9 +68,9 @@ const seccion = (doc, texto, y) => {
   return y + 5;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // Carga de imagen — proxy backend para evitar CORS
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 const recortarBlob = (blob) =>
   new Promise((resolve) => {
     const reader = new FileReader();
@@ -146,9 +146,9 @@ const cargarImagen = async (url) => {
   });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // PORTADA
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 const portada = (doc, recetas, fecha) => {
   fill(doc, ...VERDE);
   doc.rect(0, 0, W, 100, 'F');
@@ -183,7 +183,7 @@ const portada = (doc, recetas, fecha) => {
     W / 2, 77, { align: 'center' }
   );
 
-  // ── Índice ──
+  //  Índice 
   let y = 116;
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
@@ -233,9 +233,9 @@ const portada = (doc, recetas, fecha) => {
   doc.text('healtyhelp.com', W / 2, H - 12, { align: 'center' });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // RECETA individual
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   const IMG_H = imgB64 ? 62 : 0;
 
@@ -312,7 +312,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     y += 7;
   }
 
-  // ── DOS COLUMNAS ──
+  //  DOS COLUMNAS 
   const COL_ING = ANCHO * 0.54;
   const COL_DAT = ANCHO * 0.38;
   const X_DAT   = MG + ANCHO * 0.62;
@@ -378,7 +378,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
 
   y = Math.max(yIng, yD) + 7;
 
-  // ── PREPARACIÓN ──
+  //  PREPARACIÓN 
   y = saltoPagina(doc, y, 25);
   y = seccion(doc, 'Preparación', y);
   y += 1;
@@ -405,7 +405,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
 
   y += 5;
 
-  // ── TABLA NUTRICIONAL DETALLADA ──
+  //  TABLA NUTRICIONAL DETALLADA 
   const nutriAvanzado = [
     ['Colesterol',  fmt(receta.nutri?.colesterol, ' mg')],
     ['Calcio',      fmt(receta.nutri?.calcio,     ' mg')],
@@ -466,9 +466,9 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   return y;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // EXPORTACIÓN PRINCIPAL
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 export const generarPDFRecetas = async (recetas) => {
   const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
   const fecha = new Date().toLocaleDateString('es-CO', {

@@ -1,6 +1,6 @@
 /**
  * useFiltroSalud
- * ──────────────────────────────────────────────────────────────────────────────
+ * 
  * REGLA DE ORO:
  *   • Sin sesión  → localStorage SOLO (sin BD). IA no disponible.
  *   • Con sesión  → BD es la única fuente de verdad.
@@ -25,11 +25,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../api/axios';
 
-// ─── Claves de almacenamiento local (solo para anónimos) ─────────────────────
+//  Claves de almacenamiento local (solo para anónimos) 
 const LS_CONDICIONES = 'hh_filtros_condiciones';
 const LS_CATEGORIA   = 'hh_filtro_categoria'; // solo un string, no array
 
-// ─── Caché de módulo: sobrevive desmontajes ───────────────────────────────────
+//  Caché de módulo: sobrevive desmontajes 
 // Guarda el último estado confirmado para el userId activo.
 // Si el componente se desmonta y remonta con el mismo usuario, restaura
 // instantáneamente sin esperar otra petición a la BD.
@@ -40,7 +40,7 @@ let _cache = {
   cargado:    false,
 };
 
-// ─── Helpers localStorage (solo anónimos) ────────────────────────────────────
+//  Helpers localStorage (solo anónimos) 
 
 const leerLS = (clave, fallback) => {
   try {
@@ -64,7 +64,7 @@ const limpiarLS = () => {
   localStorage.removeItem(LS_CATEGORIA);
 };
 
-// ─── Hook ────────────────────────────────────────────────────────────────────
+//  Hook 
 
 const useFiltroSalud = (usuario) => {
   const uid = usuario?._id ?? null;
@@ -79,7 +79,7 @@ const useFiltroSalud = (usuario) => {
   const peticionRef  = useRef(null);
   const usuarioIdRef = useRef(uid);
 
-  // ── Sincronizar caché → state cuando cambia el usuario ────────────────────
+  //  Sincronizar caché → state cuando cambia el usuario 
   useEffect(() => {
     // Si el usuario no cambió y ya está cargado, no hacer nada
     if (uid === usuarioIdRef.current && listo) return;
@@ -135,7 +135,7 @@ const useFiltroSalud = (usuario) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid]);
 
-  // ── Persistir en BD o localStorage ───────────────────────────────────────
+  //  Persistir en BD o localStorage 
   const persistir = useCallback(async ({ nuevasCondiciones, nuevaCategoria }) => {
     // Actualizar caché de módulo inmediatamente
     _cache = {
@@ -184,7 +184,7 @@ const useFiltroSalud = (usuario) => {
     }
   }, [usuario, uid]);
 
-  // ── API pública: condiciones (multi-selección) ────────────────────────────
+  //  API pública: condiciones (multi-selección) 
 
   const toggleFiltro = useCallback((id) => {
     setFiltros(prev => {
@@ -201,7 +201,7 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevasCondiciones: [] });
   }, [persistir]);
 
-  // ── API pública: categoría (RADIO — solo una o ninguna) ───────────────────
+  //  API pública: categoría (RADIO — solo una o ninguna) 
   // Llamar con un id selecciona ese id (o lo deselecciona si ya estaba).
   // En la UI esto equivale a un botón de radio donde hacer clic en el activo
   // lo apaga (vuelve a "todas").
@@ -220,7 +220,7 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevaCategoria: '' });
   }, [persistir]);
 
-  // ── Limpiar todo ──────────────────────────────────────────────────────────
+  //  Limpiar todo 
 
   const limpiarTodo = useCallback(() => {
     setFiltros([]);
@@ -228,7 +228,7 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevasCondiciones: [], nuevaCategoria: '' });
   }, [persistir]);
 
-  // ── Compatibilidad hacia atrás ────────────────────────────────────────────
+  //  Compatibilidad hacia atrás 
   // VistaInicio usaba `categorias` (array) y `toggleCategoria`.
   // Exponemos alias para no romper código existente.
   // NUEVO comportamiento: categorias es siempre un array de 0 o 1 elementos.

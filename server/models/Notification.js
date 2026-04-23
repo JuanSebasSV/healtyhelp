@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
-// ─────────────────────────────────────────────
 // Tipos de notificación:
-//   'reply'   → alguien respondió tu comentario en una receta
-//   'message' → mensaje directo de un administrador
-// ─────────────────────────────────────────────
+ 
 const notificationSchema = new mongoose.Schema(
   {
     // Destinatario
@@ -24,7 +21,6 @@ const notificationSchema = new mongoose.Schema(
     // Leída o no
     leida: { type: Boolean, default: false },
 
-    // ── Campos para type='reply' ──
     // Quién respondió
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,7 +36,6 @@ const notificationSchema = new mongoose.Schema(
     respuestaId:    { type: mongoose.Schema.Types.ObjectId, default: null }, // deep-link directo a la respuesta
     respuestaTexto: { type: String, default: '' }, // preview de la respuesta
 
-    // ── Campos para type='message' ──
     // El remitente es un admin — guardamos nombre para mostrarlo aunque se elimine
     adminId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     adminName: { type: String, default: '' },

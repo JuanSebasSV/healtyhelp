@@ -1,4 +1,4 @@
-/* ModalCookies.css — Glassmorphism verde, no se pierde sobre fondos oscuros */
+/* ModalCookies.css*/
 
 .cookies-overlay {
   position: fixed;
@@ -29,7 +29,7 @@
   border-radius: 18px;
   overflow: hidden;
 
-  /* Glassmorphism — funciona sobre fondos claros y oscuros */
+  /* Glassmorphism*/
   background: rgba(20, 48, 28, 0.72);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
@@ -80,7 +80,7 @@
   color: rgba(209, 250, 229, 0.75);
 }
 
-/* ── Aviso crítico ──────────────────────────────────────────────────────── */
+/*Aviso crítico*/
 .cookies-aviso-critico {
   margin-top: 0.55rem !important;
   font-size: 0.76rem !important;
@@ -127,7 +127,7 @@
   transform: translateY(0);
 }
 
-/* ── Botón rechazar / Salir ─────────────────────────────────────────────── */
+/*Botón rechazar / Salir*/
 .cookies-btn-rechazar {
   display: inline-flex;
   align-items: center;
@@ -163,7 +163,7 @@
 }
 
 
-/* ── Botón cerrar (X) ───────────────────────────────────────────────────── */
+/*Botón cerrar (X)*/
 .cookies-btn-cerrar {
   position: absolute;
   top: 10px;
@@ -195,7 +195,7 @@
   transform: scale(0.95);
 }
 
-/* ── Tablet ─────────────────────────────────────────────────────────────── */
+/*Tablet*/
 @media (max-width: 768px) {
   .cookies-overlay {
     bottom: 1rem;
@@ -208,7 +208,7 @@
   }
 }
 
-/* ── Mobile ─────────────────────────────────────────────────────────────── */
+/*Mobile*/
 @media (max-width: 480px) {
   .cookies-overlay {
     bottom: 0;
@@ -258,7 +258,7 @@
   }
 }
 
-/* ── Mobile muy pequeño (< 360px) ───────────────────────────────────────── */
+/*Mobile muy pequeño (< 360px)*/
 @media (max-width: 360px) {
   .cookies-card {
     padding: 1.1rem 1rem 1.3rem;

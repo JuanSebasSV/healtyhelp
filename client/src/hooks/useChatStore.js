@@ -1,31 +1,10 @@
-/**
- * useChatStore
- * ─────────────────────────────────────────────────────────────────────────────
- * PROPÓSITO:
- *   Estado compartido del chat que sobrevive desmontajes y remontajes.
- *   Tanto RobotIA (ventana flotante) como VistaChatbot (pantalla completa)
- *   leen y escriben aquí — el historial nunca se pierde al cambiar entre vistas.
- *
- * POR QUÉ FUNCIONA:
- *   Las variables de módulo viven toda la sesión del navegador.
- *   Los listeners permiten que cualquier componente suscrito reciba
- *   actualizaciones en tiempo real sin necesidad de Context ni Redux.
- *
- * FILTROS EN TIEMPO REAL:
- *   Ya NO se interceptan preguntas sobre filtros localmente.
- *   El backend (POST /chat) consulta la BD en cada request, por lo que
- *   siempre devuelve el perfil real y actualizado del usuario.
- *
- * EXPORTA:
- *   useChatStore() → { chat, cargando, mensaje, onMensajeChange,
- *                      onEnviar, onKeyPress, enviarTextoDirecto }
- */
+/*useChatStore*/
 
 import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { toast } from 'react-toastify';
 
-// ─── Estado global de módulo ──────────────────────────────────────────────────
+//  Estado global de módulo 
 let _chat     = [];
 let _cargando = false;
 
@@ -36,11 +15,11 @@ function notificar() {
   _listeners.forEach(fn => fn());
 }
 
-// ─── Flags de control de envío ────────────────────────────────────────────────
+//  Flags de control de envío 
 let _enviando    = false;
 let _ultimoEnvio = 0;
 
-// ─── Mutadores de estado ──────────────────────────────────────────────────────
+//  Mutadores de estado 
 
 function setChat(updater) {
   _chat = typeof updater === 'function' ? updater(_chat) : updater;
@@ -52,7 +31,7 @@ function setCargando(valor) {
   notificar();
 }
 
-// ─── Llamada a la API ─────────────────────────────────────────────────────────
+//  Llamada a la API 
 // Lee _chat directamente para que el historial siempre sea el más reciente,
 // incluso en retries con setTimeout (evita closures obsoletos).
 
@@ -76,7 +55,7 @@ async function llamarAPI(texto) {
   }
 }
 
-// ─── Función de envío global ──────────────────────────────────────────────────
+//  Función de envío global 
 
 async function enviarMensajeGlobal(texto) {
   if (!texto?.trim()) return;
@@ -89,7 +68,7 @@ async function enviarMensajeGlobal(texto) {
 
   setChat(prev => [...prev, { tipo: 'usuario', texto }]);
 
-  // ── IMPORTANTE: no se interceptan preguntas sobre filtros localmente.
+  //IMPORTANTE: no se interceptan preguntas sobre filtros localmente.
   // La versión anterior (RobotIA.jsx) capturaba palabras clave como "filtro",
   // "dieta", "condición" y respondía con datos cargados UNA SOLA VEZ al montar.
   // Si el usuario cambiaba sus filtros después, la respuesta era incorrecta.
@@ -123,7 +102,7 @@ async function enviarMensajeGlobal(texto) {
   }
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+//  Hook 
 
 const useChatStore = () => {
   const [, forceRender] = useState(0);

@@ -86,7 +86,7 @@
   z-index: 1;
 }
 
-/* ── Info items — translúcidos con blur, igual a la imagen objetivo ── */
+/*Info items — translúcidos con blur, igual a la imagen objetivo*/
 .info-item {
   background: rgba(180, 165, 165, 0.2);
   backdrop-filter: blur(22px) saturate(180%);

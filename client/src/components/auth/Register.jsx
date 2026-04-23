@@ -11,10 +11,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import './Register.css';
 
-/* ─── Dominios de correo permitidos ──────────────────────────
-   Solo proveedores reales y verificables. Resend puede enviar
-   a cualquier dominio, pero restringimos en el front para evitar
-   correos inventados como pito@pito.com                        */
 const DOMINIOS_PERMITIDOS = new Set([
   // Google
   'gmail.com',
@@ -48,7 +44,7 @@ const esEmailPermitido = (email) => {
   return DOMINIOS_PERMITIDOS.has(dominio);
 };
 
-/* ─── Iconos ─────────────────────────────────────────────── */
+/*  Iconos  */
 const EyeIcon = ({ open }) =>
   open ? (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -65,7 +61,7 @@ const EyeIcon = ({ open }) =>
     </svg>
   );
 
-/* ─── Aviso inline reutilizable ───────────────────────────── */
+/*  Aviso inline reutilizable  */
 const InfoIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -83,11 +79,11 @@ const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
   </div>
 );
 
-/* ─── Definición de avisos por campo ──────────────────────── */
+/*  Definición de avisos por campo  */
 const AVISOS = {
   nombre_caracteres:  { titulo: 'Solo letras.',              mensaje: 'El nombre no puede contener números ni símbolos.',                                                    variante: 'naranja' },
   email_invalido:     { titulo: 'Formato incorrecto.',       mensaje: 'Escribe un correo válido, por ejemplo: usuario@correo.com.',                                          variante: 'naranja' },
-  // ── NUEVO ──
+  //NUEVO 
   email_dominio:      { titulo: 'Proveedor no permitido.',   mensaje: 'Usa un correo de Gmail, Hotmail, Outlook, Yahoo, iCloud u otro proveedor reconocido.',                variante: 'rojo'    },
   pass_debil:         { titulo: 'Contraseña débil.',         mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.',                            variante: 'naranja' },
   passConf_mismatch:  { titulo: 'No coinciden.',             mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                                              variante: 'rojo'    },
@@ -99,7 +95,7 @@ const AVISOS = {
   altura_alta:        { titulo: 'Altura fuera de rango.',    mensaje: 'El valor máximo aceptado es 300 cm.',                                                                 variante: 'rojo'    },
 };
 
-/* ─── Calcula qué aviso mostrar para cada campo ───────────── */
+/*  Calcula qué aviso mostrar para cada campo  */
 const calcularAviso = (field, value, datos) => {
   switch (field) {
     case 'nombre': {
@@ -110,7 +106,7 @@ const calcularAviso = (field, value, datos) => {
     case 'email': {
       if (!value) return null;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'email_invalido';
-      // ── NUEVO: validar dominio ──
+      //NUEVO: validar dominio 
       if (!esEmailPermitido(value)) return 'email_dominio';
       return null;
     }
@@ -151,7 +147,7 @@ const calcularAviso = (field, value, datos) => {
   }
 };
 
-/* ─── Input numérico con flechas ──────────────────────────── */
+/*  Input numérico con flechas  */
 const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, step, disabled }) => {
   const s = parseFloat(step) || 1;
   const increment = () => {
@@ -192,7 +188,7 @@ const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, ste
   );
 };
 
-/* ─── Helpers de validación en tiempo real ────────────────── */
+/*  Helpers de validación en tiempo real  */
 const validarCampo = (field, value, datos) => {
   switch (field) {
     case 'nombre': {
@@ -202,7 +198,7 @@ const validarCampo = (field, value, datos) => {
     case 'email': {
       if (!value) return 'El correo es requerido';
       if (!validateEmail(value)) return 'Correo inválido';
-      // ── NUEVO: bloquear dominios no reconocidos ──
+      //NUEVO: bloquear dominios no reconocidos 
       if (!esEmailPermitido(value)) return 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)';
       return '';
     }
@@ -237,7 +233,7 @@ const validarCampo = (field, value, datos) => {
   }
 };
 
-/* ─── Hint de campo: muestra estado visual mientras escribe ── */
+/*  Hint de campo: muestra estado visual mientras escribe*/
 const FieldHint = ({ field, value, datos, touched }) => {
   if (!touched) return null;
 
@@ -248,7 +244,7 @@ const FieldHint = ({ field, value, datos, touched }) => {
     ],
     email: [
       { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), label: 'Formato válido (ejemplo@correo.com)' },
-      // ── NUEVO hint de dominio ──
+      //NUEVO hint de dominio 
       { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && esEmailPermitido(value), label: 'Proveedor reconocido (Gmail, Hotmail…)' },
     ],
     pass: [
@@ -295,7 +291,7 @@ const FieldHint = ({ field, value, datos, touched }) => {
   );
 };
 
-/* ─── Componente principal ────────────────────────────────── */
+/*  Componente principal  */
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -367,7 +363,7 @@ const Register = () => {
     const allTouched = Object.keys(datos).reduce((acc, k) => ({ ...acc, [k]: true }), {});
     setTouched(allTouched);
 
-    // ── NUEVO: verificar dominio antes de llamar al backend ──
+    //NUEVO: verificar dominio antes de llamar al backend 
     if (datos.email && !esEmailPermitido(datos.email)) {
       setErrors((prev) => ({ ...prev, email: 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)' }));
       setAvisos((prev) => ({ ...prev, email: 'email_dominio' }));
@@ -423,7 +419,7 @@ const Register = () => {
     <div className="vistaAuth">
 
       <div className="authCard">
-        {/* ── Header ── */}
+        {/*Header*/}
         <div className="auth-brand">
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="2">

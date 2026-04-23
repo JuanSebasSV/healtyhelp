@@ -128,7 +128,7 @@
 .terms-tb-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); }
 .terms-tb-btn.active { background: rgba(79,119,45,0.3); color: #a7d588; }
 .terms-tb-btn svg { stroke: currentColor; }
-/* ── Dropdown personalizado de bloques ── */
+/*Dropdown personalizado de bloques*/
 .terms-block-dropdown {
   position: relative;
   flex-shrink: 0;

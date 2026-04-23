@@ -12,17 +12,17 @@ const {
   quitarImagenResena,
 } = require('../controllers/recipeController');
 
-// ── Públicas ──
+//  Públicas 
 router.get('/',    getAllRecipes);
 router.get('/:id', getRecipeById);
 
-// ── Reseñas (protect pero NO admin) ──
+//  Reseñas
 router.get   ('/:id/resenas',                              getResenas);
 
-// crearResena: acepta JSON plano o multipart con campo "imagen"
+// crearResena
 router.post  ('/:id/resenas',
   protect,
-  uploadResena.single('imagen'),   // si no hay fichero, next() igual
+  uploadResena.single('imagen'),
   crearResena
 );
 
@@ -30,8 +30,7 @@ router.put   ('/:id/resenas',                protect,      editarResena);
 router.delete('/:id/resenas/:resenaId',      protect,      borrarResena);
 router.post  ('/:id/resenas/:resenaId/voto', protect,      votarResena);
 
-// ── Imagen en reseña existente ──
-// IMPORTANTE: esta ruta fija debe ir ANTES de /:id/resenas/:resenaId
+//  Imagen en reseña existente 
 router.delete('/:id/resenas/imagen', protect, quitarImagenResena);
 
 router.post(
@@ -41,11 +40,11 @@ router.post(
   subirImagenResena
 );
 
-// ── Respuestas ──
+//  Respuestas 
 router.post  ('/:id/resenas/:resenaId/respuestas',            protect, responderResena);
 router.delete('/:id/resenas/:resenaId/respuestas/:respId',    protect, borrarRespuesta);
 
-// ── Admin (rutas fijas ANTES de /:id para evitar colisiones) ──
+//  Admin (rutas fijas ANTES de /:id para evitar colisiones) 
 router.use(protect);
 router.use(admin);
 router.get   ('/export/all',      exportRecipes);

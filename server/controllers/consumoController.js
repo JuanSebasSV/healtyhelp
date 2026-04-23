@@ -1,7 +1,7 @@
 const Consumo  = require('../models/Consumo');
 const Recipe   = require('../models/Recipe');
 
-// ─── Utilidad: fecha y hora actual en Bogotá ───────────────────────────────
+//  Utilidad: fecha y hora actual en Bogotá 
 const bogotaAhora = () => {
   const ahora = new Date();
   const offsetMs = -5 * 60 * 60 * 1000;
@@ -20,23 +20,19 @@ const bogotaAhora = () => {
   };
 };
 
-// ─── Determinar tipo según hora Bogotá ─────────────────────────────────────
+//  Determinar tipo según hora Bogotá 
 const tipoSegunHora = (hora24) => {
   if (hora24 >= 6  && hora24 < 12) return 'desayuno';
   if (hora24 >= 12 && hora24 < 17) return 'almuerzo';
   return 'cena';
 };
 
-// ─── Tipos válidos (incluye snack) ─────────────────────────────────────────
-// ✅ NUEVO: 'snack' es un tipo válido
+//  Tipos válidos (incluye snack) 
 const TIPOS_VALIDOS = ['desayuno', 'almuerzo', 'cena', 'snack'];
 
-// ─── Límite de snacks por día ──────────────────────────────────────────────
+//  Límite de snacks por día 
 const MAX_SNACKS_DIA = 3;
 
-// ─── Helper: verificar límite de duplicados ────────────────────────────────
-// Para desayuno/almuerzo/cena: sin límite — el usuario decide qué come cuándo.
-// Para snack: máximo MAX_SNACKS_DIA por día.
 const verificarLimite = async (userId, fechaBogota, tipo) => {
   if (tipo === 'snack') {
     const count = await Consumo.countDocuments({ userId, fechaBogota, tipo: 'snack' });
@@ -48,7 +44,7 @@ const verificarLimite = async (userId, fechaBogota, tipo) => {
   return { bloqueado: false };
 };
 
-// ─── Helper: extraer nutri de forma segura ─────────────────────────────────
+//  Helper: extraer nutri de forma segura 
 const extraerNutri = (receta) => {
   try {
     if (!receta.nutri) return {};
@@ -58,10 +54,10 @@ const extraerNutri = (receta) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // POST /api/consumos/:recetaId — Registrar consumo rápido (desde BtnConsumo)
 // Detecta el tipo según la hora actual en Bogotá.
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.registrarConsumo = async (req, res) => {
   try {
     const { recetaId } = req.params;
@@ -99,9 +95,9 @@ exports.registrarConsumo = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // DELETE /api/consumos/:consumoId — Cancelar consumo
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.cancelarConsumo = async (req, res) => {
   try {
     if (!req.params.consumoId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -127,10 +123,10 @@ exports.cancelarConsumo = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // PUT /api/consumos/:consumoId/tipo — Editar tipo
 // ✅ NUEVO: ahora acepta 'snack' como tipo válido
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.editarTipo = async (req, res) => {
   try {
     const { tipo } = req.body;
@@ -191,12 +187,12 @@ exports.editarTipo = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // POST /api/consumos/manual — Añadir consumo manual
 // Body: { recetaId, tipo, fecha }
 // ✅ El usuario elige cualquier receta en cualquier tipo — sin restricción por cat.
 // ✅ 'snack' permite hasta MAX_SNACKS_DIA por día.
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.agregarManual = async (req, res) => {
   try {
     const { recetaId, tipo, fecha } = req.body;
@@ -240,9 +236,9 @@ exports.agregarManual = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/hoy
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getHoy = async (req, res) => {
   try {
     const { fecha } = bogotaAhora();
@@ -257,9 +253,9 @@ exports.getHoy = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/dias
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getDiasConConsumos = async (req, res) => {
   try {
     const dias = await Consumo.distinct('fechaBogota', { userId: req.user._id });
@@ -270,9 +266,9 @@ exports.getDiasConConsumos = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/dia/:fecha
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getDia = async (req, res) => {
   try {
     const consumos = await Consumo.find({
@@ -286,9 +282,9 @@ exports.getDia = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/semana/:lunes
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getSemana = async (req, res) => {
   try {
     const lunes = req.params.lunes;
@@ -307,9 +303,9 @@ exports.getSemana = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/mes/:yearMes
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getMes = async (req, res) => {
   try {
     const yearMes = req.params.yearMes;
@@ -329,11 +325,11 @@ exports.getMes = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 // GET /api/consumos/receta/:recetaId/hoy
 // ✅ NUEVO: también considera snacks (no bloquea si ya hay snacks, solo si
 //    el tipo automático de la hora está lleno)
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 exports.getConsumoHoyPorReceta = async (req, res) => {
   try {
     const { fecha, hora24 } = bogotaAhora();

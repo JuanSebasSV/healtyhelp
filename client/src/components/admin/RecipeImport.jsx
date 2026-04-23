@@ -5,7 +5,7 @@ import './RecipeImport.css';
 
 const STORAGE_KEY = 'healtyhelp_import_draft';
 
-// ── Secciones nutricionales para el editor modal ──
+// Secciones nutricionales
 const NUTRI_SECCIONES = [
   {
     titulo: '🔥 Macros principales',
@@ -57,7 +57,7 @@ const NUTRI_SECCIONES = [
   },
 ];
 
-// ── Modal editor nutricional ──
+// Modal editor nutricional 
 const NutriEditorModal = ({ receta, onGuardar, onCerrar }) => {
   const [nutri, setNutri]           = useState({ ...(receta.nutri || {}) });
   const [seccionAbierta, setSeccion]= useState(0);
@@ -121,7 +121,7 @@ const NutriEditorModal = ({ receta, onGuardar, onCerrar }) => {
   );
 };
 
-// ── Tarjeta de revisión individual ──
+// Tarjeta de revisión individual 
 const ReviewCard = ({ receta, index, onChange }) => {
   const [editandoNutri, setEditandoNutri] = useState(false);
   const nutri = receta.nutri || {};
@@ -211,7 +211,7 @@ const ReviewCard = ({ receta, index, onChange }) => {
   );
 };
 
-// ── Componente principal ──
+//  Componente principal 
 const RecipeImport = ({ onSuccess }) => {
   const [recetas,    setRecetas]    = useState(null);   // array de recetas en revisión
   const [mode,       setMode]       = useState('add');
@@ -220,7 +220,7 @@ const RecipeImport = ({ onSuccess }) => {
   const [hasDraft,   setHasDraft]   = useState(false);
   const [paso,       setPaso]       = useState('upload'); // 'upload' | 'review'
 
-  // ── Recuperar borrador al montar ──
+  //  Recuperar borrador al montar 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -239,7 +239,7 @@ const RecipeImport = ({ onSuccess }) => {
     }
   }, []);
 
-  // ── Guardar en localStorage al cambiar ──
+  //  Guardar en localStorage al cambiar 
   useEffect(() => {
     if (recetas && recetas.length > 0) {
       try {
@@ -248,7 +248,7 @@ const RecipeImport = ({ onSuccess }) => {
     }
   }, [recetas, mode]);
 
-  // ── Drag & drop ──
+  //  Drag & drop 
   const handleDrag = e => {
     e.preventDefault(); e.stopPropagation();
     setDragActive(e.type === 'dragenter' || e.type === 'dragover');
@@ -285,7 +285,7 @@ const RecipeImport = ({ onSuccess }) => {
     reader.readAsText(file);
   };
 
-  // ── Editar campo de una receta ──
+  //  Editar campo de una receta 
   const handleChange = (index, field, value) => {
     setRecetas(prev => {
       const copia = [...prev];
@@ -294,7 +294,7 @@ const RecipeImport = ({ onSuccess }) => {
     });
   };
 
-  // ── Descartar borrador ──
+  //  Descartar borrador 
   const clearDraft = () => {
     localStorage.removeItem(STORAGE_KEY);
     setRecetas(null);
@@ -303,7 +303,7 @@ const RecipeImport = ({ onSuccess }) => {
     toast.info('🗑️ Borrador descartado');
   };
 
-  // ── Importar a la BD ──
+  //  Importar a la BD 
   const handleImport = async () => {
     if (!recetas || recetas.length === 0) return;
 
@@ -338,9 +338,7 @@ const RecipeImport = ({ onSuccess }) => {
     }
   };
 
-  // ══════════════════════════════════════════
   // RENDER — PASO UPLOAD
-  // ══════════════════════════════════════════
   if (paso === 'upload') {
     return (
       <div className="recipe-import">
@@ -400,9 +398,7 @@ const RecipeImport = ({ onSuccess }) => {
     );
   }
 
-  // ══════════════════════════════════════════
   // RENDER — PASO REVIEW
-  // ══════════════════════════════════════════
   const sinImagen = recetas.filter(r => !r.img).length;
 
   return (

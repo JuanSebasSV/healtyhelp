@@ -8,9 +8,7 @@ const Recipe   = require('../models/Recipe.js');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// ─── Caché de configuración del bot (prompt base) ────────────────────────────
-// El perfil del usuario NO se cachea — se consulta en cada request
-// para reflejar cambios inmediatamente.
+//  Caché de configuración del bot (prompt base) 
 let _configCache   = null;
 let _configCacheAt = 0;
 const CONFIG_TTL_MS = 60 * 1000; // 1 minuto
@@ -24,7 +22,7 @@ async function getConfig() {
   return config;
 }
 
-// ─── Retry con backoff exponencial para errores de Gemini ────────────────────
+//  Retry con backoff exponencial para errores de Gemini 
 async function callGeminiWithRetry(chat, message, maxRetries = 3) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -43,9 +41,6 @@ async function callGeminiWithRetry(chat, message, maxRetries = 3) {
   }
 }
 
-// ─── FIX C2: filtro duro de alergias en el backend ───────────────────────────
-// Gemini puede ignorar instrucciones en el prompt. Este filtro garantiza
-// que ninguna receta que contenga un ingrediente alérgeno llegue al modelo.
 function filtrarPorAlergias(recetas, alergias) {
   if (!alergias?.length) return recetas;
 
@@ -61,7 +56,7 @@ function filtrarPorAlergias(recetas, alergias) {
   });
 }
 
-// ─── POST /chat ───────────────────────────────────────────────────────────────
+//  POST /chat 
 
 router.post('/', protect, async (req, res) => {
   try {
@@ -141,7 +136,6 @@ REGLAS:
     res.json({ reply });
 
   } catch (error) {
-    // FIX W3: log con detalle para depuración en producción
     console.error('❌ Error en POST /chat:', error?.message ?? error);
     if (error.status === 429 || error.status === 503) {
       return res.status(429).json({
@@ -153,7 +147,7 @@ REGLAS:
   }
 });
 
-// ─── GET /chat/filtros ────────────────────────────────────────────────────────
+//  GET /chat/filtros 
 
 router.get('/filtros', protect, async (req, res) => {
   try {
@@ -167,13 +161,12 @@ router.get('/filtros', protect, async (req, res) => {
       preferencias: user.healthProfile?.preferencias || [],
     });
   } catch (err) {
-    // FIX W3: siempre loguear el error real
     console.error('❌ Error en GET /filtros:', err?.message ?? err);
     res.status(500).json({ error: 'Error al obtener filtros' });
   }
 });
 
-// ─── PUT /chat/health-profile ─────────────────────────────────────────────────
+//  PUT /chat/health-profile 
 
 router.put('/health-profile', protect, async (req, res) => {
   try {
@@ -203,7 +196,7 @@ router.put('/health-profile', protect, async (req, res) => {
   }
 });
 
-// ─── GET /chat/prompt ─────────────────────────────────────────────────────────
+//  GET /chat/prompt 
 
 router.get('/prompt', protect, async (req, res) => {
   try {
@@ -215,7 +208,7 @@ router.get('/prompt', protect, async (req, res) => {
   }
 });
 
-// ─── PUT /chat/prompt ─────────────────────────────────────────────────────────
+//  PUT /chat/prompt 
 
 router.put('/prompt', protect, async (req, res) => {
   try {
@@ -233,8 +226,5 @@ router.put('/prompt', protect, async (req, res) => {
     res.status(500).json({ error: 'Error guardando el prompt' });
   }
 });
-
-// NOTA: La ruta /debug-perfil fue eliminada (FIX W4).
-// Exponía email, userId y healthProfile completo a cualquier usuario autenticado.
 
 module.exports = router;

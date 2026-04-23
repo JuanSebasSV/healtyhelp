@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RecipeForm.css';
 
-// ── Iconos memoizados para evitar re-renders innecesarios ─────────────────────
+//  Iconos
 const IcoInfo  = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>);
 IcoInfo.displayName = 'IcoInfo';
 const IcoSalud = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'7px',flexShrink:0}}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>);
@@ -23,7 +23,7 @@ IcoSave.displayName = 'IcoSave';
 const IcoEdit2 = memo(() => <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px'}}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>);
 IcoEdit2.displayName = 'IcoEdit2';
 
-// ── Datos estáticos fuera del componente (no se recrean en cada render) ───────
+//Datos estáticos fuera del componente (no se recrean en cada render)
 const CATEGORIAS = [
   { id: 'desayuno',       nombre: 'Desayuno' },
   { id: 'almuerzo',       nombre: 'Almuerzo' },
@@ -79,7 +79,7 @@ const DRAFT_KEY = 'recipe_form_draft';
 
 const NUTRI_VACIA = { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 };
 
-// NUEVA FUNCIONALIDAD: tiempoMinutos añadido al estado inicial
+//tiempoMinutos
 const FORM_INICIAL = {
   nombre: '', desc: '', img: '', cat: 'almuerzo',
   salud: [], puntos: 0, ingredientes: [''], pasos: [''],
@@ -87,11 +87,9 @@ const FORM_INICIAL = {
   nutri: { ...NUTRI_VACIA },
 };
 
-// ── NumeroInput: FIX principal — value nunca será undefined ──────────────────
 const NumeroInput = memo(({ value, onChange, min, max, step, name, placeholder }) => {
   const s = parseFloat(step) || 1;
 
-  // BUGFIX: garantizar que value nunca sea undefined/null → evita controlled→uncontrolled
   const safeValue = value ?? '';
 
   const increment = useCallback(() => {
@@ -132,7 +130,7 @@ const NumeroInput = memo(({ value, onChange, min, max, step, name, placeholder }
 });
 NumeroInput.displayName = 'NumeroInput';
 
-// ── RecipeForm ────────────────────────────────────────────────────────────────
+//RecipeForm
 const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const isEditing = !!recipe;
 
@@ -155,7 +153,6 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     if (!recipe) return;
     setFormData({
       ...recipe,
-      // BUGFIX: garantizar que campos numéricos nunca sean undefined
       puntos:        recipe.puntos        ?? 0,
       tiempoMinutos: recipe.tiempoMinutos ?? 0,
       ingredientes:  recipe.ingredientes?.length ? recipe.ingredientes : [''],
@@ -170,7 +167,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
   }, [formData, isEditing]);
 
-  // ── Handlers con useCallback ──────────────────────────────────────────────
+  //Handlers con useCallback
   const handleChange = useCallback(
     (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value })),
     []
@@ -293,7 +290,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
                 ))}
               </select>
             </div>
-            {/* NUEVA FUNCIONALIDAD: campo Tiempo de preparación */}
+            {/*ampo Tiempo de preparación */}
             <div className="form-group">
               <label>Tiempo (minutos)</label>
               <NumeroInput

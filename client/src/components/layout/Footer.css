@@ -25,7 +25,7 @@
   margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
-/* ── Títulos ── */
+/*Títulos*/
 .footerSeccion h3 {
   font-size: 1.15rem;
   font-family: 'Georgia', serif;
@@ -44,7 +44,7 @@
   margin-bottom: 1rem;
 }
 
-/* ── Párrafos ── */
+/*Párrafos*/
 .footerSeccion p {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.9rem;
@@ -54,7 +54,7 @@
   align-items: center;
 }
 
-/* ── Lista de enlaces ── */
+/*Lista de enlaces*/
 .footerSeccion ul {
   list-style: none;
   padding: 0;
@@ -88,7 +88,7 @@
   opacity: 0.5;
 }
 
-/* ── Copyright ── */
+/*Copyright*/
 .footerCopy {
   max-width: 1200px;
   margin: 0 auto;
@@ -104,7 +104,7 @@
   color: rgba(180, 210, 160, 0.35);
 }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 640px) {
   .footerContenido { grid-template-columns: 1fr; }
 

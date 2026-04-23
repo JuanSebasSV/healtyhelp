@@ -14,7 +14,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 
-// ─── Helpers de cookie ────────────────────────────────────────────────────────
+//  Helpers de cookie 
 
 export const COOKIE_CONSENT_KEY = 'hh_cookie_consent';
 export const TERMS_ACCEPTED_KEY = 'hh_terms_accepted';
@@ -41,7 +41,7 @@ export const setPersisted = (key, value) => {
   localStorage.setItem(key, value);
 };
 
-// ─── Hook principal ───────────────────────────────────────────────────────────
+//  Hook principal 
 
 /**
  * @param {object|null} user   — el usuario autenticado (o null si no hay sesión)
@@ -54,7 +54,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
   const [cookiesReady,     setCookiesReady]     = useState(false);
   const [esActualizacion,  setEsActualizacion]  = useState(false);
 
-  // ── Paso 1: decidir si mostrar el banner de cookies ───────────────────────
+  //  Paso 1: decidir si mostrar el banner de cookies 
   useEffect(() => {
     const cookieConsent = getPersistedValue(COOKIE_CONSENT_KEY);
     if (cookieConsent === 'accepted') {
@@ -64,7 +64,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
     }
   }, []);
 
-  // ── Paso 2: cuando las cookies están listas, evaluar los términos ─────────
+  //  Paso 2: cuando las cookies están listas, evaluar los términos 
   useEffect(() => {
     if (!cookiesReady || !activeTermsVersion) return;
     evaluarTerminos();
@@ -74,7 +74,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
     if (!activeTermsVersion) return;
 
     if (user) {
-      // ── Usuario autenticado: la fuente de verdad es la BD ──────────────
+      //  Usuario autenticado: la fuente de verdad es la BD 
       // El objeto `user` debe incluir `termsAccepted` y `termsVersion`
       if (!user.termsAccepted || user.termsVersion !== activeTermsVersion) {
         setEsActualizacion(
@@ -87,7 +87,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
         setPersisted(TERMS_VERSION_KEY, activeTermsVersion);
       }
     } else {
-      // ── Usuario anónimo: la fuente de verdad son cookies + localStorage ─
+      //  Usuario anónimo: la fuente de verdad son cookies + localStorage 
       const localVersion  = getPersistedValue(TERMS_VERSION_KEY);
       const localAccepted = getPersistedValue(TERMS_ACCEPTED_KEY);
 
@@ -100,7 +100,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
     }
   }, [user, activeTermsVersion]);
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
+  //  Handlers 
 
   const handleCookiesAceptadas = useCallback(() => {
     setPersisted(COOKIE_CONSENT_KEY, 'accepted');

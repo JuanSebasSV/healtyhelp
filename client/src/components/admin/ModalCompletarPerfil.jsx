@@ -3,9 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './ModalCompletarPerfil.css';
 
-/* ═══════════════════════════════════════════════════════════════
-   AVISOS — misma estructura que Register.jsx
-   ═══════════════════════════════════════════════════════════════ */
+/*AVISOS*/
 const AVISOS = {
   age_menor:    { titulo: 'Edad mínima.',          mensaje: 'Debes tener al menos 18 años.',                                        variante: 'naranja' },
   age_invalida: { titulo: 'Edad inválida.',         mensaje: 'Ingresa una edad entre 18 y 100 años.',                               variante: 'rojo'    },
@@ -15,7 +13,7 @@ const AVISOS = {
   height_alta:  { titulo: 'Altura fuera de rango.', mensaje: 'El valor máximo aceptado es 210 cm.',                                variante: 'rojo'    },
 };
 
-/* ── Calcula qué aviso mostrar por campo ── */
+/*Calcula qué aviso mostrar por campo*/
 const calcularAviso = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
@@ -45,7 +43,7 @@ const calcularAviso = (field, value) => {
   }
 };
 
-/* ── Validación de error por campo ── */
+/*Validación de error por campo*/
 const validarCampo = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
@@ -70,9 +68,7 @@ const validarCampo = (field, value) => {
   }
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   FIELD HINT — checks en tiempo real (igual que Register)
-   ═══════════════════════════════════════════════════════════════ */
+/*FIELD HINT*/
 const FieldHint = ({ field, value, touched }) => {
   if (!touched) return null;
 
@@ -112,9 +108,7 @@ const FieldHint = ({ field, value, touched }) => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   AVISO INLINE — idéntico al de Register
-   ═══════════════════════════════════════════════════════════════ */
+/*AVISO INLINE*/
 const InfoIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -132,9 +126,7 @@ const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
   </div>
 );
 
-/* ═══════════════════════════════════════════════════════════════
-   NUMERO INPUT — igual que Register
-   ═══════════════════════════════════════════════════════════════ */
+/*NUMERO INPUT — igual que Register*/
 const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, step }) => {
   const s = parseFloat(step) || 1;
   const increment = () => {
@@ -173,9 +165,7 @@ const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, ste
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   COMPONENTE PRINCIPAL
-   ═══════════════════════════════════════════════════════════════ */
+/*COMPONENTE PRINCIPAL*/
 const ModalCompletarPerfil = ({ onCompletado, user }) => {
   const [form, setForm]       = useState({ age: String(user?.age || ''), weight: '', height: '' });
   const [errors, setErrors]   = useState({});
@@ -183,7 +173,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
   const [avisos, setAvisos]   = useState({});
   const [cargando, setCargando] = useState(false);
 
-  /* ── Cambio en tiempo real ── */
+  /*Cambio en tiempo real*/
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -194,14 +184,14 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     setAvisos(prev => ({ ...prev, [name]: calcularAviso(name, value) }));
   };
 
-  /* ── Blur: marcar como tocado y validar ── */
+  /*Blur: marcar como tocado y validar*/
   const handleBlur = (name) => {
     setTouched(prev => ({ ...prev, [name]: true }));
     setErrors(prev => ({ ...prev, [name]: validarCampo(name, form[name]) }));
     setAvisos(prev => ({ ...prev, [name]: calcularAviso(name, form[name]) }));
   };
 
-  /* ── Submit ── */
+  /*Submit*/
   const handleSubmit = async () => {
     setTouched({ age: true, weight: true, height: true });
 
@@ -228,7 +218,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     }
   };
 
-  /* ── Helper aviso ── */
+  /*Helper aviso*/
   const renderAviso = (field) => {
     const key = avisos[field];
     if (!key || !AVISOS[key]) return null;
@@ -240,7 +230,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     <div className="completar-overlay">
       <div className="completar-modal">
 
-        {/* ── Brand — idéntico a Register ── */}
+        {/*Brand*/}
         <div className="completar-header">
           <div className="completar-brand">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
@@ -269,7 +259,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
           </p>
         </div>
 
-        {/* ── Campos ── */}
+        {/*Campos*/}
         <div className="completar-body">
 
           {/* Edad */}

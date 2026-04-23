@@ -3,14 +3,6 @@ import useChatStore from '../../hooks/useChatStore';
 import ChatCore from '../inicio/ChatCore';
 import './VistaChatbot.css';
 
-// ─── CAMBIOS RESPECTO A LA VERSIÓN ANTERIOR ───────────────────────────────────
-//
-// Ya no depende de chatProps pasado desde App.
-// Ahora llama directamente a useChatStore, que comparte el mismo estado de
-// módulo que RobotIA. El historial es idéntico en ambas vistas — al expandir
-// o minimizar, la conversación continúa exactamente donde estaba.
-
-/* ── SVGs del panel lateral ───────────────────────────────── */
 const IconoHoja = ({ size = 20 }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -65,7 +57,7 @@ const capacidades = [
   { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',     desc: 'Basados en tu perfil de salud' },
 ];
 
-/* ── Componente ──────────────────────────────────────────── */
+/*Componente  */
 
 const VistaChatbot = ({ abrirFlotante }) => {
   const navigate = useNavigate();

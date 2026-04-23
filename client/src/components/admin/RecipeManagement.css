@@ -1,21 +1,21 @@
-/* ============================================
+/*
    RecipeManagement.css
    Contenedor de la sección de recetas dentro
    del Dashboard. NO tiene header propio porque
    ya está en el Dashboard padre.
-   ============================================ */
+   */
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Contenedor raíz ── */
+/*Contenedor raíz*/
 .recipe-management-content {
   animation: fadeIn 0.35s ease;
 }
 
-/* ── Estadísticas de recetas (mini cards) ── */
+/*Estadísticas de recetas (mini cards)*/
 .recipe-stats {
   display: flex;
   flex-wrap: wrap;
@@ -62,7 +62,7 @@
 .modo-oscuro .recipe-stats .stat-label { color: rgba(180, 210, 160, 0.5); }
 .modo-oscuro .recipe-stats .stat-value { color: rgba(210, 245, 185, 0.97); }
 
-/* ── Tabs internos (Lista / Importar / Crear / Exportar) ── */
+/*Tabs internos (Lista / Importar / Crear / Exportar)*/
 .recipe-tabs {
   display: flex;
   gap: 0.5rem;
@@ -125,7 +125,7 @@
   color: rgba(210, 245, 185, 0.97);
 }
 
-/* ── Contenido (la vista activa) ── */
+/*Contenido (la vista activa)*/
 .recipe-content {
   /* Glassmorphism suave para el panel de contenido */
   background: rgba(255, 255, 255, 0.06);
@@ -141,7 +141,7 @@
   border-color: rgba(79, 119, 45, 0.2);
 }
 
-/* ── Loading ── */
+/*Loading*/
 .loading {
   text-align: center;
   padding: 3rem;
@@ -150,7 +150,7 @@
 }
 .modo-oscuro .loading { color: rgba(180, 210, 160, 0.6); }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 768px) {
   .recipe-content { padding: 1.25rem; }
   .recipe-tabs { gap: 0.4rem; }
@@ -158,14 +158,14 @@
   .recipe-stats .stat-card { min-width: calc(50% - 0.5rem); }
 }
 
-/* ── Tabs con SVG alineado ── */
+/*Tabs con SVG alineado*/
 .recipe-tabs button {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ── Fix visibilidad SVGs en tabs ── */
+/*Fix visibilidad SVGs en tabs*/
 .recipe-tabs button svg {
   stroke: currentColor;
   opacity: 0.9;

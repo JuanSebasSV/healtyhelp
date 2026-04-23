@@ -13,7 +13,7 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* ── Botones período ── */
+/*Botones período*/
 .seg-periodo-btns {
   display: flex;
   gap: 1rem;
@@ -45,7 +45,7 @@
   box-shadow: 0 4px 20px rgba(247, 127, 0, 0.3);
 }
 
-/* ── Layout dividido ── */
+/*Layout dividido*/
 .seg-layout {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -67,7 +67,7 @@
 .seg-col::-webkit-scrollbar { display: none; }
 .seg-col { scrollbar-width: none; }
 
-/* ── Modo oscuro ── */
+/*Modo oscuro*/
 .modo-oscuro .seg-col {
   background: rgba(15, 35, 20, 0.55);
   border-color: rgba(79, 119, 45, 0.25);
@@ -86,7 +86,7 @@
   color: rgba(167, 213, 136, 0.95);
 }
 
-/* ── Selector scroll ── */
+/*Selector scroll*/
 .seg-selector-scroll {
   display: flex;
   flex-direction: column;
@@ -121,7 +121,7 @@
   color: var(--naranja);
 }
 
-/* ── Bloque de día ── */
+/*Bloque de día*/
 .seg-dia-bloque {
   margin-bottom: 1.5rem;
 }
@@ -142,14 +142,14 @@
   gap: 0.6rem;
 }
 
-/* ── Sección por tipo ── */
+/*Sección por tipo*/
 .seg-tipo-seccion {
   display: flex;
   flex-direction: column;
   margin-bottom: 0.25rem;
 }
 
-/* ── Cabecera de sección (título tipo) ── */
+/*Cabecera de sección (título tipo)*/
 .seg-snacks-titulo {
   display: flex;
   align-items: center;
@@ -161,7 +161,7 @@
   margin-top: 0.25rem;
 }
 
-/* ── Tarjeta consumo ── */
+/*Tarjeta consumo*/
 .seg-consumo-card {
   display: flex;
   align-items: center;
@@ -226,7 +226,7 @@
   font-weight: 700;
 }
 
-/* ── Acciones ── */
+/*Acciones*/
 .seg-consumo-acciones { flex-shrink: 0; }
 
 .seg-acciones-row {
@@ -272,7 +272,7 @@
   color: var(--blanco-puro);
 }
 
-/* ── Selector de tipo al editar ── */
+/*Selector de tipo al editar*/
 .seg-tipo-selector {
   display: flex;
   gap: 0.35rem;
@@ -306,7 +306,7 @@
   cursor: pointer;
 }
 
-/* ── Slot vacío ── */
+/*Slot vacío*/
 .seg-consumo-vacio {
   display: flex;
   align-items: center;
@@ -339,7 +339,7 @@
   color: var(--blanco-puro);
 }
 
-/* ── Límite snacks ── */
+/*Límite snacks*/
 .seg-snacks-limite {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.35);
@@ -347,7 +347,7 @@
   padding: 0.4rem 0;
 }
 
-/* ── Estados ── */
+/*Estados*/
 .seg-estado {
   text-align: center;
   color: rgba(255, 255, 255, 0.65);
@@ -368,7 +368,7 @@
 }
 .seg-vacio-total strong { color: var(--naranja); }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 968px) {
   .seg-layout {
     grid-template-columns: 1fr;
@@ -378,7 +378,7 @@
   }
 }
 
-/* ── Iconos SVG ── */
+/*Iconos SVG*/
 .seg-tipo-ico {
   width: 14px;
   height: 14px;

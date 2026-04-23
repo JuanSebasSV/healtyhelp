@@ -1,7 +1,4 @@
-/* ============================================
-   RecipeImport.css
-   Vive dentro de .recipe-content (glassmorphism)
-   ============================================ */
+/*RecipeImport.css*/
 
 .recipe-import {
   max-width: 900px;
@@ -18,9 +15,7 @@
 }
 .modo-oscuro .recipe-import h2 { color: rgba(210,245,185,0.97); }
 
-/* ════════════════════════════════
-   BANNER BORRADOR
-════════════════════════════════ */
+/*BANNER BORRADOR*/
 .draft-banner {
   display: flex;
   align-items: center;
@@ -89,9 +84,7 @@
   color: var(--rojo-rosa);
 }
 
-/* ════════════════════════════════
-   INSTRUCCIONES / MODO
-════════════════════════════════ */
+/*INSTRUCCIONES*/
 .import-instructions {
   background: rgba(0,0,0,0.2);
   border: 1px solid rgba(255,255,255,0.1);
@@ -146,9 +139,7 @@
 .modo-oscuro .import-options label.active { background: rgba(79,119,45,0.28); border-color: rgba(79,119,45,0.5); }
 .modo-oscuro .import-options span { color: rgba(210,245,185,0.8); }
 
-/* ════════════════════════════════
-   DROPZONE
-════════════════════════════════ */
+/*DROPZONE*/
 .file-dropzone {
   border: 2.5px dashed rgba(255,255,255,0.2);
   border-radius: 16px;
@@ -188,9 +179,7 @@
 .file-dropzone.active .file-label span { color: rgba(255,255,255,0.95); }
 .modo-oscuro .file-dropzone { border-color: rgba(79,119,45,0.25); }
 
-/* ════════════════════════════════
-   CABECERA REVISIÓN
-════════════════════════════════ */
+/*CABECERA REVISIÓN*/
 .review-header {
   display: flex;
   align-items: center;
@@ -241,9 +230,7 @@
   font-weight: 600;
 }
 
-/* ════════════════════════════════
-   GRID DE TARJETAS DE REVISIÓN
-════════════════════════════════ */
+/*GRID DE TARJETAS DE REVISIÓN*/
 .review-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -421,9 +408,7 @@
 }
 .modo-oscuro .review-nutri-resumen { background: rgba(0,0,0,0.3); }
 
-/* ════════════════════════════════
-   BOTÓN IMPORTAR
-════════════════════════════════ */
+/*BOTÓN IMPORTAR*/
 .btn-import {
   width: 100%;
   padding: 1rem;
@@ -449,9 +434,7 @@
   box-shadow: none;
 }
 
-/* ════════════════════════════════
-   MODAL EDITOR NUTRICIONAL
-════════════════════════════════ */
+/*MODAL EDITOR NUTRICIONAL*/
 .nutri-editor-overlay {
   position: fixed;
   inset: 0;
@@ -642,9 +625,7 @@
   transform: translateY(-1px);
 }
 
-/* ════════════════════════════════
-   RESPONSIVE
-════════════════════════════════ */
+/*RESPONSIVE*/
 @media (max-width: 768px) {
   .import-options { flex-direction: column; }
   .import-options label { min-width: 100%; }

@@ -5,12 +5,7 @@ const Consumo = require('../models/Consumo');
 const User    = require('../models/User');
 const { generarRecomendaciones } = require('../utils/motorRecomendaciones');
 
-/**
- * GET /api/recomendaciones/filtros
- * Devuelve SOLO condiciones y categorias del usuario.
- * No devuelve alergias ni preferencias — esos campos no pertenecen
- * al sistema de filtros de recomendaciones y causaban datos fantasma.
- */
+// GET /api/recomendaciones/filtros
 router.get('/filtros', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
@@ -27,11 +22,7 @@ router.get('/filtros', protect, async (req, res) => {
   }
 });
 
-/**
- * GET /api/recomendaciones
- * El motor lee SOLO healthProfile.condiciones y healthProfile.categorias —
- * nunca alergias, preferencias, cookies ni estado del cliente.
- */
+// GET /api/recomendaciones
 router.get('/', protect, async (req, res) => {
   try {
     const usuario = await User.findById(req.user._id)

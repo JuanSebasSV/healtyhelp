@@ -4,9 +4,9 @@ import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 
-/* ─────────────────────────────────────────────
+/* 
    Modal enviar mensaje
-───────────────────────────────────────────── */
+ */
 const ModalMensaje = ({ user: target, onClose }) => {
   const [asunto,   setAsunto]   = useState('');
   const [mensaje,  setMensaje]  = useState('');
@@ -114,9 +114,9 @@ const ModalMensaje = ({ user: target, onClose }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
+/* 
    Modal de baneo
-───────────────────────────────────────────── */
+ */
 const ModalBaneo = ({ user: target, onClose, onBan }) => {
   const [motivo,   setMotivo]   = useState('');
   const [tipo,     setTipo]     = useState('dias'); // 'dias' | 'permanente'
@@ -217,9 +217,9 @@ const ModalBaneo = ({ user: target, onClose, onBan }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
+/* 
    Componente principal UserList
-───────────────────────────────────────────── */
+ */
 const UserList = ({ users, onDelete, onChangeRole }) => {
   const { user: currentUser } = useAuth();
   const [modalBaneo,    setModalBaneo]    = useState(null);
@@ -312,7 +312,7 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
         </h2>
       </div>
 
-      {/* ── Tarjetas móvil ── */}
+      {/*Tarjetas móvil*/}
       <div className="user-cards-movil">
         {users.map((user) => {
           const targetId      = user._id || user.id;
@@ -424,7 +424,7 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
         })}
       </div>
 
-      {/* ── Tabla desktop ── */}
+      {/*Tabla desktop*/}
       <div className="table-container">
         <table className="user-table">
           <thead>

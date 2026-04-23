@@ -242,7 +242,7 @@ const UserProfile = () => {
 
       <div className="perfil-contenedor">
 
-        {/* ── Sidebar ── */}
+        {/*Sidebar*/}
         <div className="perfil-sidebar">
           <div className="perfil-identidad">
 
@@ -361,7 +361,7 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* ── Contenido principal ── */}
+        {/*Contenido principal*/}
         <div className="perfil-contenido">
 
           <div className="perfil-header">

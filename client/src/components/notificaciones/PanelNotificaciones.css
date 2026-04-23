@@ -1,9 +1,6 @@
-/* PanelNotificaciones.css
-   Glassmorphism coherente con el resto de la app
-   Prefijo: pn-
-*/
+/* PanelNotificaciones.css*/
 
-/* ── Panel contenedor ── */
+/*Panel contenedor*/
 .pn-panel {
   position: absolute;
   top: calc(100% + 10px);
@@ -50,7 +47,7 @@
   }
 }
 
-/* ── Header ── */
+/*Header*/
 .pn-header {
   display: flex;
   align-items: center;
@@ -107,7 +104,7 @@
   color: rgba(167, 213, 136, 0.9);
 }
 
-/* ── Lista ── */
+/*Lista*/
 .pn-lista {
   max-height: 420px;
   overflow-y: auto;
@@ -122,7 +119,7 @@
   border-radius: 4px;
 }
 
-/* ── Item ── */
+/*Item*/
 .pn-item {
   display: flex;
   align-items: flex-start;
@@ -160,7 +157,7 @@
   flex-shrink: 0;
 }
 
-/* ── Ícono de tipo ── */
+/*Ícono de tipo*/
 .pn-icono {
   width: 32px;
   height: 32px;
@@ -185,7 +182,7 @@
   color: rgba(165, 180, 252, 0.9);
 }
 
-/* ── Contenido ── */
+/*Contenido*/
 .pn-contenido {
   flex: 1;
   min-width: 0;
@@ -223,7 +220,7 @@
   font-weight: 500;
 }
 
-/* ── Estado vacío ── */
+/*Estado vacío*/
 .pn-vacio {
   display: flex;
   flex-direction: column;
@@ -245,7 +242,7 @@
   line-height: 1.45;
 }
 
-/* ── Estado cargando ── */
+/*Estado cargando*/
 .pn-estado {
   display: flex;
   align-items: center;
@@ -272,7 +269,7 @@
   }
 }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 480px) {
   .pn-panel {
     width: calc(100vw - 1rem);
@@ -289,14 +286,14 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-/* ── Header derecho (agrupa "leer todas" + botón X) ── */
+/*Header derecho (agrupa "leer todas" + botón X)*/
 .pn-header-der {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* ── Botón X cerrar modal (solo móvil) ── */
+/*Botón X cerrar modal (solo móvil)*/
 .pn-btn-cerrar-modal {
   display: flex;
   align-items: center;
@@ -319,7 +316,7 @@
   transform: scale(1.08);
 }
 
-/* ── Botón eliminar notificación (visible en hover) ── */
+/*Botón eliminar notificación (visible en hover)*/
 .pn-btn-eliminar {
   position: absolute;
   top: 0.55rem;

@@ -2,9 +2,7 @@ const Recipe   = require('../models/Recipe');
 const AdminLog = require('../models/AdminLog');
 const { crearNotifRespuesta, crearNotifNuevaReceta } = require('./notificationController');
 
-// ─────────────────────────────────────────────
-// 📊 Obtener todas las recetas
-// ─────────────────────────────────────────────
+// Obtener todas las recetas
 exports.getAllRecipes = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '', cat = '', salud = '' } = req.query;
@@ -147,7 +145,7 @@ exports.importRecipes = async (req, res) => {
       result = { created: created.length };
     }
     await AdminLog.create({ adminId: req.user._id, action: 'IMPORT_RECIPES', metadata: result });
-    // ── Notificar a todos los usuarios sobre las recetas importadas ──
+    //  Notificar a todos los usuarios sobre las recetas importadas 
     if (result.created > 0) {
   const todas = await Recipe.find().sort({ createdAt: -1 }).limit(result.created).select('_id nombre cat salud').lean();
   for (const r of todas) {
@@ -189,21 +187,13 @@ exports.getRecipeStats = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════════
 // ⭐ SISTEMA DE RESEÑAS
-// ═══════════════════════════════════════════════════════════════
-
-/**
- * Serializa una reseña para el cliente.
- * La imagen solo se expone si está aprobada O si el userId coincide con el solicitante.
- */
 const serializarResena = (r, userId) => {
   const esAutor    = userId && r.userId.toString() === userId.toString();
   const imgAprobada = r.imagen?.estado === 'aprobada';
   const imgPendiente = r.imagen?.estado === 'pendiente' && esAutor;
 
   let imagenCliente = null;
-  // BUGFIX: imagen pendiente tiene url=null en DB → no depender de r.imagen?.url
   if (r.imagen && r.imagen.estado) {
     if (imgAprobada) {
       imagenCliente = { url: r.imagen.url, estado: 'aprobada' };
@@ -239,12 +229,6 @@ const serializarResena = (r, userId) => {
   };
 };
 
-// ─────────────────────────────────────────────
-// GET /recipes/:id/resenas?page=1&limit=5&orden=reciente|relevancia
-// IMPORTANTE: esta ruta debe usar el middleware de auth OPCIONAL (optionalAuth o similar),
-// no el middleware que rechaza la petición si no hay token. Así req.user?._id llega
-// correctamente cuando el usuario está logueado y el autor puede ver su imagen pendiente.
-// ─────────────────────────────────────────────
 exports.getResenas = async (req, res) => {
   try {
     const { page = 1, limit = 5, orden = 'reciente' } = req.query;
@@ -286,11 +270,7 @@ exports.getResenas = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// POST /recipes/:id/resenas — Crear reseña
-// Acepta application/json (sin imagen) o multipart/form-data (con imagen)
-// La imagen se procesa por uploadResena middleware ANTES de llegar aquí
-// ─────────────────────────────────────────────
+
 exports.crearResena = async (req, res) => {
   try {
     const { estrellas, texto = '' } = req.body;
@@ -322,8 +302,8 @@ exports.crearResena = async (req, res) => {
     // Si multer adjuntó imagen (campo "imagen")
     if (req.file) {
       nuevaResena.imagen = {
-        url:      req.file.path,       // Cloudinary devuelve la URL en req.file.path
-        publicId: req.file.filename,   // y el public_id en req.file.filename
+        url:      req.file.path,
+        publicId: req.file.filename,
         estado:   'pendiente',
       };
     }
@@ -346,11 +326,6 @@ exports.crearResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// POST /recipes/:id/resenas/:resenaId/imagen
-// Sube imagen a una reseña ya existente (botón "Adjuntar imagen" post-publicación)
-// Procesado por uploadResena middleware
-// ─────────────────────────────────────────────
 exports.subirImagenResena = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
@@ -386,7 +361,7 @@ exports.subirImagenResena = async (req, res) => {
     res.json({
       success: true,
       message: 'Imagen subida. Pendiente de aprobación (≈3 días).',
-      imagen:  { url: null, estado: 'pendiente' }, // El autor ve placeholder
+      imagen:  { url: null, estado: 'pendiente' },
     });
   } catch (error) {
     console.error(error);
@@ -394,9 +369,7 @@ exports.subirImagenResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// PUT /recipes/:id/resenas — Editar propia reseña
-// ─────────────────────────────────────────────
+// PUT /recipes/:id/resenas
 exports.editarResena = async (req, res) => {
   try {
     const { estrellas, texto = '' } = req.body;
@@ -426,11 +399,6 @@ exports.editarResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// DELETE /recipes/:id/resenas/:resenaId
-// Borra propia reseña (o admin borra cualquiera)
-// Si tenía imagen en Cloudinary, la elimina también
-// ─────────────────────────────────────────────
 exports.borrarResena = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -465,10 +433,6 @@ exports.borrarResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// POST /recipes/:id/resenas/:resenaId/voto
-// body: { tipo: 'like' | 'dislike' }
-// ─────────────────────────────────────────────
 exports.votarResena = async (req, res) => {
   try {
     const { tipo } = req.body;
@@ -517,9 +481,7 @@ exports.votarResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // POST /recipes/:id/resenas/:resenaId/respuestas
-// ─────────────────────────────────────────────
 exports.responderResena = async (req, res) => {
   try {
     const { texto } = req.body;
@@ -536,7 +498,7 @@ exports.responderResena = async (req, res) => {
 
     const nueva = resena.respuestas[resena.respuestas.length - 1];
 
-    // ── Notificar al autor de la reseña original ──
+    //  Notificar al autor de la reseña original 
     crearNotifRespuesta({
       destinatarioId: resena.userId,
       fromUserId:     req.user._id,
@@ -544,9 +506,9 @@ exports.responderResena = async (req, res) => {
       recetaId:       recipe._id,
       recetaNombre:   recipe.nombre,
       resenaId:       resena._id,
-      respuestaId:    nueva._id,   // ← deep-link directo al comentario
+      respuestaId:    nueva._id,
       respuestaTexto: texto.trim(),
-    }); // fire-and-forget — no await para no bloquear la respuesta
+    });
     res.status(201).json({
       success:   true,
       respuesta: {
@@ -563,9 +525,7 @@ exports.responderResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // DELETE /recipes/:id/resenas/:resenaId/respuestas/:respId
-// ─────────────────────────────────────────────
 exports.borrarRespuesta = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -590,10 +550,7 @@ exports.borrarRespuesta = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// DELETE /recipes/:id/resenas/imagen
 // Quita la imagen de la propia reseña del usuario (desde modo editar)
-// ─────────────────────────────────────────────
 exports.quitarImagenResena = async (req, res) => {
   try {
     const { cloudinary } = require('../config/cloudinary');

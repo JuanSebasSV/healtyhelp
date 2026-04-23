@@ -1,8 +1,6 @@
-/* ============================================================
-   RobotIA.css — Botanical Tech · Ventana flotante
-   ============================================================ */
+/*RobotIA.css — Botanical Tech · Ventana flotante*/
 
-/* ── Botón flotante ──────────────────────────────────────── */
+/*Botón flotante  */
 .robotBoton {
   position: fixed;
   bottom: 2rem;
@@ -66,7 +64,7 @@
     0 4px 12px rgba(0,0,0,0.35);
 }
 
-/* ── Panel flotante ──────────────────────────────────────── */
+/*Panel flotante  */
 .robotChat {
   position: fixed;
   bottom: 5.5rem;
@@ -118,7 +116,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: none;
 }
 
-/* ── Orbes decorativos (solo flotante, solo desktop) ─────── */
+/*Orbes decorativos (solo flotante, solo desktop)  */
 .chatOrbes {
   position: absolute;
   inset: 0;
@@ -170,7 +168,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   66%  { transform: translate(-6px, 8px) scale(0.97); }
 }
 
-/* ── Header ─────────────────────────────────────────────── */
+/*Header  */
 .robotHeader {
   display: flex;
   justify-content: space-between;
@@ -286,7 +284,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-color: rgba(214,40,40,0.5);
 }
 
-/* ── Área de mensajes ────────────────────────────────────── */
+/*Área de mensajes  */
 .robotMensajes {
   flex: 1;
   padding: 1rem;
@@ -295,7 +293,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: rgba(107,158,74,0.3) transparent;
-  /* FIX: momentum scroll en iOS */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -309,7 +306,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-radius: 3px;
 }
 
-/* ── Bienvenida ──────────────────────────────────────────── */
+/*Bienvenida  */
 .chatBienvenida {
   text-align: center;
   padding: 0.5rem 0.25rem 0.75rem;
@@ -387,7 +384,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: flex;
 }
 
-/* ── Mensajes ────────────────────────────────────────────── */
+/*Mensajes  */
 .robotMensaje {
   display: flex;
   gap: 0.5rem;
@@ -452,7 +449,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-radius: 4px 12px 12px 12px;
 }
 
-/* ── Input ───────────────────────────────────────────────── */
+/*Input  */
 .robotInput {
   padding: 0.75rem 0.9rem;
   border-top: 1px solid rgba(107,158,74,0.15);
@@ -522,7 +519,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   transform: none;
 }
 
-/* ── Footer ─────────────────────────────────────────────── */
+/*Footer  */
 .robotFooter {
   display: flex;
   align-items: center;
@@ -546,7 +543,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   letter-spacing: 0.03em;
 }
 
-/* ── Typing indicator ────────────────────────────────────── */
+/*Typing indicator  */
 .typingIndicator {
   display: flex;
   gap: 4px;
@@ -570,7 +567,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
-/* ── Modo oscuro ─────────────────────────────────────────── */
+/*Modo oscuro  */
 .modo-oscuro .robotChat .chatCore {
   background:
     radial-gradient(ellipse at 0% 0%, rgba(15,40,22,0.5) 0%, transparent 60%),
@@ -578,17 +575,13 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     rgba(4, 12, 7, 0.95);
 }
 
-/* ============================================================
-   RESPONSIVE — Tablets (≤ 968px)
-   ============================================================ */
+/*RESPONSIVE — Tablets (≤ 968px)*/
 @media (max-width: 968px) {
   .robotBoton { bottom: 1.5rem; right: 1.5rem; }
   .robotChat  { width: 330px; right: 1.5rem; bottom: 5rem; }
 }
 
-/* ============================================================
-   RESPONSIVE — Teléfonos (≤ 767px)
-   ============================================================ */
+/*RESPONSIVE — Teléfonos (≤ 767px)*/
 @media (max-width: 767px) {
 
   .robotBoton {
@@ -599,7 +592,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     animation: none;
   }
 
-  /* FIX: el ::before con conic-gradient rotando es costoso en móvil */
   .robotBoton::before {
     inset: -2px;
     animation: none;
@@ -618,16 +610,12 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     padding: 1.5px;
   }
 
-  /* FIX: en móvil, el chatCore usa backdrop-filter: blur(28px)
-     que es extremadamente costoso. Se reemplaza por fondo sólido. */
   .robotChat .chatCore {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(6, 18, 10, 0.97);
   }
 
-  /* FIX: los orbes con filter:blur() animados son el mayor
-     problema de rendimiento del chat en móvil. Se desactivan. */
   .chatOrbes {
     display: none;
   }
@@ -649,9 +637,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   .robotChat .robotFooter small { font-size: 0.64rem; }
 }
 
-/* ============================================================
-   RESPONSIVE — Muy pequeños (≤ 380px)
-   ============================================================ */
+/*RESPONSIVE — Muy pequeños (≤ 380px)*/
 @media (max-width: 380px) {
   .robotBoton { width: 44px; height: 44px; right: 0.75rem; bottom: 0.75rem; }
   .robotBoton svg { width: 19px; height: 19px; }

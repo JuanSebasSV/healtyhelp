@@ -14,7 +14,7 @@ import ImagenesAprobacion from "./ImagenesAprobacion";
 // Badge poll cada 60 s — suficiente para moderación
 const BADGE_INTERVAL = 60_000;
 
-// ── Iconos estáticos fuera del componente ─────────────────────────────────────
+//  Iconos estáticos fuera del componente 
 const IcoShield = memo(() => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@ const IcoBack = memo(() => (
 ));
 IcoBack.displayName = "IcoBack";
 
-// ── TabButton memoizado ───────────────────────────────────────────────────────
+//  TabButton memoizado 
 const TabButton = memo(({ id, label, icon, activeTab, onClick, badge = 0 }) => (
   <button
     className={`main-tab ${activeTab === id ? "active" : ""}`}
@@ -61,7 +61,7 @@ const TabButton = memo(({ id, label, icon, activeTab, onClick, badge = 0 }) => (
 ));
 TabButton.displayName = "TabButton";
 
-// ── Dashboard ─────────────────────────────────────────────────────────────────
+//  Dashboard 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
@@ -79,7 +79,7 @@ const Dashboard = () => {
   const usersPerPage = 10;
   const badgeIntervalRef = useRef(null);
 
-  // ── Fetch badge — estable ────────────────────────────────────────────────
+  //  Fetch badge — estable 
   const fetchBadge = useCallback(async () => {
     try {
       const { data } = await api.get(
@@ -107,7 +107,7 @@ const Dashboard = () => {
     };
   }, [fetchBadge]);
 
-  // ── Redirección si no es admin ───────────────────────────────────────────
+  //  Redirección si no es admin 
   useEffect(() => {
     if (!isAdmin()) {
       toast.error("Acceso denegado - Requiere permisos de administrador");
@@ -115,7 +115,7 @@ const Dashboard = () => {
     }
   }, [isAdmin, navigate]);
 
-  // ── Carga inicial — protegida contra doble-mount ─────────────────────────
+  //  Carga inicial — protegida contra doble-mount 
   useEffect(() => {
     let mounted = true;
 
@@ -149,7 +149,7 @@ const Dashboard = () => {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Refresco manual (acciones de usuarios) ───────────────────────────────
+  //  Refresco manual (acciones de usuarios) 
   const fetchData = useCallback(async () => {
     try {
       const [statsRes, usersRes] = await Promise.all([
@@ -218,7 +218,7 @@ const Dashboard = () => {
     fetchBadge();
   }, [fetchData, fetchBadge]);
 
-  // ── Limpiar notificaciones huérfanas ─────────────────────────────────────
+  //  Limpiar notificaciones huérfanas 
   const handleLimpiarNotifs = useCallback(async () => {
     if (
       !window.confirm("¿Eliminar notificaciones de recetas que ya no existen?")
@@ -266,7 +266,7 @@ const Dashboard = () => {
     toast.success("Datos exportados correctamente");
   }, [users]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Derivados (no necesitan estado propio) ───────────────────────────────
+  //  Derivados (no necesitan estado propio) 
   const filteredUsers = users.filter((u) => {
     const matchesSearch =
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -427,7 +427,7 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* ── Usuarios ── */}
+      {/*  Usuarios  */}
       {activeTab === "users" && (
         <>
           <div className="admin-controls">
@@ -535,7 +535,7 @@ const Dashboard = () => {
         </>
       )}
 
-      {/* ── Recetas ── */}
+      {/*  Recetas  */}
       {activeTab === "recipes" && (
         <>
           <div

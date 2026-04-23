@@ -843,9 +843,9 @@
     cursor: grabbing;
   }
 }
-/* =====================================================
+/*
    NUEVA FUNCIONALIDAD: Fila de filtro por tiempo
-   ===================================================== */
+   */
 
 /* Separador visual entre la fila de categorías y la de tiempos */
 .tiempos-fila {
@@ -919,9 +919,9 @@
 }
 .modo-oscuro .catBtn--limpiar-tiempo { border-color: rgba(255, 255, 255, 0.1); }
 
-/* =====================================================
+/*
    NUEVA FUNCIONALIDAD: Buscador
-   ===================================================== */
+   */
 
 .buscador-recetas {
   display: flex;

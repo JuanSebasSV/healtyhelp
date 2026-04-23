@@ -136,7 +136,7 @@
   }
 }
 
-/* ── Header Healthy Help ── */
+/*Header Healthy Help*/
 .auth-brand {
   display: flex;
   align-items: center;
@@ -176,9 +176,9 @@
   }
 }
 
-/* ── Agregar esto a Register.css ────────────────────────────
+/*Agregar esto a Register.css 
    Pega este bloque al final de tu archivo Register.css
-   ──────────────────────────────────────────────────────── */
+    */
 
 /* Lista de hints de validación en tiempo real */
 .field-hints {

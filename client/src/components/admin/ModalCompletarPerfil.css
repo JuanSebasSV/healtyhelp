@@ -1,6 +1,6 @@
-/* ModalCompletarPerfil.css — Estilo unificado con Register.css */
+/* ModalCompletarPerfil.css*/
 
-/* ── Overlay ── */
+/*Overlay*/
 .completar-overlay {
   position: fixed;
   inset: 0;
@@ -16,7 +16,7 @@
   box-sizing: border-box;
 }
 
-/* ── Modal — mismo glass que .authCard ── */
+/*Modal*/
 .completar-modal {
   background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(24px) saturate(180%);
@@ -37,7 +37,7 @@
   animation: fadeIn 0.35s ease;
 }
 
-/* ── Header (brand) ── */
+/*Header (brand)*/
 .completar-header {
   display: flex;
   flex-direction: column;
@@ -104,7 +104,7 @@
   height: 24px;
 }
 
-/* ── Cuerpo ── */
+/*Cuerpo*/
 .completar-body {
   display: flex;
   flex-direction: column;
@@ -112,7 +112,7 @@
   margin-bottom: 1.25rem;
 }
 
-/* ── Grupo de campo — igual que .formGroup ── */
+/*Grupo de campo*/
 .completar-grupo {
   display: flex;
   flex-direction: column;
@@ -129,7 +129,7 @@
   text-transform: uppercase;
 }
 
-/* ── Inputs numéricos — igual que .authForm input ── */
+/*Inputs numéricos*/
 .completar-grupo .numero-wrapper input {
   width: 100%;
   padding: 1rem 2.6rem 1rem 1rem;
@@ -160,7 +160,7 @@
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.18);
 }
 
-/* ── Flechas del input numérico — igual que Register ── */
+/*Flechas del input numérico*/
 .completar-grupo .numero-wrapper {
   position: relative;
   display: flex;
@@ -199,7 +199,7 @@
   stroke-width: 2.5;
 }
 
-/* ── Error de campo ── */
+/*Error de campo*/
 .completar-error {
   display: block;
   color: #f87171;
@@ -208,7 +208,7 @@
   margin-top: 0.2rem;
 }
 
-/* ── Nota informativa — misma paleta que .aviso-inline--naranja ── */
+/*Nota informativa*/
 .completar-nota {
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.78rem;
@@ -223,7 +223,7 @@
   align-items: flex-start;
 }
 
-/* ── Avisos inline — idénticos a Register.css ── */
+/*Avisos inline*/
 .completar-aviso {
   display: flex;
   align-items: flex-start;
@@ -251,7 +251,7 @@
 .completar-aviso--rojo svg    { color: #f87171; }
 .completar-aviso--rojo strong { color: #f87171; }
 
-/* ── Botón principal — idéntico a .btn-primario ── */
+/*Botón principal*/
 .completar-btn {
   width: 100%;
   padding: 1rem;
@@ -284,7 +284,7 @@
   transform: none;
 }
 
-/* ── Modo oscuro — misma lógica que Register ── */
+/*Modo oscuro*/
 .modo-oscuro .completar-modal {
   background: rgba(10, 25, 15, 0.60);
   border-color: rgba(79, 119, 45, 0.35);
@@ -336,9 +336,7 @@
   color: rgba(200, 230, 185, 0.80);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   MÓVIL ≤ 768px
-   ═══════════════════════════════════════════════════════════════ */
+/*MÓVIL ≤ 768px*/
 @media screen and (max-width: 768px) {
   .completar-overlay {
     padding: 12px;
@@ -374,9 +372,7 @@
   .completar-btn   { padding: 0.9rem; font-size: 0.95rem; border-radius: 10px; }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   MÓVIL MUY PEQUEÑO ≤ 360px
-   ═══════════════════════════════════════════════════════════════ */
+/*MÓVIL MUY PEQUEÑO ≤ 360px*/
 @media screen and (max-width: 360px) {
   .completar-overlay { padding: 8px; }
   .completar-modal   { width: calc(100% - 16px); max-width: calc(100% - 16px); }

@@ -10,20 +10,20 @@ const adminLogSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: [
-      // ── Usuarios ──
+      //  Usuarios 
       'DELETE_USER',
       'CHANGE_ROLE',
       'BAN_USER',
       'UNBAN_USER',
       'VERIFY_USER',
-      // ── Recetas ──
+      //  Recetas 
       'CREATE_RECIPE',
       'UPDATE_RECIPE',
       'DELETE_RECIPE',
       'DELETE_MULTIPLE_RECIPES',
       'IMPORT_RECIPES',
       'EXPORT_RECIPES',
-      // ── Sistema / Admin ──
+      //  Sistema / Admin 
       'SYSTEM_CONFIG',
       'INVITE_ADMIN',
       'ADMIN_INVITE_ACCEPTED',

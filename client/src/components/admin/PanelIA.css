@@ -1,15 +1,12 @@
-/* ============================================
-   PanelIA.css
-   Panel de configuración del Asistente IA
-   ============================================ */
+/*PanelIA.css/
 
-/* ── Contenedor principal ── */
+/*  Contenedor principal  */
 .panel-ia {
   padding: 1.5rem 0;
   max-width: 860px;
 }
 
-/* ── Header ── */
+/*  Header  */
 .panel-ia__header {
   display: flex;
   align-items: center;
@@ -43,7 +40,7 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ── Badge de estado ── */
+/*  Badge de estado  */
 .panel-ia__badge-wrapper {
   margin: 1rem 0 1.5rem;
 }
@@ -68,7 +65,7 @@
   background: #7ec850;
 }
 
-/* ── Métricas ── */
+/*  Métricas  */
 .panel-ia__metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -102,7 +99,7 @@
   margin-top: 4px;
 }
 
-/* ── Separador ── */
+/*  Separador  */
 .panel-ia__divider {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -115,7 +112,7 @@
   margin-bottom: 1.25rem;
 }
 
-/* ── Label del editor ── */
+/*  Label del editor  */
 .panel-ia__editor-header {
   display: flex;
   align-items: center;
@@ -136,7 +133,7 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-/* ── Textarea ── */
+/*  Textarea  */
 .panel-ia__textarea {
   width: 100%;
   box-sizing: border-box;
@@ -162,7 +159,7 @@
   color: rgba(255, 255, 255, 0.28);
 }
 
-/* ── Nota informativa ── */
+/*  Nota informativa  */
 .panel-ia__note {
   background: rgba(79, 119, 45, 0.13);
   border-left: 2px solid rgba(120, 180, 70, 0.6);
@@ -174,7 +171,7 @@
   line-height: 1.5;
 }
 
-/* ── Footer / acciones ── */
+/*  Footer / acciones  */
 .panel-ia__footer {
   display: flex;
   align-items: center;
@@ -191,7 +188,7 @@
   gap: 6px;
 }
 
-/* ── Botón guardar ── */
+/*  Botón guardar  */
 .panel-ia__btn-save {
   padding: 0.7rem 1.8rem;
   background: rgba(247, 127, 0, 0.25);
@@ -217,14 +214,14 @@
   cursor: not-allowed;
 }
 
-/* ── Loading ── */
+/*  Loading  */
 .panel-ia__loading {
   padding: 2rem;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
 }
 
-/* ── Responsive ── */
+/*  Responsive  */
 @media (max-width: 600px) {
   .panel-ia__metrics {
     grid-template-columns: 1fr;

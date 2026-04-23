@@ -12,14 +12,14 @@ export const AuthProvider = ({ children }) => {
   const autoLogoutEnabledRef = useRef(false);  // espejo ref del estado (para callbacks)
   const autoLogoutMinutesRef = useRef(15);     // espejo ref de los minutos
 
-  // ── Limpiar sesión ───────────────────────────────────────────────────────
+  //Limpiar sesión 
   const limpiarSesion = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
   }, []);
 
-  // ── Timer de inactividad ─────────────────────────────────────────────────
+  //Timer de inactividad 
   const clearInactivityTimer = useCallback(() => {
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     }, ms);
   }, [clearInactivityTimer, limpiarSesion]);
 
-  // ── Registrar/quitar eventos de actividad del usuario ────────────────────
+  //Registrar/quitar eventos de actividad del usuario 
   const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll', 'click'];
 
   const stopActivityListeners = useCallback(() => {
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     resetInactivityTimer(); // arrancar el timer de inmediato
   }, [stopActivityListeners, resetInactivityTimer]);
 
-  // ── Cierre al ocultar la pestaña/ventana ────────────────────────────────
+  //Cierre al ocultar la pestaña/ventana 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden' && autoLogoutEnabledRef.current) {
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [limpiarSesion]);
 
-  // ── Actualizar preferencias de auto-logout en vivo ───────────────────────
+  //Actualizar preferencias de auto-logout en vivo 
   // Se llama cuando el usuario cambia el toggle; también se llama al cargar
   // la sesión para sincronizar los refs y arrancar/parar los listeners.
   const applyAutoLogoutPrefs = useCallback((enabled, minutes) => {
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [startActivityListeners, stopActivityListeners]);
 
-  // ── updateAutoLogout: lo llama el toggle del Navbar ─────────────────────
+  //updateAutoLogout: lo llama el toggle del Navbar 
   // Guarda en BD y actualiza el estado local al instante
   const updateAutoLogout = useCallback(async (enabled, minutes) => {
     try {
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [applyAutoLogoutPrefs]);
 
-  // ── checkAuth ────────────────────────────────────────────────────────────
+  //checkAuth 
   const checkAuth = useCallback(async () => {
     const token = localStorage.getItem('token');
 
@@ -179,7 +179,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user, stopActivityListeners]);
 
-  // ── Funciones de auth ────────────────────────────────────────────────────
+  //Funciones de auth 
   const register = async (userData) => {
     try {
       const { data } = await api.post('/auth/register', userData);

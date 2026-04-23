@@ -9,7 +9,7 @@ import PanelNotificaciones from '../notificaciones/PanelNotificaciones';
 // Poll de notificaciones cada 60 s
 const NOTIF_INTERVAL = 60_000;
 
-// ── Iconos estáticos memoizados ───────────────────────────────────────────────
+//Iconos estáticos memoizados 
 const IcoCampana = memo(() => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -54,7 +54,7 @@ const IcoLock = memo(() => (
 ));
 IcoLock.displayName = 'IcoLock';
 
-// ── Botón campana memoizado ───────────────────────────────────────────────────
+//Botón campana memoizado 
 
 const IcoCerrarSesion = memo(() => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -98,7 +98,7 @@ const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
 ));
 BtnCampana.displayName = 'BtnCampana';
 
-// ── Navbar ────────────────────────────────────────────────────────────────────
+//Navbar 
 const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta }) => {
   const { user, logout, isAdmin, updateAutoLogout } = useAuth();
   const navigate  = useNavigate();
@@ -130,7 +130,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // ── Fetch notificaciones ─────────────────────────────────────────────────
+  //Fetch notificaciones 
   const fetchNotificaciones = useCallback(async () => {
     if (!user) return;
     try {
@@ -153,7 +153,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     };
   }, [user, fetchNotificaciones]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
+  //Handlers 
   const handleAbrirPanel = useCallback(() => {
     setPanelAbierto(v => {
       const nuevoEstado = !v;
@@ -234,7 +234,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     _procesarUrlNotif(url);
   }, [_procesarUrlNotif]);
 
-  // ── Toggle auto-logout
+  //Toggle auto-logout
   const handleToggleAutoLogout = useCallback(async (e) => {
     e.stopPropagation(); e.preventDefault();
     if (toggleLoading) return;
@@ -246,7 +246,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     setToggleLoading(false);
   }, [autoLogout, toggleLoading, updateAutoLogout]);
 
-  // ── Dropdown desktop
+  //Dropdown desktop
   const handleMouseEnterDropdown = useCallback(() => {
     clearTimeout(dropdownTimerRef.current);
     setDropdownAbierto(true);
@@ -262,7 +262,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ── Cerrar sesión
+  //Cerrar sesión
   const ejecutarCerrarSesion = useCallback(() => {
     logout(); setMenuAbierto(false); setDropdownAbierto(false); setModalCerrarAbierto(false); navigate('/');
   }, [logout, navigate]);

@@ -6,7 +6,7 @@ import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
 import './VistaInicio.css';
 
-// ─── Datos estáticos ──────────────────────────────────────────────────────────
+//  Datos estáticos 
 
 const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
@@ -58,7 +58,7 @@ const CONDICIONES = [
 const normalizarTexto = (texto) =>
   texto ? texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 
-// ─── Componente ───────────────────────────────────────────────────────────────
+//  Componente 
 
 const VistaInicio = ({
   recetas,
@@ -106,7 +106,7 @@ const VistaInicio = ({
     HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
   }, []);
 
-  // ─── Scrollbar personalizado ──────────────────────────────────────────────
+  //  Scrollbar personalizado 
 
   useEffect(() => {
     let raf = null;
@@ -140,7 +140,7 @@ const VistaInicio = ({
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
-  // ─── Abrir receta desde prop (notificaciones) ─────────────────────────────
+  //  Abrir receta desde prop (notificaciones) 
 
   useEffect(() => {
     if (!recetaPendiente || !recetas.length) return;
@@ -155,7 +155,7 @@ const VistaInicio = ({
     }
   }, [recetaPendiente, recetas]);
 
-  // ─── Carrusel hero ────────────────────────────────────────────────────────
+  //  Carrusel hero 
 
   const cambiarImagen = useCallback((idx) => {
     if (transitandoRef.current) return;
@@ -186,7 +186,7 @@ const VistaInicio = ({
     return () => window.removeEventListener('keydown', onKey);
   }, [imagenActual, cambiarManual]);
 
-  // ─── PDF ──────────────────────────────────────────────────────────────────
+  //  PDF 
 
   const toggleSeleccion = (id) =>
     setSeleccionadas(p => p.includes(id) ? p.filter(s => s !== id) : [...p, id]);
@@ -202,7 +202,7 @@ const VistaInicio = ({
     }
   };
 
-  // ─── Handlers de filtros ──────────────────────────────────────────────────
+  //  Handlers de filtros 
 
   const handleToggleFiltro = useCallback((id) => {
     toggleFiltro(id);
@@ -228,7 +228,7 @@ const VistaInicio = ({
     setFiltroTiempo(prev => prev === id ? null : id);
   }, []);
 
-  // ─── Filtrado de recetas ──────────────────────────────────────────────────
+  //  Filtrado de recetas 
 
   // NUEVA FUNCIONALIDAD: filtrado ampliado con búsqueda por texto y tiempo
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
@@ -256,7 +256,7 @@ const VistaInicio = ({
   return (
     <div className="vistaInicio">
 
-      {/* ─── Hero ─── */}
+      {/*  Hero  */}
       <div className="hero">
         {HERO_IMGS.map((img, i) => (
           <div key={i} className={`hero-capa ${i === imagenActual ? 'hero-capa--activa' : ''}`}
@@ -276,7 +276,7 @@ const VistaInicio = ({
         </div>
       </div>
 
-      {/* ─── Botón filtro de condiciones ─── */}
+      {/*  Botón filtro de condiciones  */}
       <div className="filtroModalWrapper">
         <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -289,7 +289,7 @@ const VistaInicio = ({
         </button>
       </div>
 
-      {/* ─── Modal filtro salud ─── */}
+      {/*  Modal filtro salud  */}
       {filtroAbierto && (
         <div className="filtroModalOverlay" onClick={(e) => { if (e.target === e.currentTarget) setFiltroAbierto(false); }}>
           <div className="filtroModal">
@@ -325,7 +325,7 @@ const VistaInicio = ({
         </div>
       )}
 
-      {/* ─── Categorías ─── */}
+      {/*  Categorías  */}
       <section className="categorias">
         {CATEGORIAS.map(cat => {
           const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
@@ -395,7 +395,7 @@ const VistaInicio = ({
         )}
       </div>
 
-      {/* ─── Recetas ─── */}
+      {/*  Recetas  */}
       <section className="recetasGrid">
         <div className="recetasGrid-header">
           <h2>Explorar Recetas</h2>
@@ -434,7 +434,7 @@ const VistaInicio = ({
         )}
       </section>
 
-      {/* ─── Botón flotante PDF ─── */}
+      {/*  Botón flotante PDF  */}
       {seleccionadas.length > 0 && (
         <button className="btn-pdf-flotante" onClick={handlePDF} disabled={generandoPDF}>
           {generandoPDF ? (
@@ -459,7 +459,7 @@ const VistaInicio = ({
         </button>
       )}
 
-      {/* ─── Modal detalle receta ─── */}
+      {/*  Modal detalle receta  */}
       {recetaAbierta && (
         <DetalleReceta
           receta={recetaAbierta}
@@ -469,7 +469,7 @@ const VistaInicio = ({
         />
       )}
 
-      {/* ─── Scrollbar personalizado ─── */}
+      {/*  Scrollbar personalizado  */}
       <div className="scrollbar-custom-track" ref={trackRef}>
         <div
           ref={thumbRef}

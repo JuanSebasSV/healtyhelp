@@ -3,7 +3,6 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './PanelIA.css';
 
-// ── Subcomponente estable fuera del padre — evita que se re-defina en cada render ──
 const MetricCard = memo(({ num, lbl, accent = false }) => (
   <div className={`panel-ia__card${accent ? ' panel-ia__card--accent' : ''}`}>
     <div className="panel-ia__card-num">{num}</div>
@@ -37,16 +36,15 @@ const IcoSave = memo(() => (
 ));
 IcoSave.displayName = 'IcoSave';
 
-// ── PanelIA ───────────────────────────────────────────────────────────────────
+// PanelIA
 const PanelIA = () => {
   const [prompt,        setPrompt]        = useState('');
   const [guardando,     setGuardando]     = useState(false);
   const [cargando,      setCargando]      = useState(true);
   const [totalUsuarios, setTotalUsuarios] = useState('–');
 
-  /* ── Carga inicial — protegida contra doble-mount de React StrictMode ── */
   useEffect(() => {
-    let cancelled = false;   // FIX 429: el cleanup cancela actualizaciones de estado
+    let cancelled = false;
 
     const cargarPrompt = async () => {
       try {
@@ -76,7 +74,7 @@ const PanelIA = () => {
       .finally(() => { if (!cancelled) setCargando(false); });
 
     return () => { cancelled = true; };
-  }, []);   // sin dependencias: solo se ejecuta al montar
+  }, []);
 
   const guardarPrompt = useCallback(async () => {
     setGuardando(true);

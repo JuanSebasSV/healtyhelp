@@ -1,11 +1,11 @@
-// ─── Constantes ───────────────────────────────────────────────────────────────
+//  Constantes 
 
 const CALORIAS_BASE = {
   hombre: { sedentario: 2000, moderado: 2400, activo: 2800 },
   mujer:  { sedentario: 1700, moderado: 2000, activo: 2300 },
 };
 
-// ─── Utilidades ───────────────────────────────────────────────────────────────
+//  Utilidades 
 
 function calcularIMC(peso, altura) {
   if (!peso || !altura) return null;
@@ -43,7 +43,7 @@ function detectarComidasSaltadas(consumos) {
   }, []);
 }
 
-// ─── Recomendaciones por condición ───────────────────────────────────────────
+//  Recomendaciones por condición 
 
 const REC = {
   diabetes: {
@@ -288,7 +288,7 @@ const REC = {
   },
 };
 
-// ─── Recomendaciones por categoría/momento del día ────────────────────────────
+//  Recomendaciones por categoría/momento del día 
 // Tips específicos que el motor genera cuando el usuario tiene una categoría activa
 
 const REC_CATEGORIA = {
@@ -338,7 +338,7 @@ const REC_CATEGORIA = {
   },
 };
 
-// ─── Ejercicio por IMC ────────────────────────────────────────────────────────
+//  Ejercicio por IMC 
 
 const EJERCICIO_IMC = {
   bajo_peso: [
@@ -361,13 +361,10 @@ const EJERCICIO_IMC = {
   ],
 };
 
-// ─── Motor principal ──────────────────────────────────────────────────────────
+//  Motor principal 
 
 function generarRecomendaciones(usuario, consumos) {
   const { age, weight, height, healthProfile = {} } = usuario;
-
-  // Fuente de verdad única: healthProfile.condiciones desde la BD.
-  // Solo lo que el usuario seleccionó en sus filtros — nada más.
   const condiciones = Array.isArray(healthProfile.condiciones)
     ? healthProfile.condiciones.filter(Boolean)
     : [];
@@ -386,7 +383,7 @@ function generarRecomendaciones(usuario, consumos) {
     categoriasActivas: categorias,         // ← NUEVO: se devuelve al frontend
   };
 
-  // ── IMC y metabolismo ──
+  //  IMC y metabolismo 
   const imc    = calcularIMC(weight, height);
   const calObj = calcularTMB(weight, height, age);
 
@@ -403,7 +400,7 @@ function generarRecomendaciones(usuario, consumos) {
 
   if (calObj) res.caloriasObjetivo = calObj;
 
-  // ── Análisis de consumos ──
+  //  Análisis de consumos 
   if (consumos.length > 0) {
     const cal   = promedioNutri(consumos, 'cal');
     const prot  = promedioNutri(consumos, 'prot');
@@ -469,7 +466,7 @@ function generarRecomendaciones(usuario, consumos) {
     res.alertas.push({ tipo: 'sin_datos', mensaje: 'Aún no tienes consumos registrados. Empieza a registrar tus comidas para recibir recomendaciones personalizadas.', nivel: 'info' });
   }
 
-  // ── Recomendaciones por condición (deduplicadas desde el origen) ──
+  //  Recomendaciones por condición (deduplicadas desde el origen) 
   condiciones.forEach(cond => {
     const d = REC[cond];
     if (!d) return;
@@ -480,8 +477,7 @@ function generarRecomendaciones(usuario, consumos) {
     }
   });
 
-  // ── NUEVO: Recomendaciones por categoría/momento del día ──────────────────
-  // Solo se agregan si el usuario tiene esa categoría seleccionada en su perfil
+  // Recomendaciones por categoría/momento del día 
   categorias.forEach(cat => {
     const d = REC_CATEGORIA[cat];
     if (!d) return;
@@ -489,14 +485,14 @@ function generarRecomendaciones(usuario, consumos) {
     if (d.ejercicio?.length)    res.ejercicio.push(...d.ejercicio);
   });
 
-  // ── Ejercicio por IMC ──
+  //  Ejercicio por IMC 
   if (imc) {
     const ejs = EJERCICIO_IMC[imc.categoria] || [];
     if (res.ejercicio.length === 0)    res.ejercicio.push(...ejs);
     else if (res.ejercicio.length < 2) res.ejercicio.unshift(ejs[0] || '');
   }
 
-  // ── Cobertura real por sección ──
+  //  Cobertura real por sección 
   res.coberturaAlimentacion =
     condiciones.some(c => REC[c]?.alimentacion?.length > 0) ||
     categorias.some(c => REC_CATEGORIA[c]?.alimentacion?.length > 0);

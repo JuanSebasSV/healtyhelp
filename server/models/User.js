@@ -43,12 +43,12 @@ const userSchema = new mongoose.Schema({
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 
-  // ── Términos y condiciones ──
+  //  Términos y condiciones 
   termsAccepted:   { type: Boolean, default: false },
   termsAcceptedAt: { type: Date },
   termsVersion:    { type: String, default: '' },
 
-  // ── Perfil de salud ──
+  //  Perfil de salud 
   healthProfile: {
     condiciones:  { type: [String], default: [] },
     categorias:   { type: [String], default: [] },
@@ -56,19 +56,17 @@ const userSchema = new mongoose.Schema({
     preferencias: { type: [String], default: [] }
   },
 
-  // ── Perfil completo ──
+  //  Perfil completo 
   profileComplete: { type: Boolean, default: false },
 
-  // ── Sistema de baneo ──
+  //  Sistema de baneo 
   baneado:        { type: Boolean, default: false },
   baneadoHasta:   { type: Date,    default: null },
   baneadoMotivo:  { type: String,  default: '' },
   baneadoPor:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   baneadoEn:      { type: Date,    default: null },
 
-  // ── Cierre de sesión automático ──
-  // autoLogoutEnabled : si el usuario tiene activa la opción
-  // autoLogoutMinutes : minutos de inactividad antes de cerrar sesión (default 15)
+  //  Cierre de sesión automático 
   autoLogoutEnabled: { type: Boolean, default: false },
   autoLogoutMinutes: { type: Number,  default: 15, min: 1, max: 480 },
 

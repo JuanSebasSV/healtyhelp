@@ -1,10 +1,8 @@
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 
-// ─────────────────────────────────────────────
 // GET /api/notifications
 // Devuelve las últimas 30 notificaciones del usuario autenticado
-// ─────────────────────────────────────────────
 exports.getMisNotificaciones = async (req, res) => {
   try {
     const notifs = await Notification.find({ userId: req.user._id })
@@ -21,10 +19,8 @@ exports.getMisNotificaciones = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // PUT /api/notifications/leer-todas
 // Marca todas las notificaciones del usuario como leídas
-// ─────────────────────────────────────────────
 exports.leerTodas = async (req, res) => {
   try {
     await Notification.updateMany(
@@ -37,10 +33,8 @@ exports.leerTodas = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // PUT /api/notifications/:id/leer
 // Marca una notificación específica como leída
-// ─────────────────────────────────────────────
 exports.leerUna = async (req, res) => {
   try {
     const notif = await Notification.findOneAndUpdate(
@@ -56,10 +50,8 @@ exports.leerUna = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // GET /api/notifications/no-leidas
 // Devuelve solo el conteo de no leídas (para el badge del navbar)
-// ─────────────────────────────────────────────
 exports.contarNoLeidas = async (req, res) => {
   try {
     const count = await Notification.countDocuments({
@@ -72,11 +64,8 @@ exports.contarNoLeidas = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
 // POST /api/notifications/mensaje
-// Solo admins — envía un mensaje a un usuario específico
-// Body: { userId, asunto, mensaje }
-// ─────────────────────────────────────────────
+// Solo admins 
 exports.enviarMensaje = async (req, res) => {
   try {
     const { userId, asunto = "", mensaje } = req.body;
@@ -108,18 +97,14 @@ exports.enviarMensaje = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// Función interna (no ruta) — usada desde recipeController
-// Crea una notificación de tipo 'reply'
-// ─────────────────────────────────────────────
 exports.crearNotifRespuesta = async ({
-  destinatarioId, // ObjectId del autor del comentario original
+  destinatarioId,
   fromUserId,
   fromUserName,
   recetaId,
   recetaNombre,
   resenaId,
-  respuestaId,    // _id de la respuesta nueva — necesario para el deep-link
+  respuestaId,
   respuestaTexto,
 }) => {
   // No notificar si alguien se responde a sí mismo
@@ -134,7 +119,7 @@ exports.crearNotifRespuesta = async ({
       recetaId,
       recetaNombre,
       resenaId,
-      respuestaId,  // ← guardado para que el frontend pueda hacer scroll directo
+      respuestaId, 
       respuestaTexto: respuestaTexto?.slice(0, 120) || "",
     });
   } catch (err) {

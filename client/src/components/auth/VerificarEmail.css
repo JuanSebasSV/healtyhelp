@@ -1,6 +1,6 @@
 /* VerificarEmail.css */
 
-/* ── Header Healthy Help — igual que Login ── */
+/*Header Healthy Help — igual que Login*/
 .auth-brand {
   display: flex;
   align-items: center;
@@ -30,7 +30,7 @@
   color: rgba(210, 245, 185, 0.97);
 }
 
-/* ── Header con logo Healthy Help ── */
+/*Header con logo Healthy Help*/
 .auth-brand {
   display: flex;
   align-items: center;

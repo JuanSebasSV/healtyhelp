@@ -8,7 +8,7 @@ import ResumenNutricional from './ResumenNutricional';
 import PanelRecomendaciones from './PanelRecomendaciones';
 import './VistaSeguimiento.css';
 
-// ─── Iconos SVG ───────────────────────────────────────────────────────────────
+//  Iconos SVG 
 
 const IcoDesayuno = ({ className }) => (
   <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -72,7 +72,7 @@ const IcoBasura = ({ className }) => (
   </svg>
 );
 
-// ─── Metadata estática ────────────────────────────────────────────────────────
+//  Metadata estática 
 
 const TIPOS_META = {
   desayuno: { label: 'Desayuno',       Icon: IcoDesayuno, placeholder: 'Añadir desayuno'       },
@@ -86,7 +86,7 @@ const TIPOS_ORDEN = ['desayuno', 'almuerzo', 'cena', 'snack'];
 const TIPOS_COLOR = { desayuno: '#f59e0b', almuerzo: '#06b6d4', cena: '#a855f7', snack: '#10b981' };
 const MAX_SNACKS  = 3;
 
-// ─── Utilidades de fecha ──────────────────────────────────────────────────────
+//  Utilidades de fecha 
 
 const fechaLegible = (fechaStr) => {
   const [y, m, d] = fechaStr.split('-').map(Number);
@@ -131,7 +131,7 @@ const sumarNutri = (consumos) => {
   return base;
 };
 
-// ─── Componente principal ─────────────────────────────────────────────────────
+//  Componente principal 
 
 /**
  * VistaSeguimiento
@@ -217,7 +217,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const nutriAcumulado = sumarNutri(consumos);
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
+  //Handlers 
 
   const handleEditarTipo = async (consumoId, nuevoTipo) => {
     try {
@@ -257,7 +257,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     }
   };
 
-  // ── Sub-componentes ────────────────────────────────────────────────────────
+  //Sub-componentes 
 
   const TarjetaConsumo = ({ consumo }) => (
     <div className="seg-consumo-card" onClick={() => abrirReceta(consumo)}>

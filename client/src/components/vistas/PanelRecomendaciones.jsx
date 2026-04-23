@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import api from '../../api/axios';
 import './PanelRecomendaciones.css';
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
+//  Iconos 
 
 const IcoAlerta    = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><path d="M10 2L18.5 17H1.5L10 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="10" cy="14.5" r="0.8" fill="currentColor"/></svg>;
 const IcoOk        = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M6 10.5L8.5 13L14 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -13,7 +13,7 @@ const IcoCalendario = () => <svg viewBox="0 0 20 20" fill="none" className="rec-
 const IcoIMC       = () => <svg viewBox="0 0 20 20" fill="none" className="rec-sec-ico"><path d="M3 16L8 9L12 12L16 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const IcoReloj     = () => <svg viewBox="0 0 20 20" fill="none" className="rec-sec-ico"><circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.6"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+//  Helpers 
 
 const COLOR_NIVEL = { ok: 'verde', advertencia: 'amarillo', atencion: 'naranja', info: 'azul' };
 
@@ -27,7 +27,7 @@ const LABEL_CATEGORIA = {
   'postres-snacks': 'Postres & Snacks',
 };
 
-// ─── Componente ───────────────────────────────────────────────────────────────
+//  Componente 
 
 /**
  * PanelRecomendaciones
@@ -113,7 +113,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
   return (
     <div className="rec-panel">
 
-      {/* ─── Encabezado ─── */}
+      {/*  Encabezado  */}
       <div className="rec-header">
         <h2 className="rec-titulo">
           Recomendaciones para <span className="rec-nombre">{nombre?.split(' ')[0] || 'ti'}</span>
@@ -132,7 +132,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         )}
       </div>
 
-      {/* ─── Stats IMC / calorías / nutrientes ─── */}
+      {/*  Stats IMC / calorías / nutrientes  */}
       {(imc || caloriasObjetivo || nutriPromedio) && (
         <div className="rec-stats">
           {imc && (
@@ -174,7 +174,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Alertas ─── */}
+      {/*  Alertas  */}
       {alertas.length > 0 && (
         <div className="rec-seccion">
           {alertas.map((a, i) => (
@@ -186,7 +186,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Comidas saltadas ─── */}
+      {/*  Comidas saltadas  */}
       {comidasSaltadas.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoCalendario />Hábitos de comida</h3>
@@ -200,7 +200,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Momento del día activo ─── */}
+      {/*  Momento del día activo  */}
       {categoriasActivas.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoReloj />Consejos para tu momento del día</h3>
@@ -211,7 +211,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Alimentación ─── */}
+      {/*  Alimentación  */}
       <div className="rec-seccion">
         <h3 className="rec-sec-titulo"><IcoComida />Alimentación</h3>
         {coberturaAlimentacion && alimentacion.length > 0 ? (
@@ -228,7 +228,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         )}
       </div>
 
-      {/* ─── Ejercicio ─── */}
+      {/*  Ejercicio  */}
       <div className="rec-seccion">
         <h3 className="rec-sec-titulo"><IcoEjercicio />Actividad Física</h3>
         {coberturaEjercicio && ejercicio.length > 0 ? (

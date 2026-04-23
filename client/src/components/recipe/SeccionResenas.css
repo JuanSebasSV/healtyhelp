@@ -574,7 +574,7 @@
 
 .sr-resp-lista { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.35rem; }
 
-/* ── Hilo visual de conversación ─────────────────────────────── */
+/*Hilo visual de conversación  */
 .sr-resp-item {
   position: relative;
   display: flex;
@@ -755,7 +755,7 @@
 .sr-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
 .sr-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
 
-/* ── Chip de mención (cita al responder) ─────────────────────── */
+/*Chip de mención (cita al responder)  */
 .sr-mencion-chip {
   display: inline-flex;
   align-items: baseline;
@@ -786,7 +786,7 @@
   font-style: italic;
 }
 
-/* ── Botón responder inline (dentro de cada respuesta) ───────── */
+/*Botón responder inline (dentro de cada respuesta)  */
 .sr-btn-responder--inline {
   display: inline-flex;
   align-items: center;
@@ -806,14 +806,14 @@
   color: rgba(167, 213, 136, 0.9);
 }
 
-/* ── Formulario de respuesta inline ──────────────────────────── */
+/*Formulario de respuesta inline  */
 .sr-resp-form--inline {
   margin-top: 0.5rem;
   margin-left: 0;
   padding-left: 0;
 }
 
-/* ── Indicador "respondiendo a" sobre el textarea ────────────── */
+/*Indicador "respondiendo a" sobre el textarea  */
 .sr-resp-citando {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.38);
@@ -831,7 +831,7 @@
   font-weight: 600;
 }
 
-/* ── Contador de caracteres ──────────────────────────────────── */
+/*Contador de caracteres  */
 .sr-resp-contador {
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.25);

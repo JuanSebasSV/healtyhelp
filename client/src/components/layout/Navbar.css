@@ -27,7 +27,7 @@
   gap: 1rem;
 }
 
-/* ── Logo ── */
+/*Logo*/
 .navLogo {
   display: flex;
   align-items: center;
@@ -73,7 +73,7 @@
   color: var(--blanco-puro) !important;
 }
 
-/* ── Hamburguesa ── */
+/*Hamburguesa*/
 .navHamburguesa {
   display: none;
   flex-direction: column;
@@ -97,7 +97,7 @@
   opacity: 1 !important;
 }
 
-/* ── Menú ── */
+/*Menú*/
 .navMenu {
   display: flex;
   list-style: none;
@@ -119,7 +119,7 @@
 .navMenu li:not(:has(button)):hover::after { width: 100%; }
 .modo-oscuro .navMenu li { color: var(--blanco-puro) !important; }
 
-/* ── Botón tema ── */
+/*Botón tema*/
 .btnTema {
   padding: 0.5rem;
   border: none;
@@ -139,7 +139,7 @@
 .modo-oscuro .btnTema { background: rgba(0, 0, 0, 0.2); }
 .modo-oscuro .btnTema:hover { background: rgba(0, 0, 0, 0.3); }
 
-/* ── Botones sesión ── */
+/*Botones sesión*/
 .btn-primario {
   padding: 0.6rem 1.3rem;
   background: rgba(247, 127, 0, 0.25) !important;
@@ -178,7 +178,7 @@
   transform: translateY(-2px);
 }
 
-/* ── Usuario / Avatar ── */
+/*Usuario / Avatar*/
 .navUsuario {
   display: flex;
   align-items: center;
@@ -219,7 +219,7 @@
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; }
 .navMenu li.navUsuario::after { display: none; }
 
-/* ── Admin btn ── */
+/*Admin btn*/
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   backdrop-filter: blur(10px);
@@ -469,7 +469,7 @@
   transform: translateY(-8.5px) rotate(-45deg);
 }
 
-/* ── Header del menú ── */
+/*Header del menú*/
 .navMenu-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   margin-bottom: 0 !important;
@@ -530,7 +530,7 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ── Items con icono ── */
+/*Items con icono*/
 .navMenu li {
   display: flex;
   align-items: center;
@@ -553,7 +553,7 @@
   color: var(--naranja) !important;
 }
 
-/* ── Divider ── */
+/*Divider*/
 .navMenu-divider {
   height: 1px !important;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -563,7 +563,7 @@
   pointer-events: none;
 }
 
-/* ── Fila de modo tema ── */
+/*Fila de modo tema*/
 .navMenu-tema {
   display: flex !important;
   align-items: center !important;
@@ -579,12 +579,12 @@
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* ── Perfil ── */
+/*Perfil*/
 .navMenu-perfil {
   cursor: pointer;
 }
 
-/* ── Botón cerrar sesión ── */
+/*Botón cerrar sesión*/
 .navMenu-cerrar {
   border-bottom: none !important;
   padding-top: 0.5rem !important;
@@ -856,7 +856,7 @@ nav .navHamburguesa span,
    Pegar al final de Navbar.css
 ════════════════════════════════════════════════════════════════ */
 
-/* ── Toggle switch ──────────────────────────────────────────── */
+/*Toggle switch  */
 /* (ver bloque de protección más abajo para estilos con !important) */
 
 /* Garantizar pointer-events en todo el dropdown y modal */
@@ -870,7 +870,7 @@ nav .navHamburguesa span,
   pointer-events: all !important;
 }
 
-/* ── Dropdown desktop (hover sobre "Cerrar Sesión") ─────────── */
+/*Dropdown desktop (hover sobre "Cerrar Sesión")  */
 .al-dropdown-wrap {
   position: relative;
   display: inline-flex;
@@ -985,7 +985,7 @@ nav .navHamburguesa span,
   min-height: 1em;
 }
 
-/* ── Modal confirmación (mobile / táctil) ───────────────────── */
+/*Modal confirmación (mobile / táctil)  */
 .al-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1145,7 +1145,7 @@ nav .navHamburguesa span,
   }
 }
 
-/* ── Toggle switch — protección total contra herencia del navMenu ── */
+/*Toggle switch — protección total contra herencia del navMenu*/
 .al-toggle,
 .al-toggle:hover,
 .al-toggle:focus {
@@ -1224,7 +1224,7 @@ nav .navHamburguesa span,
   border-radius: 10px !important;
 }
 
-/* ── Neutralizar herencia de SVGs del navMenu en el dropdown ── */
+/*Neutralizar herencia de SVGs del navMenu en el dropdown*/
 .al-dropdown__logout-btn svg {
   stroke: #fca5a5 !important;
   fill: none !important;
@@ -1236,7 +1236,7 @@ nav .navHamburguesa span,
   opacity: 1 !important;
 }
 
-/* ── FIX: contexto de posicionamiento para el dropdown ── */
+/*FIX: contexto de posicionamiento para el dropdown*/
 /* navMenu-centrado necesita position: relative para anclar el dropdown absoluto */
 /* Sin esto el dropdown se posiciona relativo al navMenu y puede causar reflow */
 @media (min-width: 969px) {
@@ -1245,7 +1245,7 @@ nav .navHamburguesa span,
   }
 }
 
-/* ── Punto de admin sobre avatar ── */
+/*Punto de admin sobre avatar*/
 .nav-admin-dot {
   position: absolute;
   bottom: 0;

@@ -1,10 +1,6 @@
-/* ============================================
-   RecipeList.css
-   Vive dentro de .recipe-content (glassmorphism)
-   — los fondos deben ser semitransparentes
-   ============================================ */
+/*RecipeList.css*/
 
-/* ── Controles ── */
+/*Controles*/
 .list-controls {
   display: flex;
   gap: 0.85rem;
@@ -68,7 +64,7 @@
 .modo-oscuro .search-input::placeholder { color: rgba(180, 210, 160, 0.38); }
 .modo-oscuro .filter-select option { background: var(--verde-profundo); }
 
-/* ── Tabla ── */
+/*Tabla*/
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
@@ -116,7 +112,7 @@
 .modo-oscuro .recipes-table tbody tr:hover { background: rgba(79, 119, 45, 0.08); }
 .modo-oscuro .recipes-table td { color: rgba(210, 245, 185, 0.88); }
 
-/* ── Imagen thumbnail ── */
+/*Imagen thumbnail*/
 .recipe-thumbnail {
   width: 56px;
   height: 56px;
@@ -126,7 +122,7 @@
   display: block;
 }
 
-/* ── Nombre + descripción ── */
+/*Nombre + descripción*/
 .recipe-name {
   display: flex;
   flex-direction: column;
@@ -144,7 +140,7 @@
 .modo-oscuro .recipe-name strong { color: rgba(210, 245, 185, 0.95); }
 .modo-oscuro .recipe-desc { color: rgba(180, 210, 160, 0.45); }
 
-/* ── Badges de categoría ── */
+/*Badges de categoría*/
 .badge {
   display: inline-block;
   padding: 0.25rem 0.7rem;
@@ -164,7 +160,7 @@
 }
 .modo-oscuro .health-count { color: rgba(180, 210, 160, 0.55); }
 
-/* ── Botones de acción ── */
+/*Botones de acción*/
 .action-buttons {
   display: flex;
   gap: 0.4rem;
@@ -191,7 +187,7 @@
   transform: scale(1.1);
 }
 
-/* ── Estado vacío ── */
+/*Estado vacío*/
 .recipes-empty,
 .no-results {
   text-align: center;
@@ -205,7 +201,7 @@
 .modo-oscuro .recipes-empty,
 .modo-oscuro .no-results { color: rgba(180, 210, 160, 0.5); }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 968px) {
   .list-controls {
     flex-direction: column;
@@ -322,7 +318,7 @@
   .rcard-nombre { font-size: 0.85rem; }
 }
 
-/* ── Buscador con ícono integrado ── */
+/*Buscador con ícono integrado*/
 .search-box-list {
   position: relative;
   display: flex;
@@ -343,7 +339,7 @@
   padding-left: 2.6rem;
 }
 
-/* ── Botón eliminar seleccionadas con SVG ── */
+/*Botón eliminar seleccionadas con SVG*/
 .btn-bulk-delete {
   display: flex;
   align-items: center;
@@ -364,14 +360,14 @@
   transform: translateY(-1px);
 }
 
-/* ── Acciones con SVG ── */
+/*Acciones con SVG*/
 .btn-edit, .btn-delete {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ── Placeholder receta sin imagen ── */
+/*Placeholder receta sin imagen*/
 .recipe-thumbnail-placeholder {
   width: 56px;
   height: 56px;
@@ -383,7 +379,7 @@
   justify-content: center;
 }
 
-/* ── Checkboxes modernos glassmorphism ── */
+/*Checkboxes modernos glassmorphism*/
 .recipes-table input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -422,7 +418,7 @@
   background: rgba(79, 119, 45, 0.15);
 }
 
-/* ── Fix visibilidad SVGs en botones de acción ── */
+/*Fix visibilidad SVGs en botones de acción*/
 .btn-edit {
   color: rgba(96, 165, 250, 0.85);
 }

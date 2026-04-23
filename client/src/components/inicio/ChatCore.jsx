@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-/* ── Iconos ── */
+/*Iconos*/
 const IconoRobot = ({ size = 20, color = 'currentColor' }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -92,7 +92,7 @@ const IconoSemilla = ({ size = 14 }) => (
   </svg>
 );
 
-/* ── Sugerencias ── */
+/*Sugerencias*/
 const sugerencias = [
   { icono: <IconoZanahoría size={13}/>, texto: 'Recetas para diabéticos' },
   { icono: <IconoCorazon size={13}/>,   texto: 'Menú bajo en sodio' },
@@ -100,7 +100,7 @@ const sugerencias = [
   { icono: <IconoManzana size={13}/>,   texto: 'Sin gluten' },
 ];
 
-/* ── Componente ── */
+/*Componente*/
 const ChatCore = ({
   modoExpandido = false,
   chat = [],

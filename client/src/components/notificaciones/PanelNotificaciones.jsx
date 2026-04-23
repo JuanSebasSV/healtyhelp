@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import "./PanelNotificaciones.css";
 
-/* ── Íconos ── */
+/*Íconos*/
 const IcoReply = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -60,7 +60,7 @@ const IcoClose = () => (
   </svg>
 );
 
-/* ── Formatea fecha relativa ── */
+/*Formatea fecha relativa*/
 const formatRelativa = (date) => {
   const diff = Date.now() - new Date(date).getTime();
   const min  = Math.floor(diff / 60000);
@@ -73,7 +73,7 @@ const formatRelativa = (date) => {
   return new Date(date).toLocaleDateString("es-ES", { day: "numeric", month: "short" });
 };
 
-/* ── Componente ── */
+/*Componente*/
 const PanelNotificaciones = ({
   notificaciones,
   noLeidas,
@@ -202,7 +202,7 @@ const PanelNotificaciones = ({
               {/* Indicador de no leída */}
               {!n.leida && <span className="pn-dot" aria-hidden="true" />}
 
-              {/* ── Botón eliminar — SIEMPRE visible en hover ── */}
+              {/*Botón eliminar — SIEMPRE visible en hover*/}
               <button
                 className="pn-btn-eliminar"
                 onClick={(e) => {
