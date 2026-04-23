@@ -278,7 +278,7 @@
   }
 }
 
-/* Item con navegación (reply con recetaId) */
+/* Item con navegación */
 .pn-clickable {
   cursor: pointer;
 }
@@ -286,14 +286,14 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-/*Header derecho (agrupa "leer todas" + botón X)*/
+/*Header derecho*/
 .pn-header-der {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/*Botón X cerrar modal (solo móvil)*/
+/*Botón X cerrar modal*/
 .pn-btn-cerrar-modal {
   display: flex;
   align-items: center;

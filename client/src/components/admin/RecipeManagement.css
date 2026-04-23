@@ -1,9 +1,4 @@
-/*
-   RecipeManagement.css
-   Contenedor de la sección de recetas dentro
-   del Dashboard. NO tiene header propio porque
-   ya está en el Dashboard padre.
-   */
+/*RecipeManagement.css*/
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

@@ -184,7 +184,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     setAvisos(prev => ({ ...prev, [name]: calcularAviso(name, value) }));
   };
 
-  /*Blur: marcar como tocado y validar*/
+  /*Blur*/
   const handleBlur = (name) => {
     setTouched(prev => ({ ...prev, [name]: true }));
     setErrors(prev => ({ ...prev, [name]: validarCampo(name, form[name]) }));

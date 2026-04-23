@@ -9,7 +9,6 @@ import PanelRecomendaciones from './PanelRecomendaciones';
 import './VistaSeguimiento.css';
 
 //  Iconos SVG 
-
 const IcoDesayuno = ({ className }) => (
   <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.6"/>
@@ -73,7 +72,6 @@ const IcoBasura = ({ className }) => (
 );
 
 //  Metadata estática 
-
 const TIPOS_META = {
   desayuno: { label: 'Desayuno',       Icon: IcoDesayuno, placeholder: 'Añadir desayuno'       },
   almuerzo: { label: 'Almuerzo',       Icon: IcoAlmuerzo, placeholder: 'Añadir almuerzo'       },
@@ -87,7 +85,6 @@ const TIPOS_COLOR = { desayuno: '#f59e0b', almuerzo: '#06b6d4', cena: '#a855f7',
 const MAX_SNACKS  = 3;
 
 //  Utilidades de fecha 
-
 const fechaLegible = (fechaStr) => {
   const [y, m, d] = fechaStr.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('es-CO', {
@@ -132,14 +129,6 @@ const sumarNutri = (consumos) => {
 };
 
 //  Componente principal 
-
-/**
- * VistaSeguimiento
- *
- * Ya NO recibe `filtros` como prop.
- * PanelRecomendaciones es completamente autónomo: se conecta directamente
- * a /api/recomendaciones que lee la BD sin pasar por el cliente.
- */
 const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const [periodo,      setPeriodo]      = useState('dia');
   const [dias,         setDias]         = useState([]);
@@ -198,12 +187,10 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     if (ops.length > 0 && !ops.includes(seleccionado)) {
       setSeleccionado(ops[0]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [periodo, dias]);
 
   useEffect(() => {
     if (seleccionado) cargarConsumos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seleccionado, periodo]);
 
   const consumosPorFecha = useCallback(() => {
@@ -218,7 +205,6 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const nutriAcumulado = sumarNutri(consumos);
 
   //Handlers 
-
   const handleEditarTipo = async (consumoId, nuevoTipo) => {
     try {
       await api.put(`/consumos/${consumoId}/tipo`, { tipo: nuevoTipo });
@@ -258,7 +244,6 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   };
 
   //Sub-componentes 
-
   const TarjetaConsumo = ({ consumo }) => (
     <div className="seg-consumo-card" onClick={() => abrirReceta(consumo)}>
       <div className="seg-consumo-img-wrap">
@@ -446,12 +431,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/*
-        PanelRecomendaciones es autónomo:
-        - Se conecta directamente a /api/recomendaciones
-        - Lee condiciones + categorias + nutrientes desde BD
-        - No necesita props del padre
-      */}
+      {}
       <PanelRecomendaciones versionFiltros={versionFiltros} />
 
       {vistaReceta === 'detalle' && recetaSelec && (

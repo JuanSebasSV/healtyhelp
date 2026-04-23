@@ -106,7 +106,6 @@ const PanelNotificaciones = ({
   }, [onCerrar]);
 
   // Marcar todas las visibles como leídas cuando el panel se abre
-  // (las que están en pantalla se consideran "vistas")
   useEffect(() => {
     if (cargando) return;
     const noLeidasVisibles = notificaciones.filter(n => !n.leida);
@@ -118,8 +117,7 @@ const PanelNotificaciones = ({
     }, 1200);
 
     return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cargando]); // Solo al abrir (cuando cargando pasa a false)
+  }, [cargando]);
 
   const decodificar = (str) => {
     if (!str) return "";
@@ -132,10 +130,6 @@ const PanelNotificaciones = ({
     if (!n.leida) onLeerUna(n._id);
     if ((n.type === "reply" || n.type === "new_recipe") && n.recetaId) {
       onCerrar();
-      // URL con deep-link:
-      //   ?receta=<id>            → abre la receta
-      //   &resena=<id>            → hace scroll hasta esa reseña y la destaca
-      //   &respuesta=<id>         → expande las respuestas y hace scroll hasta esa respuesta
       const params = new URLSearchParams({ receta: n.recetaId });
       if (n.resenaId)    params.set('resena',    n.resenaId);
       if (n.respuestaId) params.set('respuesta', n.respuestaId);
@@ -143,7 +137,6 @@ const PanelNotificaciones = ({
       if (onNavegar) {
         onNavegar(url);
       } else {
-        // Fallback: navegación nativa si no hay router prop
         window.location.href = url;
       }
     }
@@ -202,7 +195,7 @@ const PanelNotificaciones = ({
               {/* Indicador de no leída */}
               {!n.leida && <span className="pn-dot" aria-hidden="true" />}
 
-              {/*Botón eliminar — SIEMPRE visible en hover*/}
+              {/*Botón eliminar*/}
               <button
                 className="pn-btn-eliminar"
                 onClick={(e) => {

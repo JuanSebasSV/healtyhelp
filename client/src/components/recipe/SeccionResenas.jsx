@@ -194,9 +194,6 @@ const RespuestaItem = memo(({
   const [enviando, setEnviando]         = useState(false);
   const itemRef = useRef(null);
 
-  // Scroll + flash animado cuando esta respuesta es la destacada.
-  // Timeout de 600ms para esperar: apertura del modal (300ms) +
-  // expansión de SeccionRespuestas + render de items.
   useEffect(() => {
     if (!idIgual(rp._id, respuestaIdDestacada) || !itemRef.current) return;
     const el = itemRef.current;
@@ -341,13 +338,6 @@ const RespuestaItem = memo(({
 });
 RespuestaItem.displayName = 'RespuestaItem';
 
-//SeccionRespuestas — árbol plano con referencias visuales 
-//
-// La estrategia: el backend devuelve un array plano de respuestas, cada una
-// puede tener parentRespuestaId + parentUserName + parentTexto.
-// Renderizamos en orden cronológico con chips de mención (sin anidado profundo)
-// y permitimos responder a cualquiera.  Visualmente inspirado en YouTube/Reddit.
-//
 const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user, isAuthenticated, respuestaIdDestacada }) => {
   const [respuestas,   setRespuestas]   = useState(respInit || []);
   const [texto,        setTexto]        = useState('');
@@ -358,7 +348,6 @@ const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user
   );
   const [respondiendo, setRespondiendo] = useState(false);
 
-  // Re-verificar expansión si el prop cambia (navegación desde notificación después del mount)
   useEffect(() => {
     if (!respuestaIdDestacada) return;
     // Expandir siempre que haya un ID destacado, incluso si la respuesta fue borrada
@@ -401,8 +390,6 @@ const SeccionRespuestas = memo(({ recetaId, resenaId, respuestas: respInit, user
     }
   }, [recetaId, resenaId]);
 
-  // Calcular depth visual: si la respuesta tiene parent, es nivel 1+
-  // Mantenemos mapa de id→depth para rendering correcto
   const depthMap = {};
   respuestas.forEach(r => {
     if (!r.parentRespuestaId) {
@@ -503,7 +490,7 @@ const esDelUsuario = (r, user) =>
   );
 
 //SeccionResenas 
-// Compara dos IDs de MongoDB de forma segura (string vs ObjectId vs undefined)
+// Compara dos IDs de MongoDB de forma segura
 const idIgual = (a, b) => a && b && String(a) === String(b);
 
 const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, respuestaIdDestacada }) => {
@@ -527,9 +514,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
 
   const resenaDestacadaRef = useRef(null);
 
-  //Buscar página correcta para el deep-link 
-  // Cuando hay respuestaIdDestacada o resenaIdDestacada, consultamos todas las
-  // páginas hasta encontrar la reseña que la contiene y saltamos a esa página.
   useEffect(() => {
     if (!respuestaIdDestacada && !resenaIdDestacada) {
       setBuscandoPagina(false);
@@ -539,7 +523,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
     const buscar = async () => {
       setBuscandoPagina(true);
       try {
-        // Primero obtenemos página 1 para saber cuántas páginas hay
         const { data: d1 } = await api.get(
           `/recipes/${receta._id}/resenas?page=1&limit=5&orden=${orden}`
         );
@@ -555,13 +538,12 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
           return false;
         };
 
-        // Revisar página 1 primero (ya la tenemos)
         if (revisar(d1.resenas)) {
           if (!cancelled) setPagina(1);
           return;
         }
 
-        // Buscar en páginas 2..N
+        // Buscar en páginas 2
         for (let p = 2; p <= totalPaginas; p++) {
           if (cancelled) return;
           const { data } = await api.get(
@@ -573,7 +555,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
             return;
           }
         }
-        // No encontrada (fue borrada) — quedarse en página 1
+        // No encontrada (fue borrada)
         if (!cancelled) setPagina(1);
       } catch { /* silencioso */ } finally {
         if (!cancelled) setBuscandoPagina(false);
@@ -582,7 +564,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
     buscar();
     return () => { cancelled = true; };
   // Solo corre una vez al montar con los IDs iniciales
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receta._id, respuestaIdDestacada, resenaIdDestacada]);
 
   //Scroll a reseña destacada (cuando carga termina y hay ref) 
@@ -594,7 +575,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
     return () => clearTimeout(t);
   }, [resenaIdDestacada, cargandoRes, buscandoPagina]);
 
-  // Carga principal: se ejecuta al montar y cuando cambia orden o pagina
+  // Carga principal
   useEffect(() => {
     let cancelled = false;
     setCargandoRes(true);
@@ -660,7 +641,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
 
     fetchData();
     return () => { cancelled = true; };
-  }, [receta._id, pagina, orden, refresco, user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [receta._id, pagina, orden, refresco, user]); 
 
   const cambiarOrden = useCallback((nuevoOrden) => {
     setOrden(nuevoOrden);
@@ -766,7 +747,6 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
         .sr-resp-item--flash { animation: sr-flash 2.8s ease-out forwards; }
       `}</style>
 
-      {/* Spinner mientras buscamos la página correcta del deep-link */}
       {buscandoPagina && (
         <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'8px 0', opacity:0.6, fontSize:'0.82rem' }}>
           <div style={{ width:14, height:14, border:'2px solid currentColor', borderTopColor:'transparent', borderRadius:'50%', animation:'spin 0.7s linear infinite' }} />

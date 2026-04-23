@@ -522,14 +522,14 @@
 @media (max-width: 767px) {
   .recetasGrid .grid {
     display: grid;
-    grid-template-columns: 1fr !important; /* Fuerza una sola columna */
+    grid-template-columns: 1fr !important;
     gap: 20px; 
     padding-left: 3rem;
     padding-right: 3rem;    
     
   }
 
-  /* Opcional: ajustar el encabezado si es necesario */
+  /* Ajustar el encabezado si es necesario */
   .recetasGrid-header {
     text-align: center;
     display: flex;
@@ -843,9 +843,7 @@
     cursor: grabbing;
   }
 }
-/*
-   NUEVA FUNCIONALIDAD: Fila de filtro por tiempo
-   */
+/*Fila de filtro por tiempo*/
 
 /* Separador visual entre la fila de categorías y la de tiempos */
 .tiempos-fila {
@@ -871,14 +869,9 @@
 .modo-oscuro .tiempos-label { color: rgba(180, 220, 150, 0.5); }
 .modo-oscuro .tiempos-label svg { stroke: rgba(180, 220, 150, 0.35); }
 
-/* Los botones de tiempo heredan todo de .catBtn
-   Solo se reduce un poco el padding para que sean
-   visualmente más compactos que las categorías */
 .catBtn--tiempo {
   padding: 0.3rem 0.9rem;
   font-size: 0.82rem;
-  /* tono azul-verde sutil para diferenciarlos de las categorías
-     sin romper la paleta del diseño original */
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.18);
 }
@@ -901,7 +894,7 @@
   border-color: rgba(56, 189, 248, 0.5);
 }
 
-/* Botón "✕ Limpiar" — discreto, no compite visualmente */
+/* Botón "✕ Limpiar" */
 .catBtn--limpiar-tiempo {
   padding: 0.3rem 0.8rem;
   font-size: 0.75rem;
@@ -919,9 +912,7 @@
 }
 .modo-oscuro .catBtn--limpiar-tiempo { border-color: rgba(255, 255, 255, 0.1); }
 
-/*
-   NUEVA FUNCIONALIDAD: Buscador
-   */
+/*Buscador*/
 
 .buscador-recetas {
   display: flex;

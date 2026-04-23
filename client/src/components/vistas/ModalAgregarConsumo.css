@@ -1,5 +1,4 @@
 /* ModalAgregarConsumo.css */
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -87,7 +86,7 @@
   flex-shrink: 0;
 }
 
-/*Selector tipo (solo filtro visual)*/
+/*Selector tipo */
 .agr-tipo-selector {
   display: flex;
   gap: 0.45rem;

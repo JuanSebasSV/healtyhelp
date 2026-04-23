@@ -135,12 +135,39 @@ const TarjetaReceta = memo(
               {seleccionada ? <IconoCheck /> : <IconoPDF />}
             </button>
 
-            {costoFormato && (
-              <div className="tarjeta-costo-badge">
-                <span className="tarjeta-costo-icono">🍽️</span>
-                <span className="tarjeta-costo-valor">{costoFormato}</span>
-                <span className="tarjeta-costo-label">/porción</span>
-              </div>
+          {costoFormato && (
+            <div className="tarjeta-costo-badge">
+              <span className="tarjeta-costo-icono">🍽️</span>
+              <span className="tarjeta-costo-valor">{costoFormato}</span>
+              <span className="tarjeta-costo-label">/porción</span>
+            </div>
+          )}
+        </div>
+
+        <div className="tarjetaInfo">
+          <h3>{receta.nombre}</h3>
+          <p>{receta.desc}</p>
+          <div className="tarjetaPuntuacion">
+            <div className="estrellas-mini">
+              {ESTRELLAS.map(n => (
+                <span key={n} className={`estrella-ico ${n <= promRedondeado ? 'llena' : 'vacia'}`}>★</span>
+              ))}
+            </div>
+            <span className="tarjeta-prom-txt">
+              {prom > 0 ? `${prom} (${total})` : 'Sin reseñas'}
+            </span>
+
+            {receta.tiempoMinutos > 0 && (
+              <span className="tarjeta-tiempo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                {receta.tiempoMinutos < 60
+                  ? `${receta.tiempoMinutos} min`
+                  : `${Math.floor(receta.tiempoMinutos / 60)}h${receta.tiempoMinutos % 60 > 0 ? ` ${receta.tiempoMinutos % 60}min` : ''}`}
+              </span>
             )}
           </div>
 

@@ -1,7 +1,4 @@
-/*
-   UserList.css — Tabla de usuarios
-   Glassmorphism coherente con el Dashboard
-   */
+/*UserList.css — Tabla de usuarios*/
 
 /*Contenedor*/
 .user-list-container {
@@ -209,7 +206,7 @@
   color: var(--verde-menta);
 }
 
-/*Badges de estado (verificación - eliminados)*/
+/*Badges de estado*/
 .status-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
 .badge.verified {
@@ -257,7 +254,7 @@
   cursor: not-allowed;
 }
 
-/*Botón admin en navbar (si lo usas desde aquí)*/
+/*Botón admin en navbar*/
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   border: 1.5px solid rgba(129, 140, 248, 0.4) !important;
@@ -376,7 +373,6 @@
   .user-cards-movil { display: none; }
   .user-table { display: table; }
 }
-/*Fix alineación vertical de todas las celdas*/
 .user-table td {
   vertical-align: middle;
 }
@@ -420,7 +416,7 @@
   height: 100%;
 }
 
-/*Nombre: no dejar que el badge (Tú) empuje la fila*/
+/*Nombre*/
 .you-badge {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
@@ -439,7 +435,6 @@
   justify-content: center;
 }
 
-/*Fix visibilidad SVGs botones acción*/
 .btn-delete {
   color: rgba(239, 68, 68, 0.75);
 }
@@ -454,12 +449,10 @@
   stroke: rgba(255, 255, 255, 0.3);
 }
 
-/*Fix badges con SVG inline*/
 .badge svg {
   vertical-align: middle;
 }
 
-/*Fix google badge SVG*/
 .google-badge svg {
   stroke: var(--azul-medio);
 }

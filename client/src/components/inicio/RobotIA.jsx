@@ -5,7 +5,6 @@ import ChatCore from './ChatCore';
 import './RobotIA.css';
 
 // Componente principal 
-
 const RobotIA = ({ activo, toggleIA }) => {
   const navigate = useNavigate();
 

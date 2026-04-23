@@ -47,7 +47,6 @@
   text-align: center;
 }
 
-/* Reutiliza .auth-brand de Register */
 .completar-brand {
   display: flex;
   align-items: center;

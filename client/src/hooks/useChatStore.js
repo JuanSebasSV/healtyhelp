@@ -1,5 +1,4 @@
 /*useChatStore*/
-
 import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { toast } from 'react-toastify';
@@ -31,10 +30,7 @@ function setCargando(valor) {
   notificar();
 }
 
-//  Llamada a la API 
 // Lee _chat directamente para que el historial siempre sea el más reciente,
-// incluso en retries con setTimeout (evita closures obsoletos).
-
 async function llamarAPI(texto) {
   setCargando(true);
   try {
@@ -56,7 +52,6 @@ async function llamarAPI(texto) {
 }
 
 //  Función de envío global 
-
 async function enviarMensajeGlobal(texto) {
   if (!texto?.trim()) return;
 
@@ -67,14 +62,6 @@ async function enviarMensajeGlobal(texto) {
   _ultimoEnvio = ahora;
 
   setChat(prev => [...prev, { tipo: 'usuario', texto }]);
-
-  //IMPORTANTE: no se interceptan preguntas sobre filtros localmente.
-  // La versión anterior (RobotIA.jsx) capturaba palabras clave como "filtro",
-  // "dieta", "condición" y respondía con datos cargados UNA SOLA VEZ al montar.
-  // Si el usuario cambiaba sus filtros después, la respuesta era incorrecta.
-  //
-  // Ahora TODOS los mensajes van al backend (POST /chat), que hace
-  // User.findById() en cada request — siempre lee el perfil real y actualizado.
 
   try {
     await llamarAPI(texto);
@@ -102,8 +89,7 @@ async function enviarMensajeGlobal(texto) {
   }
 }
 
-//  Hook 
-
+//  Hook
 const useChatStore = () => {
   const [, forceRender] = useState(0);
   const [mensaje, setMensaje] = useState('');

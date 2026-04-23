@@ -88,9 +88,7 @@
   line-height: 1.65;
 }
 
-/* =====================================================
-   NUEVA FUNCIONALIDAD: Tiempo de preparación en detalle
-   ===================================================== */
+/*Tiempo de preparación en detalle*/
 .detalle-tiempo {
   display: inline-flex;
   align-items: center;

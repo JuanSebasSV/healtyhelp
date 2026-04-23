@@ -188,7 +188,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
 
   // Marcar una como leída y actualizar el contador local
   const handleLeerUna = useCallback(async (id) => {
-    // Actualizamos optimistamente primero para que el badge desaparezca de inmediato
     setNotificaciones(prev => {
       const notif = prev.find(n => n._id === id);
       if (!notif || notif.leida) return prev;
@@ -198,7 +197,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
     // Luego sincronizamos con el servidor
     try {
       await api.put(`/notifications/${id}/leer`);
-    } catch { /* silencioso — ya actualizamos localmente */ }
+    } catch { /* silencioso */ }
   }, []);
 
   const handleNavigate = useCallback((ruta) => {

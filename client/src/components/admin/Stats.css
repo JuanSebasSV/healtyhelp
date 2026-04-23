@@ -1,7 +1,4 @@
-/*
-   Stats.css — Tarjetas de estadísticas
-   Glassmorphism sobre fondo verde/oscuro
-   */
+/*Stats.css*/
 
 @keyframes shimmer {
   0%   { transform: translateX(-100%); }

@@ -122,9 +122,7 @@ const mapItem = (img) => ({
 
 /*  Componente principal  */
 const ImagenesAprobacion = ({ onCambio }) => {
-  // Cache de todos los estados — se llena con UN solo batch de 3 requests
   const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
-  // Flag para evitar doble carga en React StrictMode (doble-invoke de effects en dev)
   const cargandoRef = useRef(false);
 
   const [imagenes,       setImagenes]       = useState([]);

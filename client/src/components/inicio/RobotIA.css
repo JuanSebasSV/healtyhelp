@@ -1,4 +1,4 @@
-/*RobotIA.css — Botanical Tech · Ventana flotante*/
+/*RobotIA.css*/
 
 /*Botón flotante  */
 .robotBoton {
@@ -129,8 +129,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 .chatOrbe {
   position: absolute;
   border-radius: 50%;
-  /* FIX: filter: blur() en elementos animados es el peor caso
-     posible para rendimiento. Se reduce drásticamente el blur. */
   filter: blur(40px);
   opacity: 0.25;
 }
