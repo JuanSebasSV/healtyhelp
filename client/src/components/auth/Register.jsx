@@ -12,29 +12,21 @@ import { toast } from 'react-toastify';
 import './Register.css';
 
 const DOMINIOS_PERMITIDOS = new Set([
-  // Google
   'gmail.com',
-  // Microsoft
   'hotmail.com', 'hotmail.es', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de',
   'outlook.com', 'outlook.es', 'live.com', 'live.com.mx', 'live.co.uk',
   'msn.com',
-  // Yahoo
   'yahoo.com', 'yahoo.es', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de',
   'yahoo.com.mx', 'yahoo.com.ar', 'yahoo.com.co',
-  // Apple
   'icloud.com', 'me.com', 'mac.com',
-  // Otros populares globales
   'protonmail.com', 'proton.me', 'pm.me',
   'tutanota.com', 'tuta.io',
   'zoho.com',
   'aol.com', 'aol.co.uk',
   'mail.com', 'email.com', 'gmx.com', 'gmx.de', 'gmx.net',
   'yandex.com', 'yandex.ru',
-  // Latinoamérica frecuentes
   'bol.com.br', 'ig.com.br', 'uol.com.br', 'terra.com.br',
   'hotmail.com.br',
-  // Colombia / España universitarios y corporativos comunes
-  // (agrega los tuyos si necesitas admitir dominios institucionales)
 ]);
 
 const esEmailPermitido = (email) => {
@@ -83,7 +75,6 @@ const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
 const AVISOS = {
   nombre_caracteres:  { titulo: 'Solo letras.',              mensaje: 'El nombre no puede contener números ni símbolos.',                                                    variante: 'naranja' },
   email_invalido:     { titulo: 'Formato incorrecto.',       mensaje: 'Escribe un correo válido, por ejemplo: usuario@correo.com.',                                          variante: 'naranja' },
-  //NUEVO 
   email_dominio:      { titulo: 'Proveedor no permitido.',   mensaje: 'Usa un correo de Gmail, Hotmail, Outlook, Yahoo, iCloud u otro proveedor reconocido.',                variante: 'rojo'    },
   pass_debil:         { titulo: 'Contraseña débil.',         mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.',                            variante: 'naranja' },
   passConf_mismatch:  { titulo: 'No coinciden.',             mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                                              variante: 'rojo'    },
@@ -106,7 +97,6 @@ const calcularAviso = (field, value, datos) => {
     case 'email': {
       if (!value) return null;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'email_invalido';
-      //NUEVO: validar dominio 
       if (!esEmailPermitido(value)) return 'email_dominio';
       return null;
     }
@@ -198,7 +188,6 @@ const validarCampo = (field, value, datos) => {
     case 'email': {
       if (!value) return 'El correo es requerido';
       if (!validateEmail(value)) return 'Correo inválido';
-      //NUEVO: bloquear dominios no reconocidos 
       if (!esEmailPermitido(value)) return 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)';
       return '';
     }
@@ -244,7 +233,6 @@ const FieldHint = ({ field, value, datos, touched }) => {
     ],
     email: [
       { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), label: 'Formato válido (ejemplo@correo.com)' },
-      //NUEVO hint de dominio 
       { ok: value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && esEmailPermitido(value), label: 'Proveedor reconocido (Gmail, Hotmail…)' },
     ],
     pass: [
@@ -320,7 +308,7 @@ const Register = () => {
   const [showPass, setShowPass]         = useState(false);
   const [showPassConf, setShowPassConf] = useState(false);
 
-  // Avisos inline en tiempo real — una clave por campo
+  // Avisos inline en tiempo real
   const [avisos, setAvisos] = useState({});
 
   /* Cambio con validación en tiempo real */
@@ -363,7 +351,6 @@ const Register = () => {
     const allTouched = Object.keys(datos).reduce((acc, k) => ({ ...acc, [k]: true }), {});
     setTouched(allTouched);
 
-    //NUEVO: verificar dominio antes de llamar al backend 
     if (datos.email && !esEmailPermitido(datos.email)) {
       setErrors((prev) => ({ ...prev, email: 'Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)' }));
       setAvisos((prev) => ({ ...prev, email: 'email_dominio' }));

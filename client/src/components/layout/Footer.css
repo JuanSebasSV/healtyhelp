@@ -107,9 +107,6 @@
 /*Responsive*/
 @media (max-width: 640px) {
   .footerContenido { grid-template-columns: 1fr; }
-
-  /* FIX: en móvil, backdrop-filter: blur(20px) en el footer
-     es muy costoso. Se reemplaza por un fondo sólido equivalente. */
   .footer {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

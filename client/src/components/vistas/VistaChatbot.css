@@ -186,7 +186,6 @@
 
 
 /*Zona derecha: chatCore  */
-/* padding para que el chat respire y no toque los bordes */
 .vistaChatbot__chat {
   flex: 1;
   display: flex;
@@ -197,7 +196,6 @@
 }
 
 /*chatCore en modo expandido  */
-/* glassmorphism igual que hero-texto y perfil-identidad */
 .chatCore--expandido {
   flex: 1;
   display: flex;
@@ -334,7 +332,7 @@
   50%       { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
 }
 
-/*Modo oscuro: misma lógica que el resto de la app  */
+/*Modo oscuro*/
 .modo-oscuro .vistaChatbot__panel {
   background: rgba(4,12,7,0.82);
 }
@@ -345,9 +343,7 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
-/*
-   RESPONSIVE — Tablets (768px – 1024px)
-   */
+/*RESPONSIVE — Tablets (768px – 1024px)*/
 @media (max-width: 1024px) {
   .vistaChatbot__panel {
     width: 220px;
@@ -364,9 +360,7 @@
   .chatCore--expandido .robotFooter   { padding: 0.5rem 1.5rem; }
 }
 
-/*
-   RESPONSIVE — Teléfonos (≤ 767px)
-   */
+/*RESPONSIVE — Teléfonos (≤ 767px)*/
 @media (max-width: 767px) {
 
   .vistaChatbot { top: 64px; }
@@ -440,9 +434,7 @@
   .chatCore--expandido .robotFooter { padding: 0.4rem 1rem; }
 }
 
-/*
-   RESPONSIVE — Muy pequeños (≤ 380px)
-   */
+/*RESPONSIVE — Muy pequeños (≤ 380px)*/
 @media (max-width: 380px) {
   .vistaChatbot__panel { padding: 0.6rem 0.75rem; }
   .vistaChatbot__marcaIcono { width: 28px; height: 28px; }

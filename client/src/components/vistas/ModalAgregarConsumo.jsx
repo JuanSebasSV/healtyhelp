@@ -137,7 +137,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
           Se guardará en: <strong>{TIPOS_META[tipoDestino].label}</strong>
         </p>
 
-        {/* Selector filtro visual — oculto cuando el destino es snack */}
+        {/* Selector filtro visual*/}
         {tipoDestino !== 'snack' && (
           <div className="agr-tipo-selector">
             {['todas', 'desayuno', 'almuerzo', 'cena'].map(t => {
@@ -156,7 +156,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
           </div>
         )}
 
-        {/* Buscador sin placeholder — título arriba */}
+        {/* Buscador sin placeholder */}
         <p className="agr-busqueda-label">Buscar receta</p>
         <div className="agr-busqueda">
           <svg className="agr-lupa-svg" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

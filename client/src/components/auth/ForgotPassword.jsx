@@ -32,9 +32,7 @@ const ForgotPassword = () => {
 
     if (result.success) {
       setEnviado(true);
-      toast.success('Revisa tu correo electrónico');
-      
-      // Opcional: redirigir después de 3 segundos
+      toast.success('Revisa tu correo electrónico');      
       setTimeout(() => {
         navigate('/login');
       }, 3000);

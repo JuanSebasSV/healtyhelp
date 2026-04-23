@@ -4,9 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 
-/* 
-   Modal enviar mensaje
- */
+/* Modal enviar mensaje*/
 const ModalMensaje = ({ user: target, onClose }) => {
   const [asunto,   setAsunto]   = useState('');
   const [mensaje,  setMensaje]  = useState('');
@@ -114,12 +112,10 @@ const ModalMensaje = ({ user: target, onClose }) => {
   );
 };
 
-/* 
-   Modal de baneo
- */
+/* Modal de baneo*/
 const ModalBaneo = ({ user: target, onClose, onBan }) => {
   const [motivo,   setMotivo]   = useState('');
-  const [tipo,     setTipo]     = useState('dias'); // 'dias' | 'permanente'
+  const [tipo,     setTipo]     = useState('dias');
   const [dias,     setDias]     = useState(7);
   const [enviando, setEnviando] = useState(false);
 
@@ -217,9 +213,7 @@ const ModalBaneo = ({ user: target, onClose, onBan }) => {
   );
 };
 
-/* 
-   Componente principal UserList
- */
+/*Componente principal UserList*/
 const UserList = ({ users, onDelete, onChangeRole }) => {
   const { user: currentUser } = useAuth();
   const [modalBaneo,    setModalBaneo]    = useState(null);
@@ -265,11 +259,11 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
     try {
       const { data } = await api.put(`/admin/users/${userId}/ban`, { motivo, dias });
       toast.success(data.message || 'Usuario baneado');
-      // Forzar refresco de lista — reutilizamos onChangeRole como señal de refresh
+      // Forzar refresco de list
       onChangeRole && onChangeRole(userId, null, '__refresh__');
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al banear'}`);
-      throw e; // para que el modal no cierre
+      throw e;
     } finally {
       setProcesandoBan(null);
     }
@@ -551,7 +545,7 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
                   <td>
                     <div className="action-buttons">
 
-                      {/* Mensaje directo — disponible para cualquier usuario que no seas tú */}
+                      {/* Mensaje directo */}
                       {!isCurrentUser && (
                         <button
                           onClick={() => setModalMensaje(user)}

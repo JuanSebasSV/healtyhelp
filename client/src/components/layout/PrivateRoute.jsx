@@ -61,7 +61,6 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   // 7. ¿La versión de los términos que aceptó es la vigente?
   const serverVersion = user.activeTermsVersion;
   if (serverVersion && user.termsVersion !== serverVersion) {
-    // Términos desactualizados → volver a "/" donde App.jsx mostrará ModalTerminos
     return <Navigate to="/" replace />;
   }
   

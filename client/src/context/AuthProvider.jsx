@@ -8,10 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Refs para el sistema de cierre automático
-  const inactivityTimerRef  = useRef(null);   // timer de inactividad
-  const autoLogoutEnabledRef = useRef(false);  // espejo ref del estado (para callbacks)
-  const autoLogoutMinutesRef = useRef(15);     // espejo ref de los minutos
-
+  const inactivityTimerRef  = useRef(null);
+  const autoLogoutEnabledRef = useRef(false);
+  const autoLogoutMinutesRef = useRef(15);    
   //Limpiar sesión 
   const limpiarSesion = useCallback(() => {
     localStorage.removeItem('token');
@@ -47,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   }, [clearInactivityTimer, resetInactivityTimer]);
 
   const startActivityListeners = useCallback(() => {
-    stopActivityListeners(); // evitar duplicados
+    stopActivityListeners();
     ACTIVITY_EVENTS.forEach(ev =>
       window.addEventListener(ev, resetInactivityTimer, { passive: true })
     );
@@ -66,8 +65,6 @@ export const AuthProvider = ({ children }) => {
   }, [limpiarSesion]);
 
   //Actualizar preferencias de auto-logout en vivo 
-  // Se llama cuando el usuario cambia el toggle; también se llama al cargar
-  // la sesión para sincronizar los refs y arrancar/parar los listeners.
   const applyAutoLogoutPrefs = useCallback((enabled, minutes) => {
     autoLogoutEnabledRef.current  = enabled;
     autoLogoutMinutesRef.current  = minutes ?? 15;
@@ -79,7 +76,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [startActivityListeners, stopActivityListeners]);
 
-  //updateAutoLogout: lo llama el toggle del Navbar 
   // Guarda en BD y actualiza el estado local al instante
   const updateAutoLogout = useCallback(async (enabled, minutes) => {
     try {
@@ -265,7 +261,7 @@ export const AuthProvider = ({ children }) => {
         register, login, logout,
         forgotPassword, resetPassword,
         isAdmin, checkAuth,
-        updateAutoLogout,   // ← nuevo: lo usa el toggle del Navbar
+        updateAutoLogout,
       }}
     >
       {children}

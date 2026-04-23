@@ -61,8 +61,6 @@ const capacidades = [
 
 const VistaChatbot = ({ abrirFlotante }) => {
   const navigate = useNavigate();
-
-  // Mismo store que RobotIA — historial compartido automáticamente
   const {
     chat,
     cargando,

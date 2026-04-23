@@ -176,10 +176,6 @@
   }
 }
 
-/*Agregar esto a Register.css 
-   Pega este bloque al final de tu archivo Register.css
-    */
-
 /* Lista de hints de validación en tiempo real */
 .field-hints {
   list-style: none;
@@ -227,9 +223,7 @@ input.inputOk {
   margin-bottom: 0.5rem;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   AVISO INLINE — Menor de edad (reemplaza el modal de pantalla completa)
-   ═══════════════════════════════════════════════════════════════ */
+/*AVISO INLINE — Menor de edad*/
 
 .aviso-menor {
   display: flex;
@@ -261,9 +255,8 @@ input.inputOk {
   color: rgba(200, 230, 185, 0.85);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   INPUT WRAPPER — Contraseña con ojo
-   ═══════════════════════════════════════════════════════════════ */
+/*INPUT WRAPPER — Contraseña con ojo
+  */
 
 .inputWrapper {
   position: relative;
@@ -296,9 +289,8 @@ input.inputOk {
 .modo-oscuro .eyeButton       { color: rgba(200, 230, 185, 0.55); }
 .modo-oscuro .eyeButton:hover { color: rgba(200, 230, 185, 0.90); }
 
-/* ═══════════════════════════════════════════════════════════════
-   NUMERO INPUT — Flechas arriba/abajo
-   ═══════════════════════════════════════════════════════════════ */
+/*NUMERO INPUT — Flechas arriba/abajo
+  */
 
 .numero-wrapper {
   position: relative;
@@ -346,9 +338,8 @@ input.inputOk {
 .modo-oscuro .numero-flechas button       { color: rgba(200, 230, 185, 0.55); }
 .modo-oscuro .numero-flechas button:hover { color: var(--naranja, #f77f00);   }
 
-/* ═══════════════════════════════════════════════════════════════
-   BOTÓN PRIMARIO — Registrarse
-   ═══════════════════════════════════════════════════════════════ */
+/*BOTÓN PRIMARIO — Registrarse
+  */
 
 .btn-primario {
   width: 100%;
@@ -378,10 +369,6 @@ input.inputOk {
   opacity: 0.6;
   cursor: not-allowed;
 }
-/* ═══════════════════════════════════════════════════════════════
-   AVISO INLINE — Sistema unificado (reemplaza aviso-menor)
-   Variantes: naranja (advertencia), rojo (error)
-   ═══════════════════════════════════════════════════════════════ */
 
 .aviso-inline {
   display: flex;

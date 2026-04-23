@@ -322,7 +322,7 @@ const RecipeImport = ({ onSuccess }) => {
         throw new Error(data.error || 'El servidor no confirmó la importación');
       }
 
-      // ✅ Confirmado — limpiar localStorage
+      // limpiar localStorage
       localStorage.removeItem(STORAGE_KEY);
       toast.success(`✅ ${data.result.created} recetas importadas correctamente a la base de datos`);
       setRecetas(null);

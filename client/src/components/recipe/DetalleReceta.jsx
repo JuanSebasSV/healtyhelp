@@ -37,7 +37,6 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada,
           <img src={receta.img} alt={receta.nombre} className="modalImg" loading="lazy" decoding="async" />
           <h2>{receta.nombre}</h2>
 
-          {/* NUEVA FUNCIONALIDAD: tiempo de preparación debajo del título */}
           {receta.tiempoMinutos > 0 && (
             <div className="detalle-tiempo">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"

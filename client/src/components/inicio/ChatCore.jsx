@@ -112,9 +112,6 @@ const ChatCore = ({
   onExpandir,
   onCerrar,
   onMinimizar,
-  // onSugerencia: dispara el mensaje de la sugerencia directamente (sin pasar
-  // por el textarea). Si no se pasa, cae al comportamiento anterior de poner
-  // el texto en el textarea para que el usuario lo envíe manualmente.
   onSugerencia,
 }) => {
   const mensajesRef = useRef(null);
@@ -137,9 +134,6 @@ const ChatCore = ({
     }
   }, [chat, cargando]);
 
-  // Al hacer clic en una sugerencia:
-  // - Si existe onSugerencia (nuevo comportamiento): envía el mensaje directamente.
-  // - Si no (compatibilidad hacia atrás): pone el texto en el textarea.
   const handleSugerencia = (texto) => {
     if (onSugerencia) {
       onSugerencia(texto);

@@ -3,9 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './TermsManager.css';
 
-/* 
-   Iconos SVG inline (sin dependencia extra)
- */
+/*Iconos SVG inline (sin dependencia extra)*/
 const Icons = {
   Doc: () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -80,9 +78,7 @@ const Icons = {
   ),
 };
 
-/* 
-   Dropdown personalizado de bloques
- */
+/*Dropdown personalizado de bloques*/
 const BLOCK_OPTIONS = [
   { value: 'p',  label: 'Párrafo',         hint: 'Texto normal' },
   { value: 'h1', label: 'Título',          hint: 'Encabezado principal' },
@@ -138,9 +134,7 @@ const BlockDropdown = ({ value, onChange }) => {
   );
 };
 
-/* 
-   Botón de toolbar
- */
+/*Botón de toolbar*/
 const TbBtn = ({ title, active, onClick, children }) => (
   <button
     className={`terms-tb-btn${active ? ' active' : ''}`}
@@ -152,9 +146,7 @@ const TbBtn = ({ title, active, onClick, children }) => (
   </button>
 );
 
-/* 
-   Componente principal
- */
+/*Componente principal*/
 const TermsManager = () => {
   const [termsCurrent, setTermsCurrent] = useState(null);
   const [version,      setVersion]      = useState('');
@@ -177,7 +169,6 @@ const TermsManager = () => {
       if (data.terms) {
         setTermsCurrent(data.terms);
         setVersion(data.terms.version);
-        // Inyectar HTML guardado en el editor
         if (editorRef.current) {
           editorRef.current.innerHTML = data.terms.content || '';
           actualizarContador();
@@ -196,7 +187,6 @@ const TermsManager = () => {
       editorRef.current.innerHTML = termsCurrent.content || '';
       actualizarContador();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   /*Contador de caracteres*/
@@ -239,7 +229,6 @@ const TermsManager = () => {
   /*Toggle vista previa*/
   const togglePreview = () => {
     if (!preview) {
-      // Pasar al preview: copiar HTML del editor
       if (previewRef.current && editorRef.current) {
         previewRef.current.innerHTML = editorRef.current.innerHTML;
       }
@@ -363,7 +352,6 @@ const TermsManager = () => {
 
           {/* Toolbar */}
           <div className="terms-toolbar">
-            {/* Selector de bloque personalizado */}
             <BlockDropdown value={blockActual()} onChange={applyBlock} />
 
             <div className="terms-tb-sep" />

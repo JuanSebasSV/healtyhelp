@@ -1,5 +1,4 @@
 /* VistaFavoritos.css */
-
 .vista-favoritos {
   animation: fadeIn 0.6s ease;
   max-width: 1400px;
@@ -54,9 +53,7 @@
 .modo-oscuro .vacio p {
   color: rgba(210, 235, 195, 0.8);
 }
-/* ============================================================
-   RESPONSIVE — Solo teléfonos (320px – 767px)
-   ============================================================ */
+/*RESPONSIVE — Solo teléfonos (320px – 767px)*/
 
 @media (max-width: 767px) {
   .vista-favoritos {

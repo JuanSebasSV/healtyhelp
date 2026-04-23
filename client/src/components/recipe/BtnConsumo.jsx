@@ -59,11 +59,11 @@ const BtnConsumo = ({ recetaId }) => {
   const observerRef = useRef(null);
   const yaMostroRef = useRef(false);
 
-  /*Cargar estado inicial — protegido contra doble-mount (StrictMode)*/
+  /*Cargar estado inicial*/
   useEffect(() => {
     if (!isAuthenticated) { setCargando(false); return; }
 
-    let cancelled = false;   // FIX 429: evita setState tras desmontaje (StrictMode)
+    let cancelled = false;
 
     api.get(`/consumos/receta/${recetaId}/hoy`)
       .then(({ data }) => {
@@ -79,7 +79,6 @@ const BtnConsumo = ({ recetaId }) => {
     return () => { cancelled = true; };
   }, [recetaId, isAuthenticated]);
 
-  /*IntersectionObserver: tooltip educativo*/
   useEffect(() => {
     if (!isAuthenticated || cargando || consumoId) return;
     if (getTooltipCount() >= MAX_TOOLTIP) return;

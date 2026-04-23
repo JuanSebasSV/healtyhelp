@@ -18,7 +18,6 @@
       var(--verde-bosque) 0%,
       var(--fondo-grad-claro-medio) 50%,
       var(--verde-hoja) 100%);
-  /* FIX: fuerza GPU compositing para el gradiente */
   transform: translateZ(0);
 }
 
@@ -37,7 +36,6 @@
   pointer-events: none;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* FIX: crea un contexto de composición propio para cada onda */
   transform: translateZ(0);
 }
 
@@ -90,22 +88,16 @@
   stroke: rgba(255, 154, 60, 0.15) !important;
 }
 
-/* =====================================================
-   FIX MÓVIL: Las ondas animadas son el mayor culpable
-   del bugeo visual al hacer scroll rápido en móvil.
-   En pantallas pequeñas se detienen completamente.
-   ===================================================== */
 @media (max-width: 768px) {
   .ondaLinea1,
   .ondaLinea2,
   .ondaLinea3 {
     animation-play-state: paused;
-    /* FIX: reduce opacidad para que el fondo sea más limpio */
     opacity: 0.5;
   }
 }
 
-/* En tablets (hasta 1024px) se ralentizan para reducir carga */
+/* En tablets (hasta 1024px)*/
 @media (min-width: 769px) and (max-width: 1024px) {
   .ondaLinea1 { animation-duration: 35s; }
   .ondaLinea2 { animation-duration: 45s; }

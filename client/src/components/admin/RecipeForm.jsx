@@ -135,7 +135,6 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
   const isEditing = !!recipe;
 
   const [formData, setFormData] = useState(() => {
-    // Inicialización perezosa: solo se ejecuta una vez
     if (!recipe) {
       try {
         const saved = localStorage.getItem(DRAFT_KEY);
@@ -166,8 +165,6 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
     if (isEditing) return;
     localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
   }, [formData, isEditing]);
-
-  //Handlers con useCallback
   const handleChange = useCallback(
     (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value })),
     []

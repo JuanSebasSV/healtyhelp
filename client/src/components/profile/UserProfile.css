@@ -134,7 +134,7 @@
 
 
 
-/*Botón cámara — elemento independiente debajo del avatar*/
+/*Botón cámara */
 .avatar-cambiar {
   width: 42px;
   height: 42px;
@@ -579,7 +579,7 @@
 .req-ok    { color: rgba(107, 158, 74, 0.95); }
 .req-falta { color: rgba(255, 138, 138, 0.8); }
 
-/* inputWrapper para el ojo — adaptado al campo-input */
+/* inputWrapper para el ojo */
 .perfil-seccion .inputWrapper {
   position: relative;
   display: flex;
@@ -661,8 +661,6 @@
 .deco-hoja { font-size: 1.2rem; opacity: 0.6; }
 
 /*RESPONSIVE*/
-
-/*Tablet: sidebar pasa a fila horizontal*/
 @media (max-width: 900px) {
   .perfil-contenedor { grid-template-columns: 1fr; }
   .perfil-sidebar    { order: 1; }
@@ -681,22 +679,21 @@
   .sidebar-deco     { display: none; }
 }
 
-/*Móvil ≤ 640px: columna única, sidebar vuelve a centrado vertical*/
+/*Móvil ≤ 640px: columna única*/
 @media (max-width: 640px) {
-  /* Página: quitar overflow:hidden para que el contenido no se corte */
   .perfil-pagina {
     padding: 1.25rem 0.875rem;
     overflow: visible;
     min-height: calc(100vh - 64px);
   }
 
-  /* Contenedor: columna única sin gap excesivo */
+  /* Contenedor*/
   .perfil-contenedor {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
-  /* Sidebar: vuelve a columna centrada */
+  /* Sidebar*/
   .perfil-identidad {
     flex-direction: column;
     text-align: center;
@@ -705,26 +702,26 @@
     gap: 0.75rem;
   }
 
-  /* Stats: restablecer borde top en móvil */
+  /* Stats*/
   .perfil-stats {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     padding-top: 0.75rem;
     width: 100%;
   }
 
-  /* Botón cerrar sesión ocupa todo el ancho */
+  /* Botón cerrar sesión*/
   .btn-cerrar-sesion { width: 100%; }
 
-  /* Contenido principal: padding reducido */
+  /* Contenido principal*/
   .perfil-contenido {
     padding: 1.25rem 1rem;
     gap: 1.25rem;
   }
 
-  /* Secciones: padding reducido */
+  /* Secciones*/
   .perfil-seccion { padding: 1.25rem 1rem; }
 
-  /* Header del perfil: columna */
+  /* Header del perfil*/
   .perfil-header {
     flex-direction: column;
     align-items: flex-start;
@@ -734,7 +731,7 @@
   .perfil-titulo { font-size: 1.4rem; }
   .perfil-subtitulo { margin-left: 0; margin-top: 0.25rem; }
 
-  /* Botones editar/guardar/cancelar: ancho completo */
+  /* Botones editar/guardar/cancelar*/
   .btn-editar,
   .btn-group {
     width: 100%;
@@ -749,18 +746,18 @@
   /* Campos: una columna */
   .campos-grid { grid-template-columns: 1fr; }
 
-  /* Campo valor: wrap para emails largos */
+  /* Campo valor*/
   .campo-valor {
     word-break: break-all;
     white-space: normal;
     font-size: 0.88rem;
   }
 
-  /* Google vinculo: ajuste en pantallas pequeñas */
+  /* Google vinculo*/
   .google-vinculo { flex-wrap: wrap; gap: 0.75rem; }
   .google-desc    { font-size: 0.78rem; }
 
-  /* Partículas: reducir tamaño para no afectar layout */
+  /* Partículas*/
   .particula-1 { width: 50px;  height: 50px; }
   .particula-3 { width: 70px;  height: 70px; }
   .particula-6 { width: 55px;  height: 55px; }
@@ -1041,7 +1038,7 @@
   cursor: not-allowed;
 }
 
-/*MODAL MENORES (Register)*/
+/*MODAL MENORES*/
 .modal-menor {
   background: rgba(15, 25, 18, 0.92);
   backdrop-filter: blur(24px);

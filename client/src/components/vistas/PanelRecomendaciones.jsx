@@ -3,7 +3,6 @@ import api from '../../api/axios';
 import './PanelRecomendaciones.css';
 
 //  Iconos 
-
 const IcoAlerta    = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><path d="M10 2L18.5 17H1.5L10 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="10" cy="14.5" r="0.8" fill="currentColor"/></svg>;
 const IcoOk        = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M6 10.5L8.5 13L14 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const IcoInfo      = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/><line x1="10" y1="9" x2="10" y2="14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="10" cy="6.5" r="0.8" fill="currentColor"/></svg>;
@@ -14,7 +13,6 @@ const IcoIMC       = () => <svg viewBox="0 0 20 20" fill="none" className="rec-s
 const IcoReloj     = () => <svg viewBox="0 0 20 20" fill="none" className="rec-sec-ico"><circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.6"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 
 //  Helpers 
-
 const COLOR_NIVEL = { ok: 'verde', advertencia: 'amarillo', atencion: 'naranja', info: 'azul' };
 
 const iconAlerta = (nivel) =>
@@ -28,18 +26,6 @@ const LABEL_CATEGORIA = {
 };
 
 //  Componente 
-
-/**
- * PanelRecomendaciones
- *
- * Props:
- *   - versionFiltros: number  ← clave que sube en 1 cada vez que cambian los
- *     filtros del usuario (condiciones o categorías). Cuando cambia, este panel
- *     recarga desde /recomendaciones automáticamente, sin polling ni cookies.
- *
- * La fuente de verdad sigue siendo la BD (via /recomendaciones), nunca el estado
- * local del cliente. versionFiltros es solo una señal de "algo cambió, recarga".
- */
 const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
   const [datos,    setDatos]    = useState(null);
   const [cargando, setCargando] = useState(true);
@@ -51,10 +37,9 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
     return () => { montadoRef.current = false; };
   }, []);
 
-  // Recarga cada vez que versionFiltros cambia (incluye la carga inicial con 0)
+  // Recarga cada vez que versionFiltros cambia
   useEffect(() => {
     cargar();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [versionFiltros]);
 
   const cargar = async () => {

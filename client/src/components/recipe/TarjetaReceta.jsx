@@ -122,7 +122,6 @@ const TarjetaReceta = memo(({ receta, toggleFav, esFav, seleccionada, onSeleccio
               {prom > 0 ? `${prom} (${total})` : 'Sin reseñas'}
             </span>
 
-            {/* NUEVA FUNCIONALIDAD: badge de tiempo de preparación */}
             {receta.tiempoMinutos > 0 && (
               <span className="tarjeta-tiempo">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"

@@ -20,7 +20,6 @@ const VistaContacto = () => {
     }
     setEnviando(true);
     try {
-      // await api.post('/contact', datosForm);
       toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
       setDatosForm({ nombre: '', email: '', asunto: '', mensaje: '' });
     } catch (error) {

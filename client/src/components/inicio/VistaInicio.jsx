@@ -7,7 +7,6 @@ import useFiltroSalud from '../../hooks/useFiltroSalud';
 import './VistaInicio.css';
 
 //  Datos estáticos 
-
 const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp',
@@ -17,7 +16,7 @@ const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp',
 ];
 
-// 'todas' es solo UI — no se persiste en BD ni localStorage
+// todas
 const CATEGORIAS = [
   { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
   { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
@@ -26,7 +25,7 @@ const CATEGORIAS = [
   { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e26e6e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
 ];
 
-// NUEVA FUNCIONALIDAD: opciones de filtro por tiempo — misma estructura que CATEGORIAS
+// opciones de filtro por tiempo
 const TIEMPOS = [
   { id: 'menos15', nombre: 'Menos de 15 min', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
   { id: '15a30',   nombre: '15 – 30 min',     icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
@@ -54,12 +53,11 @@ const CONDICIONES = [
   { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Z"/></svg>' },
 ];
 
-// NUEVA FUNCIONALIDAD: normalización para búsqueda sin tildes
+// normalización para búsqueda sin tildes
 const normalizarTexto = (texto) =>
   texto ? texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 
 //  Componente 
-
 const VistaInicio = ({
   recetas,
   cargandoRecetas,
@@ -89,7 +87,7 @@ const VistaInicio = ({
   const [resenaIdDestacada,   setResenaIdDestacada]   = useState(null);
   const [respuestaIdDestacada, setRespuestaIdDestacada] = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
-  // NUEVA FUNCIONALIDAD: estados de búsqueda y filtro por tiempo
+  // estados de búsqueda y filtro por tiempo
   const [busqueda,          setBusqueda]           = useState('');
   const [filtroTiempo,      setFiltroTiempo]       = useState(null);
 
@@ -107,7 +105,6 @@ const VistaInicio = ({
   }, []);
 
   //  Scrollbar personalizado 
-
   useEffect(() => {
     let raf = null;
     const update = () => {
@@ -144,7 +141,6 @@ const VistaInicio = ({
 
   useEffect(() => {
     if (!recetaPendiente || !recetas.length) return;
-    // recetaPendiente es { recetaId, resenaId, respuestaId }
     const id    = recetaPendiente.recetaId ?? recetaPendiente; // compat. si llega string
     const found = recetas.find(r => r._id === id || r._id?.toString() === id?.toString());
     if (found) {
@@ -156,7 +152,6 @@ const VistaInicio = ({
   }, [recetaPendiente, recetas]);
 
   //  Carrusel hero 
-
   const cambiarImagen = useCallback((idx) => {
     if (transitandoRef.current) return;
     const nuevo = (idx + HERO_IMGS.length) % HERO_IMGS.length;
@@ -187,7 +182,6 @@ const VistaInicio = ({
   }, [imagenActual, cambiarManual]);
 
   //  PDF 
-
   const toggleSeleccion = (id) =>
     setSeleccionadas(p => p.includes(id) ? p.filter(s => s !== id) : [...p, id]);
 
@@ -203,7 +197,6 @@ const VistaInicio = ({
   };
 
   //  Handlers de filtros 
-
   const handleToggleFiltro = useCallback((id) => {
     toggleFiltro(id);
     onFiltrosCambiados?.();
@@ -223,19 +216,19 @@ const VistaInicio = ({
     onFiltrosCambiados?.();
   }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
 
-  // NUEVA FUNCIONALIDAD: toggle del filtro de tiempo (desactiva si se pulsa el mismo)
+  // toggle del filtro de tiempo (desactiva si se pulsa el mismo)
   const handleFiltroTiempo = useCallback((id) => {
     setFiltroTiempo(prev => prev === id ? null : id);
   }, []);
 
   //  Filtrado de recetas 
 
-  // NUEVA FUNCIONALIDAD: filtrado ampliado con búsqueda por texto y tiempo
+  // filtrado ampliado con búsqueda por texto y tiempo
   const recetasFiltradas = useMemo(() => recetas.filter(r => {
     const okCat   = !categoria || r.cat === categoria;
     const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
 
-    // Búsqueda por texto normalizada (sin tildes, case-insensitive)
+    // Búsqueda por texto normalizada
     const busquedaLimpia = normalizarTexto(busqueda);
     const okBusqueda = busqueda.trim() === '' ||
       normalizarTexto(r.nombre || '').includes(busquedaLimpia) ||
@@ -342,7 +335,7 @@ const VistaInicio = ({
         })}
       </section>
 
-      {/* Filtro por tiempo — misma fila visual que categorías */}
+      {/* Filtro por tiempo */}
       <section className="categorias tiempos-fila">
         <span className="tiempos-label">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -367,7 +360,7 @@ const VistaInicio = ({
         )}
       </section>
 
-      {/* NUEVA FUNCIONALIDAD: Buscador por nombre o descripción */}
+      {/*Buscador por nombre o descripción */}
       <div className="buscador-recetas">
         <div className="buscador-input-wrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
