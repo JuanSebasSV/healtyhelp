@@ -105,10 +105,7 @@ const VistaChatbot = ({ abrirFlotante }) => {
               </div>
             ))}
           </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> e06080b3bb9081fa4184d797a04fba67c3a6314a
         </aside>
 
         <div className="vistaChatbot__chat">

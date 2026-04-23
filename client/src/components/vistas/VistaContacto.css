@@ -11,15 +11,10 @@
   background: rgb(248, 245, 239);
   min-height: calc(100vh - var(--navbar-h) - var(--page-py) * 3);
 }
-<<<<<<< HEAD
 .modo-oscuro .vista-contacto{
   background: black;
 }
 /* ============ HEADER ============ */
-=======
-
-/*HEADER*/
->>>>>>> e06080b3bb9081fa4184d797a04fba67c3a6314a
 .contacto-header {
   text-align: center;
   margin-top: 5rem;

@@ -23,12 +23,8 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-<<<<<<< HEAD
 
 /* ── Botones período ── */
-=======
-/*Botones período*/
->>>>>>> e06080b3bb9081fa4184d797a04fba67c3a6314a
 .seg-periodo-btns {
   display: flex;
   gap: 1rem;
@@ -361,14 +357,10 @@
   color: var(--blanco-puro);
 }
 
-<<<<<<< HEAD
 .modo-oscuro .seg-btn-agregar{
   border: 1px solid rgba(27, 113, 67, 0.474);
 }
 /* ── Límite snacks ── */
-=======
-/*Límite snacks*/
->>>>>>> e06080b3bb9081fa4184d797a04fba67c3a6314a
 .seg-snacks-limite {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.35);
