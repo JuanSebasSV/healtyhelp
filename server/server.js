@@ -32,9 +32,9 @@ app.use(hpp());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Demasiadas peticiones, intenta en 15 minutos'
+  max: process.env.NODE_ENV === 'production' ? 100 : 500,
 });
+
 app.use('/api/', limiter);
 
 const authLimiter = rateLimit({

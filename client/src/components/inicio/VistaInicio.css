@@ -208,7 +208,7 @@
 /* ── Tip card ────────────────────────────────────── */
 .tip-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(76,175,130,0.15) 0%, rgba(45,122,87,0.08) 100%);
+  background: linear-gradient(135deg, rgba(105, 198, 156, 0.483) 0%, rgba(79, 184, 136, 0.486) 100%);
   border: 1px solid rgba(76,175,130,0.25);
   border-radius: 18px;
   padding: 1.2rem 1.1rem 1.4rem;
@@ -226,11 +226,11 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(45, 106, 79, 0.1);
+  background: rgba(50, 173, 117, 0.557);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2d6a4f;
+  color: #265b43;
   flex-shrink: 0;
 }
 .modo-oscuro .tip-icono-wrap{
@@ -251,7 +251,7 @@
 
 .tip-texto {
   font-size: 0.88rem;
-  color: #797979 !important;
+  color: #191919 !important;
   line-height: 1.6;
   font-style: italic;
   margin: 0;
@@ -269,7 +269,7 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: rgba(45, 106, 79, 0.06);
+  background: rgba(19, 168, 101, 0.394);
   pointer-events: none;
 }
 
@@ -456,7 +456,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 1.5rem 3rem;
-  background: rgba(33, 123, 99, 0.6);
+  background: rgba(24, 146, 113, 0.709);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -764,7 +764,7 @@
 
 /* ── Widget lateral genérico ── */
 .widget-lateral {
-  background: linear-gradient(135deg, rgba(76,175,130,0.15) 0%, rgba(45,122,87,0.08) 100%);
+  background: linear-gradient(135deg, rgba(75, 197, 142, 0.687) 0%, rgba(58, 159, 114, 0.819) 100%);
 
   border: 1.5px solid #c8d4cf;
   border-radius: 14px;
@@ -780,9 +780,10 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #4D9E7A;
+  color: #ffffff !important;
   margin-bottom: 0.85rem;
-
+  
+  
 }
 
 .widget-lateral__header svg { flex-shrink: 0; }

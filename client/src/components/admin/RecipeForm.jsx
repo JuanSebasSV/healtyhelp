@@ -147,14 +147,15 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
 
   // Recuperar borrador solo al crear (no al editar)
   useEffect(() => {
-    if (!isEditing) {
-      try {
-        const saved = localStorage.getItem(DRAFT_KEY);
-        if (saved) return JSON.parse(saved);
-      } catch {}
-    }
-    return { ...FORM_INICIAL, nutri: { ...NUTRI_VACIA } };
-  });
+    if (isEditing) return;
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setFormData(parsed);  // ← usar setFormData en lugar de return
+      }
+    } catch {}
+  }, [isEditing]);  // ← agregar el array de dependencias
 
 
   // Cargar datos de la receta al editar

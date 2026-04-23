@@ -18,6 +18,8 @@
   margin: 2rem auto;
   padding: 2rem;
   animation: fadeIn 0.45s ease;
+  background: #06775b;
+  border-radius: 20px;
 }
 
 /* ── Header ── */
