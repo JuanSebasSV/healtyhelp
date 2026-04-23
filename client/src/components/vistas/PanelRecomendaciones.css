@@ -1,5 +1,4 @@
 /* PanelRecomendaciones.css */
-
 .rec-panel {
   margin-top: 2.5rem;
   padding: 1.75rem;
@@ -16,7 +15,7 @@
   border-color: rgba(79, 119, 45, 0.25);
 }
 
-/* ── Encabezado ── */
+/*Encabezado*/
 .rec-header {
   margin-bottom: 1.25rem;
 }
@@ -54,7 +53,7 @@
   text-transform: capitalize;
 }
 
-/* ── Stats superiores ── */
+/*Stats superiores*/
 .rec-stats {
   display: flex;
   flex-wrap: wrap;
@@ -91,7 +90,7 @@
   opacity: 0.75;
 }
 
-/* ── Íconos ── */
+/*Íconos*/
 .rec-ico {
   width: 1.1rem;
   height: 1.1rem;
@@ -104,7 +103,7 @@
   flex-shrink: 0;
 }
 
-/* ── Alertas ── */
+/*Alertas*/
 .rec-seccion {
   margin-bottom: 1.5rem;
 }
@@ -128,7 +127,7 @@
 .rec-alerta--naranja { background: rgba(247, 127, 0, 0.1); border-color: rgba(247, 127, 0, 0.3); color: var(--naranja); }
 .rec-alerta--azul    { background: rgba(96, 165, 250, 0.08); border-color: rgba(96, 165, 250, 0.2); color: var(--azul-claro); }
 
-/* ── Secciones de tips ── */
+/*Secciones de tips*/
 .rec-sec-titulo {
   display: flex;
   align-items: center;
@@ -171,7 +170,7 @@
   margin-top: 0.05rem;
 }
 
-/* ── Estados de carga ── */
+/*Estados de carga*/
 .rec-cargando {
   display: flex;
   flex-direction: column;
@@ -202,7 +201,7 @@
   padding: 1rem;
 }
 
-/* ── Disclaimer ── */
+/*Disclaimer*/
 .rec-disclaimer {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
@@ -210,7 +209,7 @@
   text-align: center;
 }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 968px) {
   .rec-panel {
     padding: 1.25rem;
@@ -222,7 +221,7 @@
   .rec-titulo { font-size: 1.05rem; }
 }
 
-/* ── Sin cobertura ── */
+/*Sin cobertura*/
 .rec-sin-cobertura {
   display: flex;
   align-items: flex-start;

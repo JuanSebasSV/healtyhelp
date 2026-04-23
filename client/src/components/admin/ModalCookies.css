@@ -1,4 +1,4 @@
-/* ModalCookies.css — Glassmorphism verde, no se pierde sobre fondos oscuros */
+/* ModalCookies.css*/
 
 .cookies-overlay {
   position: fixed;
@@ -29,7 +29,7 @@
   border-radius: 18px;
   overflow: hidden;
 
-  /* Glassmorphism — funciona sobre fondos claros y oscuros */
+  /* Glassmorphism*/
   background: rgba(20, 48, 28, 0.72);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
@@ -80,8 +80,24 @@
   color: rgba(209, 250, 229, 0.75);
 }
 
+/*Aviso crítico*/
+.cookies-aviso-critico {
+  margin-top: 0.55rem !important;
+  font-size: 0.76rem !important;
+  line-height: 1.45;
+  color: rgba(253, 224, 71, 0.72) !important; /* amarillo suave — alerta sin agredir */
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(253, 224, 71, 0.07);
+  border-left: 2px solid rgba(253, 224, 71, 0.4);
+}
+
 .cookies-acciones {
   margin-top: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .cookies-btn-aceptar {
@@ -111,6 +127,34 @@
   transform: translateY(0);
 }
 
+/*Botón rechazar / Salir*/
+.cookies-btn-rechazar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(209, 250, 229, 0.18);
+  background: transparent;
+  color: rgba(209, 250, 229, 0.55);
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.cookies-btn-rechazar:hover {
+  background: rgba(209, 250, 229, 0.08);
+  border-color: rgba(209, 250, 229, 0.32);
+  color: rgba(209, 250, 229, 0.85);
+  transform: translateY(-1px);
+}
+
+.cookies-btn-rechazar:active {
+  transform: translateY(0);
+}
+
 .cookies-nota {
   margin: 0.85rem 0 0;
   font-size: 0.72rem;
@@ -119,7 +163,7 @@
 }
 
 
-/* ── Botón cerrar (X) ───────────────────────────────────────────────────── */
+/*Botón cerrar (X)*/
 .cookies-btn-cerrar {
   position: absolute;
   top: 10px;
@@ -151,7 +195,7 @@
   transform: scale(0.95);
 }
 
-/* ── Tablet ─────────────────────────────────────────────────────────────── */
+/*Tablet*/
 @media (max-width: 768px) {
   .cookies-overlay {
     bottom: 1rem;
@@ -164,7 +208,7 @@
   }
 }
 
-/* ── Mobile ─────────────────────────────────────────────────────────────── */
+/*Mobile*/
 @media (max-width: 480px) {
   .cookies-overlay {
     bottom: 0;
@@ -177,7 +221,6 @@
     border-radius: 20px 20px 0 0;
     border-bottom: none;
     padding: 1.3rem 1.2rem 1.4rem;
-    /* Sombra hacia arriba en mobile */
     box-shadow:
       0 0 0 1px rgba(74, 222, 128, 0.08),
       0 -8px 32px rgba(0, 0, 0, 0.45),
@@ -195,13 +238,16 @@
   .cookies-texto p {
     font-size: 0.8rem;
   }
+  .cookies-aviso-critico {
+    font-size: 0.73rem !important;
+  }
   .cookies-acciones {
     margin-top: 1rem;
-    display: flex;
-    gap: 0.6rem;
+    flex-direction: column;
   }
-  .cookies-btn-aceptar {
-    flex: 1;
+  .cookies-btn-aceptar,
+  .cookies-btn-rechazar {
+    width: 100%;
     justify-content: center;
     padding: 0.65rem 1rem;
     font-size: 0.88rem;
@@ -212,7 +258,7 @@
   }
 }
 
-/* ── Mobile muy pequeño (< 360px) ───────────────────────────────────────── */
+/*Mobile muy pequeño (< 360px)*/
 @media (max-width: 360px) {
   .cookies-card {
     padding: 1.1rem 1rem 1.3rem;
@@ -220,7 +266,8 @@
   .cookies-texto h3 {
     font-size: 0.9rem;
   }
-  .cookies-btn-aceptar {
+  .cookies-btn-aceptar,
+  .cookies-btn-rechazar {
     font-size: 0.83rem;
     padding: 0.6rem 0.8rem;
   }

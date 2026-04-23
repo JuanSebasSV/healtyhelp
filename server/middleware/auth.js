@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// 🔒 Proteger rutas - Validar JWT
+// Proteger rutas - Validar JWT
 exports.protect = async (req, res, next) => {
   try {
     let token;
@@ -32,7 +32,7 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// 🔒 SOLO ADMIN — actualiza req.user con datos frescos incluyendo isSuperAdmin
+// SOLO ADMIN
 exports.admin = async (req, res, next) => {
   try {
     // Refrescar usuario desde BD para tener isSuperAdmin actualizado
@@ -42,7 +42,7 @@ exports.admin = async (req, res, next) => {
       return res.status(403).json({ error: 'Acceso denegado - Requiere privilegios de administrador' });
     }
 
-    // Actualizar req.user con datos frescos (incluye isSuperAdmin)
+    // Actualizar req.user con datos frescos
     req.user = user;
     next();
 
@@ -51,7 +51,7 @@ exports.admin = async (req, res, next) => {
   }
 };
 
-// 🔒 Validar permisos específicos
+// Validar permisos específicos
 exports.restrictTo = (...roles) => {
   return async (req, res, next) => {
     const user = await User.findById(req.user._id).select('-password');

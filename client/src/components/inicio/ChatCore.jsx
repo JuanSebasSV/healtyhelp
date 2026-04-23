@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-/* ── Iconos ── */
+/*Iconos*/
 const IconoRobot = ({ size = 20, color = 'currentColor' }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -92,15 +92,15 @@ const IconoSemilla = ({ size = 14 }) => (
   </svg>
 );
 
-/* ── Sugerencias ── */
+/*Sugerencias*/
 const sugerencias = [
   { icono: <IconoZanahoría size={13}/>, texto: 'Recetas para diabéticos' },
-  { icono: <IconoCorazon size={13}/>, texto: 'Menú bajo en sodio' },
-  { icono: <IconoSemilla size={13}/>, texto: 'Opciones veganas' },
-  { icono: <IconoManzana size={13}/>, texto: 'Sin gluten' },
+  { icono: <IconoCorazon size={13}/>,   texto: 'Menú bajo en sodio' },
+  { icono: <IconoSemilla size={13}/>,   texto: 'Opciones veganas' },
+  { icono: <IconoManzana size={13}/>,   texto: 'Sin gluten' },
 ];
 
-/* ── Componente ── */
+/*Componente*/
 const ChatCore = ({
   modoExpandido = false,
   chat = [],
@@ -112,6 +112,7 @@ const ChatCore = ({
   onExpandir,
   onCerrar,
   onMinimizar,
+  onSugerencia,
 }) => {
   const mensajesRef = useRef(null);
   const prevChatLen = useRef(chat.length);
@@ -132,6 +133,14 @@ const ChatCore = ({
       el.scrollTop = el.scrollHeight;
     }
   }, [chat, cargando]);
+
+  const handleSugerencia = (texto) => {
+    if (onSugerencia) {
+      onSugerencia(texto);
+    } else {
+      onMensajeChange?.({ target: { value: texto } });
+    }
+  };
 
   return (
     <div className={`chatCore ${modoExpandido ? 'chatCore--expandido' : ''}`}>
@@ -194,7 +203,7 @@ const ChatCore = ({
                 <button
                   key={i}
                   className="chatSugerencia"
-                  onClick={() => onMensajeChange?.({ target: { value: s.texto } })}
+                  onClick={() => handleSugerencia(s.texto)}
                 >
                   <span className="chatSugerencia__icono">{s.icono}</span>
                   {s.texto}

@@ -1,10 +1,4 @@
 const sendSecurityAlert = async (action, adminUser, details) => {
-  // Enviar email a TODOS los admins cuando:
-  // - Se crea un nuevo admin
-  // - Se elimina un admin
-  // - Se cambia un rol
-  // - Intentos fallidos de acceso al panel
-  
   const allAdmins = await User.find({ role: 'admin' });
   
   for (const admin of allAdmins) {

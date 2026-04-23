@@ -22,7 +22,7 @@ app.use(cors({
     'https://healtyhelp11.onrender.com'
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -39,11 +39,10 @@ app.use('/api/', limiter);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 20 : 100,
+  max: process.env.NODE_ENV === 'production' ? 20 : 200,
   message: 'Demasiados intentos de login, espera 15 minutos'
 });
 app.use('/api/auth/login', authLimiter);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -98,6 +97,13 @@ app.use('/api/recomendaciones', require('./routes/recomendaciones'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'API funcionando correctamente ✅' });
+});
+
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'JSON inválido en el cuerpo de la petición' });
+  }
+  next(err);
 });
 
 // Error handler global

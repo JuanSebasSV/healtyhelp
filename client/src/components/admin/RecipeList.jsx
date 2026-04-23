@@ -58,7 +58,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
         )}
       </div>
 
-      {/* ── Tarjetas móvil ── */}
+      {/*Tarjetas móvil*/}
       <div className="recipe-cards-movil">
         {filteredRecipes.map(recipe => (
           <div key={recipe._id} className="rcard">
@@ -119,7 +119,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
         )}
       </div>
 
-      {/* ── Tabla desktop ── */}
+      {/*Tabla desktop*/}
       <div className="table-container">
         <table className="recipes-table">
           <thead>

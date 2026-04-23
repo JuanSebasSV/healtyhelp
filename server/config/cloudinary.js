@@ -9,7 +9,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ── Storage para avatares de usuario ──
+//  Storage para avatares de usuario 
 const storageAvatars = new CloudinaryStorage({
   cloudinary,
   params: {
@@ -28,7 +28,7 @@ const uploadAvatar = multer({
   },
 });
 
-// ── Storage para imágenes de reseñas ──
+//  Storage para imágenes de reseñas 
 const storageResenas = new CloudinaryStorage({
   cloudinary,
   params: {

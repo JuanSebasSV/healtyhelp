@@ -12,6 +12,8 @@
   height: var(--navbar-h);
   display: flex;
   align-items: center;
+  transform: translateZ(0);
+  will-change: auto;
 }
 .nav-icon {
   display: none;
@@ -28,7 +30,7 @@
   gap: 1rem;
 }
 
-/* ── Logo ── */
+/*Logo*/
 .navLogo {
   display: flex;
   align-items: center;
@@ -38,7 +40,6 @@
   transition: var(--transicion);
 }
 
-/* Hover en el logo completo — escala ambos y pone naranja */
 .navLogo:hover {
   transform: scale(1.07);
 }
@@ -49,18 +50,15 @@
   justify-content: center;
 }
 
-/* MODO CLARO - Logo blanco */
-.logoIcono svg { 
+.logoIcono svg {
   stroke: var(--blanco-puro) !important;
-  transition: var(--transicion); 
+  transition: var(--transicion);
 }
 
-/* Al hover del logo completo, el ícono se pone naranja */
-.navLogo:hover .logoIcono svg { 
+.navLogo:hover .logoIcono svg {
   stroke: var(--naranja) !important;
 }
 
-/* Texto SIEMPRE blanco, se pone naranja en hover del logo */
 .logoTexto {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: 700;
@@ -74,11 +72,11 @@
   color: var(--naranja) !important;
 }
 
-.modo-oscuro .logoTexto { 
+.modo-oscuro .logoTexto {
   color: var(--blanco-puro) !important;
 }
 
-/* ── Hamburguesa ── */
+/*Hamburguesa*/
 .navHamburguesa {
   display: none;
   flex-direction: column;
@@ -97,7 +95,6 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
   display: block;
-  /* Evitar que el sistema operativo sobreescriba */
   -webkit-appearance: none;
   appearance: none;
   opacity: 1 !important;
@@ -141,7 +138,7 @@
 .navMenu li:not(:has(button)):hover::after { width: 100%; }
 .modo-oscuro .navMenu li { color: var(--blanco-puro) !important; }
 
-/* ── Botón tema ── */
+/*Botón tema*/
 .btnTema {
   padding: 0.5rem;
   border: none;
@@ -161,7 +158,7 @@
 .modo-oscuro .btnTema { background: rgba(0, 0, 0, 0.2); }
 .modo-oscuro .btnTema:hover { background: rgba(0, 0, 0, 0.3); }
 
-/* ── Botones sesión ── */
+/*Botones sesión*/
 .btn-primario {
   padding: 0.6rem 1.3rem;
   background: rgba(247, 127, 0, 0.25) !important;
@@ -200,7 +197,7 @@
   transform: translateY(-2px);
 }
 
-/* ── Usuario / Avatar ── */
+/*Usuario / Avatar*/
 .navUsuario {
   display: flex;
   align-items: center;
@@ -241,7 +238,7 @@
 .nav-nombre { font-size: 0.9rem; font-weight: 600; color: var(--blanco-puro); white-space: nowrap; padding-left: 0.5rem; }
 .navMenu li.navUsuario::after { display: none; }
 
-/* ── Admin btn (SVG centrado) ── */
+/*Admin btn*/
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   backdrop-filter: blur(10px);
@@ -254,10 +251,9 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.4rem !important;
+  position: relative;
 }
-.nav-admin-btn svg {
-  flex-shrink: 0;
-}
+.nav-admin-btn svg { flex-shrink: 0; }
 .nav-admin-btn:hover {
   background: rgba(129, 140, 248, 0.32) !important;
   border-color: rgba(129, 140, 248, 0.65) !important;
@@ -267,7 +263,7 @@
 }
 .nav-admin-btn::after { display: none !important; }
 
-/* ============ RESPONSIVE ============ */
+/*RESPONSIVE*/
 @media (max-width: 968px) {
   
     .nav-icon {
@@ -281,16 +277,14 @@
     top: 100%; left: 0; right: 0;
     background: linear-gradient(
       160deg,
-      rgba(26, 77, 46, 0.97) 0%,
-      rgba(20, 58, 35, 0.99) 60%,
-      rgba(15, 45, 28, 1) 100%
+      rgba(22, 65, 38, 0.99) 0%,
+      rgba(16, 50, 29, 1) 60%,
+      rgba(12, 38, 22, 1) 100%
     );
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
     flex-direction: column;
     align-items: center;
     padding: 1rem 0 1.25rem;
@@ -302,14 +296,12 @@
     z-index: 999;
   }
 
-  /* Wrapper centrado que contiene todos los items */
   .navMenu {
     align-items: center;
     background-color: rgb(255, 51, 0);
    
   }
 
-  /* Items con SVG — desplazados a la derecha del centro */
   .navMenu li {
     font-size: 0.95rem;
     font-weight: 600;
@@ -329,7 +321,6 @@
    
   }
 
-  /* SVG fijo 20x20 */
   .navMenu li > svg {
     width: 20px !important;
     height: 20px !important;
@@ -340,7 +331,6 @@
     
   }
 
-  /* Admin Panel en móvil — igual que los demás items */
   .navMenu li.nav-admin-btn {
     all: unset !important;
     display: flex !important;
@@ -375,7 +365,6 @@
     stroke: var(--blanco-puro) !important;
   }
 
-  /* navUsuario en móvil — centrado igual que modo noche */
   .navMenu li.navUsuario {
     all: unset !important;
     display: flex !important;
@@ -389,7 +378,6 @@
     cursor: pointer !important;
   }
 
-  /* El contenedor interno navUsuario — solo lo necesario */
   .navMenu .navUsuario {
     display: flex !important;
     align-items: center !important;
@@ -399,6 +387,8 @@
     background: rgba(255, 255, 255, 0.1) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 50px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .navMenu .nav-nombre {
@@ -408,7 +398,6 @@
     white-space: nowrap !important;
   }
 
-  /* Tema e items centrados — override total, independientes del flujo */
   .navMenu li.navMenu-tema,
   .navMenu li.navMenu-centrado {
     all: unset !important;
@@ -450,24 +439,27 @@
   .modo-oscuro .navMenu {
     background: linear-gradient(
       160deg,
-      rgba(5, 15, 8, 0.99) 0%,
-      rgba(8, 22, 12, 1) 60%,
-      rgba(3, 10, 6, 1) 100%
+      rgba(4, 12, 6, 1) 0%,
+      rgba(6, 18, 10, 1) 60%,
+      rgba(2, 8, 4, 1) 100%
     );
     border-bottom-color: rgba(79, 119, 45, 0.25);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(79, 119, 45, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   }
 
   .modo-oscuro .navMenu li {
     border-bottom-color: rgba(79, 119, 45, 0.15);
   }
+  .navMenu .btn-primario,
+  .navMenu .btn-secundario,
+  .navMenu .btnTema {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
-/* ============================================================
-   MENÚ MÓVIL — elementos nuevos
-   ============================================================ */
+/*MENÚ MÓVIL*/
 
-/* Overlay oscuro detrás del menú */
 .navOverlay {
   position: fixed;
   inset: 0;
@@ -477,10 +469,12 @@
   animation: fadeIn 0.25s ease;
 }
 
-/* Hamburguesa → X al abrir */
-.navHamburguesa {
-  gap: 6px;
+@supports not (backdrop-filter: blur(1px)) {
+  .navOverlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
 }
+
 .navHamburguesa.abierto span:nth-child(1) {
   transform: translateY(8.5px) rotate(45deg);
 }
@@ -492,7 +486,7 @@
   transform: translateY(-8.5px) rotate(-45deg);
 }
 
-/* ── Header del menú ── */
+/*Header del menú*/
 .navMenu-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   margin-bottom: 0 !important;
@@ -500,7 +494,6 @@
   padding-top: 0.25rem !important;
 }
 
-/* Ocultar header cuando no tiene contenido */
 .navMenu-header:empty {
   display: none !important;
 }
@@ -521,7 +514,6 @@
   stroke: var(--naranja);
 }
 
-/* Usuario en el header */
 .navMenu-usuario {
   display: flex;
   align-items: center;
@@ -555,7 +547,7 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ── Items con icono ── */
+/*Items con icono*/
 .navMenu li {
   display: flex;
   align-items: center;
@@ -578,7 +570,7 @@
   color: var(--naranja) !important;
 }
 
-/* ── Divider ── */
+/*Divider*/
 .navMenu-divider {
   height: 1px !important;
   background: rgba(255, 255, 255, 0.08) !important;
@@ -588,7 +580,7 @@
   pointer-events: none;
 }
 
-/* ── Fila de modo tema ── */
+/*Fila de modo tema*/
 .navMenu-tema {
   display: flex !important;
   align-items: center !important;
@@ -604,12 +596,12 @@
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* ── Perfil ── */
+/*Perfil*/
 .navMenu-perfil {
   cursor: pointer;
 }
 
-/* ── Botón cerrar sesión ── */
+/*Botón cerrar sesión*/
 .navMenu-cerrar {
   border-bottom: none !important;
   padding-top: 0.5rem !important;
@@ -656,7 +648,7 @@
   padding: 0.85rem;
 }
 
-/* Modo oscuro ajustes */
+/* Modo oscuro */
 .modo-oscuro .navMenu-usuario-email {
   color: rgba(180, 220, 160, 0.45);
 }
@@ -669,18 +661,14 @@
   color: rgba(200, 230, 180, 0.8) !important;
 }
 
-/* Garantizar visibilidad de las rayas del hamburguesa en todos los modos */
+/* Hamburguesa siempre visible */
 nav .navHamburguesa span,
 .nav .navHamburguesa span {
   background-color: #ffffff !important;
   opacity: 1 !important;
 }
 
-/* Badge de imágenes pendientes en el botón Admin Panel */
-.nav-admin-btn {
-  position: relative;
-}
- 
+/* Badge Admin */
 .nav-badge-pendientes {
   position: absolute;
   top: -6px;
@@ -688,7 +676,7 @@ nav .navHamburguesa span,
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
-  background: #f97316;          /* naranja llamativo */
+  background: #f97316;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -698,25 +686,21 @@ nav .navHamburguesa span,
   justify-content: center;
   line-height: 1;
   box-shadow: 0 0 0 2px var(--color-fondo, #fff);
-  /* Pulso para llamar la atención */
   animation: badge-pulso 2s ease-in-out infinite;
   pointer-events: none;
 }
- 
+
 @keyframes badge-pulso {
   0%, 100% { transform: scale(1);    box-shadow: 0 0 0 2px var(--color-fondo, #fff); }
   50%       { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(249,115,22,.3); }
 }
-/* ════════════════════════════════
-   CAMPANA DE NOTIFICACIONES
-════════════════════════════════ */
+
+/* CAMPANA DE NOTIFICACIONES*/
 
 .nav-notif-wrap {
   position: relative;
   display: flex;
   align-items: center;
-  /* En desktop se queda entre el logo y la hamburguesa;
-     en pantallas grandes se reordena al final (ver orden flex) */
   order: 3;
 }
 
@@ -746,15 +730,14 @@ nav .navHamburguesa span,
 }
 
 @keyframes campana-ring {
-  0%   { transform: rotate(0);   }
+  0%   { transform: rotate(0);    }
   20%  { transform: rotate(12deg);  }
   40%  { transform: rotate(-10deg); }
-  60%  { transform: rotate(8deg);  }
-  80%  { transform: rotate(-6deg); }
-  100% { transform: rotate(0);   }
+  60%  { transform: rotate(8deg);   }
+  80%  { transform: rotate(-6deg);  }
+  100% { transform: rotate(0);    }
 }
 
-/* Badge número de no leídas */
 .nav-notif-badge {
   position: absolute;
   top: -3px;
@@ -780,21 +763,15 @@ nav .navHamburguesa span,
   to   { transform: scale(1);   opacity: 1; }
 }
 
-/* Campana desktop: oculta en móvil */
 .nav-notif-wrap--desktop {
   display: flex;
 }
 
-/* Campana dentro del menú móvil: oculta en desktop */
 .nav-notif-btn--movil {
   display: none;
 }
 
-/* Reordenar en desktop para que la campana quede a la derecha del menú */
 @media (min-width: 769px) {
-  .navContenedor {
-    /* logo | menú | campana | hamburguesa (oculto en desktop) */
-  }
   .nav-notif-wrap {
     order: 4;
   }
@@ -803,7 +780,6 @@ nav .navHamburguesa span,
   }
 }
 
-/* En móvil la campana queda dentro del menú hamburguesa */
 @media (max-width: 768px) {
   .nav-notif-wrap--desktop {
     display: none !important;
@@ -816,9 +792,8 @@ nav .navHamburguesa span,
     margin-left: auto;
   }
 }
-/* ════════════════════════════════════════════════════
-   MODAL NOTIFICACIONES — solo móvil
-════════════════════════════════════════════════════ */
+
+/*MODAL NOTIFICACIONES — solo móvil*/
 .pn-modal-movil {
   display: none;
 }
@@ -832,8 +807,8 @@ nav .navHamburguesa span,
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     animation: pn-modal-fade 0.2s ease;
     padding: 1rem;
   }
@@ -854,7 +829,6 @@ nav .navHamburguesa span,
     to   { transform: translateY(0)    scale(1);    opacity: 1; }
   }
 
-  /* En móvil el panel no es absolute sino block */
   .pn-modal-movil .pn-panel {
     position: static !important;
     width: 100% !important;
@@ -864,7 +838,6 @@ nav .navHamburguesa span,
   }
 }
 
-/* Fila tema + campana en móvil */
 @media (max-width: 968px) {
   .navMenu li.navMenu-tema {
     gap: 1rem !important;
@@ -888,4 +861,385 @@ nav .navHamburguesa span,
     border-color: rgba(255, 255, 255, 0.25);
     color: var(--blanco-puro);
   }
+}
+.al-dropdown,
+.al-dropdown * {
+  pointer-events: all !important;
+}
+
+.al-modal__toggle-row,
+.al-modal__toggle-row * {
+  pointer-events: all !important;
+}
+
+/*Dropdown desktop (hover sobre "Cerrar Sesión")  */
+.al-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.al-btn-trigger {
+}
+
+.al-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  background: rgba(18, 52, 30, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  z-index: 1100;
+  will-change: opacity, transform;
+  contain: layout style;
+  animation: al-dropdown-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modo-oscuro .al-dropdown {
+  background: rgba(20, 20, 20, 0.97);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes al-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Botón "Cerrar Sesión" dentro del dropdown */
+.al-dropdown__logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  text-align: left;
+}
+
+.al-dropdown__logout-btn svg {
+  stroke: #fca5a5;
+  flex-shrink: 0;
+}
+
+.al-dropdown__logout-btn:hover {
+  background: rgba(220, 38, 38, 0.24);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+/* Separador */
+.al-dropdown__divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 0;
+}
+
+/* Fila toggle */
+.al-dropdown__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  min-height: 52px;
+}
+
+.al-dropdown__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  width: 0;
+}
+
+.al-dropdown__label-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+}
+
+.al-dropdown__label-sub {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  min-height: 1em;
+}
+
+/*Modal confirmación (mobile / táctil)  */
+.al-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  animation: al-overlay-in 0.2s ease;
+}
+
+@keyframes al-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.al-modal {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(18, 52, 30, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: al-modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modo-oscuro .al-modal {
+  background: rgba(20, 20, 20, 0.98);
+}
+
+@keyframes al-modal-in {
+  from { transform: translateY(30px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+.al-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.al-modal__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.al-modal__icon svg {
+  stroke: #fca5a5;
+}
+
+.al-modal__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--blanco-puro);
+  margin: 0;
+}
+
+/* Fila toggle dentro del modal */
+.al-modal__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+  min-height: 64px;
+  box-sizing: border-box;
+}
+
+.al-modal__toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  width: 0;
+}
+
+.al-modal__toggle-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.al-modal__toggle-sub {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  display: block;
+  min-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botones del modal */
+.al-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.al-modal__btn-cancelar {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.al-modal__btn-cancelar:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.al-modal__btn-confirmar {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(220, 38, 38, 0.18);
+  border: 1.5px solid rgba(220, 38, 38, 0.4);
+  border-radius: 12px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.al-modal__btn-confirmar:hover {
+  background: rgba(220, 38, 38, 0.3);
+  border-color: rgba(220, 38, 38, 0.6);
+}
+
+/* En desktop el modal siempre se centra (no pegado abajo) */
+@media (min-width: 769px) {
+  .al-modal-overlay {
+    align-items: center;
+  }
+}
+
+/*Toggle switch — protección total contra herencia del navMenu*/
+.al-toggle,
+.al-toggle:hover,
+.al-toggle:focus {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  min-width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: background 0.28s ease, border-color 0.28s ease;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+  pointer-events: all !important;
+  z-index: 10;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  isolation: isolate;
+}
+
+.al-toggle--on,
+.al-toggle--on:hover {
+  background: #3b82f6 !important;
+  border-color: #2563eb !important;
+}
+
+.al-toggle--loading {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Thumb: círculo blanco animado */
+.al-toggle__thumb {
+  all: unset !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 3px !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35) !important;
+  transition:
+    left         0.26s cubic-bezier(0.34, 1.4, 0.64, 1),
+    width        0.18s ease,
+    border-radius 0.18s ease !important;
+  pointer-events: none !important;
+  will-change: left !important;
+}
+
+/* Estiramiento al presionar (apagado → encendido) */
+.al-toggle:active .al-toggle__thumb {
+  width: 20px !important;
+  border-radius: 10px !important;
+}
+
+/* Thumb en posición ON */
+.al-toggle--on .al-toggle__thumb {
+  left: calc(100% - 19px) !important;
+}
+
+/* Estiramiento al presionar (encendido → apagado) */
+.al-toggle--on:active .al-toggle__thumb {
+  left: calc(100% - 23px) !important;
+  width: 20px !important;
+  border-radius: 10px !important;
+}
+
+/*Neutralizar herencia de SVGs del navMenu en el dropdown*/
+.al-dropdown__logout-btn svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+.al-modal__icon svg {
+  stroke: #fca5a5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 969px) {
+  li.navMenu-centrado {
+    position: relative;
+  }
+}
+
+/*Punto de admin sobre avatar*/
+.nav-admin-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--naranja, #f77f00);
+  border: 1.5px solid rgba(26, 77, 46, 0.9);
 }

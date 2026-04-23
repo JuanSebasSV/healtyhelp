@@ -1,17 +1,11 @@
-/* ImagenesAprobacion.css
-   Prefijo: ia-
-   Panel de administración para moderar imágenes de reseñas.
-   Compatible con variables de index.css
-*/
+/*ImagenesAprobacion.css*/
 
-/* ════════════════════════════════
-   CONTENEDOR GENERAL
-════════════════════════════════ */
+/*CONTENEDOR GENERAL*/
 .ia-contenedor {
   padding: 1.5rem 0;
 }
 
-/* ── Cabecera ── */
+/*  Cabecera  */
 .ia-cabecera {
   display: flex;
   align-items: flex-start;
@@ -42,7 +36,7 @@
   margin: 0;
 }
 
-/* ── Contadores ── */
+/*  Contadores  */
 .ia-contadores {
   display: flex;
   gap: 0.75rem;
@@ -91,7 +85,7 @@
   margin-top: 0.15rem;
 }
 
-/* ── Filtros ── */
+/*  Filtros  */
 .ia-filtros {
   display: flex;
   gap: 0.5rem;
@@ -149,7 +143,7 @@
   line-height: 1;
 }
 
-/* ── Loading / vacío ── */
+/*  Loading / vacío  */
 .ia-loading {
   display: flex;
   flex-direction: column;
@@ -182,9 +176,7 @@
 }
 .ia-vacio svg { stroke: rgba(255, 255, 255, 0.18); }
 
-/* ════════════════════════════════
-   GRID DE CARDS
-════════════════════════════════ */
+/*GRID DE CARDS*/
 .ia-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
@@ -401,9 +393,7 @@
 }
 .ia-btn-revertir:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* ════════════════════════════════
-   MODAL IMAGEN COMPLETA
-════════════════════════════════ */
+/*MODAL IMAGEN COMPLETA*/
 .ia-modal-overlay {
   position: fixed;
   inset: 0;
@@ -542,9 +532,7 @@
   transform: none;
 }
 
-/* ════════════════════════════════
-   RESPONSIVE
-════════════════════════════════ */
+/*RESPONSIVE*/
 @media (max-width: 767px) {
   .ia-cabecera {
     flex-direction: column;

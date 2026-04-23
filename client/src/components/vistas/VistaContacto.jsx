@@ -73,7 +73,6 @@ const VistaContacto = () => {
     }
     setEnviando(true);
     try {
-      // await api.post('/contact', datosForm);
       toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
       setDatosForm({ nombre: '', email: '', asunto: '', mensaje: '' });
     } catch (error) {
@@ -86,7 +85,7 @@ const VistaContacto = () => {
   return (
     <div className="vista-contacto">
 
-      {/* ── Header desktop (oculto en móvil vía CSS) ── */}
+      {/*Header desktop (oculto en móvil vía CSS)*/}
       <div className="contacto-header" style={{ marginBottom: '3rem' }}>
         <h1>Contáctanos</h1>
         <p className="contacto-subtitulo">
@@ -95,7 +94,7 @@ const VistaContacto = () => {
         </p>
       </div>
 
-      {/* ── Tarjeta principal ── */}
+      {/*Tarjeta principal*/}
       <div className="contacto-contenedor">
 
         {/* Panel izquierdo — foto + título hero (móvil) + info items (desktop) */}

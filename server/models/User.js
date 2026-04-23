@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     min: [18, 'Debes ser mayor de 18 años'],
     max: [100, 'La edad máxima permitida es 100 años']
   },
-  weight: { type: Number, min: 40, max: 150 }, // kg
+  weight: { type: Number, min: 40, max: 300 }, // kg
   height: { type: Number, min: 50, max: 210 }, // cm
   role: {
     type: String,
@@ -43,27 +43,33 @@ const userSchema = new mongoose.Schema({
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 
-  // ── Términos y condiciones ──
+  //  Términos y condiciones 
   termsAccepted:   { type: Boolean, default: false },
   termsAcceptedAt: { type: Date },
   termsVersion:    { type: String, default: '' },
 
-  // ── Perfil de salud ──
+  //  Perfil de salud 
   healthProfile: {
     condiciones:  { type: [String], default: [] },
+    categorias:   { type: [String], default: [] },
     alergias:     { type: [String], default: [] },
     preferencias: { type: [String], default: [] }
   },
 
-  // ── Perfil completo ──
+  //  Perfil completo 
   profileComplete: { type: Boolean, default: false },
 
-  // ── Sistema de baneo ──
+  //  Sistema de baneo 
   baneado:        { type: Boolean, default: false },
-  baneadoHasta:   { type: Date,    default: null },   // null = permanente
+  baneadoHasta:   { type: Date,    default: null },
   baneadoMotivo:  { type: String,  default: '' },
   baneadoPor:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   baneadoEn:      { type: Date,    default: null },
+
+  //  Cierre de sesión automático 
+  autoLogoutEnabled: { type: Boolean, default: false },
+  autoLogoutMinutes: { type: Number,  default: 15, min: 1, max: 480 },
+
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {

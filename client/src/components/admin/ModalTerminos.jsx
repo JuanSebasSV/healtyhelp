@@ -1,6 +1,4 @@
-// ModalTerminos.jsx — versión corregida
-// La persistencia ya NO vive aquí; vive en useTermsGuard.js
-// Este componente solo muestra el contenido y llama a onAceptar()
+// ModalTerminos.jsx
 
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
@@ -36,7 +34,6 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
   const handleAceptar = async () => {
     if (!aceptado || !scrollado) return;
     setCargando(true);
-    // Delega toda la lógica de persistencia al padre (useTermsGuard)
     await onAceptar();
     setCargando(false);
   };

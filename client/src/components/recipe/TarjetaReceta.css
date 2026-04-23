@@ -42,13 +42,16 @@
   border-left-color: #6ee7b7;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
 }
- 
-/* ── Imagen ── */
+
+/*Imagen*/
 .tarjetaImg {
   position: relative;
   height: 200px;
   overflow: hidden;
   flex-shrink: 0;
+  /* FIX: min-height evita el layout shift cuando la imagen carga */
+  min-height: 220px;
+  background: rgba(255, 255, 255, 0.06);
 }
  
 .tarjetaImg img {
@@ -127,8 +130,8 @@
 .btnFav:hover svg { stroke: var(--rojo); }
 .btnFav.activo    { background: #fff0ec; }
 .btnFav.activo svg { fill: var(--rojo); stroke: var(--rojo); }
- 
-/* ── Info ── */
+
+/*Info de la tarjeta*/
 .tarjetaInfo {
   padding: 1rem 1.1rem 0.9rem 1.1rem;
   display: flex;
@@ -277,6 +280,7 @@
 }
  
 
+/*Botón seleccionar*/
 .btnSeleccionar {
   position: absolute;
   bottom: 0.85rem;
@@ -321,3 +325,13 @@
 .btnSeleccionar.activo svg { stroke: #4ade80; }
 
 .tarjeta-seleccionada { outline: 2px solid #16a34a; }
+
+@media (max-width: 900px) {
+  .btnSeleccionar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.45);
+  }
+}
+
+

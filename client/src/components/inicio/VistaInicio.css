@@ -41,7 +41,6 @@
   opacity: 0;
   transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  will-change: opacity;
   backface-visibility: hidden;
 }
 
@@ -50,6 +49,7 @@
 .hero-capa--activa {
   opacity: 1;
   z-index: 2;
+  will-change: opacity;
 }
 
 .hero-gradiente {
@@ -761,11 +761,15 @@
 
 /* ============ COLUMNA DERECHA ============ */
 
+.columna-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-/* ── Widget lateral genérico ── */
 .widget-lateral {
-  background: linear-gradient(135deg, rgba(75, 197, 142, 0.687) 0%, rgba(58, 159, 114, 0.819) 100%);
-
+  /* Degradado verde característico del proyecto */
+  background: linear-gradient(135deg, rgba(105, 198, 156, 0.643) 0%, rgba(79, 184, 136, 0.486) 100%);
   border: 1.5px solid #c8d4cf;
   border-radius: 14px;
   padding: 1rem 1.1rem;
@@ -782,26 +786,21 @@
   text-transform: uppercase;
   color: #ffffff !important;
   margin-bottom: 0.85rem;
-  
-  
 }
 
-.widget-lateral__header svg { flex-shrink: 0; }
-
-/* Lista de items con botón */
 .widget-lateral__lista {
-  
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
 }
 
+/* Items de tiempo (fondo crema) */
 .widget-lateral__item {
   display: flex;
   align-items: center;
   gap: 0.65rem;
   padding: 0.55rem 0.8rem;
-  background: #f5f2ec;
+  background: #f5f2ec; /* Color crema de la imagen */
   border: 1.5px solid #e2ddd6;
   border-radius: 10px;
   cursor: pointer;
@@ -809,20 +808,17 @@
   font-weight: 600;
   color: #3d5a4a;
   transition: all 0.2s ease;
-  text-align: left;
   width: 100%;
 }
 
-.widget-lateral__item:hover {
+.widget-lateral__item:hover, .widget-lateral__item.activo {
+  background: #ffffff;
   border-color: #4D9E7A;
-  background: #edf7f3;
   color: #2D6A52;
   transform: translateX(3px);
 }
 
-.widget-lateral__icono { font-size: 1rem; }
-
-/* Tags de dietas */
+/* Estilo para los tags de dietas */
 .widget-lateral__tags {
   display: flex;
   flex-wrap: wrap;
@@ -841,48 +837,55 @@
   transition: all 0.2s ease;
 }
 
-.widget-tag:hover {
-  border-color: #4D9E7A;
-  color: #2D6A52;
-  background: #edf7f3;
-}
-
-.widget-tag.activo {
+.widget-tag.activo, .widget-tag:hover {
   background: #4D9E7A;
-  border-color: #4D9E7A;
   color: #ffffff;
+  border-color: #4D9E7A;
 }
 
-/* Modo oscuro */
+/* MODO OSCURO */
 .modo-oscuro .widget-lateral {
   background: rgba(18, 32, 22, 0.85);
-  border-color: rgba(79, 119, 45, 0.3);
 }
 
-.modo-oscuro .widget-lateral__item {
+.modo-oscuro .widget-lateral__item, .modo-oscuro .widget-tag {
   background: rgba(26, 45, 30, 0.7);
+  color: #b4dca0;
   border-color: rgba(79, 119, 45, 0.25);
-  color: rgba(180, 220, 160, 0.85);
 }
 
-.modo-oscuro .widget-lateral__item:hover {
-  background: rgba(40, 70, 48, 0.85);
-  border-color: rgba(77, 158, 122, 0.5);
-  color: #a8e6c8;
+/*ORBES DEL WIDGET LATERAL*/
+.widget-lateral {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 
-.modo-oscuro .widget-tag {
-  background: rgba(26, 45, 30, 0.7);
-  border-color: rgba(79, 119, 45, 0.25);
-  color: rgba(180, 220, 160, 0.85);
+/* Orbe decorativo grande en la esquina inferior derecha */
+.widget-lateral::before {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: rgba(19, 164, 116, 0.315); 
+  border-radius: 50%;
+  z-index: -1; /* Se posiciona detrás del contenido */
 }
 
-.modo-oscuro .widget-tag.activo {
-  background: #3d8a69;
-  border-color: #3d8a69;
-  color: #ffffff;
+/* Orbe decorativo pequeño opcional en la esquina superior izquierda */
+.widget-lateral::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  width: 50px;
+  height: 50px;
+  background: rgba(19, 164, 116, 0.315);
+  border-radius: 50%;
+  z-index: -1;
 }
-
 
 
 
@@ -1125,4 +1128,162 @@
     transition: none;
     cursor: grabbing;
   }
+}
+/*Fila de filtro por tiempo*/
+
+/* Separador visual entre la fila de categorías y la de tiempos */
+.tiempos-fila {
+  margin-top: -1rem;     
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+}
+
+/* Etiqueta "Tiempo:" a la izquierda de los botones */
+.tiempos-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding-right: 0.25rem;
+  user-select: none;
+}
+.tiempos-label svg { stroke: rgba(255, 255, 255, 0.45); flex-shrink: 0; width: 25px; height: auto; }
+.modo-oscuro .tiempos-label { color: rgba(180, 220, 150, 0.5); }
+.modo-oscuro .tiempos-label svg { stroke: rgba(180, 220, 150, 0.35); }
+
+.catBtn--tiempo {
+  padding: 0.3rem 0.9rem;
+  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.catBtn--tiempo.activo {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2);
+  color: var(--blanco-puro);
+}
+
+.catBtn--tiempo.activo .catIcono svg { stroke: rgba(186, 230, 253, 0.9); }
+
+.modo-oscuro .catBtn--tiempo {
+  background: rgba(10, 25, 35, 0.5);
+  border-color: rgba(56, 150, 200, 0.25);
+}
+.modo-oscuro .catBtn--tiempo.activo {
+  background: rgba(56, 150, 200, 0.25);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+/* Botón "✕ Limpiar" */
+.catBtn--limpiar-tiempo {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.45);
+  gap: 0.3rem;
+}
+.catBtn--limpiar-tiempo:hover {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: rgba(255, 180, 180, 0.9);
+  transform: none;
+  box-shadow: none;
+}
+.modo-oscuro .catBtn--limpiar-tiempo { border-color: rgba(255, 255, 255, 0.1); }
+
+/*Buscador*/
+
+.buscador-recetas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.buscador-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 580px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 0.7rem 1.2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.buscador-input-wrap:focus-within {
+  border-color: rgba(247, 127, 0, 0.55);
+  box-shadow: 0 4px 20px rgba(247, 127, 0, 0.18);
+}
+
+.buscador-input-wrap svg {
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+  stroke: rgba(255, 255, 255, 0.45);
+}
+
+.buscador-input-wrap:focus-within svg {
+  stroke: rgba(247, 127, 0, 0.7);
+}
+
+.buscador-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.92rem;
+  color: var(--blanco-puro);
+}
+
+.buscador-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+
+.buscador-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+  stroke: rgba(255, 255, 255, 0.4);
+  transition: stroke 0.2s;
+}
+.buscador-clear svg { stroke: rgba(255, 255, 255, 0.4); transition: stroke 0.2s; }
+.buscador-clear:hover svg { stroke: rgba(220, 38, 38, 0.8); }
+
+.buscador-conteo {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+.modo-oscuro .buscador-input-wrap {
+  background: rgba(10, 25, 15, 0.6);
+  border-color: rgba(79, 119, 45, 0.3);
+}
+.modo-oscuro .buscador-input-wrap:focus-within {
+  border-color: rgba(247, 127, 0, 0.5);
+}
+.modo-oscuro .buscador-input { color: rgba(210, 240, 190, 0.9); }
+.modo-oscuro .buscador-input::placeholder { color: rgba(150, 190, 130, 0.35); }
+
+/* Responsive */
+@media (max-width: 767px) {
+  .tiempos-fila { margin-top: -0.5rem; }
+  .catBtn--tiempo { padding: 0.25rem 0.7rem; font-size: 0.77rem; }
+  .buscador-input-wrap { padding: 0.6rem 1rem; }
+  .buscador-input { font-size: 0.85rem; }
 }

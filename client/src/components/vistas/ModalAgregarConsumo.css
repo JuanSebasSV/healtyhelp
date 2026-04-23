@@ -1,5 +1,4 @@
 /* ModalAgregarConsumo.css */
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -38,7 +37,7 @@
   text-align: center;
 }
 
-/* ── Cerrar ── */
+/*Cerrar*/
 .modal-cerrar {
   position: absolute;
   top: 1rem;
@@ -66,7 +65,7 @@
   stroke: currentColor;
 }
 
-/* ── Etiqueta destino ── */
+/*Etiqueta destino*/
 .agr-destino-label {
   display: flex;
   align-items: center;
@@ -87,7 +86,7 @@
   flex-shrink: 0;
 }
 
-/* ── Selector tipo (solo filtro visual) ── */
+/*Selector tipo */
 .agr-tipo-selector {
   display: flex;
   gap: 0.45rem;
@@ -134,7 +133,7 @@
   white-space: nowrap;
 }
 
-/* ── Label buscador ── */
+/*Label buscador*/
 .agr-busqueda-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -144,7 +143,7 @@
   margin: 0 0 0.35rem 0.1rem;
 }
 
-/* ── Buscador ── */
+/*Buscador*/
 .agr-busqueda {
   display: flex;
   align-items: center;
@@ -179,7 +178,7 @@
   caret-color: rgba(247, 127, 0, 0.8);
 }
 
-/* ── Lista ── */
+/*Lista*/
 .agr-lista {
   display: flex;
   flex-direction: column;
@@ -239,7 +238,7 @@
   margin: 0;
 }
 
-/* ── Botón añadir ── */
+/*Botón añadir*/
 .agr-btn-añadir {
   padding: 0.36rem 0.82rem;
   border-radius: 8px;

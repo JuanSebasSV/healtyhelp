@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import './Navbar.css';
 import PanelNotificaciones from '../notificaciones/PanelNotificaciones';
 
-// Poll de notificaciones cada 60 s — reduce carga al servidor
+// Poll de notificaciones cada 60 s
 const NOTIF_INTERVAL = 60_000;
 
-// ── Iconos estáticos memoizados ───────────────────────────────────────────────
+//Iconos estáticos memoizados 
 const IcoCampana = memo(() => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +54,33 @@ const IcoLock = memo(() => (
 ));
 IcoLock.displayName = 'IcoLock';
 
-// ── Botón campana memoizado ───────────────────────────────────────────────────
+//Botón campana memoizado 
+
+const IcoCerrarSesion = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+));
+IcoCerrarSesion.displayName = 'IcoCerrarSesion';
+
+const ToggleSwitch = memo(({ enabled, onChange, loading = false }) => (
+  <div
+    className={`al-toggle${enabled ? ' al-toggle--on' : ''}${loading ? ' al-toggle--loading' : ''}`}
+    onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (!loading) onChange(e); }}
+    onPointerDown={(e) => e.stopPropagation()}
+    onTouchStart={(e) => e.stopPropagation()}
+    role="switch"
+    aria-checked={enabled}
+    aria-label="Cierre automático de sesión"
+  >
+    <span className="al-toggle__thumb" />
+  </div>
+));
+ToggleSwitch.displayName = 'ToggleSwitch';
+
 const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
   <button
     className={`nav-notif-btn${extraClass ? ` ${extraClass}` : ''}`}
@@ -71,20 +98,39 @@ const BtnCampana = memo(({ noLeidas, onClick, extraClass = '' }) => (
 ));
 BtnCampana.displayName = 'BtnCampana';
 
-// ── Navbar ────────────────────────────────────────────────────────────────────
-const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
-  const { user, logout, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+//Navbar 
+const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta }) => {
+  const { user, logout, isAdmin, updateAutoLogout } = useAuth();
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
   const [menuAbierto,    setMenuAbierto]    = useState(false);
   const [panelAbierto,   setPanelAbierto]   = useState(false);
   const [notificaciones, setNotificaciones] = useState([]);
   const [noLeidas,       setNoLeidas]       = useState(0);
   const [cargandoNotifs, setCargandoNotifs] = useState(false);
+  const [dropdownAbierto,    setDropdownAbierto]    = useState(false);
+  const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
+  const [autoLogout,         setAutoLogout]         = useState(false);
+  const [toggleLoading,      setToggleLoading]       = useState(false);
+  const [esTactil,           setEsTactil]            = useState(false);
+  const dropdownTimerRef = useRef(null);
+  const dropdownRef      = useRef(null);
   const notifIntervalRef = useRef(null);
 
-  // ── Fetch notificaciones — estable ───────────────────────────────────────
+  // Sincronizar toggle con BD
+  useEffect(() => { setAutoLogout(user?.autoLogoutEnabled ?? false); }, [user?.autoLogoutEnabled]);
+
+  // Detectar dispositivo táctil
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)');
+    setEsTactil(mq.matches);
+    const handler = (e) => setEsTactil(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  //Fetch notificaciones 
   const fetchNotificaciones = useCallback(async () => {
     if (!user) return;
     try {
@@ -94,23 +140,20 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
     } catch { /* silencioso */ }
   }, [user]);
 
-  // Poll — protegido contra doble-mount
+  // Poll
   useEffect(() => {
     if (!user) return;
     let activo = true;
-
     const poll = () => { if (activo) fetchNotificaciones(); };
-
     poll();
     notifIntervalRef.current = setInterval(poll, NOTIF_INTERVAL);
-
     return () => {
       activo = false;
       clearInterval(notifIntervalRef.current);
     };
   }, [user, fetchNotificaciones]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
+  //Handlers 
   const handleAbrirPanel = useCallback(() => {
     setPanelAbierto(v => {
       const nuevoEstado = !v;
@@ -132,13 +175,28 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
     } catch { /* silencioso */ }
   }, []);
 
+  const handleEliminarNotif = useCallback(async (id) => {
+    try {
+      await api.delete(`/notifications/${id}`);
+      setNotificaciones(prev => {
+        const eraNoLeida = prev.find(n => n._id === id && !n.leida);
+        if (eraNoLeida) setNoLeidas(c => Math.max(0, c - 1));
+        return prev.filter(n => n._id !== id);
+      });
+    } catch { /* silencioso */ }
+  }, []);
+
+  // Marcar una como leída y actualizar el contador local
   const handleLeerUna = useCallback(async (id) => {
+    setNotificaciones(prev => {
+      const notif = prev.find(n => n._id === id);
+      if (!notif || notif.leida) return prev;
+      setNoLeidas(c => Math.max(0, c - 1));
+      return prev.map(n => n._id === id ? { ...n, leida: true } : n);
+    });
+    // Luego sincronizamos con el servidor
     try {
       await api.put(`/notifications/${id}/leer`);
-      setNotificaciones(prev =>
-        prev.map(n => n._id === id ? { ...n, leida: true } : n)
-      );
-      setNoLeidas(prev => Math.max(0, prev - 1));
     } catch { /* silencioso */ }
   }, []);
 
@@ -147,28 +205,74 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
     setMenuAbierto(false);
   }, [navigate]);
 
+  // Extrae parámetros de la URL de notificación y los pasa a onAbrirReceta
+  const _procesarUrlNotif = useCallback((url) => {
+    const recetaMatch   = url.match(/[?&]receta=([^&]+)/);
+    const resenaMatch   = url.match(/[?&]resena=([^&]+)/);
+    const respuestaMatch = url.match(/[?&]respuesta=([^&]+)/);
+
+    if (recetaMatch && onAbrirReceta) {
+      onAbrirReceta(
+        recetaMatch[1],
+        resenaMatch?.[1]   || null,
+        respuestaMatch?.[1] || null,
+      );
+    } else {
+      navigate(url);
+    }
+  }, [navigate, onAbrirReceta]);
+
   const handleNavNotif = useCallback((url) => {
     setPanelAbierto(false);
-    navigate(url);
-  }, [navigate]);
+    _procesarUrlNotif(url);
+  }, [_procesarUrlNotif]);
 
   const handleNavNotifMovil = useCallback((url) => {
     setPanelAbierto(false);
     setMenuAbierto(false);
-    navigate(url);
-  }, [navigate]);
+    _procesarUrlNotif(url);
+  }, [_procesarUrlNotif]);
 
-  const handleCerrarSesion = useCallback(() => {
-    logout();
-    setMenuAbierto(false);
-    navigate('/');
+  //Toggle auto-logout
+  const handleToggleAutoLogout = useCallback(async (e) => {
+    e.stopPropagation(); e.preventDefault();
+    if (toggleLoading) return;
+    const nuevoValor = !autoLogout;
+    setAutoLogout(nuevoValor);
+    setToggleLoading(true);
+    const result = await updateAutoLogout(nuevoValor);
+    if (!result?.success) setAutoLogout(!nuevoValor);
+    setToggleLoading(false);
+  }, [autoLogout, toggleLoading, updateAutoLogout]);
+
+  //Dropdown desktop
+  const handleMouseEnterDropdown = useCallback(() => {
+    clearTimeout(dropdownTimerRef.current);
+    setDropdownAbierto(true);
+  }, []);
+  const handleMouseLeaveDropdown = useCallback(() => {
+    dropdownTimerRef.current = setTimeout(() => setDropdownAbierto(false), 300);
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDropdownAbierto(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  //Cerrar sesión
+  const ejecutarCerrarSesion = useCallback(() => {
+    logout(); setMenuAbierto(false); setDropdownAbierto(false); setModalCerrarAbierto(false); navigate('/');
   }, [logout, navigate]);
+  const handleCerrarSesionDesktop = useCallback(() => ejecutarCerrarSesion(), [ejecutarCerrarSesion]);
+  const handleCerrarSesionMobile  = useCallback(() => setModalCerrarAbierto(true), []);
 
   const handleToggleMenu = useCallback(() => setMenuAbierto(v => !v), []);
-
   const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
 
   return (
+    <>
     <nav className="nav">
       <div className="navContenedor">
 
@@ -188,6 +292,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
                 cargando={cargandoNotifs}
                 onLeerTodas={handleLeerTodas}
                 onLeerUna={handleLeerUna}
+                onEliminar={handleEliminarNotif}
                 onCerrar={handleCerrarPanel}
                 onNavegar={handleNavNotif}
               />
@@ -281,7 +386,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
           </li>
 
           {/* Panel notificaciones — móvil */}
-          {panelAbierto && (
+          {panelAbierto && esTactil && (
             <div className="pn-modal-movil" onClick={handleCerrarPanel}>
               <div className="pn-modal-movil__contenido" onClick={e => e.stopPropagation()}>
                 <PanelNotificaciones
@@ -290,6 +395,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
                   cargando={cargandoNotifs}
                   onLeerTodas={handleLeerTodas}
                   onLeerUna={handleLeerUna}
+                  onEliminar={handleEliminarNotif}
                   onCerrar={handleCerrarPanel}
                   onNavegar={handleNavNotifMovil}
                   esMobil={true}
@@ -322,10 +428,42 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
                 </div>
                 <span className="nav-nombre">{user.name?.split(' ')[0]}</span>
               </li>
-              <li className="navMenu-centrado">
-                <button className="btn-secundario" onClick={handleCerrarSesion}>
-                  Cerrar Sesión
-                </button>
+              <li className="navMenu-centrado" onClick={e => e.stopPropagation()}>
+                {!esTactil ? (
+                  <div
+                    className="al-dropdown-wrap"
+                    ref={dropdownRef}
+                    onMouseEnter={handleMouseEnterDropdown}
+                    onMouseLeave={handleMouseLeaveDropdown}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button className="btn-secundario al-btn-trigger" onClick={handleCerrarSesionDesktop}>
+                      Cerrar Sesión
+                    </button>
+                    {dropdownAbierto && (
+                      <div className="al-dropdown">
+                        <button className="al-dropdown__logout-btn" onClick={handleCerrarSesionDesktop}>
+                          <IcoCerrarSesion />
+                          Cerrar Sesión
+                        </button>
+                        <div className="al-dropdown__divider" />
+                        <div className="al-dropdown__row">
+                          <div className="al-dropdown__label">
+                            <span className="al-dropdown__label-title">Cierre automático</span>
+                            <span className="al-dropdown__label-sub">
+                              {autoLogout ? `Activo · ${user?.autoLogoutMinutes ?? 15} min sin actividad` : 'Inactivo · cierre manual'}
+                            </span>
+                          </div>
+                          <ToggleSwitch enabled={autoLogout} onChange={handleToggleAutoLogout} loading={toggleLoading} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button className="btn-secundario" onClick={handleCerrarSesionMobile}>
+                    Cerrar Sesión
+                  </button>
+                )}
               </li>
             </>
           ) : (
@@ -339,6 +477,41 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0 }) => {
         </ul>
       </div>
     </nav>
+
+      {modalCerrarAbierto && createPortal(
+        <div
+          className="al-modal-overlay"
+          onClick={() => setModalCerrarAbierto(false)}
+          onTouchStart={(e) => { if (e.target === e.currentTarget) setModalCerrarAbierto(false); }}
+        >
+          <div
+            className="al-modal"
+            onClick={e => e.stopPropagation()}
+            onTouchStart={e => e.stopPropagation()}
+            onPointerDown={e => e.stopPropagation()}
+          >
+            <div className="al-modal__header">
+              <div className="al-modal__icon"><IcoCerrarSesion /></div>
+              <h3 className="al-modal__title">¿Cerrar sesión?</h3>
+            </div>
+            <div className="al-modal__toggle-row">
+              <div className="al-modal__toggle-label">
+                <span className="al-modal__toggle-title">Cierre automático de sesión</span>
+                <span className="al-modal__toggle-sub">
+                  {autoLogout ? `Activo · ${user?.autoLogoutMinutes ?? 15} min sin actividad` : 'Inactivo · cierre manual'}
+                </span>
+              </div>
+              <ToggleSwitch enabled={autoLogout} onChange={handleToggleAutoLogout} loading={toggleLoading} />
+            </div>
+            <div className="al-modal__actions">
+              <button className="al-modal__btn-cancelar" onClick={() => setModalCerrarAbierto(false)}>Cancelar</button>
+              <button className="al-modal__btn-confirmar" onClick={ejecutarCerrarSesion}>Sí, cerrar sesión</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 };
 

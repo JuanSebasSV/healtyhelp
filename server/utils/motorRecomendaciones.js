@@ -1,11 +1,11 @@
-// ─── Constantes ───────────────────────────────────────────────────────────────
+//  Constantes 
 
 const CALORIAS_BASE = {
   hombre: { sedentario: 2000, moderado: 2400, activo: 2800 },
   mujer:  { sedentario: 1700, moderado: 2000, activo: 2300 },
 };
 
-// ─── Utilidades ───────────────────────────────────────────────────────────────
+//  Utilidades 
 
 function calcularIMC(peso, altura) {
   if (!peso || !altura) return null;
@@ -43,7 +43,7 @@ function detectarComidasSaltadas(consumos) {
   }, []);
 }
 
-// ─── Recomendaciones por condición ───────────────────────────────────────────
+//  Recomendaciones por condición 
 
 const REC = {
   diabetes: {
@@ -288,7 +288,57 @@ const REC = {
   },
 };
 
-// ─── Ejercicio por IMC ────────────────────────────────────────────────────────
+//  Recomendaciones por categoría/momento del día 
+// Tips específicos que el motor genera cuando el usuario tiene una categoría activa
+
+const REC_CATEGORIA = {
+  desayuno: {
+    alimentacion: [
+      'Un desayuno con proteína y fibra (huevo + avena o frutas con yogur) estabiliza la energía toda la mañana.',
+      'Evita desayunos altos en azúcar simple (cereales azucarados, pan blanco solo) — generan un pico y luego fatiga.',
+      'Si tu desayuno es tarde o lo saltas frecuentemente, considera preparar algo la noche anterior.',
+    ],
+    ejercicio: [
+      'Si entrenas en la mañana en ayunas, ten a mano un snack ligero (fruta, nueces) para después.',
+      'Un desayuno completo 1–2 horas antes del ejercicio matutino mejora el rendimiento.',
+    ],
+  },
+  almuerzo: {
+    alimentacion: [
+      'El almuerzo debe ser tu comida más completa del día: proteína, carbohidrato complejo y verduras.',
+      'Comer en un ambiente tranquilo y sin pantallas mejora la saciedad y la digestión.',
+      'Un almuerzo abundante y equilibrado reduce el picoteo de la tarde.',
+    ],
+    ejercicio: [
+      'Espera al menos 1 hora después del almuerzo antes de hacer ejercicio intenso.',
+      'Si entrenas en la tarde, el almuerzo es tu principal fuente de energía — no lo saltes.',
+    ],
+  },
+  cena: {
+    alimentacion: [
+      'La cena debería ser ligera y fácil de digerir — prioriza proteína magra y verduras.',
+      'Cena al menos 2 horas antes de dormir para favorecer el descanso y la digestión.',
+      'Evita carbohidratos de alto índice glucémico en la noche — el cuerpo los usa menos en reposo.',
+    ],
+    ejercicio: [
+      'El ejercicio suave nocturno (caminata, yoga) puede mejorar el sueño si se hace 2+ horas antes de acostarte.',
+      'Evita entrenamientos de alta intensidad después de las 9 p.m. — pueden alterar el sueño.',
+    ],
+  },
+  'postres-snacks': {
+    alimentacion: [
+      'Los snacks saludables (fruta, nueces, yogur) evitan bajones de energía entre comidas.',
+      'Evita snacks ultraprocesados — su combinación de sal, azúcar y grasa genera sobreconsumo.',
+      'Un snack proteico a media tarde (huevo cocido, queso, legumbres) reduce el apetito en la cena.',
+    ],
+    ejercicio: [
+      'Un snack de 150–200 kcal 30–45 min antes del entrenamiento mejora el rendimiento.',
+      'Post-entrenamiento, combina carbohidrato + proteína (plátano + yogur) para la recuperación.',
+    ],
+  },
+};
+
+//  Ejercicio por IMC 
 
 const EJERCICIO_IMC = {
   bajo_peso: [
@@ -311,16 +361,16 @@ const EJERCICIO_IMC = {
   ],
 };
 
-// ─── Motor principal ──────────────────────────────────────────────────────────
+//  Motor principal 
 
 function generarRecomendaciones(usuario, consumos) {
   const { age, weight, height, healthProfile = {} } = usuario;
+  const condiciones = Array.isArray(healthProfile.condiciones)
+    ? healthProfile.condiciones.filter(Boolean)
+    : [];
 
-  const condiciones = [
-    ...(healthProfile.condiciones  || []),
-    ...(healthProfile.alergias     || []),
-    ...(healthProfile.preferencias || []),
-  ];
+  // Categorías de momento del día seleccionadas por el usuario
+  const categorias = healthProfile.categorias || [];
 
   const res = {
     imc: null,
@@ -330,11 +380,12 @@ function generarRecomendaciones(usuario, consumos) {
     ejercicio: [],
     comidasSaltadas: [],
     condicionesDetectadas: condiciones,
+    categoriasActivas: categorias,         // ← NUEVO: se devuelve al frontend
   };
 
-  // ── IMC y metabolismo ──
-  const imc       = calcularIMC(weight, height);
-  const calObj    = calcularTMB(weight, height, age);
+  //  IMC y metabolismo 
+  const imc    = calcularIMC(weight, height);
+  const calObj = calcularTMB(weight, height, age);
 
   if (imc) {
     res.imc = imc;
@@ -349,7 +400,7 @@ function generarRecomendaciones(usuario, consumos) {
 
   if (calObj) res.caloriasObjetivo = calObj;
 
-  // ── Análisis de consumos ──
+  //  Análisis de consumos 
   if (consumos.length > 0) {
     const cal   = promedioNutri(consumos, 'cal');
     const prot  = promedioNutri(consumos, 'prot');
@@ -367,7 +418,7 @@ function generarRecomendaciones(usuario, consumos) {
       else                  res.alertas.push({ tipo: 'cal_ok',      mensaje: `Tu ingesta calórica (${cal} kcal) está cerca de tu objetivo (${calObj} kcal). ¡Buen trabajo!`, nivel: 'ok' });
     }
 
-    // Sodio — umbral reducido a 1500 si condición hipertensión o renal
+    // Sodio — umbral reducido si condición hipertensión o renal
     const limSodio = condiciones.some(c => ['hipertension', 'enfermedad-renal'].includes(c)) ? 1500 : 2300;
     if (sodio > limSodio) {
       res.alertas.push({ tipo: 'sodio_alto', mensaje: `Consumo de sodio (${sodio} mg/día) supera el límite recomendado (${limSodio} mg). Reduce procesados y sal.`, nivel: 'advertencia' });
@@ -395,14 +446,27 @@ function generarRecomendaciones(usuario, consumos) {
       res.alertas.push({ tipo: 'grasa_alta', mensaje: `Consumo de grasas (${grasa}g/día) elevado para tu perfil. Prioriza cocciones sin fritura y grasas insaturadas.`, nivel: 'advertencia' });
     }
 
+    // Comidas saltadas — mensaje mejorado con contexto según condición
     detectarComidasSaltadas(consumos).forEach(({ tipo, porcentaje }) => {
-      res.comidasSaltadas.push({ tipo, mensaje: `Registras ${tipo} solo el ${porcentaje}% de los días. Saltarte el ${tipo} puede afectar tu energía y metabolismo.` });
+      let extra = '';
+      if (tipo === 'desayuno' && condiciones.includes('diabetes')) {
+        extra = ' Para tu condición, saltarte el desayuno puede desestabilizar la glucosa.';
+      } else if (tipo === 'desayuno' && condiciones.includes('gastritis')) {
+        extra = ' Con gastritis, el estómago vacío puede aumentar la irritación.';
+      } else if (tipo === 'cena' && condiciones.some(c => ['keto', 'bajo-carbohidratos'].includes(c))) {
+        extra = ' Asegúrate de que la proteína de la noche sea adecuada para sostener la cetosis.';
+      }
+      res.comidasSaltadas.push({
+        tipo,
+        mensaje: `Registras ${tipo} solo el ${porcentaje}% de los días. Saltarte el ${tipo} puede afectar tu energía y metabolismo.${extra}`,
+      });
     });
+
   } else {
     res.alertas.push({ tipo: 'sin_datos', mensaje: 'Aún no tienes consumos registrados. Empieza a registrar tus comidas para recibir recomendaciones personalizadas.', nivel: 'info' });
   }
 
-  // ── Recomendaciones por condición ──
+  //  Recomendaciones por condición (deduplicadas desde el origen) 
   condiciones.forEach(cond => {
     const d = REC[cond];
     if (!d) return;
@@ -413,17 +477,33 @@ function generarRecomendaciones(usuario, consumos) {
     }
   });
 
-  // ── Ejercicio por IMC ──
+  // Recomendaciones por categoría/momento del día 
+  categorias.forEach(cat => {
+    const d = REC_CATEGORIA[cat];
+    if (!d) return;
+    if (d.alimentacion?.length) res.alimentacion.push(...d.alimentacion);
+    if (d.ejercicio?.length)    res.ejercicio.push(...d.ejercicio);
+  });
+
+  //  Ejercicio por IMC 
   if (imc) {
     const ejs = EJERCICIO_IMC[imc.categoria] || [];
     if (res.ejercicio.length === 0)    res.ejercicio.push(...ejs);
     else if (res.ejercicio.length < 2) res.ejercicio.unshift(ejs[0] || '');
   }
 
-  // ── Cobertura real por sección ──
-  res.coberturaAlimentacion = condiciones.some(c => REC[c]?.alimentacion?.length > 0);
-  res.coberturaEjercicio    = condiciones.some(c => REC[c]?.ejercicio?.length > 0) || !!imc;
+  //  Cobertura real por sección 
+  res.coberturaAlimentacion =
+    condiciones.some(c => REC[c]?.alimentacion?.length > 0) ||
+    categorias.some(c => REC_CATEGORIA[c]?.alimentacion?.length > 0);
 
+  res.coberturaEjercicio =
+    condiciones.some(c => REC[c]?.ejercicio?.length > 0) ||
+    categorias.some(c => REC_CATEGORIA[c]?.ejercicio?.length > 0) ||
+    !!imc;
+
+  // Deduplicación final de strings (por si el usuario tiene condiciones que
+  // comparten algún tip genérico de ejercicio, ej. dos condiciones cardíacas)
   res.alimentacion = [...new Set(res.alimentacion)].filter(Boolean);
   res.ejercicio    = [...new Set(res.ejercicio)].filter(Boolean);
 

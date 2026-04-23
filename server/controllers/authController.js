@@ -1,18 +1,31 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
 
-const crearTransporter = () => nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-});
+const enviarEmail = async ({ to, subject, html }) => {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: process.env.EMAIL_FROM,   // ej: "Healthy Help <no-reply@tudominio.com>"
+      to,
+      subject,
+      html
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`Resend error: ${JSON.stringify(err)}`);
+  }
+  return res.json();
+};
 
 const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizaste esta acción, ignora este correo.' }) => `
 <!DOCTYPE html>
@@ -43,6 +56,14 @@ const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizas
 </html>`;
 
 const buildUserResponse = (user) => {
+  // Calcular profileComplete dinámicamente desde los datos reales,
+  // sin confiar en el campo almacenado (puede estar desincronizado).
+  const profileComplete = !!(
+    user.age    != null && user.age    >= 18 && user.age    <= 100 &&
+    user.weight != null && user.weight >= 40 && user.weight <= 300 &&
+    user.height != null && user.height >= 50 && user.height <= 210
+  );
+
   const obj = {
     id:              user._id,
     name:            user.name,
@@ -57,7 +78,7 @@ const buildUserResponse = (user) => {
     height:          user.height,
     termsAccepted:   user.termsAccepted   || false,
     termsVersion:    user.termsVersion    || '',
-    profileComplete: user.profileComplete || false,
+    profileComplete,
     createdAt:       user.createdAt
   };
   if (user.password !== undefined) obj.hasPassword = !!user.password;
@@ -117,11 +138,22 @@ exports.register = async (req, res) => {
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
+    const pesoNum  = weight  ? parseFloat(weight)  : null;
+    const altNum   = height  ? parseFloat(height)  : null;
+
+    // profileComplete = true solo si age, weight Y height están presentes y son válidos
+    const profileComplete = !!(
+      edadNum >= 18 &&
+      pesoNum  && pesoNum  >= 40 && pesoNum  <= 300 &&
+      altNum   && altNum   >= 50 && altNum   <= 210
+    );
+
     await User.create({
       name, email, password,
       age: edadNum,
-      ...(weight && { weight: parseFloat(weight) }),
-      ...(height && { height: parseFloat(height) }),
+      ...(pesoNum && { weight: pesoNum }),
+      ...(altNum  && { height: altNum  }),
+      profileComplete,
       isVerified:         false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),
       verificationExpire: Date.now() + 15 * 60 * 1000
@@ -141,13 +173,11 @@ exports.register = async (req, res) => {
 };
 
 async function enviarCodigoVerificacion(email, name, code) {
-  const transporter = crearTransporter();
   const digitos = code.split('').map(d =>
     `<span style="display:inline-block;width:44px;height:52px;line-height:52px;text-align:center;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-size:26px;font-weight:800;margin:0 4px;">${d}</span>`
   ).join('');
 
-  await transporter.sendMail({
-    from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: '🔐 Verifica tu cuenta — Healthy Help',
     html: emailBase({
@@ -186,6 +216,15 @@ exports.verifyEmail = async (req, res) => {
     user.isVerified         = true;
     user.verificationCode   = undefined;
     user.verificationExpire = undefined;
+
+    // Recalcular profileComplete con validación de rangos completa,
+    // por si quedó en false aunque los datos ya existían.
+    user.profileComplete = !!(
+      user.age    != null && user.age    >= 18 && user.age    <= 100 &&
+      user.weight != null && user.weight >= 40 && user.weight <= 300 &&
+      user.height != null && user.height >= 50 && user.height <= 210
+    );
+
     await user.save({ validateBeforeSave: false });
 
     const token = generateToken(user._id);
@@ -232,6 +271,26 @@ exports.acceptTerms = async (req, res) => {
 // COMPLETAR PERFIL
 exports.completeProfile = async (req, res) => {
   try {
+    // Verificar estado real en BD antes de procesar
+    const userActual = await User.findById(req.user._id);
+    if (!userActual) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Si ya tiene los 3 campos válidos, solo corregir profileComplete y responder
+    const yaCompleto = (
+      userActual.age    != null && userActual.age    >= 18 && userActual.age    <= 100 &&
+      userActual.weight != null && userActual.weight >= 40 && userActual.weight <= 300 &&
+      userActual.height != null && userActual.height >= 50 && userActual.height <= 210
+    );
+
+    if (yaCompleto) {
+      if (!userActual.profileComplete) {
+        userActual.profileComplete = true;
+        await userActual.save({ validateBeforeSave: false });
+      }
+      return res.json({ success: true, user: buildUserResponse(userActual) });
+    }
+
+    // Flujo normal: validar y guardar los datos enviados
     const { age, weight, height } = req.body;
 
     const edadNum = parseInt(age, 10);
@@ -240,8 +299,8 @@ exports.completeProfile = async (req, res) => {
 
     if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
       return res.status(400).json({ error: 'Edad válida entre 18 y 100' });
-    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 150)
-      return res.status(400).json({ error: 'Peso válido entre 40 y 150 kg' });
+    if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 300)
+      return res.status(400).json({ error: 'Peso válido entre 40 y 300 kg' });
     if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
       return res.status(400).json({ error: 'Altura válida entre 50 y 210 cm' });
 
@@ -344,11 +403,9 @@ exports.setGooglePassword = async (req, res) => {
 };
 
 async function enviarAlertaBloqueo(email, name) {
-  const transporter = crearTransporter();
   const resetUrl = `${process.env.FRONTEND_URL}/recuperar`;
 
-  await transporter.sendMail({
-    from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: '⚠️ Actividad sospechosa en tu cuenta — Healthy Help',
     html: emailBase({
@@ -394,10 +451,8 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    const transporter = crearTransporter();
 
-    await transporter.sendMail({
-      from: `"Healthy Help 🌿" <${process.env.EMAIL_USER}>`,
+    await enviarEmail({
       to: user.email,
       subject: '🔐 Recupera tu contraseña — Healthy Help',
       html: emailBase({

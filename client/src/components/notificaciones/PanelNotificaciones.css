@@ -1,9 +1,6 @@
-/* PanelNotificaciones.css
-   Glassmorphism coherente con el resto de la app
-   Prefijo: pn-
-*/
+/* PanelNotificaciones.css*/
 
-/* ── Panel contenedor ── */
+/*Panel contenedor*/
 .pn-panel {
   position: absolute;
   top: calc(100% + 10px);
@@ -15,19 +12,42 @@
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45),
-              inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   z-index: 1000;
   overflow: hidden;
   animation: pn-aparecer 0.18s ease;
 }
 
-@keyframes pn-aparecer {
-  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+@media (max-width: 968px) {
+  .pn-panel {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 2rem) !important;
+    max-width: 420px !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+    animation: pn-aparecer 0.2s ease !important;
+  }
 }
 
-/* ── Header ── */
+@keyframes pn-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*Header*/
 .pn-header {
   display: flex;
   align-items: center;
@@ -42,7 +62,9 @@
   gap: 0.5rem;
 }
 
-.pn-header-izq svg { color: rgba(167, 213, 136, 0.8); }
+.pn-header-izq svg {
+  color: rgba(167, 213, 136, 0.8);
+}
 
 .pn-titulo {
   font-size: 0.92rem;
@@ -82,20 +104,22 @@
   color: rgba(167, 213, 136, 0.9);
 }
 
-/* ── Lista ── */
+/*Lista*/
 .pn-lista {
   max-height: 420px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
-.pn-lista::-webkit-scrollbar { width: 4px; }
+.pn-lista::-webkit-scrollbar {
+  width: 4px;
+}
 .pn-lista::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
 
-/* ── Item ── */
+/*Item*/
 .pn-item {
   display: flex;
   align-items: flex-start;
@@ -106,14 +130,20 @@
   cursor: default;
   transition: background 0.15s ease;
 }
-.pn-item:last-child { border-bottom: none; }
-.pn-item:hover { background: rgba(255, 255, 255, 0.04); }
+.pn-item:last-child {
+  border-bottom: none;
+}
+.pn-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
 
 .pn-item.no-leida {
   background: rgba(79, 119, 45, 0.08);
   cursor: pointer;
 }
-.pn-item.no-leida:hover { background: rgba(79, 119, 45, 0.14); }
+.pn-item.no-leida:hover {
+  background: rgba(79, 119, 45, 0.14);
+}
 
 /* Punto indicador de no leída */
 .pn-dot {
@@ -127,7 +157,7 @@
   flex-shrink: 0;
 }
 
-/* ── Ícono de tipo ── */
+/*Ícono de tipo*/
 .pn-icono {
   width: 32px;
   height: 32px;
@@ -152,8 +182,11 @@
   color: rgba(165, 180, 252, 0.9);
 }
 
-/* ── Contenido ── */
-.pn-contenido { flex: 1; min-width: 0; }
+/*Contenido*/
+.pn-contenido {
+  flex: 1;
+  min-width: 0;
+}
 
 .pn-texto {
   font-size: 0.83rem;
@@ -161,8 +194,14 @@
   line-height: 1.45;
   margin: 0 0 0.25rem;
 }
-.pn-texto strong { color: var(--blanco-puro); font-weight: 700; }
-.pn-texto em { color: rgba(167, 213, 136, 0.8); font-style: normal; }
+.pn-texto strong {
+  color: var(--blanco-puro);
+  font-weight: 700;
+}
+.pn-texto em {
+  color: rgba(167, 213, 136, 0.8);
+  font-style: normal;
+}
 
 .pn-preview {
   font-size: 0.78rem;
@@ -181,7 +220,7 @@
   font-weight: 500;
 }
 
-/* ── Estado vacío ── */
+/*Estado vacío*/
 .pn-vacio {
   display: flex;
   flex-direction: column;
@@ -203,7 +242,7 @@
   line-height: 1.45;
 }
 
-/* ── Estado cargando ── */
+/*Estado cargando*/
 .pn-estado {
   display: flex;
   align-items: center;
@@ -225,10 +264,12 @@
 }
 
 @keyframes pn-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* ── Responsive ── */
+/*Responsive*/
 @media (max-width: 480px) {
   .pn-panel {
     width: calc(100vw - 1rem);
@@ -237,7 +278,7 @@
   }
 }
 
-/* Item con navegación (reply con recetaId) */
+/* Item con navegación */
 .pn-clickable {
   cursor: pointer;
 }
@@ -245,14 +286,14 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-/* ── Header derecho (agrupa "leer todas" + botón X) ── */
+/*Header derecho*/
 .pn-header-der {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* ── Botón X cerrar modal (solo móvil) ── */
+/*Botón X cerrar modal*/
 .pn-btn-cerrar-modal {
   display: flex;
   align-items: center;
@@ -273,4 +314,50 @@
   border-color: rgba(220, 38, 38, 0.4);
   color: rgba(255, 120, 120, 0.9);
   transform: scale(1.08);
+}
+
+/*Botón eliminar notificación (visible en hover)*/
+.pn-btn-eliminar {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.5rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.pn-item:hover .pn-btn-eliminar,
+.pn-item:focus-within .pn-btn-eliminar {
+  opacity: 1;
+}
+
+.pn-btn-eliminar:hover {
+  color: rgba(255, 120, 120, 0.85);
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* Transición suave al marcar como leída */
+.pn-dot {
+  transition: opacity 0.4s ease-out;
+}
+
+.pn-item.leida .pn-dot {
+  opacity: 0;
 }

@@ -41,7 +41,8 @@ const useAuth = () => {
     isAdmin: context.isAdmin,
     loading: context.loading,
     checkAuth: context.checkAuth,
-    setGooglePassword
+    updateAutoLogout: context.updateAutoLogout, 
+    setGooglePassword,
   };
 };
 

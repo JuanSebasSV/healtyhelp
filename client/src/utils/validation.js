@@ -1,6 +1,4 @@
-/**
- * Utilidades de validación para formularios
- */
+//Utilidades de validación para formularios
 
 export const validateEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,9 +7,8 @@ export const validateEmail = (email) => {
 
 export const isValidEmail = validateEmail;
 
-/**
- * Valida nombre — sin números, sin símbolos, sin letras repetidas 4+ veces seguidas
- */
+//Valida nombre — sin números, sin símbolos, sin letras repetidas 4+ veces seguidas
+
 export const validateName = (name) => {
   const errors = [];
   if (!name || !name.trim()) {

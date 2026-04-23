@@ -8,8 +8,7 @@ import ResumenNutricional from './ResumenNutricional';
 import PanelRecomendaciones from './PanelRecomendaciones';
 import './VistaSeguimiento.css';
 
-// ─── Iconos SVG ───────────────────────────────────────────────────────────────
-
+//  Iconos SVG 
 const IcoDesayuno = ({ className }) => (
   <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.6"/>
@@ -72,8 +71,7 @@ const IcoBasura = ({ className }) => (
   </svg>
 );
 
-// ─── Metadata estática ────────────────────────────────────────────────────────
-
+//  Metadata estática 
 const TIPOS_META = {
   desayuno: { label: 'Desayuno',       Icon: IcoDesayuno, placeholder: 'Añadir desayuno'       },
   almuerzo: { label: 'Almuerzo',       Icon: IcoAlmuerzo, placeholder: 'Añadir almuerzo'       },
@@ -86,8 +84,7 @@ const TIPOS_ORDEN = ['desayuno', 'almuerzo', 'cena', 'snack'];
 const TIPOS_COLOR = { desayuno: '#f59e0b', almuerzo: '#06b6d4', cena: '#a855f7', snack: '#10b981' };
 const MAX_SNACKS  = 3;
 
-// ─── Utilidades de fecha ──────────────────────────────────────────────────────
-
+//  Utilidades de fecha 
 const fechaLegible = (fechaStr) => {
   const [y, m, d] = fechaStr.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('es-CO', {
@@ -131,9 +128,8 @@ const sumarNutri = (consumos) => {
   return base;
 };
 
-// ─── Componente principal ─────────────────────────────────────────────────────
-
-const VistaSeguimiento = ({ recetas, filtros = [] }) => {
+//  Componente principal 
+const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const [periodo,      setPeriodo]      = useState('dia');
   const [dias,         setDias]         = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
@@ -141,14 +137,11 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
   const [cargando,     setCargando]     = useState(true);
   const [editandoId,   setEditandoId]   = useState(null);
 
-  // Modal detalle receta
   const [vistaReceta,  setVistaReceta]  = useState(null);
   const [recetaSelec,  setRecetaSelec]  = useState(null);
 
-  // Modal agregar manual
   const [modalAgregar, setModalAgregar] = useState(null);
 
-  // Ref para evitar doble eliminacion
   const eliminandoRef = useRef(new Set());
 
   useEffect(() => { cargarDias(); }, []);
@@ -189,19 +182,15 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
     }
   };
 
-  // Cuando cambia el período, ajustar seleccionado solo si no es válido para ese período
   useEffect(() => {
     const ops = opciones();
     if (ops.length > 0 && !ops.includes(seleccionado)) {
       setSeleccionado(ops[0]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [periodo, dias]);
 
-  // Cargar consumos solo cuando cambia el seleccionado o el período, no en cada render
   useEffect(() => {
     if (seleccionado) cargarConsumos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seleccionado, periodo]);
 
   const consumosPorFecha = useCallback(() => {
@@ -215,8 +204,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
 
   const nutriAcumulado = sumarNutri(consumos);
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
-
+  //Handlers 
   const handleEditarTipo = async (consumoId, nuevoTipo) => {
     try {
       await api.put(`/consumos/${consumoId}/tipo`, { tipo: nuevoTipo });
@@ -255,8 +243,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
     }
   };
 
-  // ── Sub-componentes ────────────────────────────────────────────────────────
-
+  //Sub-componentes 
   const TarjetaConsumo = ({ consumo }) => (
     <div className="seg-consumo-card" onClick={() => abrirReceta(consumo)}>
       <div className="seg-consumo-img-wrap">
@@ -316,7 +303,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
               className="seg-btn-agregar"
               onClick={() => setModalAgregar({ fecha, tipo })}
             >
-              + Anadir
+              + Añadir
             </button>
           </div>
         )}
@@ -335,18 +322,18 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
           <div className="seg-consumo-vacio">
             <span className="seg-vacio-label">
               <IcoSnack className="seg-tipo-ico" />
-              {snacks.length === 0 ? 'Anadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} mas`}
+              {snacks.length === 0 ? 'Añadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} más`}
             </span>
             <button
               className="seg-btn-agregar"
               onClick={() => setModalAgregar({ fecha, tipo: 'snack' })}
             >
-              + Anadir
+              + Añadir
             </button>
           </div>
         )}
         {vacios === 0 && (
-          <p className="seg-snacks-limite">Limite de {MAX_SNACKS} snacks alcanzado</p>
+          <p className="seg-snacks-limite">Límite de {MAX_SNACKS} snacks alcanzado</p>
         )}
       </div>
     );
@@ -388,7 +375,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
             className={periodo === p ? 'activo' : ''}
             onClick={() => setPeriodo(p)}
           >
-            {p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}
+            {p === 'dia' ? 'Día' : p === 'semana' ? 'Semana' : 'Mes'}
           </button>
         ))}
       </div>
@@ -396,7 +383,7 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
       {ops.length === 0 ? (
         <div className="seg-vacio-total">
           <div className="seg-vacio-icono"><IcoPlato className="seg-plato-svg" /></div>
-          <p>Aun no has registrado ningun consumo.</p>
+          <p>Aún no has registrado ningún consumo.</p>
           <p>Abre una receta y presiona <strong>"Registrar consumo"</strong> para empezar.</p>
         </div>
       ) : (
@@ -444,7 +431,8 @@ const VistaSeguimiento = ({ recetas, filtros = [] }) => {
         </div>
       )}
 
-      <PanelRecomendaciones filtrosActivos={filtros} />
+      {}
+      <PanelRecomendaciones versionFiltros={versionFiltros} />
 
       {vistaReceta === 'detalle' && recetaSelec && (
         <DetalleReceta

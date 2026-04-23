@@ -4,9 +4,9 @@ const AdminInvitation = require('../models/AdminInvitation');
 const Recipe          = require('../models/Recipe');
 const crypto          = require('crypto');
 
-// ─────────────────────────────────────────────
+// 
 // Obtener todos los usuarios
-// ─────────────────────────────────────────────
+// 
 exports.getAllUsers = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: 'No autenticado' });
@@ -23,9 +23,9 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Estadísticas
-// ─────────────────────────────────────────────
+// 
 exports.getStats = async (req, res) => {
   try {
     const totalUsers   = await User.countDocuments();
@@ -55,9 +55,9 @@ exports.getStats = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Eliminar usuario
-// ─────────────────────────────────────────────
+// 
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,9 +95,9 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Cambiar rol
-// ─────────────────────────────────────────────
+// 
 exports.updateUserRole = async (req, res) => {
   try {
     const { id }   = req.params;
@@ -144,9 +144,9 @@ exports.updateUserRole = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Crear log manual
-// ─────────────────────────────────────────────
+// 
 exports.createLog = async (req, res) => {
   try {
     const { action, targetUserId, metadata } = req.body;
@@ -158,9 +158,9 @@ exports.createLog = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Obtener logs
-// ─────────────────────────────────────────────
+// 
 exports.getLogs = async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
@@ -182,9 +182,9 @@ exports.getLogs = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Invitar admin
-// ─────────────────────────────────────────────
+// 
 exports.inviteAdmin = async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -214,9 +214,9 @@ exports.inviteAdmin = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Aceptar invitación
-// ─────────────────────────────────────────────
+// 
 exports.acceptAdminInvite = async (req, res) => {
   try {
     const { token }    = req.params;
@@ -256,9 +256,9 @@ exports.acceptAdminInvite = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Invitaciones pendientes
-// ─────────────────────────────────────────────
+// 
 exports.getPendingInvitations = async (req, res) => {
   try {
     const invitations = await AdminInvitation.find({ used: false })
@@ -270,9 +270,9 @@ exports.getPendingInvitations = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Revocar invitación
-// ─────────────────────────────────────────────
+// 
 exports.revokeInvitation = async (req, res) => {
   try {
     const { id }       = req.params;
@@ -426,14 +426,14 @@ exports.rechazarImagenResena = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+// 
 // Helper interno
-// ─────────────────────────────────────────────
+// 
 
 
-// ─────────────────────────────────────────────
+// 
 // SISTEMA DE BANEO
-// ─────────────────────────────────────────────
+// 
 
 /**
  * PUT /admin/users/:id/ban

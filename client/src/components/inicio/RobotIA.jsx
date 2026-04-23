@@ -1,23 +1,30 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import useChatStore from '../../hooks/useChatStore';
 import ChatCore from './ChatCore';
 import './RobotIA.css';
 
-const RobotIA = ({ activo, toggleIA, chatProps }) => {
+// Componente principal 
+const RobotIA = ({ activo, toggleIA }) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.body.style.overflow = activo ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [activo]);
+  const {
+    chat,
+    cargando,
+    mensaje,
+    onMensajeChange,
+    onEnviar,
+    onKeyPress,
+    enviarTextoDirecto,
+  } = useChatStore();
 
   const irAChatCompleto = () => {
-    toggleIA();
     navigate('/chatbot');
   };
 
   return (
     <>
+      {/* Botón flotante */}
       <button className="robotBoton" onClick={toggleIA} title="Asistente IA">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
           fill="none" stroke="white" strokeWidth="2">
@@ -28,13 +35,20 @@ const RobotIA = ({ activo, toggleIA, chatProps }) => {
         </svg>
       </button>
 
+      {/* Panel flotante */}
       {activo && (
         <div className="robotChat">
           <ChatCore
             modoExpandido={false}
+            chat={chat}
+            cargando={cargando}
+            mensaje={mensaje}
+            onMensajeChange={onMensajeChange}
+            onEnviar={onEnviar}
+            onKeyPress={onKeyPress}
             onExpandir={irAChatCompleto}
             onCerrar={toggleIA}
-            {...chatProps}
+            onSugerencia={enviarTextoDirecto}
           />
         </div>
       )}

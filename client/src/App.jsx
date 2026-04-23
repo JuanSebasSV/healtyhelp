@@ -10,7 +10,6 @@ import FondoAnimado from './components/layout/FondoAnimado';
 import PrivateRoute from './components/layout/PrivateRoute';
 import api from './api/axios';
 import useAuth from './hooks/useAuth';
-import useChat from './hooks/useChat';
 
 const UserProfile          = lazy(() => import('./components/profile/UserProfile'));
 const Login                = lazy(() => import('./components/auth/Login'));
@@ -85,7 +84,6 @@ const RUTAS_LIBRES = ['/login', '/registro', '/recuperar', '/google-callback', '
 
 function AppContent() {
   const { user, checkAuth } = useAuth();
-  const chatProps = useChat();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem('modoOscuro');
@@ -99,7 +97,10 @@ function AppContent() {
   const [robotIAActivo, setRobotIAActivo]         = useState(false);
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
-
+  // recetaPendiente guarda { recetaId, resenaId, respuestaId } cuando se navega
+  // desde una notificación. VistaInicio lo consume para auto-abrir la tarjeta correcta.
+  const [recetaPendiente, setRecetaPendiente] = useState(null);
+  const [versionFiltros,         setVersionFiltros]         = useState(0);
   const [mostrarCookies,         setMostrarCookies]         = useState(false);
   const [mostrarTerminos,        setMostrarTerminos]        = useState(false);
   const [esActualizacion,        setEsActualizacion]        = useState(false);
@@ -152,7 +153,16 @@ function AppContent() {
   }, [user]);
 
   const resolverTerminos = useCallback(() => {
-    if (user && !user.profileComplete) {
+    if (!user) return;
+    // Calcular igual que el backend: desde los datos reales, no desde el campo cacheado.
+    // Esto evita que el modal aparezca cuando el usuario ya tiene age/weight/height válidos
+    // pero profileComplete quedó en false por desincronización.
+    const profileRealmenteCompleto = (
+      user.age    != null && Number(user.age)    >= 18 &&
+      user.weight != null && Number(user.weight) >= 40 &&
+      user.height != null && Number(user.height) >= 50
+    );
+    if (!profileRealmenteCompleto) {
       setMostrarCompletarPerfil(true);
     }
   }, [user]);
@@ -220,8 +230,8 @@ function AppContent() {
   }, [activeTermsVersion, user, checkAuth, resolverTerminos]);
 
   const handlePerfilCompletado = useCallback(() => {
-    setMostrarCompletarPerfil(false);
-    checkAuth();
+    setMostrarCompletarPerfil(false); // cerrar inmediatamente sin esperar
+    checkAuth();                       // luego refrescar usuario desde BD
   }, [checkAuth]);
 
   const handleGooglePasswordSuccess = useCallback(() => {
@@ -232,6 +242,13 @@ function AppContent() {
   const toggleModoOscuro = useCallback(() => setModoOscuro(prev => !prev), []);
   const toggleRobotIA    = useCallback(() => setRobotIAActivo(prev => !prev), []);
   const cambiarCategoria = useCallback((cat) => setCategoriaActiva(cat), []);
+
+  // Navbar llama este handler con (recetaId, resenaId, respuestaId) al navegar
+  // desde una notificación. Guardamos el objeto completo para que VistaInicio
+  // pueda auto-abrir la tarjeta correcta y hacer scroll hasta el comentario.
+  const handleAbrirReceta = useCallback((recetaId, resenaId = null, respuestaId = null) => {
+    setRecetaPendiente({ recetaId, resenaId, respuestaId });
+  }, []);
 
   const toggleFav = useCallback((recetaId) => {
     setFavoritos(prev =>
@@ -245,7 +262,11 @@ function AppContent() {
     <Router>
       <div className="App">
         <FondoAnimado />
-        <Navbar modoOscuro={modoOscuro} toggleModoOscuro={toggleModoOscuro} />
+        <Navbar
+          modoOscuro={modoOscuro}
+          toggleModoOscuro={toggleModoOscuro}
+          onAbrirReceta={handleAbrirReceta}
+        />
 
         <main className="contenido-principal">
           <Suspense fallback={null}>
@@ -255,11 +276,15 @@ function AppContent() {
                 element={
                   <VistaInicio
                     recetas={recetas}
+                    recetaPendiente={recetaPendiente}
+                    onRecetaPendienteResuelta={() => setRecetaPendiente(null)}
                     cargandoRecetas={cargandoRecetas}
                     toggleFav={toggleFav}
                     favoritos={favoritos}
                     cambiarCategoria={cambiarCategoria}
                     categoriaActiva={categoriaActiva}
+                    usuario={user}
+                    onFiltrosCambiados={() => setVersionFiltros(v => v + 1)}
                   />
                 }
               />
@@ -275,11 +300,10 @@ function AppContent() {
                 element={
                   <VistaChatbot
                     abrirFlotante={() => setRobotIAActivo(true)}
-                    chatProps={chatProps}
                   />
                 }
               />
-              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} /></PrivateRoute>} />
+              <Route path="/seguimiento" element={<PrivateRoute><VistaSeguimiento recetas={recetas} versionFiltros={versionFiltros} /></PrivateRoute>} />
               <Route path="/historial"   element={<Navigate to="/seguimiento" replace />} />
               <Route path="/favoritos"   element={
                 <PrivateRoute>
@@ -301,7 +325,7 @@ function AppContent() {
 
         {user && (
           <Suspense fallback={null}>
-            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} chatProps={chatProps} />
+            <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />
           </Suspense>
         )}
 

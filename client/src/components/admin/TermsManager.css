@@ -1,5 +1,4 @@
-/* TermsManager.css — Editor enriquecido de Términos y Condiciones
-   Estilo oscuro / glassmorphism coherente con UserProfile.css e index.css */
+/*TermsManager.css*/
 
 .terms-manager {
   background: rgba(255, 255, 255, 0.08);
@@ -98,7 +97,7 @@
 .terms-version-input::placeholder { color: rgba(255,255,255,0.3); }
 .terms-version-hint { color: rgba(247,127,0,0.8); font-size: 0.8rem; font-weight: 500; }
 
-/* ═══ EDITOR ENRIQUECIDO ═══ */
+/*EDITOR ENRIQUECIDO*/
 .terms-editor-container { display: flex; flex-direction: column; gap: 0; }
 .terms-editor-label {
   display: flex; justify-content: space-between; align-items: center;
@@ -128,7 +127,7 @@
 .terms-tb-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); }
 .terms-tb-btn.active { background: rgba(79,119,45,0.3); color: #a7d588; }
 .terms-tb-btn svg { stroke: currentColor; }
-/* ── Dropdown personalizado de bloques ── */
+/*Dropdown personalizado de bloques*/
 .terms-block-dropdown {
   position: relative;
   flex-shrink: 0;
@@ -257,7 +256,7 @@
 .terms-editor-rich em { font-style:italic; }
 .terms-editor-rich u  { text-decoration:underline; }
 
-/* ═══ PREVIEW ═══ */
+/*PREVIEW*/
 .terms-preview-container { display:flex; flex-direction:column; gap:.6rem; }
 .terms-preview-label { color:rgba(167,213,136,.85); font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
 .terms-preview-content {
@@ -286,7 +285,7 @@
 .terms-preview-content blockquote { border-left:3px solid rgba(247,127,0,.5); padding-left:.85rem; color:rgba(255,255,255,.5); font-style:italic; margin:.5rem 0; }
 .terms-preview-content strong { font-weight:700; color:rgba(255,255,255,.95); }
 
-/* ═══ FOOTER ═══ */
+/*FOOTER*/
 .terms-manager-footer {
   display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
   padding-top:1.25rem;
@@ -315,7 +314,7 @@
 .btn-publicar svg { stroke:currentColor; flex-shrink:0; }
 .terms-manager-warning { color:rgba(255,255,255,.35); font-size:.78rem; line-height:1.6; max-width:400px; }
 
-/* ═══ LOADING ═══ */
+/*LOADING*/
 .terms-manager-loading {
   display:flex; flex-direction:column; align-items:center; gap:1rem; padding:3rem;
   color:rgba(255,255,255,.5);
@@ -333,7 +332,7 @@
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* ═══ RESPONSIVE ═══ */
+/*RESPONSIVE*/
 @media (max-width:768px) {
   .terms-manager { padding:1.5rem 1.25rem; border-radius:18px; }
   .terms-manager-header { flex-direction:column; }

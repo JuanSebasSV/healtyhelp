@@ -3,9 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './TermsManager.css';
 
-/* ─────────────────────────────────────────
-   Iconos SVG inline (sin dependencia extra)
-───────────────────────────────────────── */
+/*Iconos SVG inline (sin dependencia extra)*/
 const Icons = {
   Doc: () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -80,9 +78,7 @@ const Icons = {
   ),
 };
 
-/* ─────────────────────────────────────────
-   Dropdown personalizado de bloques
-───────────────────────────────────────── */
+/*Dropdown personalizado de bloques*/
 const BLOCK_OPTIONS = [
   { value: 'p',  label: 'Párrafo',         hint: 'Texto normal' },
   { value: 'h1', label: 'Título',          hint: 'Encabezado principal' },
@@ -138,9 +134,7 @@ const BlockDropdown = ({ value, onChange }) => {
   );
 };
 
-/* ─────────────────────────────────────────
-   Botón de toolbar
-───────────────────────────────────────── */
+/*Botón de toolbar*/
 const TbBtn = ({ title, active, onClick, children }) => (
   <button
     className={`terms-tb-btn${active ? ' active' : ''}`}
@@ -152,9 +146,7 @@ const TbBtn = ({ title, active, onClick, children }) => (
   </button>
 );
 
-/* ─────────────────────────────────────────
-   Componente principal
-───────────────────────────────────────── */
+/*Componente principal*/
 const TermsManager = () => {
   const [termsCurrent, setTermsCurrent] = useState(null);
   const [version,      setVersion]      = useState('');
@@ -167,7 +159,7 @@ const TermsManager = () => {
   const editorRef  = useRef(null);
   const previewRef = useRef(null);
 
-  /* ── Carga inicial ── */
+  /*Carga inicial*/
   useEffect(() => { cargarTerminos(); }, []);
 
   const cargarTerminos = async () => {
@@ -177,7 +169,6 @@ const TermsManager = () => {
       if (data.terms) {
         setTermsCurrent(data.terms);
         setVersion(data.terms.version);
-        // Inyectar HTML guardado en el editor
         if (editorRef.current) {
           editorRef.current.innerHTML = data.terms.content || '';
           actualizarContador();
@@ -196,17 +187,16 @@ const TermsManager = () => {
       editorRef.current.innerHTML = termsCurrent.content || '';
       actualizarContador();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  /* ── Contador de caracteres ── */
+  /*Contador de caracteres*/
   const actualizarContador = useCallback(() => {
     if (editorRef.current) {
       setCharCount(editorRef.current.innerText.length);
     }
   }, []);
 
-  /* ── Estado de botones de formato ── */
+  /*Estado de botones de formato*/
   const syncFormatos = useCallback(() => {
     setActiveFormats({
       bold:      document.queryCommandState('bold'),
@@ -217,29 +207,28 @@ const TermsManager = () => {
     });
   }, []);
 
-  /* ── Aplicar formato ── */
+  /*Aplicar formato*/
   const fmt = useCallback((cmd, value = null) => {
     document.execCommand(cmd, false, value);
     editorRef.current?.focus();
     syncFormatos();
   }, [syncFormatos]);
 
-  /* ── Aplicar bloque (H1/H2/H3/p) ── */
+  /*Aplicar bloque (H1/H2/H3/p)*/
   const applyBlock = useCallback((tag) => {
     document.execCommand('formatBlock', false, `<${tag}>`);
     editorRef.current?.focus();
   }, []);
 
-  /* ── Leer bloque actual para el selector ── */
+  /*Leer bloque actual para el selector*/
   const blockActual = () => {
     const raw = document.queryCommandValue('formatBlock').toLowerCase().replace(/[<>]/g, '');
     return ['p', 'h1', 'h2', 'h3'].includes(raw) ? raw : 'p';
   };
 
-  /* ── Toggle vista previa ── */
+  /*Toggle vista previa*/
   const togglePreview = () => {
     if (!preview) {
-      // Pasar al preview: copiar HTML del editor
       if (previewRef.current && editorRef.current) {
         previewRef.current.innerHTML = editorRef.current.innerHTML;
       }
@@ -247,7 +236,7 @@ const TermsManager = () => {
     setPreview(v => !v);
   };
 
-  /* ── Publicar ── */
+  /*Publicar*/
   const handlePublicar = async () => {
     const htmlContent = editorRef.current?.innerHTML || '';
     const textoPlano  = editorRef.current?.innerText?.trim() || '';
@@ -274,14 +263,14 @@ const TermsManager = () => {
     }
   };
 
-  /* ── Deshabilitar publicar ── */
+  /*Deshabilitar publicar*/
   const publicarDisabled =
     publicando ||
     charCount === 0 ||
     !version.trim() ||
     (termsCurrent && version === termsCurrent.version);
 
-  /* ─────────────────── RENDER ─────────────────── */
+  /*  RENDER  */
   if (loading) {
     return (
       <div className="terms-manager-loading">
@@ -294,7 +283,7 @@ const TermsManager = () => {
   return (
     <div className="terms-manager">
 
-      {/* ── Cabecera ── */}
+      {/*Cabecera*/}
       <div className="terms-manager-header">
         <div className="terms-manager-title">
           <Icons.Doc />
@@ -326,7 +315,7 @@ const TermsManager = () => {
         </div>
       </div>
 
-      {/* ── Aviso ── */}
+      {/*Aviso*/}
       <div className="terms-manager-aviso">
         <Icons.Info />
         <span>
@@ -336,7 +325,7 @@ const TermsManager = () => {
         </span>
       </div>
 
-      {/* ── Versión ── */}
+      {/*Versión*/}
       <div className="terms-manager-version-row">
         <label>Número de versión</label>
         <input
@@ -353,7 +342,7 @@ const TermsManager = () => {
         )}
       </div>
 
-      {/* ── Editor enriquecido ── */}
+      {/*Editor enriquecido*/}
       {!preview && (
         <div className="terms-editor-container">
           <div className="terms-editor-label">
@@ -363,7 +352,6 @@ const TermsManager = () => {
 
           {/* Toolbar */}
           <div className="terms-toolbar">
-            {/* Selector de bloque personalizado */}
             <BlockDropdown value={blockActual()} onChange={applyBlock} />
 
             <div className="terms-tb-sep" />
@@ -417,7 +405,7 @@ const TermsManager = () => {
         </div>
       )}
 
-      {/* ── Vista previa ── */}
+      {/*Vista previa*/}
       {preview && (
         <div className="terms-preview-container">
           <div className="terms-preview-label">Vista previa del documento publicado</div>
@@ -428,7 +416,7 @@ const TermsManager = () => {
         </div>
       )}
 
-      {/* ── Footer ── */}
+      {/*Footer*/}
       <div className="terms-manager-footer">
         <button
           className="btn-publicar"

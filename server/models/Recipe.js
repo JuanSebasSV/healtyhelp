@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-// ─────────────────────────────────────────────
 // Sub-esquema nutricional completo
-// ─────────────────────────────────────────────
 const nutriSchema = new mongoose.Schema({
   cal:          { type: Number, default: 0 },
   carb:         { type: Number, default: 0 },
@@ -84,9 +82,7 @@ const nutriSchema = new mongoose.Schema({
   valina:       { type: Number, default: 0 },
 }, { _id: false });
 
-// ─────────────────────────────────────────────
 // Sub-esquema de respuesta (dentro de una reseña)
-// ─────────────────────────────────────────────
 const respuestaSchema = new mongoose.Schema(
   {
     userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -96,10 +92,7 @@ const respuestaSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ─────────────────────────────────────────────
 // Sub-esquema de reseña
-// imagen: adjunto opcional, requiere aprobación admin
-// ─────────────────────────────────────────────
 const resenaSchema = new mongoose.Schema(
   {
     userId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -107,14 +100,14 @@ const resenaSchema = new mongoose.Schema(
     estrellas:  { type: Number, required: true, min: 1, max: 5 },
     texto:      { type: String, trim: true, maxlength: [500, 'Máximo 500 caracteres'], default: '' },
 
-    // ── Votos de utilidad ──
+    //  Votos de utilidad 
     likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },
     dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },
 
-    // ── Respuestas anidadas ──
+    //  Respuestas anidadas 
     respuestas: { type: [respuestaSchema], default: [] },
 
-    // ── Imagen adjunta (flujo de aprobación) ──
+    //  Imagen adjunta (flujo de aprobación) 
     imagen: {
       url:       { type: String, default: null },   // URL pública de Cloudinary
       publicId:  { type: String, default: null },   // public_id para destroy()
@@ -128,9 +121,7 @@ const resenaSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ─────────────────────────────────────────────
 // Esquema principal de receta
-// ─────────────────────────────────────────────
 const recipeSchema = new mongoose.Schema(
   {
     nombre: {
@@ -169,7 +160,7 @@ const recipeSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-// ── Recalcular promedio ──
+//  Recalcular promedio 
 recipeSchema.methods.recalcularPuntos = function () {
   const total = this.resenas.length;
   if (total === 0) {

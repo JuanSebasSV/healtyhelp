@@ -1,7 +1,4 @@
-/* ============================================
-   Dashboard.css — Panel Administrativo
-   Glassmorphism sobre fondo verde/oscuro
-   ============================================ */
+/*Dashboard.css*/
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
@@ -12,7 +9,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── Contenedor raíz ── */
+/*  Contenedor raíz  */
 .admin-dashboard {
   max-width: 1400px;
   margin: 2rem auto;
@@ -22,7 +19,7 @@
   border-radius: 20px;
 }
 
-/* ── Header ── */
+/*  Header  */
 .admin-header {
   display: flex;
   justify-content: space-between;
@@ -51,7 +48,7 @@
 .modo-oscuro .admin-header h1 { color: rgba(210, 245, 185, 0.97); }
 .modo-oscuro .admin-subtitle  { color: rgba(180, 210, 160, 0.65); }
 
-/* ── Botón volver ── */
+/*  Botón volver  */
 .btn-back {
   padding: 0.6rem 1.4rem;
   background: rgba(255, 255, 255, 0.08);
@@ -77,7 +74,7 @@
 }
 .modo-oscuro .btn-back:hover { border-color: var(--naranja); }
 
-/* ── Tabs principales (Usuarios / Recetas) ── */
+/*  Tabs principales (Usuarios / Recetas)  */
 .admin-main-tabs {
   display: flex;
   gap: 0.5rem;
@@ -124,7 +121,7 @@
   color: rgba(180, 210, 160, 0.5);
 }
 
-/* ── Controles de búsqueda/filtro ── */
+/*  Controles de búsqueda/filtro  */
 .admin-controls {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -195,7 +192,7 @@
 .modo-oscuro .search-box input::placeholder { color: rgba(180, 210, 160, 0.4); }
 .modo-oscuro .filter-box select option { background: var(--verde-profundo); }
 
-/* ── Botón exportar CSV ── */
+/*  Botón exportar CSV  */
 .btn-export {
   padding: 0.72rem 1.4rem;
   background: rgba(247, 127, 0, 0.2);
@@ -215,7 +212,7 @@
   box-shadow: 0 6px 18px rgba(247, 127, 0, 0.35);
 }
 
-/* ── Paginación ── */
+/*  Paginación  */
 .pagination {
   display: flex;
   justify-content: center;
@@ -251,7 +248,7 @@
 }
 .modo-oscuro .page-info { color: rgba(200, 230, 185, 0.8); }
 
-/* ── Footer ── */
+/*  Footer  */
 .admin-footer {
   text-align: center;
   padding: 1rem 0;
@@ -260,7 +257,7 @@
 }
 .modo-oscuro .admin-footer { color: rgba(180, 210, 160, 0.38); }
 
-/* ── Loading ── */
+/*  Loading  */
 .admin-loading {
   display: flex;
   flex-direction: column;
@@ -556,7 +553,7 @@
   box-shadow: none;
 }
 
-/* ── Responsive ── */
+/*  Responsive  */
 @media (max-width: 968px) {
   .admin-dashboard {
     padding: 0.85rem 0.75rem;
@@ -634,7 +631,7 @@
   .ban-btn-confirmar { width: 100%; text-align: center; justify-content: center; }
 }
 
-/* ── Fix alineación SVGs ── */
+/*  Fix alineación SVGs  */
 .admin-header h1 {
   display: flex;
   align-items: center;
@@ -656,7 +653,7 @@
   gap: 0.4rem;
 }
 
-/* ── Fix visibilidad SVGs en controles ── */
+/*  Fix visibilidad SVGs en controles  */
 .search-box svg {
   color: rgba(255, 255, 255, 0.5);
   stroke: rgba(255, 255, 255, 0.5);

@@ -10,7 +10,7 @@ const ESTADOS = {
   rechazada: { label: 'Rechazadas', color: 'rojo'    },
 };
 
-/* ── Modal de baneo (desde panel de imágenes) ── */
+/*  Modal de baneo (desde panel de imágenes)  */
 const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
   const [motivo,   setMotivo]   = useState('');
   const [tipo,     setTipo]     = useState('dias');
@@ -106,7 +106,7 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
   );
 };
 
-/* ── Helper: mapea un item crudo del API al shape interno ── */
+/*  Helper: mapea un item crudo del API al shape interno  */
 const mapItem = (img) => ({
   _id:             `${img.recipeId}_${img.resenaId}`,
   recipeId:        img.recipeId,
@@ -120,11 +120,9 @@ const mapItem = (img) => ({
   creadoEn:        img.createdAt,
 });
 
-/* ── Componente principal ── */
+/*  Componente principal  */
 const ImagenesAprobacion = ({ onCambio }) => {
-  // Cache de todos los estados — se llena con UN solo batch de 3 requests
   const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
-  // Flag para evitar doble carga en React StrictMode (doble-invoke de effects en dev)
   const cargandoRef = useRef(false);
 
   const [imagenes,       setImagenes]       = useState([]);
@@ -134,14 +132,8 @@ const ImagenesAprobacion = ({ onCambio }) => {
   const [procesando,     setProcesando]     = useState(null);
   const [imagenModal,    setImagenModal]    = useState(null);
   const [modalBaneo,     setModalBaneo]     = useState(null);
-
-  /**
-   * cargarTodo — hace las 3 peticiones en paralelo y rellena el caché.
-   * Solo se llama en el mount inicial y después de cada acción (aprobar/rechazar).
-   * Cambiar el filtro NO dispara esta función.
-   */
+  
   const cargarTodo = useCallback(async () => {
-    // Evita que StrictMode lance dos fetches simultáneos en dev
     if (cargandoRef.current) return;
     cargandoRef.current = true;
     setCargando(true);
@@ -173,18 +165,13 @@ const ImagenesAprobacion = ({ onCambio }) => {
       setCargando(false);
       cargandoRef.current = false;
     }
-  }, []); // sin dep en `filtro` — cargarTodo no se recrea al cambiar tab
-
-  // Mount inicial — una sola llamada efectiva
+  }, []);
   useEffect(() => {
     cargarTodo();
-    // Cleanup: si StrictMode desmonta antes de que termine, reseteamos el flag
     return () => { cargandoRef.current = false; };
   }, [cargarTodo]);
 
-  /**
-   * Cambio de filtro — SOLO lee del caché, sin petición al servidor.
-   */
+  /*Cambio de filtro*/
   useEffect(() => {
     if (cacheRef.current[filtro] !== null) {
       setImagenes(cacheRef.current[filtro]);

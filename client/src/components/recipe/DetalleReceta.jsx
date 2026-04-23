@@ -13,7 +13,7 @@ const IconoCerrar = memo(() => (
 ));
 IconoCerrar.displayName = 'IconoCerrar';
 
-const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada }) => {
+const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada, respuestaIdDestacada }) => {
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -36,25 +36,22 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada 
         <div className="modalCol modalIzq">
           <img src={receta.img} alt={receta.nombre} className="modalImg" loading="lazy" decoding="async" />
           <h2>{receta.nombre}</h2>
-
-          {/* Tiempo debajo del título */}
-        {receta.tiempoMinutos > 0 && (
-          <div className="detalle-tiempo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            Tiempo de preparación:&nbsp;
-            <strong>
-              {receta.tiempoMinutos < 60
-                ? `${receta.tiempoMinutos} min`
-                : `${Math.floor(receta.tiempoMinutos / 60)}h${receta.tiempoMinutos % 60 > 0 ? ` ${receta.tiempoMinutos % 60}min` : ''}`}
-            </strong>
-          </div>
-        )}
-
-        <p className="modalDesc">{receta.desc}</p>
+        {/* Tiempo debajo del título */}
+          {receta.tiempoMinutos > 0 && (
+            <div className="detalle-tiempo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Tiempo de preparación:&nbsp;
+              <strong>
+                {receta.tiempoMinutos < 60
+                  ? `${receta.tiempoMinutos} min`
+                  : `${Math.floor(receta.tiempoMinutos / 60)}h${receta.tiempoMinutos % 60 > 0 ? ` ${receta.tiempoMinutos % 60}min` : ''}`}
+              </strong>
+            </div>
+          )}
 
           <p className="modalDesc">{receta.desc}</p>
 
@@ -76,6 +73,7 @@ const DetalleReceta = memo(({ receta, cerrar, abrirNutricion, resenaIdDestacada 
               user={user}
               isAuthenticated={isAuthenticated}
               resenaIdDestacada={resenaIdDestacada}
+              respuestaIdDestacada={respuestaIdDestacada}
             />
           </div>
         </div>

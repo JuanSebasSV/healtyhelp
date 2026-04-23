@@ -1,8 +1,4 @@
-/* ============================================
-   RecipeForm.css
-   Vive dentro de .recipe-content (glassmorphism)
-   — inputs adaptados al fondo oscuro/glass
-   ============================================ */
+/*RecipeForm.css*/
 
 .recipe-form {
   max-width: 960px;
@@ -19,7 +15,7 @@
 }
 .modo-oscuro .recipe-form h2 { color: rgba(210, 245, 185, 0.97); }
 
-/* ── Secciones ── */
+/*  Secciones  */
 .form-section {
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -49,7 +45,7 @@
 .modo-oscuro .form-section h3 { color: rgba(210, 245, 185, 0.8); }
 .modo-oscuro .form-section h4 { color: rgba(180, 210, 160, 0.5); }
 
-/* ── Grupos ── */
+/*  Grupos  */
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -99,14 +95,14 @@
 .modo-oscuro .form-group textarea::placeholder { color: rgba(180, 210, 160, 0.3); }
 .modo-oscuro .form-group select option { background: var(--verde-profundo); }
 
-/* ── Grid de filas ── */
+/*  Grid de filas  */
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
   gap: 1rem;
 }
 
-/* ── Condiciones de salud ── */
+/*  Condiciones de salud  */
 .salud-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
@@ -153,7 +149,7 @@
 }
 .modo-oscuro .salud-checkbox:hover { color: rgba(210, 245, 185, 0.9); }
 
-/* ── Inputs dinámicos (ingredientes / pasos) ── */
+/*  Inputs dinámicos (ingredientes / pasos)  */
 .dynamic-input {
   display: flex;
   gap: 0.5rem;
@@ -213,7 +209,7 @@
   transform: translateY(-1px);
 }
 
-/* ── Nutricional ── */
+/*  Nutricional  */
 .nutri-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -264,7 +260,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* ── Acciones del formulario ── */
+/*  Acciones del formulario  */
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -312,7 +308,7 @@
   box-shadow: none;
 }
 
-/* ── Responsive ── */
+/*  Responsive  */
 @media (max-width: 968px) {
   .recipe-form { padding: 0 0.25rem; }
   .recipe-form h2 { font-size: 1.2rem; margin-bottom: 1.25rem; }
@@ -329,7 +325,6 @@
   .nutri-grid { grid-template-columns: 1fr 1fr; gap: 0.65rem; }
   .salud-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 
-  /* Inputs dinámicos más compactos */
   .dynamic-input { gap: 0.4rem; }
   .paso-number {
     padding: 0.55rem 0.65rem;
@@ -365,20 +360,16 @@
 
   .recipe-form h2 { font-size: 1.05rem; }
 
-  /* Ingredientes: textarea compacto */
   .dynamic-input textarea { min-height: 48px; }
 
-  /* Nota nutri */
   .nutri-note { font-size: 0.82rem; padding: 0.7rem 0.85rem; }
 }
 
-/* ── Títulos de sección con SVG alineado ── */
 .form-section h3 {
   display: flex;
   align-items: center;
 }
 
-/* ── Botones add/remove con SVG ── */
 .btn-add {
   display: flex;
   align-items: center;
@@ -390,12 +381,10 @@
   justify-content: center;
 }
 
-/* ── Spinner en botón submit ── */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* ── Fix inputs dentro de dynamic-input (ingredientes y pasos) ── */
 .dynamic-input input,
 .dynamic-input textarea {
   width: 100%;
@@ -424,7 +413,6 @@
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12) !important;
 }
 
-/* Fix autofill que pone fondo blanco */
 .dynamic-input input:-webkit-autofill,
 .dynamic-input textarea:-webkit-autofill,
 .form-group input:-webkit-autofill,
@@ -441,7 +429,6 @@
   line-height: 1.6;
 }
 
-/* ── Checkboxes modernos glassmorphism ── */
 .salud-checkbox input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -479,7 +466,6 @@
   background: rgba(79, 119, 45, 0.15);
 }
 
-/* ── NumeroInput dentro de form-group ── */
 .form-group .numero-wrapper {
   width: 100%;
 }

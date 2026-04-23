@@ -16,11 +16,11 @@ const {
   acceptAdminInvite,
   getPendingInvitations,
   revokeInvitation,
-  // ── Imágenes de reseñas ──
+  //  Imágenes de reseñas 
   getImagenesResenas,
   aprobarImagenResena,
   rechazarImagenResena,
-  // ── Baneo ──
+  //  Baneo 
   banearUsuario,
   desbanearUsuario,
   getBanInfo,
@@ -29,65 +29,47 @@ const {
 const User          = require('../models/User');
 const TermsDocument = require('../models/TermsDocument');
 
-// =====================================================================
-// ✅ RUTAS PÚBLICAS
-// =====================================================================
+// RUTAS PÚBLICAS
 router.post('/accept-invite/:token', acceptAdminInvite);
 
-// =====================================================================
-// 🛡️ A partir de aquí todas las rutas requieren auth + rol admin
-// =====================================================================
+// A partir de aquí todas las rutas requieren auth + rol admin
 router.use(protect);
 router.use(admin || requireAdmin);
 
-// =====================================================================
-// 📊 ESTADÍSTICAS
-// =====================================================================
+// ESTADÍSTICAS
 router.get('/stats', getStats);
 
-// =====================================================================
-// 👥 USUARIOS
-// =====================================================================
+// USUARIOS
 router.get   ('/users',          getAllUsers);
 router.delete('/users/:id',      deleteUser);
 router.put   ('/users/:id/role', updateUserRole);
 
-// =====================================================================
-// 🔨 BANEO DE USUARIOS
+// BANEO DE USUARIOS
 // PUT /admin/users/:id/ban    — { motivo, dias } (dias=null → permanente)
 // PUT /admin/users/:id/unban  — desbanear
 // GET /admin/users/:id/ban    — info de baneo
-// =====================================================================
 router.put('/users/:id/ban',   banearUsuario);
 router.put('/users/:id/unban', desbanearUsuario);
 router.get('/users/:id/ban',   getBanInfo);
 
-// =====================================================================
-// 📝 LOGS
-// =====================================================================
+// LOGS
 router.post('/logs', createLog);
 router.get ('/logs', getLogs);
 
-// =====================================================================
-// 📨 INVITACIONES
-// =====================================================================
+// INVITACIONES
 router.post  ('/invite',              inviteAdmin);
 router.get   ('/invitations',         getPendingInvitations);
 router.delete('/invitations/:id',     revokeInvitation);
 
-// =====================================================================
 // 🖼️  IMÁGENES DE RESEÑAS
 // GET  /admin/imagenes-resenas?estado=pendiente|aprobada|rechazada
 // PUT  /admin/imagenes-resenas/:recipeId/:resenaId/aprobar
 // PUT  /admin/imagenes-resenas/:recipeId/:resenaId/rechazar
-// =====================================================================
 router.get('/imagenes-resenas',                                  getImagenesResenas);
 router.put('/imagenes-resenas/:recipeId/:resenaId/aprobar',      aprobarImagenResena);
 router.put('/imagenes-resenas/:recipeId/:resenaId/rechazar',     rechazarImagenResena);
 
-// =====================================================================
 // 📄 TÉRMINOS Y CONDICIONES
-// =====================================================================
 router.get('/terms', async (req, res) => {
   try {
     const terms = await TermsDocument.findOne().sort({ publishedAt: -1 });

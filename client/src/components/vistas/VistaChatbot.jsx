@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import useChatStore from '../../hooks/useChatStore';
 import ChatCore from '../inicio/ChatCore';
 import './VistaChatbot.css';
 
-/* ── SVGs del panel lateral ───────────────────────────────── */
 const IconoHoja = ({ size = 20 }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -50,17 +50,26 @@ const IconoChispa = ({ size = 14 }) => (
 );
 
 const capacidades = [
-  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',    desc: 'Diabetes, hipertensión, colesterol' },
-  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',       desc: 'Vegano, keto, paleo, celíaco' },
-  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',     desc: 'Ingredientes y sustitutos' },
-  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias', desc: 'Gluten, lactosa, frutos secos' },
-  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',   desc: 'Basados en tu perfil de salud' },
+  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',      desc: 'Diabetes, hipertensión, colesterol' },
+  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',         desc: 'Vegano, keto, paleo, celíaco' },
+  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',       desc: 'Ingredientes y sustitutos' },
+  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias',   desc: 'Gluten, lactosa, frutos secos' },
+  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',     desc: 'Basados en tu perfil de salud' },
 ];
 
-/* ── Componente ──────────────────────────────────────────── */
-// ✅ Recibe chatProps desde App — mismo historial que RobotIA
-const VistaChatbot = ({ abrirFlotante, chatProps }) => {
+/*Componente  */
+
+const VistaChatbot = ({ abrirFlotante }) => {
   const navigate = useNavigate();
+  const {
+    chat,
+    cargando,
+    mensaje,
+    onMensajeChange,
+    onEnviar,
+    onKeyPress,
+    enviarTextoDirecto,
+  } = useChatStore();
 
   const handleMinimizar = () => {
     abrirFlotante?.();
@@ -96,14 +105,23 @@ const VistaChatbot = ({ abrirFlotante, chatProps }) => {
               </div>
             ))}
           </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> e06080b3bb9081fa4184d797a04fba67c3a6314a
         </aside>
 
         <div className="vistaChatbot__chat">
           <ChatCore
             modoExpandido={true}
+            chat={chat}
+            cargando={cargando}
+            mensaje={mensaje}
+            onMensajeChange={onMensajeChange}
+            onEnviar={onEnviar}
+            onKeyPress={onKeyPress}
             onMinimizar={handleMinimizar}
-            {...chatProps}
+            onSugerencia={enviarTextoDirecto}
           />
         </div>
 

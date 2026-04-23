@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
 import './VistaInicio.css';
 
-// ─── Datos estáticos ──────────────────────────────────────────────────────────
-
+//  Datos estáticos 
 const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp',
@@ -47,6 +46,13 @@ const CATEGORIAS = [
   { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e26e6e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
 ];
 
+// opciones de filtro por tiempo
+const TIEMPOS = [
+  { id: 'menos15', nombre: 'Menos de 15 min', icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: '15a30',   nombre: '15 – 30 min',     icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+  { id: 'mas30',   nombre: 'Más de 30 min',   icono: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+];
+
 const CONDICIONES = [
   { id: 'diabetes',             nombre: 'Diabetes',                      icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>' },
   { id: 'hipertension',         nombre: 'Hipertensión',                  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>' },
@@ -68,20 +74,41 @@ const CONDICIONES = [
   { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Z"/></svg>' },
 ];
 
-// ─── Componente ───────────────────────────────────────────────────────────────
 
-const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCategoria, categoriaActiva, usuario }) => {
-  const { filtros, toggleFiltro, limpiar, listo } = useFiltroSalud(usuario);
+
+//  Componente 
+const VistaInicio = ({
+  recetas,
+  cargandoRecetas,
+  toggleFav,
+  favoritos,
+  usuario,
+  onFiltrosCambiados,
+  recetaPendiente,
+  onRecetaPendienteResuelta,
+}) => {
+  const {
+    filtros,
+    toggleFiltro,
+    limpiarFiltros,
+    categoria,
+    setCategoria,
+    limpiarCategoria,
+    limpiarTodo,
+    listo,
+  } = useFiltroSalud(usuario);
 
   const [filtroAbierto,     setFiltroAbierto]     = useState(false);
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
-  const [busqueda, setBusqueda] = useState('');
-  const [filtroTiempo, setFiltroTiempo] = useState(null);
-  const [recetaAbierta,     setRecetaAbierta]      = useState(null);
-  const [resenaIdDestacada, setResenaIdDestacada]  = useState(null);
+  const [recetaAbierta,       setRecetaAbierta]       = useState(null);
+  const [resenaIdDestacada,   setResenaIdDestacada]   = useState(null);
+  const [respuestaIdDestacada, setRespuestaIdDestacada] = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
+  // estados de búsqueda y filtro por tiempo
+  const [busqueda,          setBusqueda]           = useState('');
+  const [filtroTiempo,      setFiltroTiempo]       = useState(null);
 
   const thumbRef        = useRef(null);
   const trackRef        = useRef(null);
@@ -91,14 +118,12 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
   const intervaloRef    = useRef(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
   }, []);
 
-  // ─── Scrollbar personalizado ──────────────────────────────────────────────
-
+  //  Scrollbar personalizado 
   useEffect(() => {
     let raf = null;
     const update = () => {
@@ -131,23 +156,21 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
-  // ─── Abrir receta desde URL ───────────────────────────────────────────────
+  //  Abrir receta desde prop (notificaciones) 
 
   useEffect(() => {
-    if (!recetas.length) return;
-    const p = new URLSearchParams(location.search);
-    const rid = p.get('receta');
-    if (!rid) return;
-    const found = recetas.find(r => r._id === rid);
+    if (!recetaPendiente || !recetas.length) return;
+    const id    = recetaPendiente.recetaId ?? recetaPendiente; // compat. si llega string
+    const found = recetas.find(r => r._id === id || r._id?.toString() === id?.toString());
     if (found) {
       setRecetaAbierta(found);
-      setResenaIdDestacada(p.get('resena') || null);
-      navigate('/', { replace: true });
+      setResenaIdDestacada(recetaPendiente.resenaId    ?? null);
+      setRespuestaIdDestacada(recetaPendiente.respuestaId ?? null);
+      onRecetaPendienteResuelta?.();
     }
-  }, [location.search, recetas]);
+  }, [recetaPendiente, recetas]);
 
-  // ─── Carrusel hero ────────────────────────────────────────────────────────
-
+  //  Carrusel hero 
   const cambiarImagen = useCallback((idx) => {
     if (transitandoRef.current) return;
     const nuevo = (idx + HERO_IMGS.length) % HERO_IMGS.length;
@@ -177,8 +200,7 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     return () => window.removeEventListener('keydown', onKey);
   }, [imagenActual, cambiarManual]);
 
-  // ─── PDF ──────────────────────────────────────────────────────────────────
-
+  //  PDF 
   const toggleSeleccion = (id) =>
     setSeleccionadas(p => p.includes(id) ? p.filter(s => s !== id) : [...p, id]);
 
@@ -193,44 +215,60 @@ const VistaInicio = ({ recetas, cargandoRecetas, toggleFav, favoritos, cambiarCa
     }
   };
 
-  // ─── Filtro ───────────────────────────────────────────────────────────────
+  //  Handlers de filtros 
+  const handleToggleFiltro = useCallback((id) => {
+    toggleFiltro(id);
+    onFiltrosCambiados?.();
+  }, [toggleFiltro, onFiltrosCambiados]);
 
-// ─── Lógica de Filtrado Optimizada ──────────────────────────────────────────
+  const handleLimpiarTodo = useCallback(() => {
+    limpiarTodo();
+    onFiltrosCambiados?.();
+  }, [limpiarTodo, onFiltrosCambiados]);
 
-const recetasFiltradas = useMemo(() => {
-  return recetas.filter(r => {
-    // 1. Categoría (Almuerzo, Desayuno, etc.)
-    const coincideCategoria = categoriaActiva === 'todas' || r.cat === categoriaActiva;
-    
-    // 2. Búsqueda por texto (Normalizada sin tildes)
+  const handleCategoria = useCallback((catId) => {
+    if (catId === 'todas') {
+      limpiarCategoria();
+    } else {
+      setCategoria(catId);
+    }
+    onFiltrosCambiados?.();
+  }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
+
+  // toggle del filtro de tiempo (desactiva si se pulsa el mismo)
+  const handleFiltroTiempo = useCallback((id) => {
+    setFiltroTiempo(prev => prev === id ? null : id);
+  }, []);
+
+  //  Filtrado de recetas 
+
+  // filtrado ampliado con búsqueda por texto y tiempo
+  const recetasFiltradas = useMemo(() => recetas.filter(r => {
+    const okCat   = !categoria || r.cat === categoria;
+    const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
+
+    // Búsqueda por texto normalizada
     const busquedaLimpia = normalizarTexto(busqueda);
-    const coincideBusqueda = busqueda.trim() === '' ||
-      normalizarTexto(r.nombre || "").includes(busquedaLimpia) ||
-      normalizarTexto(r.desc || "").includes(busquedaLimpia);
+    const okBusqueda = busqueda.trim() === '' ||
+      normalizarTexto(r.nombre || '').includes(busquedaLimpia) ||
+      normalizarTexto(r.desc   || '').includes(busquedaLimpia);
 
-    // 3. Filtros de Salud (Diabetes, Hipertensión, etc.)
-    const coincideSalud = filtros.length === 0 ||
-      filtros.every(f => (r.salud || []).includes(f));
-
-    // 4. Filtro por Tiempo de preparación
+    // Filtro por tiempo de preparación
     const t = r.tiempoMinutos || 0;
-    const coincideTiempo = !filtroTiempo ? true :
+    const okTiempo = !filtroTiempo ? true :
       filtroTiempo === 'menos15' ? (t > 0 && t < 15) :
       filtroTiempo === '15a30'   ? (t >= 15 && t <= 30) :
       filtroTiempo === 'mas30'   ? (t > 30) : true;
 
-    // Solo si cumple las 4 condiciones, la receta se muestra
-    return coincideCategoria && coincideBusqueda && coincideSalud && coincideTiempo;
-  });
-}, [recetas, categoriaActiva, busqueda, filtros, filtroTiempo]); 
-// ^ IMPORTANTE: Añadimos todas las dependencias para que el filtro se actualice al cambiar cualquier valor.
+    return okCat && okSalud && okBusqueda && okTiempo;
+  }), [recetas, categoria, filtros, busqueda, filtroTiempo]);
 
-
+  const totalCondicionesActivas = filtros.length;
 
   return (
     <div className="vistaInicio ">
 
-      {/* ─── Hero ─── */}
+      {/*  Hero  */}
       <div className="hero">
         {HERO_IMGS.map((img, i) => (
           <div key={i} className={`hero-capa ${i === imagenActual ? 'hero-capa--activa' : ''}`}
@@ -377,16 +415,23 @@ const recetasFiltradas = useMemo(() => {
                 </div>
               )}
 
-              {/* ─── Categorías ─── */}
-              <section className="categorias">
-                {CATEGORIAS.map(cat => (
-                  <button key={cat.id} className={`catBtn ${categoriaActiva === cat.id ? 'activo' : ''}`} onClick={() => cambiarCategoria(cat.id)}>
+             {/*  Categorías  */}
+            <section className="categorias">
+              {CATEGORIAS.map(cat => {
+                const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    className={`catBtn ${esActivo ? 'activo' : ''}`}
+                    onClick={() => handleCategoria(cat.id)}
+                  >
                     <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
                     <span>{cat.nombre}</span>
                   </button>
-                ))}
-              </section>
-
+                );
+              })}
+            </section>
+             
                     {/* ── Buscador ── */}
               <div className="buscador-recetas">
                 <div className="buscador-input-wrap">
@@ -416,62 +461,62 @@ const recetasFiltradas = useMemo(() => {
           </main> 
 
           <aside className="columna-right">
+  {/* Widget de Tiempo (Columna Derecha) */}
+  <div className="widget-lateral">
+    <div className="widget-lateral__header">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> 
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/> 
+      </svg>
+      <span>Explorar por tiempo</span>
+    </div>
+    
+    <div className="widget-lateral__lista">
+      {TIEMPOS.map(t => (
+        <button 
+          key={t.id} 
+          className={`widget-lateral__item ${filtroTiempo === t.id ? 'activo' : ''}`} 
+          onClick={() => handleFiltroTiempo(t.id)}
+        >
+          <span className="widget-lateral__icono" dangerouslySetInnerHTML={{ __html: t.icono }} />
+          <span>{t.nombre}</span>
+        </button>
+      ))}
+      
+      {filtroTiempo && (
+        <button className="widget-lateral__item" onClick={() => setFiltroTiempo(null)} style={{justifyContent: 'center', backgroundColor: '#fdfaf5', color: '#e74c3c'}}>
+          ✕ Limpiar filtro
+        </button>
+      )}
+    </div>
+  </div>
 
-              {/* Widget categorías rápidas */}
-              <div className="widget-lateral">
-                <div className="widget-lateral__header">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                  </svg>
-                  <span>Explorar por tiempo</span>
-                </div>
-                <div className="widget-lateral__lista">
-                  {[
-                    { label: 'Menos de 15 min', icono: '⚡', key: 'menos15' },
-                    { label: '15 – 30 min',     icono: '🕐', key: '15a30'   },
-                    { label: 'Más de 30 min',   icono: '👨‍🍳', key: 'mas30'   },
-                  ].map(item => (
-                    <button
-                      key={item.key}
-                      className={`widget-lateral__item ${filtroTiempo === item.key ? 'activo' : ''}`}
-                      onClick={() => setFiltroTiempo(prev => prev === item.key ? null : item.key)}
-                    >
-                      <span className="widget-lateral__icono">{item.icono}</span>
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-                
-              </div>
-
-              {/* Widget dietas populares */}
-              <div className="widget-lateral" style={{ marginTop: '1rem' }}>
-                <div className="widget-lateral__header">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                  <span>Dietas populares</span>
-                </div>
-                <div className="widget-lateral__tags">
-                {[
-                  { label: 'Vegano',        id: 'vegano'           },
-                  { label: 'Keto',          id: 'keto'             },
-                  { label: 'Sin Gluten',    id: 'celiaco'          },
-                  { label: 'Vegetariano',   id: 'vegetariano'      },
-                  { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
-                ].map(dieta => (
-                  <button
-                    key={dieta.id}
-                    className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
-                    onClick={() => toggleFiltro(dieta.id)}
-                  >
-                    {dieta.label}
-                  </button>
-                ))}
-                </div>
-              </div>
-
-          </aside>
+  {/* Widget Dietas Populares */}
+  <div className="widget-lateral" style={{ marginTop: '1rem' }}>
+    <div className="widget-lateral__header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <span>Dietas populares</span>
+    </div>
+    <div className="widget-lateral__tags">
+      {[
+        { label: 'Vegano',        id: 'vegano'           },
+        { label: 'Keto',          id: 'keto'             },
+        { label: 'Sin Gluten',    id: 'celiaco'          },
+        { label: 'Vegetariano',   id: 'vegetariano'      },
+        { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
+      ].map(dieta => (
+        <button
+          key={dieta.id}
+          className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
+          onClick={() => toggleFiltro(dieta.id)}
+        >
+          {dieta.label}
+        </button>
+      ))}
+    </div>
+  </div>
+</aside>
       </div>
 
 
@@ -528,16 +573,17 @@ const recetasFiltradas = useMemo(() => {
         </button>
       )}
 
-      {/* ─── Modal detalle receta ─── */}
+      {/*  Modal detalle receta  */}
       {recetaAbierta && (
         <DetalleReceta
           receta={recetaAbierta}
-          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); }}
+          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); setRespuestaIdDestacada(null); }}
           resenaIdDestacada={resenaIdDestacada}
+          respuestaIdDestacada={respuestaIdDestacada}
         />
       )}
 
-      {/* ─── Scrollbar personalizado ─── */}
+      {/*  Scrollbar personalizado  */}
       <div className="scrollbar-custom-track" ref={trackRef}>
         <div
           ref={thumbRef}

@@ -20,7 +20,7 @@ const getTipoBogota = () => {
 
 const TIPO_EMOJIS = { desayuno: '🌅', almuerzo: '☀️', cena: '🌙' };
 
-// ── Iconos memoizados ─────────────────────────────────────────────────────────
+//Iconos memoizados 
 const IcoCheck = memo(() => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 6L9 17l-5-5"/>
@@ -42,7 +42,7 @@ const IcoCerrar = memo(() => (
 ));
 IcoCerrar.displayName = 'IcoCerrar';
 
-// ── BtnConsumo ────────────────────────────────────────────────────────────────
+//BtnConsumo 
 const BtnConsumo = ({ recetaId }) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -59,11 +59,11 @@ const BtnConsumo = ({ recetaId }) => {
   const observerRef = useRef(null);
   const yaMostroRef = useRef(false);
 
-  /* ── Cargar estado inicial — protegido contra doble-mount (StrictMode) ── */
+  /*Cargar estado inicial*/
   useEffect(() => {
     if (!isAuthenticated) { setCargando(false); return; }
 
-    let cancelled = false;   // FIX 429: evita setState tras desmontaje (StrictMode)
+    let cancelled = false;
 
     api.get(`/consumos/receta/${recetaId}/hoy`)
       .then(({ data }) => {
@@ -79,7 +79,6 @@ const BtnConsumo = ({ recetaId }) => {
     return () => { cancelled = true; };
   }, [recetaId, isAuthenticated]);
 
-  /* ── IntersectionObserver: tooltip educativo ── */
   useEffect(() => {
     if (!isAuthenticated || cargando || consumoId) return;
     if (getTooltipCount() >= MAX_TOOLTIP) return;

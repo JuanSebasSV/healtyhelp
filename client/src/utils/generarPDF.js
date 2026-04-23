@@ -1,8 +1,6 @@
 import jsPDF from 'jspdf';
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Constantes de diseño
-// ─────────────────────────────────────────────────────────────────────────────
 const W      = 210;
 const H      = 297;
 const MG     = 14;
@@ -20,9 +18,7 @@ const GRIS_BG     = [246, 248, 246];
 const BLANCO      = [255, 255, 255];
 const NEGRO       = [0,   0,   0];
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Helpers básicos
-// ─────────────────────────────────────────────────────────────────────────────
 const fmt    = (v, u = '') => (v != null && v > 0 ? `${v}${u}` : null);
 const rgb    = (doc, ...c) => doc.setTextColor(...c);
 const fill   = (doc, ...c) => doc.setFillColor(...c);
@@ -44,7 +40,7 @@ const cabPagina = (doc) => {
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   rgb(doc, ...BLANCO);
-  doc.text('HealtyHelp — Recetas Saludables', MG, 5);
+  doc.text('HealtyHelp  Recetas Saludables', MG, 5);
 };
 
 const pie = (doc, pag, total) => {
@@ -54,7 +50,7 @@ const pie = (doc, pag, total) => {
   doc.setFontSize(6.5);
   doc.setFont('helvetica', 'normal');
   rgb(doc, ...GRIS_SUAVE);
-  doc.text('HealtyHelp — Recetas para tu salud', MG, H - 7);
+  doc.text('HealtyHelp  Recetas para tu salud', MG, H - 7);
   doc.text(`Página ${pag} de ${total}`, W - MG, H - 7, { align: 'right' });
 };
 
@@ -68,9 +64,7 @@ const seccion = (doc, texto, y) => {
   return y + 5;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Carga de imagen — proxy backend para evitar CORS
-// ─────────────────────────────────────────────────────────────────────────────
+// Carga de imagen  proxy backend para evitar CORS
 const recortarBlob = (blob) =>
   new Promise((resolve) => {
     const reader = new FileReader();
@@ -103,7 +97,7 @@ const recortarBlob = (blob) =>
 const cargarImagen = async (url) => {
   if (!url) return null;
 
-  // 1️⃣ Proxy por el backend — evita CORS de terceros
+  // Proxy por el backend 
   try {
     const proxyUrl = `http://localhost:5000/api/proxy-imagen?url=${encodeURIComponent(url)}`;
     const res = await fetch(proxyUrl);
@@ -112,7 +106,7 @@ const cargarImagen = async (url) => {
     return await recortarBlob(blob);
   } catch { /* continúa al fallback */ }
 
-  // 2️⃣ Fallback: fetch directo (funciona si la imagen es propia / Cloudinary)
+  // Fallback: fetch directo
   try {
     const res = await fetch(url, { mode: 'cors' });
     if (!res.ok) throw new Error('fetch failed');
@@ -120,7 +114,6 @@ const cargarImagen = async (url) => {
     return await recortarBlob(blob);
   } catch { /* continúa al fallback 2 */ }
 
-  // 3️⃣ Último recurso: img tag con crossOrigin
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -146,9 +139,7 @@ const cargarImagen = async (url) => {
   });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
 // PORTADA
-// ─────────────────────────────────────────────────────────────────────────────
 const portada = (doc, recetas, fecha) => {
   fill(doc, ...VERDE);
   doc.rect(0, 0, W, 100, 'F');
@@ -183,7 +174,7 @@ const portada = (doc, recetas, fecha) => {
     W / 2, 77, { align: 'center' }
   );
 
-  // ── Índice ──
+  //  Índice 
   let y = 116;
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
@@ -233,9 +224,7 @@ const portada = (doc, recetas, fecha) => {
   doc.text('healtyhelp.com', W / 2, H - 12, { align: 'center' });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
 // RECETA individual
-// ─────────────────────────────────────────────────────────────────────────────
 const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   const IMG_H = imgB64 ? 62 : 0;
 
@@ -247,14 +236,11 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     rgb(doc, ...BLANCO);
-    doc.text('HealtyHelp — Recetas Saludables', MG, 7);
+    doc.text('HealtyHelp  Recetas Saludables', MG, 7);
     doc.text(`Receta ${idxMostrado} de ${totalMostrado}`, W - MG, 7, { align: 'right' });
   }
 
   let y = IMG_H + 7;
-
-  // Número de receta (esquina superior — sobre fondo blanco)
-  // ya no va sobre la imagen
 
   // Badge categoría
   const cat = receta.cat ? receta.cat.charAt(0).toUpperCase() + receta.cat.slice(1) : '';
@@ -269,7 +255,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     y += 8;
   }
 
-  // Nombre de la receta — debajo de la imagen, en negro
+  // Nombre de la receta  debajo de la imagen, en negro
   doc.setFontSize(15);
   doc.setFont('helvetica', 'bold');
   rgb(doc, ...GRIS_TEXTO);
@@ -277,7 +263,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   nombreLines.forEach(l => { doc.text(l, MG, y); y += 7; });
   y += 3;
 
-  // Número receta — alineado a la derecha del nombre
+  // Número receta  alineado a la derecha del nombre
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
   rgb(doc, ...GRIS_SUAVE);
@@ -312,14 +298,14 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     y += 7;
   }
 
-  // ── DOS COLUMNAS ──
+  //  DOS COLUMNAS 
   const COL_ING = ANCHO * 0.54;
   const COL_DAT = ANCHO * 0.38;
   const X_DAT   = MG + ANCHO * 0.62;
 
   y = saltoPagina(doc, y, 40);
 
-  // — Título Ingredientes (col izquierda) —
+  // Título Ingredientes (col izquierda) 
   fill(doc, ...VERDE);
   doc.rect(MG, y - 4, 3, 5.5, 'F');
   doc.setFontSize(10);
@@ -327,7 +313,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   rgb(doc, ...VERDE);
   doc.text('Ingredientes', MG + 5, y);
 
-  // — Título Datos rápidos (col derecha) —
+  //  Título Datos rápidos (col derecha)
   fill(doc, ...VERDE);
   doc.rect(X_DAT, y - 4, 3, 5.5, 'F');
   doc.setFontSize(10);
@@ -338,7 +324,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   y += 6;
   const yCol = y;
 
-  // — Ingredientes —
+  // Ingredientes 
   let yIng = yCol;
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
@@ -351,7 +337,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     yIng += 1.2;
   });
 
-  // — Datos rápidos —
+  // Datos rápidos 
   let yD = yCol;
 
   const datos = [
@@ -378,7 +364,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
 
   y = Math.max(yIng, yD) + 7;
 
-  // ── PREPARACIÓN ──
+  // PREPARACIÓN 
   y = saltoPagina(doc, y, 25);
   y = seccion(doc, 'Preparación', y);
   y += 1;
@@ -405,7 +391,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
 
   y += 5;
 
-  // ── TABLA NUTRICIONAL DETALLADA ──
+  // TABLA NUTRICIONAL DETALLADA 
   const nutriAvanzado = [
     ['Colesterol',  fmt(receta.nutri?.colesterol, ' mg')],
     ['Calcio',      fmt(receta.nutri?.calcio,     ' mg')],
@@ -466,9 +452,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
   return y;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
 // EXPORTACIÓN PRINCIPAL
-// ─────────────────────────────────────────────────────────────────────────────
 export const generarPDFRecetas = async (recetas) => {
   const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
   const fecha = new Date().toLocaleDateString('es-CO', {
