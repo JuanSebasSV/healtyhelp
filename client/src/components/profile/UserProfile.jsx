@@ -1,9 +1,10 @@
-// client/src/components/profile/UserProfile.jsx
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { validatePassword, validateName } from '../../utils/validation';
+
+/*  Iconos inline  */
 import './UserProfile.css';
 
 const EyeIcon = ({ open }) => (
@@ -52,6 +53,43 @@ const NumeroInput = ({ name, value, onChange, placeholder, min, max, step }) => 
   );
 };
 
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    style={{ flexShrink: 0, marginTop: '1px' }}>
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+);
+
+const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
+  <div className={`aviso-inline aviso-inline--${variante}`}>
+    <InfoIcon />
+    <span><strong>{titulo}</strong> {mensaje}</span>
+  </div>
+);
+
+const FieldHint = ({ show, items }) => {
+  if (!show || !items || items.length === 0) return null;
+  if (items.every(i => i.ok)) return null;
+  return (
+    <ul className="field-hints">
+      {items.map((item, idx) => (
+        <li key={idx} className={item.ok ? 'hint-ok' : 'hint-pending'}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+            {item.ok
+              ? <polyline points="20 6 9 17 4 12"/>
+              : <circle cx="12" cy="12" r="9"/>
+            }
+          </svg>
+          {item.label}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const UserProfile = () => {
   const { user, checkAuth, logout } = useAuth();
   const navigate = useNavigate();
@@ -71,22 +109,61 @@ const UserProfile = () => {
   const [erroresPassword, setErroresPassword] = useState([]);
 
   const [form, setForm] = useState({
-    name: user?.name || '',
-    age: user?.age || '',
-    weight: user?.weight || '',
-    height: user?.height || '',
-    password: '',
+    name:            user?.name   || '',
+    weight:          user?.weight || '',
+    password:        '',
     confirmPassword: '',
   });
+
+  const [touched, setTouched]     = useState({});
+  const [avisosCampo, setAvisos]  = useState({});
 
   const mostrarMensaje = (tipo, texto) => {
     setMensaje({ tipo, texto });
     setTimeout(() => setMensaje(null), 3500);
   };
 
+  const calcularAvisoPerf = (field, value, formActual) => {
+    switch (field) {
+      case 'name': {
+        if (!value) return null;
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) return 'nombre_caracteres';
+        return null;
+      }
+      case 'password': {
+        if (!value) return null;
+        const fuerte = value.length >= 8 && /[a-z]/.test(value) && /[A-Z]/.test(value) && /\d/.test(value);
+        return fuerte ? null : 'pass_debil';
+      }
+      case 'confirmPassword': {
+        if (!value) return null;
+        return value !== formActual.password ? 'passConf_mismatch' : null;
+      }
+      case 'weight': {
+        if (!value) return null;
+        const n = parseFloat(value);
+        if (isNaN(n) || n <= 0) return null;
+        if (n < 40)  return 'peso_bajo';
+        if (n > 300) return 'peso_alto';
+        return null;
+      }
+      default: return null;
+    }
+  };
+
+  const AVISOS_PERF = {
+    nombre_caracteres: { titulo: 'Solo letras.',        mensaje: 'El nombre no puede contener números ni símbolos.',                        variante: 'naranja' },
+    pass_debil:        { titulo: 'Contraseña débil.',   mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.', variante: 'naranja' },
+    passConf_mismatch: { titulo: 'No coinciden.',       mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                  variante: 'rojo'    },
+    peso_bajo:         { titulo: 'Peso mínimo 40 kg.',  mensaje: 'Ingresa un peso válido.',                                                 variante: 'naranja' },
+    peso_alto:         { titulo: 'Peso máximo 300 kg.', mensaje: 'El valor máximo aceptado es 300 kg.',                                     variante: 'rojo'    },
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const nuevoForm = { ...form, [name]: value };
+    setForm(nuevoForm);
+
     if (name === 'password') {
       if (value) {
         const { errors } = validatePassword(value);
@@ -95,6 +172,28 @@ const UserProfile = () => {
         setErroresPassword([]);
       }
     }
+
+    if (touched[name]) {
+      const avisoKey = calcularAvisoPerf(name, value, nuevoForm);
+      const extra = {};
+      if (name === 'password' && touched['confirmPassword']) {
+        extra.confirmPassword = calcularAvisoPerf('confirmPassword', nuevoForm.confirmPassword, nuevoForm);
+      }
+      setAvisos(prev => ({ ...prev, [name]: avisoKey, ...extra }));
+    }
+  };
+
+  const handleBlurPerf = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const avisoKey = calcularAvisoPerf(field, form[field], form);
+    setAvisos(prev => ({ ...prev, [field]: avisoKey }));
+  };
+
+  const renderAvisoPerfil = (field) => {
+    const key = avisosCampo[field];
+    if (!key || !AVISOS_PERF[key]) return null;
+    const { titulo, mensaje, variante } = AVISOS_PERF[key];
+    return <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />;
   };
 
   const handleAvatarClick = () => {
@@ -171,9 +270,7 @@ const UserProfile = () => {
     try {
       const payload = {
         name: form.name,
-        ...(form.age    && { age:    parseInt(form.age, 10) }),
         ...(form.weight && { weight: parseFloat(form.weight) }),
-        ...(form.height && { height: parseFloat(form.height) }),
       };
       if (form.password) payload.password = form.password;
       await api.put('/auth/profile', payload);
@@ -181,6 +278,8 @@ const UserProfile = () => {
       setEditando(false);
       setForm(prev => ({ ...prev, password: '', confirmPassword: '' }));
       setErroresPassword([]);
+      setTouched({});
+      setAvisos({});
       mostrarMensaje('exito', '¡Perfil actualizado correctamente!');
     } catch (error) {
       mostrarMensaje('error', error.response?.data?.error || 'Error al actualizar');
@@ -194,13 +293,13 @@ const UserProfile = () => {
     setMensaje(null);
     setErroresPassword([]);
     setForm({
-      name: user?.name || '',
-      age: user?.age || '',
-      weight: user?.weight || '',
-      height: user?.height || '',
-      password: '',
+      name:            user?.name   || '',
+      weight:          user?.weight || '',
+      password:        '',
       confirmPassword: ''
     });
+    setTouched({});
+    setAvisos({});
   };
 
   const handleEliminarCuenta = async () => {
@@ -224,6 +323,12 @@ const UserProfile = () => {
   const getInitials = (name) => {
     if (!name) return '?';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const formatBirthDate = (bd) => {
+    if (!bd) return '—';
+    const fecha = new Date(bd);
+    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
   };
 
   const joinDate = user?.createdAt
@@ -411,18 +516,27 @@ const UserProfile = () => {
               <div className="campo-grupo">
                 <label className="campo-label">Nombre completo</label>
                 {editando ? (
-                  <input
-                    className="campo-input"
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Tu nombre"
-                  />
+                  <>
+                    <input
+                      className={`campo-input${touched.name && !calcularAvisoPerf('name', form.name, form) && form.name ? ' campo-input--ok' : ''}${touched.name && avisosCampo.name ? ' campo-input--error' : ''}`}
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      onBlur={() => handleBlurPerf('name')}
+                      placeholder="Tu nombre"
+                    />
+                    <FieldHint show={touched.name} items={[
+                      { ok: form.name.trim().length >= 2, label: 'Mínimo 2 caracteres' },
+                      { ok: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.name.trim()), label: 'Solo letras y espacios' },
+                    ]} />
+                    {renderAvisoPerfil('name')}
+                  </>
                 ) : (
                   <div className="campo-valor">{user?.name || '—'}</div>
                 )}
               </div>
+
               <div className="campo-grupo">
                 <label className="campo-label">Correo electrónico</label>
                 <div className="campo-valor campo-valor--bloqueado">
@@ -438,20 +552,38 @@ const UserProfile = () => {
               </div>
 
               <div className="campo-grupo">
-                <label className="campo-label">Edad</label>
-                {editando ? (
-                  <NumeroInput name="age" value={form.age} onChange={handleChange}
-                    placeholder="Tu edad" min={18} max={100} step={1} />
-                ) : (
-                  <div className="campo-valor">{user?.age ? `${user.age} años` : '—'}</div>
-                )}
+                <label className="campo-label">Fecha de nacimiento</label>
+                <div className="campo-valor campo-valor--bloqueado campo-valor--fecha">
+                  <div className="campo-fecha-fila">
+                    <span className="campo-fecha-texto">{formatBirthDate(user?.birthDate)}</span>
+                    <div className="campo-fecha-meta">
+                      {user?.age != null && (
+                        <span className="campo-edad-badge">{user.age} años</span>
+                      )}
+                      <span className="campo-lock">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p className="campo-hint">La fecha de nacimiento no se puede modificar</p>
               </div>
 
               <div className="campo-grupo">
                 <label className="campo-label">Peso (kg)</label>
                 {editando ? (
-                  <NumeroInput name="weight" value={form.weight} onChange={handleChange}
-                    placeholder="Ej: 70" min={40} max={150} step={0.1} />
+                  <>
+                    <NumeroInput name="weight" value={form.weight} onChange={handleChange}
+                      placeholder="Ej: 70" min={40} max={300} step={0.1} />
+                    <FieldHint show={touched.weight} items={form.weight ? [
+                      { ok: parseFloat(form.weight) >= 40,  label: 'Mínimo 40 kg' },
+                      { ok: parseFloat(form.weight) <= 300, label: 'Máximo 300 kg' },
+                    ] : []} />
+                    {renderAvisoPerfil('weight')}
+                  </>
                 ) : (
                   <div className="campo-valor">{user?.weight ? `${user.weight} kg` : '—'}</div>
                 )}
@@ -459,12 +591,16 @@ const UserProfile = () => {
 
               <div className="campo-grupo">
                 <label className="campo-label">Altura (cm)</label>
-                {editando ? (
-                  <NumeroInput name="height" value={form.height} onChange={handleChange}
-                    placeholder="Ej: 170" min={50} max={210} step={1} />
-                ) : (
-                  <div className="campo-valor">{user?.height ? `${user.height} cm` : '—'}</div>
-                )}
+                <div className="campo-valor campo-valor--bloqueado">
+                  {user?.height ? `${user.height} cm` : '—'}
+                  <span className="campo-lock">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </span>
+                </div>
+                <p className="campo-hint">La altura no se puede modificar</p>
               </div>
 
             </div>
@@ -487,26 +623,20 @@ const UserProfile = () => {
                         name="password"
                         value={form.password}
                         onChange={handleChange}
+                        onBlur={() => handleBlurPerf('password')}
                         placeholder="Dejar vacío para no cambiar"
                       />
                       <button type="button" className="eyeButton" onClick={() => setShowPass(p => !p)} tabIndex={-1}>
                         <EyeIcon open={showPass} />
                       </button>
                     </div>
-                    {form.password && (
-                      <ul className="password-requisitos">
-                        {[
-                          { ok: form.password.length >= 8,        texto: 'Mínimo 8 caracteres' },
-                          { ok: /[a-z]/.test(form.password),      texto: 'Una letra minúscula' },
-                          { ok: /[A-Z]/.test(form.password),      texto: 'Una letra mayúscula' },
-                          { ok: /\d/.test(form.password),         texto: 'Un número' },
-                        ].map(({ ok, texto }) => (
-                          <li key={texto} className={ok ? 'req-ok' : 'req-falta'}>
-                            {ok ? '✓' : '✗'} {texto}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <FieldHint show={!!form.password} items={[
+                        { ok: form.password.length >= 8,           label: 'Mínimo 8 caracteres' },
+                        { ok: /[a-z]/.test(form.password),         label: 'Una letra minúscula' },
+                        { ok: /[A-Z]/.test(form.password),         label: 'Una letra mayúscula' },
+                        { ok: /[0-9]/.test(form.password),         label: 'Un número' },
+                      ]} />
+                    {renderAvisoPerfil('password')}
                   </div>
                   <div className="campo-grupo">
                     <label className="campo-label">Confirmar contraseña</label>
@@ -517,15 +647,17 @@ const UserProfile = () => {
                         name="confirmPassword"
                         value={form.confirmPassword}
                         onChange={handleChange}
+                        onBlur={() => handleBlurPerf('confirmPassword')}
                         placeholder="Repetir nueva contraseña"
                       />
                       <button type="button" className="eyeButton" onClick={() => setShowPassConf(p => !p)} tabIndex={-1}>
                         <EyeIcon open={showPassConf} />
                       </button>
                     </div>
-                    {form.confirmPassword && form.password !== form.confirmPassword && (
-                      <p className="campo-hint campo-hint--error">Las contraseñas no coinciden</p>
-                    )}
+                    <FieldHint show={!!form.confirmPassword} items={[
+                        { ok: form.confirmPassword && form.confirmPassword === form.password, label: 'Las contraseñas coinciden' },
+                      ]} />
+                    {renderAvisoPerfil('confirmPassword')}
                   </div>
                 </div>
               ) : (

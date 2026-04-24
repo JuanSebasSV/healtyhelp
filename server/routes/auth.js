@@ -11,6 +11,68 @@ const {
   verifyEmail, resendCode, setGooglePassword
 } = require('../controllers/authController');
 
+(async () => {
+  try {
+    const calcEdadMig = (bd) => {
+      if (!bd) return null;
+      const hoy = new Date();
+      const nac = new Date(bd);
+      let e = hoy.getFullYear() - nac.getFullYear();
+      const m = hoy.getMonth() - nac.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
+      return e;
+    };
+
+    // Fase 1: asignar birthDate a cuentas legacy con age en número
+    const sinFecha = await User.find(
+      { birthDate: { $exists: false }, age: { $exists: true, $ne: null } }
+    ).lean();
+    if (sinFecha.length > 0) {
+      const ahora = new Date();
+      for (const doc of sinFecha) {
+        const edadLegacy = Number(doc.age);
+        if (!edadLegacy || isNaN(edadLegacy) || edadLegacy < 1 || edadLegacy > 120) continue;
+        const mes     = Math.floor(Math.random() * 12);
+        let anioNac   = ahora.getFullYear() - edadLegacy;
+        const diasMax = new Date(anioNac, mes + 1, 0).getDate();
+        const dia     = Math.floor(Math.random() * diasMax) + 1;
+        const bdTest  = new Date(anioNac, mes, dia);
+        if (calcEdadMig(bdTest) < edadLegacy) anioNac -= 1;
+        const bd      = new Date(anioNac, mes, dia);
+        const edad    = calcEdadMig(bd);
+        const update  = { birthDate: bd };
+        if (
+          edad >= 18 && edad <= 120 &&
+          doc.weight >= 40 && doc.weight <= 300 &&
+          doc.height >= 50 && doc.height <= 210
+        ) update.profileComplete = true;
+        await User.updateOne({ _id: doc._id }, { $set: update });
+      }
+      console.log(`[migración] birthDate asignada a ${sinFecha.length} cuenta(s) legacy`);
+    }
+
+    // Fase 2: cuentas que ya tienen birthDate pero profileComplete false con datos completos
+    const sinCompletar = await User.find(
+      { birthDate: { $exists: true }, profileComplete: { $ne: true } }
+    ).lean();
+    let corregidas = 0;
+    for (const doc of sinCompletar) {
+      const edad = calcEdadMig(doc.birthDate);
+      if (
+        edad >= 18 && edad <= 120 &&
+        doc.weight >= 40 && doc.weight <= 300 &&
+        doc.height >= 50 && doc.height <= 210
+      ) {
+        await User.updateOne({ _id: doc._id }, { $set: { profileComplete: true } });
+        corregidas++;
+      }
+    }
+    if (corregidas > 0) console.log(`[migración] profileComplete corregido en ${corregidas} cuenta(s)`);
+  } catch (e) {
+    console.error('[migración] Error:', e.message);
+  }
+})();
+
 const { protect } = require('../middleware/auth');
 const { uploadAvatar, cloudinary } = require('../config/cloudinary');
 
@@ -25,6 +87,16 @@ const validatePassword = (password) => {
   return errors;
 };
 
+const calcularEdadLocal = (birthDate) => {
+  if (!birthDate) return null;
+  const hoy = new Date();
+  const nac = new Date(birthDate);
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+};
+
 // RUTAS AUTH
 router.post('/register',             register);
 router.post('/login',                login);
@@ -37,11 +109,16 @@ router.post('/set-google-password',  protect, setGooglePassword);
 // USUARIO ACTUAL
 router.get('/me', protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('+password');
+    const user     = await User.findById(req.user._id).select('+password');
     if (!user) return res.status(401).json({ error: 'Usuario no encontrado' });
 
+    const userRaw  = await User.findById(req.user._id).lean();
     const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
     const activeVersion = activeTerms?.version || '1.0.0';
+
+    const edadCalculada = user.birthDate
+      ? calcularEdadLocal(user.birthDate)
+      : (userRaw.age ?? null);
 
     res.json({
       user: {
@@ -50,7 +127,8 @@ router.get('/me', protect, async (req, res) => {
         googleId: user.googleId, isVerified: user.isVerified,
         hasPassword: !!user.password,
         isSuperAdmin: user.isSuperAdmin || false,
-        age: user.age, weight: user.weight, height: user.height,
+        birthDate: user.birthDate, age: edadCalculada,
+        weight: user.weight, height: user.height,
         termsAccepted:      user.termsAccepted   || false,
         termsVersion:       user.termsVersion    || '',
         profileComplete:    user.profileComplete  || false,
@@ -83,16 +161,20 @@ router.get('/google/callback',
 // ACTUALIZAR PERFIL
 router.put('/profile', protect, async (req, res) => {
   try {
-    const { name, password, age, weight, height } = req.body;
+    const { name, password, weight } = req.body;
     const user = await User.findById(req.user._id).select('+password');
 
     if (name)   user.name   = name.trim();
-    if (age)    user.age    = parseInt(age, 10);
     if (weight) user.weight = parseFloat(weight);
-    if (height) user.height = parseFloat(height);
 
-    // Recalcular profileComplete cuando se actualiza el perfil
-    if (user.age != null && user.weight != null && user.height != null) {
+    const edadActual = calcularEdadLocal(user.birthDate);
+    const pesoActual = user.weight;
+    const altActual  = user.height;
+    if (
+      edadActual != null && edadActual >= 18  && edadActual <= 120 &&
+      pesoActual != null && pesoActual >= 40  && pesoActual <= 300 &&
+      altActual  != null && altActual  >= 50  && altActual  <= 210
+    ) {
       user.profileComplete = true;
     }
 
@@ -107,12 +189,14 @@ router.put('/profile', protect, async (req, res) => {
 
     await user.save();
     const updatedUser = await User.findById(req.user._id);
+    const edadResp = calcularEdadLocal(updatedUser.birthDate);
     res.json({
       user: {
         id: updatedUser._id, name: updatedUser.name, email: updatedUser.email,
         role: updatedUser.role, avatar: updatedUser.avatar,
         googleId: updatedUser.googleId, isVerified: updatedUser.isVerified,
-        age: updatedUser.age, weight: updatedUser.weight, height: updatedUser.height,
+        birthDate: updatedUser.birthDate, age: edadResp,
+        weight: updatedUser.weight, height: updatedUser.height,
         isSuperAdmin: updatedUser.isSuperAdmin || false,
         termsAccepted:   updatedUser.termsAccepted   || false,
         termsVersion:    updatedUser.termsVersion    || '',
@@ -241,27 +325,46 @@ router.post('/accept-terms', protect, async (req, res) => {
 // COMPLETAR PERFIL
 router.post('/complete-profile', protect, async (req, res) => {
   try {
-    const { age, weight, height } = req.body;
+    const { age, birthDate, weight, height } = req.body;
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    const edadNum = parseInt(age, 10);
+    // Prioridad: birthDate enviado > birthDate ya almacenado > age legacy
+    if (birthDate) {
+      const fechaParsed = new Date(birthDate);
+      if (isNaN(fechaParsed.getTime()) || fechaParsed > new Date())
+        return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
+      user.birthDate = fechaParsed;
+    } else if (!user.birthDate) {
+      const edadNum = parseInt(age, 10);
+      if (!age || isNaN(edadNum) || edadNum < 18 || edadNum > 120)
+        return res.status(400).json({ error: 'Fecha de nacimiento requerida' });
+      const ahora = new Date();
+      const anioNac = ahora.getFullYear() - edadNum;
+      const mes     = Math.floor(Math.random() * 12);
+      const diasMax = new Date(anioNac, mes + 1, 0).getDate();
+      const dia     = Math.floor(Math.random() * diasMax) + 1;
+      user.birthDate = new Date(anioNac, mes, dia);
+    }
+
+    const edadComputed = calcularEdadLocal(user.birthDate);
+    if (!edadComputed || edadComputed < 18)
+      return res.status(400).json({ error: 'Debes ser mayor de 18 años' });
+
     const pesoNum = parseFloat(weight);
     const altNum  = parseFloat(height);
 
-    if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
-      return res.status(400).json({ error: 'Edad inválida (18-100)' });
     if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 300)
       return res.status(400).json({ error: 'Peso inválido (40-300 kg)' });
     if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
       return res.status(400).json({ error: 'Altura inválida (50-210 cm)' });
 
-    user.age             = edadNum;
     user.weight          = pesoNum;
     user.height          = altNum;
     user.profileComplete = true;
     await user.save({ validateBeforeSave: false });
 
+    const edadResp = calcularEdadLocal(user.birthDate);
     res.json({
       success: true,
       user: {
@@ -269,7 +372,8 @@ router.post('/complete-profile', protect, async (req, res) => {
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
         isSuperAdmin: user.isSuperAdmin || false,
-        age: user.age, weight: user.weight, height: user.height,
+        birthDate: user.birthDate, age: edadResp,
+        weight: user.weight, height: user.height,
         termsAccepted:   user.termsAccepted   || false,
         termsVersion:    user.termsVersion    || '',
         profileComplete: user.profileComplete  || false,

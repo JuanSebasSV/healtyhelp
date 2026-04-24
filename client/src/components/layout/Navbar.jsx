@@ -419,7 +419,6 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
                   <div className="nav-avatar-iniciales">
                     {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                   </div>
-                  {user.role === 'admin' && <span className="nav-admin-dot" />}
                 </div>
                 <span className="nav-nombre">{user.name?.split(' ')[0]}</span>
               </li>

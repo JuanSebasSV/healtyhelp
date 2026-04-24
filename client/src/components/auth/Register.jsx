@@ -4,7 +4,6 @@ import {
   validateName,
   validateEmail,
   validatePassword,
-  validateAge,
   validateRegisterForm,
 } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
@@ -78,8 +77,9 @@ const AVISOS = {
   email_dominio:      { titulo: 'Proveedor no permitido.',   mensaje: 'Usa un correo de Gmail, Hotmail, Outlook, Yahoo, iCloud u otro proveedor reconocido.',                variante: 'rojo'    },
   pass_debil:         { titulo: 'Contraseña débil.',         mensaje: 'Usa al menos 8 caracteres combinando mayúsculas, minúsculas y un número.',                            variante: 'naranja' },
   passConf_mismatch:  { titulo: 'No coinciden.',             mensaje: 'Las contraseñas ingresadas son distintas. Verifícalas.',                                              variante: 'rojo'    },
-  edad_menor:         { titulo: 'Acceso restringido.',       mensaje: 'Healthy Help está diseñado para mayores de 18 años. Si eres menor, consulta a un médico de confianza.', variante: 'naranja' },
-  edad_invalida:      { titulo: 'Edad inválida.',            mensaje: 'Ingresa una edad entre 1 y 120 años.',                                                                variante: 'rojo'    },
+  fechaNac_menor:     { titulo: 'Acceso restringido.',       mensaje: 'Healthy Help está diseñado para mayores de 18 años. Si eres menor, consulta a un médico de confianza.', variante: 'naranja' },
+  fechaNac_invalida:  { titulo: 'Fecha inválida.',           mensaje: 'Ingresa una fecha de nacimiento válida.',                                                              variante: 'rojo'    },
+  fechaNac_futura:    { titulo: 'Fecha inválida.',           mensaje: 'La fecha de nacimiento no puede ser en el futuro.',                                                    variante: 'rojo'    },
   peso_bajo:          { titulo: 'Peso mínimo 40 kg.',        mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones seguras.',                         variante: 'naranja' },
   peso_alto:          { titulo: 'Peso fuera de rango.',      mensaje: 'El valor máximo aceptado es 500 kg.',                                                                 variante: 'rojo'    },
   altura_baja:        { titulo: 'Altura mínima 50 cm.',      mensaje: 'Ingresa una altura válida entre 50 y 300 cm.',                                                        variante: 'naranja' },
@@ -109,11 +109,17 @@ const calcularAviso = (field, value, datos) => {
       if (!value) return null;
       return value !== datos.pass ? 'passConf_mismatch' : null;
     }
-    case 'edad': {
+    case 'fechaNac': {
       if (!value) return null;
-      const n = parseInt(value, 10);
-      if (isNaN(n) || n < 1 || n > 120) return 'edad_invalida';
-      if (n < 18) return 'edad_menor';
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime())) return 'fechaNac_invalida';
+      if (fecha > new Date()) return 'fechaNac_futura';
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fecha.getFullYear();
+      const m = hoy.getMonth() - fecha.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+      if (edad > 120) return 'fechaNac_invalida';
+      if (edad < 18) return 'fechaNac_menor';
       return null;
     }
     case 'peso': {
@@ -199,10 +205,17 @@ const validarCampo = (field, value, datos) => {
       if (!value) return 'Confirma tu contraseña';
       return value === datos.pass ? '' : 'Las contraseñas no coinciden';
     }
-    case 'edad': {
-      if (value === '' || value === undefined) return 'La edad es requerida';
-      const r = validateAge(value);
-      if (!r.isValid) return r.error === 'MINOR' ? 'Debes ser mayor de 18 años' : r.error;
+    case 'fechaNac': {
+      if (!value) return 'La fecha de nacimiento es requerida';
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime())) return 'Fecha de nacimiento inválida';
+      if (fecha > new Date()) return 'La fecha no puede ser en el futuro';
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fecha.getFullYear();
+      const m = hoy.getMonth() - fecha.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+      if (edad > 120) return 'Fecha de nacimiento inválida';
+      if (edad < 18) return 'Debes ser mayor de 18 años';
       return '';
     }
     case 'peso': {
@@ -244,9 +257,18 @@ const FieldHint = ({ field, value, datos, touched }) => {
     passConf: [
       { ok: value && value === datos.pass, label: 'Las contraseñas coinciden' },
     ],
-    edad: [
-      { ok: value && parseInt(value, 10) >= 18 && parseInt(value, 10) <= 120, label: 'Entre 18 y 120 años' },
-    ],
+    fechaNac: (() => {
+      if (!value) return [{ ok: false, label: 'Mayor de 18 años' }];
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime()) || fecha > new Date()) return [{ ok: false, label: 'Fecha válida' }];
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fecha.getFullYear();
+      const m = hoy.getMonth() - fecha.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+      return [
+        { ok: edad >= 18 && edad <= 120, label: edad >= 18 ? `Tienes ${edad} años — Mayor de edad` : 'Debes ser mayor de 18 años' },
+      ];
+    })(),
     peso: value ? [
       { ok: parseFloat(value) >= 40,  label: 'Mínimo 40 kg' },
       { ok: parseFloat(value) <= 500, label: 'Máximo 500 kg' },
@@ -293,7 +315,7 @@ const Register = () => {
         return { ...parsed, pass: '', passConf: '' };
       }
     } catch {}
-    return { nombre: '', email: '', pass: '', passConf: '', edad: '', peso: '', altura: '' };
+    return { nombre: '', email: '', pass: '', passConf: '', fechaNac: '', peso: '', altura: '' };
   });
 
   // Guardar borrador (sin contraseñas)
@@ -308,8 +330,8 @@ const Register = () => {
   const [showPass, setShowPass]         = useState(false);
   const [showPassConf, setShowPassConf] = useState(false);
 
-  // Avisos inline en tiempo real
-  const [avisos, setAvisos] = useState({});
+  const [avisos, setAvisos]           = useState({});
+  const [showModal, setShowModal]     = useState(false);
 
   /* Cambio con validación en tiempo real */
   const handleChange = (field, value) => {
@@ -358,26 +380,44 @@ const Register = () => {
     }
 
     const validationErrors = validateRegisterForm(
-      datos.nombre, datos.email, datos.pass, datos.passConf, datos.edad
+      datos.nombre, datos.email, datos.pass, datos.passConf
     );
 
-    if (validationErrors.edad === 'MINOR') {
-      setAvisos((prev) => ({ ...prev, edad: 'edad_menor' }));
-      setErrors({ ...validationErrors, edad: 'Debes ser mayor de 18 años' });
+    const fechaError = (() => {
+      if (!datos.fechaNac) return 'La fecha de nacimiento es requerida';
+      const fecha = new Date(datos.fechaNac);
+      if (isNaN(fecha.getTime()) || fecha > new Date()) return 'Fecha de nacimiento inválida';
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fecha.getFullYear();
+      const m = hoy.getMonth() - fecha.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+      if (edad < 18) return 'Debes ser mayor de 18 años';
+      if (edad > 120) return 'Fecha de nacimiento inválida';
+      return '';
+    })();
+    if (fechaError) {
+      setErrors((prev) => ({ ...prev, fechaNac: fechaError }));
       return;
     }
+
+
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
+    setShowModal(true);
+  };
+
+  const confirmarRegistro = async () => {
+    setShowModal(false);
     setLoading(true);
     const result = await register({
-      name:     datos.nombre,
-      email:    datos.email,
-      password: datos.pass,
-      age:      parseInt(datos.edad, 10),
+      name:      datos.nombre,
+      email:     datos.email,
+      password:  datos.pass,
+      birthDate: datos.fechaNac,
       ...(datos.peso   && { weight: parseFloat(datos.peso) }),
       ...(datos.altura && { height: parseFloat(datos.altura) }),
     });
@@ -400,6 +440,23 @@ const Register = () => {
     if (!key || !AVISOS[key]) return null;
     const { titulo, mensaje, variante } = AVISOS[key];
     return <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />;
+  };
+
+  const calcEdadDisplay = (fechaStr) => {
+    if (!fechaStr) return null;
+    const fecha = new Date(fechaStr);
+    if (isNaN(fecha.getTime())) return null;
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const m = hoy.getMonth() - fecha.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+    return edad;
+  };
+
+  const formatFecha = (fechaStr) => {
+    if (!fechaStr) return '—';
+    const fecha = new Date(fechaStr + 'T00:00:00');
+    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
   };
 
   return (
@@ -440,22 +497,21 @@ const Register = () => {
             {touched.nombre && errors.nombre && <span className="errorMessage">{errors.nombre}</span>}
           </div>
 
-          {/* Edad */}
+          {/* Fecha de nacimiento */}
           <div className="formGroup">
-            <NumeroInput
-              name="edad"
-              value={datos.edad}
-              placeholder="Edad"
-              onChange={(e) => handleChange('edad', e.target.value)}
-              onBlur={() => handleBlur('edad')}
-              min={1}
-              max={120}
-              step={1}
+            <input
+              type="date"
+              value={datos.fechaNac}
+              onChange={(e) => handleChange('fechaNac', e.target.value)}
+              onBlur={() => handleBlur('fechaNac')}
+              className={touched.fechaNac && errors.fechaNac ? 'inputError' : touched.fechaNac && !errors.fechaNac && datos.fechaNac ? 'inputOk' : ''}
               disabled={loading}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+              min={new Date(new Date().setFullYear(new Date().getFullYear() - 120)).toISOString().split('T')[0]}
             />
-            <FieldHint field="edad" value={datos.edad} datos={datos} touched={touched.edad} />
-            {renderAviso('edad')}
-            {touched.edad && errors.edad && <span className="errorMessage">{errors.edad}</span>}
+            <FieldHint field="fechaNac" value={datos.fechaNac} datos={datos} touched={touched.fechaNac} />
+            {renderAviso('fechaNac')}
+            {touched.fechaNac && errors.fechaNac && <span className="errorMessage">{errors.fechaNac}</span>}
           </div>
 
           {/* Peso (opcional) */}
@@ -582,6 +638,81 @@ const Register = () => {
           <Link to="/login" className="linkText">Inicia sesión</Link>
         </p>
       </div>
+    {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-confirmacion" onClick={e => e.stopPropagation()}>
+
+            <div className="modal-conf__header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+              <h3>Confirma tus datos</h3>
+              <p>Revisa que todo esté correcto antes de crear tu cuenta</p>
+            </div>
+
+            <div className="modal-conf__campos">
+              <div className="modal-conf__fila">
+                <span className="modal-conf__label">Nombre</span>
+                <span className="modal-conf__valor">{datos.nombre || '—'}</span>
+              </div>
+              <div className="modal-conf__fila">
+                <span className="modal-conf__label">Fecha de nacimiento</span>
+                <span className="modal-conf__valor">
+                  {formatFecha(datos.fechaNac)}
+                  {calcEdadDisplay(datos.fechaNac) !== null && (
+                    <span className="modal-conf__edad">{calcEdadDisplay(datos.fechaNac)} años</span>
+                  )}
+                </span>
+              </div>
+              {datos.peso && (
+                <div className="modal-conf__fila">
+                  <span className="modal-conf__label">Peso</span>
+                  <span className="modal-conf__valor">{datos.peso} kg</span>
+                </div>
+              )}
+              {datos.altura && (
+                <div className="modal-conf__fila">
+                  <span className="modal-conf__label">Altura</span>
+                  <span className="modal-conf__valor">{datos.altura} cm</span>
+                </div>
+              )}
+              <div className="modal-conf__fila">
+                <span className="modal-conf__label">Correo</span>
+                <span className="modal-conf__valor">{datos.email || '—'}</span>
+              </div>
+            </div>
+
+            <div className="modal-conf__aviso">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                style={{ flexShrink: 0, marginTop: '1px' }}>
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span>La <strong>fecha de nacimiento</strong> y la <strong>altura</strong> no se podrán modificar después del registro.</span>
+            </div>
+
+            <div className="modal-conf__acciones">
+              <button
+                className="modal-conf__btn-editar"
+                onClick={() => setShowModal(false)}
+              >
+                Editar datos
+              </button>
+              <button
+                className="modal-conf__btn-confirmar"
+                onClick={confirmarRegistro}
+              >
+                Crear cuenta
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

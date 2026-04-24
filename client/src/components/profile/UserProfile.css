@@ -1147,3 +1147,106 @@
   animation: girar 0.6s linear infinite;
   display: inline-block;
 }
+/*ESTADO OK en campo editable*/
+
+.campo-input--ok {
+  border-color: #22c55e !important;
+  outline-color: #22c55e !important;
+}
+
+/*CAMPO FECHA DE NACIMIENTO — layout limpio*/
+
+.campo-valor--fecha {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+}
+
+.campo-fecha-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.campo-fecha-texto {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}
+
+.campo-fecha-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/*BADGE de edad junto a fecha de nacimiento*/
+
+.campo-edad-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(79, 119, 45, 0.18);
+  border: 1px solid rgba(79, 119, 45, 0.35);
+  color: #a8e063;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/*FIELD HINTS — iguales que Register*/
+
+.field-hints {
+  list-style: none;
+  margin: 4px 0 2px 2px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field-hints li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.hint-pending { color: #9ca3af; }
+.hint-ok      { color: #22c55e; font-weight: 500; }
+
+/*AVISO INLINE — replicado desde Register*/
+
+.aviso-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+.aviso-inline--naranja {
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.40);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--naranja svg    { color: var(--naranja, #f77f00); }
+.aviso-inline--naranja strong { color: var(--naranja, #f77f00); }
+
+.aviso-inline--rojo {
+  background: rgba(220, 38, 38, 0.10);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--rojo svg    { color: #f87171; }
+.aviso-inline--rojo strong { color: #f87171; }

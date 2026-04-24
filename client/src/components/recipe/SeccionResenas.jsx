@@ -678,7 +678,14 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
       toast.success(miResena ? 'Reseña actualizada' : 'Reseña publicada');
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
-      setMiResena(data.resena);
+
+      // Si se subió imagen, guardar la imagen pendiente en el estado local
+      // Si NO se subió imagen, usar exactamente lo que devuelve el servidor (sin imagen)
+      const resenaFinal = formImagen
+        ? { ...data.resena, imagen: data.resena.imagen ?? { estado: 'pendiente' } }
+        : data.resena;
+
+      setMiResena(resenaFinal);
       setFormEstrellas(data.resena.estrellas);
       setFormTexto(data.resena.texto || '');
       setFormImagen(null);
@@ -930,7 +937,7 @@ const SeccionResenas = ({ receta, user, isAuthenticated, resenaIdDestacada, resp
               const esPropia = esDelUsuario(r, user);
               const esAdmin  = user?.role === 'admin';
               const imagenParaMostrar =
-                esPropia && !r.imagen && miResena?.imagen?.estado === 'pendiente'
+                esPropia && !r.imagen && miResena?.imagen?.estado === 'pendiente' && miResena?.imagen?.url
                   ? miResena.imagen
                   : r.imagen;
 

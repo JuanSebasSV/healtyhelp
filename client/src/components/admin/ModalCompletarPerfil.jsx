@@ -5,23 +5,39 @@ import './ModalCompletarPerfil.css';
 
 /*AVISOS*/
 const AVISOS = {
-  age_menor:    { titulo: 'Edad mínima.',          mensaje: 'Debes tener al menos 18 años.',                                        variante: 'naranja' },
-  age_invalida: { titulo: 'Edad inválida.',         mensaje: 'Ingresa una edad entre 18 y 100 años.',                               variante: 'rojo'    },
-  weight_bajo:  { titulo: 'Peso mínimo 40 kg.',     mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones.', variante: 'naranja' },
-  weight_alto:  { titulo: 'Peso fuera de rango.',   mensaje: 'El valor máximo aceptado es 300 kg.',                                 variante: 'rojo'    },
-  height_baja:  { titulo: 'Altura mínima 50 cm.',   mensaje: 'Ingresa una altura válida entre 50 y 210 cm.',                       variante: 'naranja' },
-  height_alta:  { titulo: 'Altura fuera de rango.', mensaje: 'El valor máximo aceptado es 210 cm.',                                variante: 'rojo'    },
+  fechaNac_menor:    { titulo: 'Acceso restringido.',       mensaje: 'Debes tener al menos 18 años.',                                        variante: 'naranja' },
+  fechaNac_invalida: { titulo: 'Fecha inválida.',           mensaje: 'Ingresa una fecha de nacimiento válida.',                              variante: 'rojo'    },
+  fechaNac_futura:   { titulo: 'Fecha inválida.',           mensaje: 'La fecha de nacimiento no puede ser en el futuro.',                    variante: 'rojo'    },
+  weight_bajo:       { titulo: 'Peso mínimo 40 kg.',        mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones.', variante: 'naranja' },
+  weight_alto:       { titulo: 'Peso fuera de rango.',      mensaje: 'El valor máximo aceptado es 300 kg.',                                 variante: 'rojo'    },
+  height_baja:       { titulo: 'Altura mínima 50 cm.',      mensaje: 'Ingresa una altura válida entre 50 y 210 cm.',                        variante: 'naranja' },
+  height_alta:       { titulo: 'Altura fuera de rango.',    mensaje: 'El valor máximo aceptado es 210 cm.',                                 variante: 'rojo'    },
+};
+
+
+const calcEdadDesde = (fechaStr) => {
+  if (!fechaStr) return null;
+  const fecha = new Date(fechaStr);
+  if (isNaN(fecha.getTime())) return null;
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - fecha.getFullYear();
+  const m = hoy.getMonth() - fecha.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+  return edad;
 };
 
 /*Calcula qué aviso mostrar por campo*/
 const calcularAviso = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
-    case 'age': {
+    case 'fechaNac': {
       if (!value) return null;
-      const edad = parseInt(value, 10);
-      if (isNaN(edad) || edad < 1 || edad > 100) return 'age_invalida';
-      if (edad < 18) return 'age_menor';
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime())) return 'fechaNac_invalida';
+      if (fecha > new Date()) return 'fechaNac_futura';
+      const edad = calcEdadDesde(value);
+      if (edad === null || edad > 120) return 'fechaNac_invalida';
+      if (edad < 18) return 'fechaNac_menor';
       return null;
     }
     case 'weight': {
@@ -47,10 +63,13 @@ const calcularAviso = (field, value) => {
 const validarCampo = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
-    case 'age': {
-      if (!value) return 'La edad es requerida';
-      const edad = parseInt(value, 10);
-      if (isNaN(edad) || edad < 18 || edad > 100) return 'Edad válida entre 18 y 100 años';
+    case 'fechaNac': {
+      if (!value) return 'La fecha de nacimiento es requerida';
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime()) || fecha > new Date()) return 'Fecha de nacimiento inválida';
+      const edad = calcEdadDesde(value);
+      if (edad === null || edad > 120) return 'Fecha de nacimiento inválida';
+      if (edad < 18) return 'Debes ser mayor de 18 años';
       return '';
     }
     case 'weight': {
@@ -73,10 +92,16 @@ const FieldHint = ({ field, value, touched }) => {
   if (!touched) return null;
 
   const hints = {
-    age: [
-      { ok: value && parseInt(value, 10) >= 18,  label: 'Mínimo 18 años' },
-      { ok: value && parseInt(value, 10) <= 100, label: 'Máximo 100 años' },
-    ],
+    fechaNac: (() => {
+      if (!value) return [{ ok: false, label: 'Mayor de 18 años' }];
+      const fecha = new Date(value);
+      if (isNaN(fecha.getTime()) || fecha > new Date()) return [{ ok: false, label: 'Fecha válida' }];
+      const edad = calcEdadDesde(value);
+      return [
+        { ok: edad !== null && edad >= 18 && edad <= 120,
+          label: edad !== null && edad >= 18 ? `Tienes ${edad} años — Mayor de edad` : 'Debes ser mayor de 18 años' },
+      ];
+    })(),
     weight: value ? [
       { ok: parseFloat(value) >= 40,  label: 'Mínimo 40 kg' },
       { ok: parseFloat(value) <= 300, label: 'Máximo 300 kg' },
@@ -167,7 +192,7 @@ const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, ste
 
 /*COMPONENTE PRINCIPAL*/
 const ModalCompletarPerfil = ({ onCompletado, user }) => {
-  const [form, setForm]       = useState({ age: String(user?.age || ''), weight: '', height: '' });
+  const [form, setForm]       = useState({ fechaNac: '', weight: '', height: '' });
   const [errors, setErrors]   = useState({});
   const [touched, setTouched] = useState({});
   const [avisos, setAvisos]   = useState({});
@@ -193,21 +218,21 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
 
   /*Submit*/
   const handleSubmit = async () => {
-    setTouched({ age: true, weight: true, height: true });
+    setTouched({ fechaNac: true, weight: true, height: true });
 
     const errs = {
-      age:    validarCampo('age',    form.age),
-      weight: validarCampo('weight', form.weight),
-      height: validarCampo('height', form.height),
+      fechaNac: validarCampo('fechaNac', form.fechaNac),
+      weight:   validarCampo('weight',   form.weight),
+      height:   validarCampo('height',   form.height),
     };
     if (Object.values(errs).some(Boolean)) { setErrors(errs); return; }
 
     setCargando(true);
     try {
       const { data } = await api.post('/auth/complete-profile', {
-        age:    parseInt(form.age, 10),
-        weight: parseFloat(form.weight),
-        height: parseFloat(form.height),
+        birthDate: form.fechaNac,
+        weight:    parseFloat(form.weight),
+        height:    parseFloat(form.height),
       });
       toast.success('¡Perfil completado!');
       onCompletado(data.user);
@@ -262,17 +287,21 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
         {/*Campos*/}
         <div className="completar-body">
 
-          {/* Edad */}
+          {/* Fecha de nacimiento */}
           <div className="completar-grupo">
-            <label>Edad *</label>
-            <NumeroInput
-              name="age" value={form.age}
-              onChange={handleChange} onBlur={() => handleBlur('age')}
-              placeholder="Tu edad" min={18} max={100} step={1}
+            <label>Fecha de nacimiento *</label>
+            <input
+              type="date"
+              name="fechaNac"
+              value={form.fechaNac}
+              onChange={handleChange}
+              onBlur={() => handleBlur('fechaNac')}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+              min={new Date(new Date().setFullYear(new Date().getFullYear() - 120)).toISOString().split('T')[0]}
             />
-            <FieldHint field="age" value={form.age} touched={touched.age} />
-            {renderAviso('age')}
-            {touched.age && errors.age && <span className="completar-error">{errors.age}</span>}
+            <FieldHint field="fechaNac" value={form.fechaNac} touched={touched.fechaNac} />
+            {renderAviso('fechaNac')}
+            {touched.fechaNac && errors.fechaNac && <span className="completar-error">{errors.fechaNac}</span>}
           </div>
 
           {/* Peso */}

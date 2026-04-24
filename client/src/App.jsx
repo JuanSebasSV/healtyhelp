@@ -191,17 +191,7 @@ function AppContent() {
 
   const resolverTerminos = useCallback(() => {
     if (!user) return;
-    // Calcular igual que el backend: desde los datos reales, no desde el campo cacheado.
-    // Esto evita que el modal aparezca cuando el usuario ya tiene age/weight/height válidos
-    // pero profileComplete quedó en false por desincronización.
-    const profileRealmenteCompleto =
-      user.age != null &&
-      Number(user.age) >= 18 &&
-      user.weight != null &&
-      Number(user.weight) >= 40 &&
-      user.height != null &&
-      Number(user.height) >= 50;
-    if (!profileRealmenteCompleto) {
+    if (!user.profileComplete) {
       setMostrarCompletarPerfil(true);
     }
   }, [user]);

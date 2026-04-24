@@ -20,6 +20,8 @@ const {
   getImagenesResenas,
   aprobarImagenResena,
   rechazarImagenResena,
+  eliminarImagenResena,
+  eliminarImagenesResenasMasivo,
   //  Baneo 
   banearUsuario,
   desbanearUsuario,
@@ -62,12 +64,16 @@ router.get   ('/invitations',         getPendingInvitations);
 router.delete('/invitations/:id',     revokeInvitation);
 
 // 🖼️  IMÁGENES DE RESEÑAS
-// GET  /admin/imagenes-resenas?estado=pendiente|aprobada|rechazada
-// PUT  /admin/imagenes-resenas/:recipeId/:resenaId/aprobar
-// PUT  /admin/imagenes-resenas/:recipeId/:resenaId/rechazar
-router.get('/imagenes-resenas',                                  getImagenesResenas);
-router.put('/imagenes-resenas/:recipeId/:resenaId/aprobar',      aprobarImagenResena);
-router.put('/imagenes-resenas/:recipeId/:resenaId/rechazar',     rechazarImagenResena);
+// GET    /admin/imagenes-resenas?estado=pendiente|aprobada|rechazada
+// PUT    /admin/imagenes-resenas/:recipeId/:resenaId/aprobar
+// PUT    /admin/imagenes-resenas/:recipeId/:resenaId/rechazar
+// DELETE /admin/imagenes-resenas/masivo                          — eliminar historial en bloque
+// DELETE /admin/imagenes-resenas/:recipeId/:resenaId             — eliminar historial individual
+router.get   ('/imagenes-resenas',                                  getImagenesResenas);
+router.put   ('/imagenes-resenas/:recipeId/:resenaId/aprobar',      aprobarImagenResena);
+router.put   ('/imagenes-resenas/:recipeId/:resenaId/rechazar',     rechazarImagenResena);
+router.delete('/imagenes-resenas/masivo',                           eliminarImagenesResenasMasivo);
+router.delete('/imagenes-resenas/:recipeId/:resenaId',              eliminarImagenResena);
 
 // 📄 TÉRMINOS Y CONDICIONES
 router.get('/terms', async (req, res) => {
