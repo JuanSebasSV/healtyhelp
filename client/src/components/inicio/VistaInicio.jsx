@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
@@ -463,62 +463,62 @@ const VistaInicio = ({
           </main> 
 
           <aside className="columna-right">
-  {/* Widget de Tiempo (Columna Derecha) */}
-  <div className="widget-lateral">
-    <div className="widget-lateral__header">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> 
-        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/> 
-      </svg>
-      <span>Explorar por tiempo</span>
-    </div>
-    
-    <div className="widget-lateral__lista">
-      {TIEMPOS.map(t => (
-        <button 
-          key={t.id} 
-          className={`widget-lateral__item ${filtroTiempo === t.id ? 'activo' : ''}`} 
-          onClick={() => handleFiltroTiempo(t.id)}
-        >
-          <span className="widget-lateral__icono" dangerouslySetInnerHTML={{ __html: t.icono }} />
-          <span>{t.nombre}</span>
-        </button>
-      ))}
-      
-      {filtroTiempo && (
-        <button className="widget-lateral__item" onClick={() => setFiltroTiempo(null)} style={{justifyContent: 'center', backgroundColor: '#fdfaf5', color: '#e74c3c'}}>
-          ✕ Limpiar filtro
-        </button>
-      )}
-    </div>
-  </div>
+          {/* Widget de Tiempo (Columna Derecha) */}
+          <div className="widget-lateral">
+            <div className="widget-lateral__header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> 
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/> 
+              </svg>
+              <span>Explorar por tiempo</span>
+            </div>
+            
+            <div className="widget-lateral__lista">
+              {TIEMPOS.map(t => (
+                <button 
+                  key={t.id} 
+                  className={`widget-lateral__item ${filtroTiempo === t.id ? 'activo' : ''}`} 
+                  onClick={() => handleFiltroTiempo(t.id)}
+                >
+                  <span className="widget-lateral__icono" dangerouslySetInnerHTML={{ __html: t.icono }} />
+                  <span>{t.nombre}</span>
+                </button>
+              ))}
+              
+              {filtroTiempo && (
+                <button className="widget-lateral__item" onClick={() => setFiltroTiempo(null)} style={{justifyContent: 'center', backgroundColor: '#fdfaf5', color: '#e74c3c'}}>
+                  ✕ Limpiar filtro
+                </button>
+              )}
+            </div>
+          </div>
 
-  {/* Widget Dietas Populares */}
-  <div className="widget-lateral" style={{ marginTop: '1rem' }}>
-    <div className="widget-lateral__header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-      <span>Dietas populares</span>
-    </div>
-    <div className="widget-lateral__tags">
-      {[
-        { label: 'Vegano',        id: 'vegano'           },
-        { label: 'Keto',          id: 'keto'             },
-        { label: 'Sin Gluten',    id: 'celiaco'          },
-        { label: 'Vegetariano',   id: 'vegetariano'      },
-        { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
-      ].map(dieta => (
-        <button
-          key={dieta.id}
-          className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
-          onClick={() => toggleFiltro(dieta.id)}
-        >
-          {dieta.label}
-        </button>
-      ))}
-    </div>
-  </div>
-</aside>
+          {/* Widget Dietas Populares */}
+          <div className="widget-lateral" style={{ marginTop: '1rem' }}>
+            <div className="widget-lateral__header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>Dietas populares</span>
+            </div>
+            <div className="widget-lateral__tags">
+              {[
+                { label: 'Vegano',        id: 'vegano'           },
+                { label: 'Keto',          id: 'keto'             },
+                { label: 'Sin Gluten',    id: 'celiaco'          },
+                { label: 'Vegetariano',   id: 'vegetariano'      },
+                { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
+              ].map(dieta => (
+                <button
+                  key={dieta.id}
+                  className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
+                  onClick={() => toggleFiltro(dieta.id)}
+                >
+                  {dieta.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
       </div>
 
 
