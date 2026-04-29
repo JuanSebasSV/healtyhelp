@@ -129,6 +129,7 @@ router.get('/me', protect, async (req, res) => {
         isSuperAdmin: user.isSuperAdmin || false,
         birthDate: user.birthDate, age: edadCalculada,
         weight: user.weight, height: user.height,
+        alergia: user.alergia || '',
         termsAccepted:      user.termsAccepted   || false,
         termsVersion:       user.termsVersion    || '',
         profileComplete:    user.profileComplete  || false,
@@ -161,11 +162,12 @@ router.get('/google/callback',
 // ACTUALIZAR PERFIL
 router.put('/profile', protect, async (req, res) => {
   try {
-    const { name, password, weight } = req.body;
+    const { name, password, weight, alergia } = req.body;
     const user = await User.findById(req.user._id).select('+password');
 
     if (name)   user.name   = name.trim();
     if (weight) user.weight = parseFloat(weight);
+    if (alergia !== undefined) user.alergia = alergia.trim();
 
     const edadActual = calcularEdadLocal(user.birthDate);
     const pesoActual = user.weight;
@@ -197,6 +199,7 @@ router.put('/profile', protect, async (req, res) => {
         googleId: updatedUser.googleId, isVerified: updatedUser.isVerified,
         birthDate: updatedUser.birthDate, age: edadResp,
         weight: updatedUser.weight, height: updatedUser.height,
+        alergia: user.alergia || '',
         isSuperAdmin: updatedUser.isSuperAdmin || false,
         termsAccepted:   updatedUser.termsAccepted   || false,
         termsVersion:    updatedUser.termsVersion    || '',
@@ -230,11 +233,13 @@ router.put('/avatar', protect, uploadAvatar.single('avatar'), async (req, res) =
         role: user.role, avatar: user.avatar,
         googleId: user.googleId, isVerified: user.isVerified,
         isSuperAdmin: user.isSuperAdmin || false,
+        alergia: user.alergia || '',
         age: user.age, weight: user.weight, height: user.height,
         termsAccepted:   user.termsAccepted   || false,
         termsVersion:    user.termsVersion    || '',
         profileComplete: user.profileComplete  || false,
         createdAt: user.createdAt
+        
       },
       message: 'Avatar actualizado'
     });
@@ -325,9 +330,10 @@ router.post('/accept-terms', protect, async (req, res) => {
 // COMPLETAR PERFIL
 router.post('/complete-profile', protect, async (req, res) => {
   try {
-    const { age, birthDate, weight, height } = req.body;
+    const { age, birthDate, weight, height, alergia } = req.body;
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (alergia) user.alergia = alergia.trim();
 
     // Prioridad: birthDate enviado > birthDate ya almacenado > age legacy
     if (birthDate) {
