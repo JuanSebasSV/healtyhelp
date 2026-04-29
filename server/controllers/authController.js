@@ -30,6 +30,7 @@ const buildUserResponse = (user) => {
     birthDate:       user.birthDate,
     age:             calcularEdad(user.birthDate),
     weight:          user.weight,
+    alergia: user.alergia || '',
     height:          user.height,
     termsAccepted:   user.termsAccepted   || false,
     termsVersion:    user.termsVersion    || '',
@@ -57,8 +58,9 @@ const validarPassword = (password) => {
 };
 
 exports.register = async (req, res) => {
+  console.log('body registro:', req.body);
   try {
-    const { name, email, password, birthDate, weight, height } = req.body;
+    const { name, email, password, birthDate, weight, height, alergia } = req.body;
 
     const nameError = validarNombre(name);
     if (nameError) return res.status(400).json({ error: nameError });
@@ -108,6 +110,8 @@ exports.register = async (req, res) => {
       birthDate: fechaNac,
       ...(pesoNum && { weight: pesoNum }),
       ...(altNum  && { height: altNum  }),
+      ...(alergia  && { alergia: alergia.trim() }),
+
       profileComplete,
       isVerified:         false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),

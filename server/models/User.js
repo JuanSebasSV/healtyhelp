@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
   },
   weight: { type: Number, min: 40, max: 300 }, // kg
   height: { type: Number, min: 50, max: 210 }, // cm
+  alergia: { type: String, default: '' },
   role: {
     type: String,
     enum: ['user', 'admin'],
