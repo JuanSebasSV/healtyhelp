@@ -20,10 +20,19 @@ const VistaContacto = () => {
     }
     setEnviando(true);
     try {
+      const token = localStorage.getItem('token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      await api.post('/contacto', {
+        nombre: datosForm.nombre,
+        email: datosForm.email,
+        asunto: datosForm.asunto,
+        mensaje: datosForm.mensaje
+      }, { headers });
       toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
       setDatosForm({ nombre: '', email: '', asunto: '', mensaje: '' });
     } catch (error) {
-      toast.error('Error al enviar el mensaje. Intenta de nuevo.');
+      const msg = error.response?.data?.error || 'Error al enviar el mensaje. Intenta de nuevo.';
+      toast.error(msg);
     } finally {
       setEnviando(false);
     }
@@ -32,7 +41,6 @@ const VistaContacto = () => {
   return (
     <div className="vista-contacto">
 
-      {/*Header desktop (oculto en móvil vía CSS)*/}
       <div className="contacto-header" style={{ marginBottom: '3rem' }}>
         <h1>Contáctanos</h1>
         <p className="contacto-subtitulo">
@@ -41,12 +49,9 @@ const VistaContacto = () => {
         </p>
       </div>
 
-      {/*Tarjeta principal*/}
       <div className="contacto-contenedor">
 
-        {/* Panel izquierdo — foto + título hero (móvil) + info items (desktop) */}
         <div className="contacto-info">
-          {/* Título visible solo en móvil dentro del hero */}
           <span className="contacto-hero-titulo">Contáctanos</span>
 
           <div className="info-item">
@@ -58,7 +63,7 @@ const VistaContacto = () => {
             </div>
             <div>
               <h3>Correo</h3>
-              <p>support@healthyhelp.com</p>
+              <p>healtyhelp@gmail.com</p>
             </div>
           </div>
 
@@ -70,7 +75,7 @@ const VistaContacto = () => {
             </div>
             <div>
               <h3>Teléfono</h3>
-              <p>+1 (555) 123-4567</p>
+              <p>+57 317 427 9162</p>
             </div>
           </div>
 
@@ -83,7 +88,7 @@ const VistaContacto = () => {
             </div>
             <div>
               <h3>Ubicación</h3>
-              <p>123 Health Street, Wellness City</p>
+              <p>Carrera 10 No. 11 - 22, Garzón - Huila</p>
             </div>
           </div>
 
@@ -96,21 +101,40 @@ const VistaContacto = () => {
             </div>
             <div>
               <h3>Horario de Atención</h3>
-              <p>Lun - Vie: 9:00 AM - 6:00 PM</p>
+              <p>Lun - Vie: 12:00 PM - 6:00 PM</p>
             </div>
           </div>
         </div>
 
-        {/* Acordeón móvil — info de contacto colapsable */}
         <div className="contacto-acordeon">
           <button
             className="acordeon-trigger"
             onClick={() => setInfoAbierta(prev => !prev)}
             aria-expanded={infoAbierta}
           >
-            <span>Información de contacto</span>
-            <span className={`acordeon-icono${infoAbierta ? ' abierto' : ''}`}>▼</span>
+            <span className="acordeon-trigger-label">
+              <span className="acordeon-punto" />
+              Información de contacto
+            </span>
+            <svg
+              className="acordeon-chevron"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="none"
+            >
+              <polyline
+                points="6 9 12 15 18 9"
+                stroke="rgba(255,255,255,0.90)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
           </button>
+
           <div className={`acordeon-contenido${infoAbierta ? ' abierto' : ''}`}>
             <div className="acordeon-inner">
               <div className="info-item">
@@ -120,7 +144,7 @@ const VistaContacto = () => {
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
                 </div>
-                <div><h3>Correo</h3><p>support@healthyhelp.com</p></div>
+                <div><h3>Correo</h3><p>healtyhelp@gmail.com</p></div>
               </div>
               <div className="info-item">
                 <div className="info-icono">
@@ -128,7 +152,7 @@ const VistaContacto = () => {
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </div>
-                <div><h3>Teléfono</h3><p>+1 (555) 123-4567</p></div>
+                <div><h3>Teléfono</h3><p>+57 317 427 9162</p></div>
               </div>
               <div className="info-item">
                 <div className="info-icono">
@@ -137,7 +161,7 @@ const VistaContacto = () => {
                     <circle cx="12" cy="10" r="3" />
                   </svg>
                 </div>
-                <div><h3>Ubicación</h3><p>123 Health Street, Wellness City</p></div>
+                <div><h3>Ubicación</h3><p>Carrera 10 No. 11 - 22, Garzón - Huila</p></div>
               </div>
               <div className="info-item">
                 <div className="info-icono">
@@ -146,43 +170,55 @@ const VistaContacto = () => {
                     <polyline points="12 6 12 12 16 14" />
                   </svg>
                 </div>
-                <div><h3>Horario de Atención</h3><p>Lun - Vie: 9:00 AM - 6:00 PM</p></div>
+                <div><h3>Horario de Atención</h3><p>Lun - Vie: 12:00 PM - 6:00 PM</p></div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Panel derecho — formulario */}
         <div className="contacto-form">
           <h2>Envíanos un Mensaje</h2>
-          <input
-            type="text"
-            placeholder="Nombre completo *"
-            value={datosForm.nombre}
-            onChange={(e) => setDatosForm({ ...datosForm, nombre: e.target.value })}
-            disabled={enviando}
-          />
-          <input
-            type="email"
-            placeholder="Correo electrónico *"
-            value={datosForm.email}
-            onChange={(e) => setDatosForm({ ...datosForm, email: e.target.value })}
-            disabled={enviando}
-          />
-          <input
-            type="text"
-            placeholder="Asunto"
-            value={datosForm.asunto}
-            onChange={(e) => setDatosForm({ ...datosForm, asunto: e.target.value })}
-            disabled={enviando}
-          />
-          <textarea
-            placeholder="Mensaje *"
-            rows="5"
-            value={datosForm.mensaje}
-            onChange={(e) => setDatosForm({ ...datosForm, mensaje: e.target.value })}
-            disabled={enviando}
-          />
+
+          <div className="campo-wrapper">
+            <input
+              type="text"
+              placeholder="Nombre completo *"
+              value={datosForm.nombre}
+              onChange={(e) => setDatosForm({ ...datosForm, nombre: e.target.value })}
+              disabled={enviando}
+            />
+          </div>
+
+          <div className="campo-wrapper">
+            <input
+              type="email"
+              placeholder="Correo electrónico *"
+              value={datosForm.email}
+              onChange={(e) => setDatosForm({ ...datosForm, email: e.target.value })}
+              disabled={enviando}
+            />
+          </div>
+
+          <div className="campo-wrapper">
+            <input
+              type="text"
+              placeholder="Asunto"
+              value={datosForm.asunto}
+              onChange={(e) => setDatosForm({ ...datosForm, asunto: e.target.value })}
+              disabled={enviando}
+            />
+          </div>
+
+          <div className="campo-wrapper campo-textarea">
+            <textarea
+              placeholder="Mensaje *"
+              rows="5"
+              value={datosForm.mensaje}
+              onChange={(e) => setDatosForm({ ...datosForm, mensaje: e.target.value })}
+              disabled={enviando}
+            />
+          </div>
+
           <button
             onClick={enviarMensaje}
             className="btn-primario"

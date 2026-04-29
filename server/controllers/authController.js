@@ -1,59 +1,11 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { enviarEmail, emailBase } = require('../utils/emailService');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
-
-const enviarEmail = async ({ to, subject, html }) => {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: process.env.EMAIL_FROM,   // ej: "Healthy Help <no-reply@tudominio.com>"
-      to,
-      subject,
-      html
-    })
-  });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(`Resend error: ${JSON.stringify(err)}`);
-  }
-  return res.json();
-};
-
-const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizaste esta acción, ignora este correo.' }) => `
-<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background:#0d1f13;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1f13;padding:40px 16px;">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-        <tr><td align="center" style="padding-bottom:24px;">
-          <div style="display:inline-block;background:linear-gradient(135deg,#1a4d2e,#4f772d);border-radius:14px;padding:12px 24px;">
-            <span style="color:#fff;font-size:20px;font-weight:700;font-family:Georgia,serif;">🌿 Healthy Help</span>
-          </div>
-        </td></tr>
-        <tr><td style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:36px 32px;">
-          <h1 style="color:#fff;font-size:24px;font-family:Georgia,serif;margin:0 0 6px;text-align:center;">${titulo}</h1>
-          <p style="color:rgba(255,255,255,0.5);font-size:13px;text-align:center;margin:0 0 28px;">${subtitulo}</p>
-          ${contenido}
-        </td></tr>
-        <tr><td align="center" style="padding-top:20px;">
-          <p style="color:rgba(255,255,255,0.22);font-size:12px;margin:0;">${footerTexto}</p>
-          <p style="color:rgba(255,255,255,0.12);font-size:11px;margin:5px 0 0;">© Healthy Help — Cuida tu salud con confianza</p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
 
 const calcularEdad = (birthDate) => {
   if (!birthDate) return null;
@@ -104,7 +56,6 @@ const validarPassword = (password) => {
   return null;
 };
 
-// REGISTRO
 exports.register = async (req, res) => {
   try {
     const { name, email, password, birthDate, weight, height } = req.body;
@@ -201,7 +152,6 @@ async function enviarCodigoVerificacion(email, name, code) {
   });
 }
 
-// VERIFICAR EMAIL
 exports.verifyEmail = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -238,7 +188,6 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-// PERFIL DEL USUARIO AUTENTICADO
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('+password');
@@ -254,7 +203,6 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// ACEPTAR TÉRMINOS
 exports.acceptTerms = async (req, res) => {
   try {
     const { version } = req.body;
@@ -272,7 +220,6 @@ exports.acceptTerms = async (req, res) => {
   }
 };
 
-// COMPLETAR PERFIL
 exports.completeProfile = async (req, res) => {
   try {
     const userActual = await User.findById(req.user._id);
@@ -315,7 +262,6 @@ exports.completeProfile = async (req, res) => {
   }
 };
 
-// LOGIN
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -378,7 +324,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// ESTABLECER CONTRASEÑA EN CUENTA GOOGLE
 exports.setGooglePassword = async (req, res) => {
   try {
     const { password } = req.body;
@@ -434,7 +379,6 @@ async function enviarAlertaBloqueo(email, name) {
   });
 }
 
-// OLVIDÉ CONTRASEÑA
 exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -492,7 +436,6 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// RESETEAR CONTRASEÑA
 exports.resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -521,7 +464,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// REENVIAR CÓDIGO
 exports.resendCode = async (req, res) => {
   try {
     const { email } = req.body;
