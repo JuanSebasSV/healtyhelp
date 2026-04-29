@@ -1,4 +1,5 @@
 /* PanelRecomendaciones.css */
+
 .rec-panel {
   margin-top: 2.5rem;
   padding: 1.75rem;
@@ -15,7 +16,7 @@
   border-color: rgba(79, 119, 45, 0.25);
 }
 
-/*Encabezado*/
+/* ── Encabezado ── */
 .rec-header {
   margin-bottom: 1.25rem;
 }
@@ -53,7 +54,7 @@
   text-transform: capitalize;
 }
 
-/*Stats superiores*/
+/* ── Stats superiores ── */
 .rec-stats {
   display: flex;
   flex-wrap: wrap;
@@ -90,7 +91,7 @@
   opacity: 0.75;
 }
 
-/*Íconos*/
+/* ── Íconos ── */
 .rec-ico {
   width: 1.1rem;
   height: 1.1rem;
@@ -103,7 +104,109 @@
   flex-shrink: 0;
 }
 
-/*Alertas*/
+/* ── Barra de progreso calórico ── */
+.rec-progreso-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.rec-progreso-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.rec-progreso-consumido {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+}
+
+.rec-progreso-meta {
+  color: rgba(167, 213, 136, 0.85);
+  font-weight: 600;
+}
+
+.rec-progreso-exceso {
+  color: var(--naranja);
+}
+
+.rec-progreso-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.rec-progreso-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.7), rgba(167, 213, 136, 0.85));
+  transition: width 0.6s ease;
+}
+
+.rec-progreso-fill--ok {
+  background: linear-gradient(90deg, rgba(79, 119, 45, 0.7), rgba(167, 213, 136, 0.9));
+}
+
+.rec-progreso-fill--exceso {
+  background: linear-gradient(90deg, rgba(247, 127, 0, 0.7), rgba(220, 38, 38, 0.8));
+}
+
+.rec-progreso-objetivo {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: right;
+}
+
+/* ── Panel de macros de hoy ── */
+.rec-macros-hoy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.rec-macro-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.rec-macro-label {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.55);
+  min-width: 44px;
+  font-weight: 600;
+}
+
+.rec-macro-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.rec-macro-fill {
+  height: 100%;
+  border-radius: 999px;
+  opacity: 0.8;
+  transition: width 0.5s ease;
+}
+
+.rec-macro-pct {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Alertas ── */
 .rec-seccion {
   margin-bottom: 1.5rem;
 }
@@ -127,7 +230,7 @@
 .rec-alerta--naranja { background: rgba(247, 127, 0, 0.1); border-color: rgba(247, 127, 0, 0.3); color: var(--naranja); }
 .rec-alerta--azul    { background: rgba(96, 165, 250, 0.08); border-color: rgba(96, 165, 250, 0.2); color: var(--azul-claro); }
 
-/*Secciones de tips*/
+/* ── Secciones de tips ── */
 .rec-sec-titulo {
   display: flex;
   align-items: center;
@@ -164,13 +267,28 @@
   color: var(--naranja-suave);
 }
 
+.rec-item--hoy {
+  background: rgba(96, 165, 250, 0.06);
+  border: 1px solid rgba(96, 165, 250, 0.12);
+  color: rgba(200, 225, 255, 0.85);
+}
+
 .rec-bullet {
   font-size: 1rem;
   flex-shrink: 0;
   margin-top: 0.05rem;
 }
 
-/*Estados de carga*/
+.rec-bullet-ico {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: currentColor;
+  opacity: 0.75;
+}
+
+/* ── Estados de carga ── */
 .rec-cargando {
   display: flex;
   flex-direction: column;
@@ -201,7 +319,7 @@
   padding: 1rem;
 }
 
-/*Disclaimer*/
+/* ── Disclaimer ── */
 .rec-disclaimer {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
@@ -209,7 +327,7 @@
   text-align: center;
 }
 
-/*Responsive*/
+/* ── Responsive ── */
 @media (max-width: 968px) {
   .rec-panel {
     padding: 1.25rem;
@@ -221,7 +339,7 @@
   .rec-titulo { font-size: 1.05rem; }
 }
 
-/*Sin cobertura*/
+/* ── Sin cobertura ── */
 .rec-sin-cobertura {
   display: flex;
   align-items: flex-start;
@@ -239,10 +357,53 @@
   filter: grayscale(0.3);
 }
 
+.rec-sin-ico {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .rec-sin-cobertura p {
   margin: 0;
   font-size: 0.86rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.55);
   font-style: italic;
+}
+
+/* ── Aviso de categoría ── */
+.rec-cat-aviso {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  line-height: 1.6;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.65rem;
+  border-left: 3px solid rgba(167, 213, 136, 0.3);
+}
+
+.rec-cat-aviso strong {
+  color: rgba(167, 213, 136, 0.9);
+}
+
+/* ── Botón reintentar ── */
+.rec-btn-reintentar {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  background: rgba(79, 119, 45, 0.15);
+  border: 1px solid rgba(79, 119, 45, 0.35);
+  border-radius: 8px;
+  color: rgba(167, 213, 136, 0.9);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rec-btn-reintentar:hover {
+  background: rgba(79, 119, 45, 0.3);
 }
