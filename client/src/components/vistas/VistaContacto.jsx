@@ -3,6 +3,30 @@ import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './VistaContacto.css';
 
+const DOMINIOS_PERMITIDOS = new Set([
+  'gmail.com',
+  'hotmail.com', 'hotmail.es', 'hotmail.co.uk', 'hotmail.fr', 'hotmail.de',
+  'outlook.com', 'outlook.es', 'live.com', 'live.com.mx', 'live.co.uk',
+  'msn.com',
+  'yahoo.com', 'yahoo.es', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de',
+  'yahoo.com.mx', 'yahoo.com.ar', 'yahoo.com.co',
+  'icloud.com', 'me.com', 'mac.com',
+  'protonmail.com', 'proton.me', 'pm.me',
+  'tutanota.com', 'tuta.io',
+  'zoho.com',
+  'aol.com', 'aol.co.uk',
+  'mail.com', 'email.com', 'gmx.com', 'gmx.de', 'gmx.net',
+  'yandex.com', 'yandex.ru',
+  'bol.com.br', 'ig.com.br', 'uol.com.br', 'terra.com.br',
+  'hotmail.com.br',
+]);
+
+const esEmailPermitido = (email) => {
+  const partes = email.split('@');
+  if (partes.length !== 2) return false;
+  return DOMINIOS_PERMITIDOS.has(partes[1].toLowerCase());
+};
+
 const VistaContacto = () => {
   const [datosForm, setDatosForm] = useState({
     nombre: '',
@@ -12,12 +36,41 @@ const VistaContacto = () => {
   });
   const [enviando, setEnviando] = useState(false);
   const [infoAbierta, setInfoAbierta] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-  const enviarMensaje = async () => {
-    if (!datosForm.nombre || !datosForm.email || !datosForm.mensaje) {
-      toast.error('Por favor completa todos los campos obligatorios');
+  const validarYMostrarConfirmacion = () => {
+    const { nombre, email, mensaje } = datosForm;
+
+    if (!nombre || nombre.trim().length < 2) {
+      toast.error('El nombre debe tener al menos 2 caracteres');
       return;
     }
+    if (!email) {
+      toast.error('El correo es requerido');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('El correo no tiene un formato válido');
+      return;
+    }
+    if (!esEmailPermitido(email)) {
+      toast.error('Usa un proveedor reconocido (Gmail, Hotmail, Outlook, etc.)');
+      return;
+    }
+    if (!mensaje || mensaje.trim().length < 10) {
+      toast.error('El mensaje debe tener al menos 10 caracteres');
+      return;
+    }
+    if (mensaje.trim().length > 1000) {
+      toast.error('El mensaje es muy largo (máximo 1000 caracteres)');
+      return;
+    }
+
+    setMostrarConfirmacion(true);
+  };
+
+  const confirmarYEnviar = async () => {
+    setMostrarConfirmacion(false);
     setEnviando(true);
     try {
       const token = localStorage.getItem('token');
@@ -40,6 +93,64 @@ const VistaContacto = () => {
 
   return (
     <div className="vista-contacto">
+
+      {mostrarConfirmacion && (
+        <div
+          className="confirmacion-overlay"
+          onClick={() => setMostrarConfirmacion(false)}
+        >
+          <div
+            className="confirmacion-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="confirmacion-header">
+              <div className="confirmacion-icono">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <h3>Confirma tu mensaje</h3>
+              <p>Revisa que todo esté correcto antes de enviar</p>
+            </div>
+
+            <div className="confirmacion-cuerpo">
+              <div className="confirmacion-fila">
+                <span className="confirmacion-etiqueta">Nombre</span>
+                <span className="confirmacion-valor">{datosForm.nombre}</span>
+              </div>
+              <div className="confirmacion-fila">
+                <span className="confirmacion-etiqueta">Correo</span>
+                <span className="confirmacion-valor confirmacion-email">{datosForm.email}</span>
+              </div>
+              {datosForm.asunto && (
+                <div className="confirmacion-fila">
+                  <span className="confirmacion-etiqueta">Asunto</span>
+                  <span className="confirmacion-valor">{datosForm.asunto}</span>
+                </div>
+              )}
+              <div className="confirmacion-fila confirmacion-fila--mensaje">
+                <span className="confirmacion-etiqueta">Mensaje</span>
+                <span className="confirmacion-valor confirmacion-mensaje">{datosForm.mensaje}</span>
+              </div>
+            </div>
+
+            <div className="confirmacion-acciones">
+              <button
+                className="confirmacion-btn-editar"
+                onClick={() => setMostrarConfirmacion(false)}
+              >
+                Editar
+              </button>
+              <button
+                className="confirmacion-btn-enviar"
+                onClick={confirmarYEnviar}
+              >
+                Confirmar y enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="contacto-header" style={{ marginBottom: '3rem' }}>
         <h1>Contáctanos</h1>
@@ -220,7 +331,7 @@ const VistaContacto = () => {
           </div>
 
           <button
-            onClick={enviarMensaje}
+            onClick={validarYMostrarConfirmacion}
             className="btn-primario"
             disabled={enviando}
           >
@@ -232,5 +343,6 @@ const VistaContacto = () => {
     </div>
   );
 };
+
 
 export default VistaContacto;

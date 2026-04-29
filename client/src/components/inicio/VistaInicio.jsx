@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TarjetaReceta from '../recipe/TarjetaReceta';
-import DetalleReceta from '../recipe/DetalleReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
 import './VistaInicio.css';
@@ -83,11 +82,7 @@ const VistaInicio = ({
   const [imagenActual,      setImagenActual]       = useState(0);
   const [seleccionadas,     setSeleccionadas]      = useState([]);
   const [generandoPDF,      setGenerandoPDF]       = useState(false);
-  const [recetaAbierta,       setRecetaAbierta]       = useState(null);
-  const [resenaIdDestacada,   setResenaIdDestacada]   = useState(null);
-  const [respuestaIdDestacada, setRespuestaIdDestacada] = useState(null);
   const [isDragging,        setIsDragging]         = useState(false);
-  // estados de búsqueda y filtro por tiempo
   const [busqueda,          setBusqueda]           = useState('');
   const [filtroTiempo,      setFiltroTiempo]       = useState(null);
 
@@ -137,19 +132,12 @@ const VistaInicio = ({
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
-  //  Abrir receta desde prop (notificaciones) 
-
-  useEffect(() => {
-    if (!recetaPendiente || !recetas.length) return;
-    const id    = recetaPendiente.recetaId ?? recetaPendiente; // compat. si llega string
-    const found = recetas.find(r => r._id === id || r._id?.toString() === id?.toString());
-    if (found) {
-      setRecetaAbierta(found);
-      setResenaIdDestacada(recetaPendiente.resenaId    ?? null);
-      setRespuestaIdDestacada(recetaPendiente.respuestaId ?? null);
-      onRecetaPendienteResuelta?.();
-    }
-  }, [recetaPendiente, recetas]);
+  //  Abrir receta desde prop (notificaciones)
+  // Los datos se calculan directamente desde recetaPendiente y se pasan a TarjetaReceta
+  const pendienteId = useMemo(() => {
+    if (!recetaPendiente) return null;
+    return recetaPendiente.recetaId ?? recetaPendiente;
+  }, [recetaPendiente]);
 
   //  Carrusel hero 
   const cambiarImagen = useCallback((idx) => {
@@ -269,20 +257,112 @@ const VistaInicio = ({
         </div>
       </div>
 
-      {/*  Botón filtro de condiciones  */}
-      <div className="filtroModalWrapper">
-        <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-          </svg>
-          ¡Busca tu Tipo de Dieta Aquí!
-          {totalCondicionesActivas > 0 && (
-            <span className="filtroModalBadge">{totalCondicionesActivas}</span>
-          )}
-        </button>
-      </div>
+      {/*  Zona de filtros unificada  */}
+      {/* ── Panel de filtros unificado ── */}
+      <div className="filtros-bloque">
 
-      {/*  Modal filtro salud  */}
+        {/* Fila 1: buscador + botón dieta */}
+        <div className="filtros-top-row">
+          <div className="buscador-input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Buscar receta por nombre o descripción..."
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              className="buscador-input"
+            />
+            {busqueda && (
+              <button className="buscador-clear" onClick={() => setBusqueda('')} aria-label="Limpiar búsqueda">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            )}
+          </div>
+
+          <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            ¡Busca tu Tipo de Dieta Aquí!
+            {totalCondicionesActivas > 0 && (
+              <span className="filtroModalBadge">{totalCondicionesActivas}</span>
+            )}
+          </button>
+        </div>
+
+        {/* Separador interno */}
+        <hr className="filtros-bloque__sep" />
+
+        {/* Fila 2: Categorías (izq, scroll) + separador vertical + Tiempo (der, fijo) */}
+        <div className="filtros-segunda-fila">
+
+          {/* Tarjetas de categoría */}
+          <div className="cats-scroll-outer">
+            <div className="cats-scroll-inner">
+              {CATEGORIAS.map(cat => {
+                const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    className={`cat-card ${esActivo ? 'activo' : ''}`}
+                    onClick={() => handleCategoria(cat.id)}
+                  >
+                    <span className="cat-card__icono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
+                    <span className="cat-card__label">{cat.nombre}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Separador vertical */}
+          <div className="filtros-vsep" aria-hidden="true" />
+
+          {/* Control segmentado de tiempo */}
+          <div className="tiempo-wrapper">
+            <span className="tiempo-etiqueta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Tiempo
+            </span>
+            <div className="tiempo-seg">
+              {TIEMPOS.map(t => (
+                <button
+                  key={t.id}
+                  className={`tiempo-seg__btn ${filtroTiempo === t.id ? 'activo' : ''}`}
+                  onClick={() => handleFiltroTiempo(t.id)}
+                >
+                  {t.nombre}
+                </button>
+              ))}
+            </div>
+            {filtroTiempo && (
+              <button className="tiempo-seg__limpiar" onClick={() => setFiltroTiempo(null)}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+                Limpiar
+              </button>
+            )}
+          </div>
+
+        </div>{/* /filtros-segunda-fila */}
+
+        {/* Conteo de búsqueda — dentro del panel, al final */}
+        {busqueda && (
+          <span className="buscador-conteo">
+            {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para &ldquo;{busqueda}&rdquo;
+          </span>
+        )}
+
+      </div>{/* /filtros-bloque */}
+
+      {/*  Modal filtro salud — fuera del panel  */}
       {filtroAbierto && (
         <div className="filtroModalOverlay" onClick={(e) => { if (e.target === e.currentTarget) setFiltroAbierto(false); }}>
           <div className="filtroModal">
@@ -318,76 +398,6 @@ const VistaInicio = ({
         </div>
       )}
 
-      {/*  Categorías  */}
-      <section className="categorias">
-        {CATEGORIAS.map(cat => {
-          const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
-          return (
-            <button
-              key={cat.id}
-              className={`catBtn ${esActivo ? 'activo' : ''}`}
-              onClick={() => handleCategoria(cat.id)}
-            >
-              <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
-              <span>{cat.nombre}</span>
-            </button>
-          );
-        })}
-      </section>
-
-      {/* Filtro por tiempo */}
-      <section className="categorias tiempos-fila">
-        <span className="tiempos-label">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-          </svg>
-          Tiempo:
-        </span>
-        {TIEMPOS.map(t => (
-          <button
-            key={t.id}
-            className={`catBtn catBtn--tiempo ${filtroTiempo === t.id ? 'activo' : ''}`}
-            onClick={() => handleFiltroTiempo(t.id)}
-          >
-            <span className="catIcono" dangerouslySetInnerHTML={{ __html: t.icono }} />
-            <span>{t.nombre}</span>
-          </button>
-        ))}
-        {filtroTiempo && (
-          <button className="catBtn catBtn--limpiar-tiempo" onClick={() => setFiltroTiempo(null)}>
-            ✕ Limpiar
-          </button>
-        )}
-      </section>
-
-      {/*Buscador por nombre o descripción */}
-      <div className="buscador-recetas">
-        <div className="buscador-input-wrap">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input
-            type="text"
-            placeholder="Buscar receta por nombre o descripción..."
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            className="buscador-input"
-          />
-          {busqueda && (
-            <button className="buscador-clear" onClick={() => setBusqueda('')} aria-label="Limpiar búsqueda">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
-            </button>
-          )}
-        </div>
-        {busqueda && (
-          <span className="buscador-conteo">
-            {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
-          </span>
-        )}
-      </div>
-
       {/*  Recetas  */}
       <section className="recetasGrid">
         <div className="recetasGrid-header">
@@ -406,19 +416,26 @@ const VistaInicio = ({
           </div>
         ) : (
           <div className="grid">
-            {recetasFiltradas.map(receta => (
-              <TarjetaReceta
-                key={receta._id}
-                receta={receta}
-                toggleFav={toggleFav}
-                esFav={favoritos.includes(receta._id)}
-                seleccionada={seleccionadas.includes(receta._id)}
-                onSeleccionar={toggleSeleccion}
-                autoAbrir={recetaAbierta?._id === receta._id && !!recetaPendiente}
-                resenaIdDestacada={recetaAbierta?._id === receta._id ? resenaIdDestacada : undefined}
-                respuestaIdDestacada={recetaAbierta?._id === receta._id ? respuestaIdDestacada : undefined}
-              />
-            ))}
+            {recetasFiltradas.map(receta => {
+              const esPendiente = !!pendienteId && (
+                receta._id === pendienteId ||
+                receta._id?.toString() === pendienteId?.toString()
+              );
+              return (
+                <TarjetaReceta
+                  key={receta._id}
+                  receta={receta}
+                  toggleFav={toggleFav}
+                  esFav={favoritos.includes(receta._id)}
+                  seleccionada={seleccionadas.includes(receta._id)}
+                  onSeleccionar={toggleSeleccion}
+                  autoAbrir={esPendiente}
+                  resenaIdDestacada={esPendiente ? (recetaPendiente?.resenaId ?? null) : undefined}
+                  respuestaIdDestacada={esPendiente ? (recetaPendiente?.respuestaId ?? null) : undefined}
+                  onPendienteResuelta={esPendiente ? onRecetaPendienteResuelta : undefined}
+                />
+              );
+            })}
           </div>
         )}
 
@@ -450,16 +467,6 @@ const VistaInicio = ({
             </>
           )}
         </button>
-      )}
-
-      {/*  Modal detalle receta  */}
-      {recetaAbierta && (
-        <DetalleReceta
-          receta={recetaAbierta}
-          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); setRespuestaIdDestacada(null); }}
-          resenaIdDestacada={resenaIdDestacada}
-          respuestaIdDestacada={respuestaIdDestacada}
-        />
       )}
 
       {/*  Scrollbar personalizado  */}

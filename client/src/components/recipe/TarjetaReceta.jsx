@@ -97,15 +97,6 @@ const TarjetaReceta = memo(({
             <IconoCorazon />
           </button>
 
-          <button
-            className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
-            onClick={handleSeleccionar}
-            title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-            aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-          >
-            {seleccionada ? <IconoCheck /> : <IconoPDF />}
-          </button>
-
           {costoFormato && (
             <div className="tarjeta-costo-badge">
               <span className="tarjeta-costo-icono">🍽️</span>
@@ -141,6 +132,15 @@ const TarjetaReceta = memo(({
               </span>
             )}
           </div>
+
+          <button
+            className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
+            onClick={handleSeleccionar}
+            title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+            aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+          >
+            {seleccionada ? <IconoCheck /> : <IconoPDF />}
+          </button>
         </div>
       </div>
 

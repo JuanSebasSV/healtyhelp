@@ -155,6 +155,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  position: relative; /* contiene al btnSeleccionar */
 }
 
 .modo-oscuro .tarjetaInfo {
@@ -248,107 +249,114 @@
 }
 
 /* =====================================================
-   RESPONSIVE MÓVIL
+   RESPONSIVE MÓVIL — 2 columnas, sin descripción
+   (breakpoint sincronizado con .recetasGrid en VistaInicio.css)
    ===================================================== */
-@media (max-width: 900px) {
- 
+@media (max-width: 767px) {
 
-  .tarjetaInfo p { display: none; }
-  .estrella-ico { font-size: 0.72rem; }
-  .tarjeta-prom-txt { font-size: 0.67rem; }
-  .tarjetaPuntuacion {
-    padding-top: 0.4rem;
-    gap: 0.3rem;
-    margin-top: 0;
+  /* Ocultar descripción en móvil */
+  .tarjetaInfo p {
+    display: none !important;
   }
 
+  /* Tarjeta compacta para 2 columnas */
+  .tarjetaReceta {
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    padding: 0.4rem;
+    gap: 0.4rem;
+    height: auto;
+  }
+
+  /* Imagen proporcionada al ancho de columna */
+  .tarjetaImg {
+    height: 130px;
+    min-height: 130px;
+    border-radius: 10px;
+  }
+
+  /* Botón favorito compacto */
   .btnFav {
     width: 28px;
     height: 28px;
-    top: 0.4rem;
-    right: 0.4rem;
+    top: 0.35rem;
+    right: 0.35rem;
     border-radius: 8px;
-    /* FIX: sin blur en botones sobre móvil */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(0, 0, 0, 0.45);
   }
+  .btnFav svg { width: 13px; height: 13px; }
 
-  .btnFav svg { width: 14px; height: 14px; }
-
-  .tarjeta-tiempo {
-    font-size: 0.62rem;
-    padding: 0.1rem 0.4rem;
+  /* Botón seleccionar — compacto en info section */
+  .btnSeleccionar {
+    width: 22px;
+    height: 22px;
+    bottom: 0.45rem;
+    right: 0.45rem;
+    border-radius: 6px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.30);
+    border-color: rgba(255, 255, 255, 0.2);
   }
+  .btnSeleccionar svg { width: 10px; height: 10px; }
 
-
-  /* La tarjeta completa */
-  .tarjetaReceta {
-    display: flex;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 16px;
-    overflow: hidden;
-    height: auto !important; /* Permite que crezca según el texto */
-    margin-bottom: 10px;
-  }
-
-  /* La imagen para que no ocupe toda la pantalla */
-  .tarjetaImg {
-    height: 220px; /* Altura fija para que el resto sea texto */
-    width: 100%;
-  }
-
-  .tarjetaImg img {
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Donde está el título y la descripción */
+  /* Info de tarjeta compacta */
   .tarjetaInfo {
-    padding: 1.5rem; /* Espacio interno para que el texto no toque los bordes */
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 0.5rem 0.6rem 0.55rem 0.75rem;
+    gap: 0.3rem;
   }
 
   .tarjetaInfo h3 {
-    font-size: 1.2rem;
-    color: #ffffff;
-    margin: 0;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+    line-height: 1.25;
+    /* 2 líneas máximo */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  /* ESTO ES CLAVE: Mostrar la descripción completa */
-  .tarjetaInfo p {
-    display: block !important; /* Por si tenías un limitador de líneas */
-    -webkit-line-clamp: unset !important; 
-    max-height: none !important;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #e0e0e0; /* Un gris muy claro para lectura */
-    margin: 0.5rem 0;
+  /* Puntuación más compacta */
+  .tarjetaPuntuacion {
+    padding-top: 0.35rem;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0;
   }
 
+  .estrella-ico { font-size: 0.65rem; }
+  .tarjeta-prom-txt { font-size: 0.62rem; }
+
+  .tarjeta-tiempo {
+    font-size: 0.58rem;
+    padding: 0.1rem 0.35rem;
+    gap: 0.2rem;
+    margin-left: 0;
+  }
+  .tarjeta-tiempo svg { width: 10px; height: 10px; }
 }
+
+/* Pantallas muy pequeñas */
 @media (max-width: 360px) {
-  .tarjetaImg { height: 180px; min-height: 180px; }
-  .tarjetaInfo h3 { font-size: 0.9rem; }
-  .tarjetaInfo p {
-    font-size: 0.82rem;
-    -webkit-line-clamp: 3;
-  }
+  .tarjetaImg { height: 110px; min-height: 110px; }
+  .tarjetaInfo h3 { font-size: 0.75rem; }
+  .tarjeta-prom-txt { font-size: 0.58rem; }
 }
 
-/*Botón seleccionar*/
+/*Botón seleccionar — vive dentro de tarjetaInfo */
 .btnSeleccionar {
   position: absolute;
-  bottom: 0.85rem;
-  right: 0.85rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.28);
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
@@ -382,13 +390,5 @@
   border-color: rgba(22, 163, 74, 0.65);
 }
 .btnSeleccionar.activo svg { stroke: #4ade80; }
-
-@media (max-width: 900px) {
-  .btnSeleccionar {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(0, 0, 0, 0.45);
-  }
-}
 
 .tarjeta-seleccionada { outline: 2px solid #16a34a; }
