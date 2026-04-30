@@ -1,20 +1,22 @@
 // useFiltroSalud
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import api from '../api/axios';
+import { useState, useEffect, useCallback, useRef } from "react";
+import api from "../api/axios";
 
-//  Claves de almacenamiento local (solo para anónimos) 
-const LS_CONDICIONES = 'hh_filtros_condiciones';
-const LS_CATEGORIA   = 'hh_filtro_categoria'; // solo un string, no array
+//  Claves de almacenamiento local
+const LS_CONDICIONES = "hh_filtros_condiciones";
+const LS_CATEGORIA = "hh_filtro_categoria";
+const LS_TIEMPO = "hh_filtro_tiempo"; // ← NUEVO
 
 let _cache = {
-  uid:        null,
-  filtros:    [],
-  categoria:  '', 
-  cargado:    false,
+  uid: null,
+  filtros: [],
+  categoria: "",
+  filtroTiempo: null, // ← NUEVO
+  cargado: false,
 };
 
-//  Helpers localStorage (solo anónimos) 
+//  Helpers localStorage
 const leerLS = (clave, fallback) => {
   try {
     const raw = localStorage.getItem(clave);
@@ -27,77 +29,99 @@ const leerLS = (clave, fallback) => {
 const escribirLS = (clave, valor) => {
   try {
     localStorage.setItem(clave, JSON.stringify(valor));
-  } catch {
-    // localStorage bloqueado (modo privado extremo)
-  }
+  } catch {}
 };
 
 const limpiarLS = () => {
   localStorage.removeItem(LS_CONDICIONES);
   localStorage.removeItem(LS_CATEGORIA);
+  localStorage.removeItem(LS_TIEMPO); // ← NUEVO
 };
 
-//  Hook 
+//  Hook
 const useFiltroSalud = (usuario) => {
   const uid = usuario?._id ?? null;
 
-  // Restaurar desde caché si es el mismo usuario
   const cacheActual = _cache.uid === uid && _cache.cargado ? _cache : null;
 
-  const [filtros,   setFiltros]   = useState(cacheActual?.filtros   ?? []);
-  const [categoria, setCategoria] = useState(cacheActual?.categoria ?? '');
-  const [listo,     setListo]     = useState(!!cacheActual?.cargado);
+  const [filtros, setFiltros] = useState(cacheActual?.filtros ?? []);
+  const [categoria, setCategoria] = useState(cacheActual?.categoria ?? "");
+  const [filtroTiempo, setFiltroTiempo] = useState(
+    cacheActual?.filtroTiempo ?? null,
+  ); // ← NUEVO
+  const [listo, setListo] = useState(!!cacheActual?.cargado);
 
-  const peticionRef  = useRef(null);
+  const peticionRef = useRef(null);
   const usuarioIdRef = useRef(uid);
 
-  //  Sincronizar caché → state cuando cambia el usuario 
+  //  Sincronizar caché → state cuando cambia el usuario
   useEffect(() => {
-    // Si el usuario no cambió y ya está cargado, no hacer nada
     if (uid === usuarioIdRef.current && listo) return;
     usuarioIdRef.current = uid;
 
-    // Si hay caché válido para este uid, restaurar sin petición de red
     if (_cache.uid === uid && _cache.cargado) {
       setFiltros(_cache.filtros);
       setCategoria(_cache.categoria);
+      setFiltroTiempo(_cache.filtroTiempo); // ← NUEVO
       setListo(true);
       return;
     }
 
-    // Sin caché: cargar desde fuente de verdad
     setListo(false);
 
     const cargar = async () => {
       if (uid) {
-        // Usuario logueado — limpiar LS del usuario anterior antes de leer BD
         if (_cache.uid !== uid) limpiarLS();
 
         try {
-          const { data } = await api.get('/chat/filtros');
-          const nuevosFiltros   = data.condiciones ?? [];
-          // El backend puede devolver un array (legacy) o string
-          const rawCat          = data.categorias;
-          const nuevaCategoria  = Array.isArray(rawCat)
-            ? (rawCat[0] ?? '') 
-            : (rawCat ?? '');
+          const { data } = await api.get("/chat/filtros");
+          const nuevosFiltros = data.condiciones ?? [];
+          const rawCat = data.categorias;
+          const nuevaCategoria = Array.isArray(rawCat)
+            ? (rawCat[0] ?? "")
+            : (rawCat ?? "");
+          // El tiempo no se guarda en BD (es preferencia de sesión de navegación),
+          // pero sí persiste en localStorage entre recargas/cierres de pestaña.
+          const nuevoTiempo = leerLS(LS_TIEMPO, null);
 
-          _cache = { uid, filtros: nuevosFiltros, categoria: nuevaCategoria, cargado: true };
+          _cache = {
+            uid,
+            filtros: nuevosFiltros,
+            categoria: nuevaCategoria,
+            filtroTiempo: nuevoTiempo, // ← NUEVO
+            cargado: true,
+          };
           setFiltros(nuevosFiltros);
           setCategoria(nuevaCategoria);
+          setFiltroTiempo(nuevoTiempo); // ← NUEVO
         } catch {
-          // Fallo de red: dejar vacío pero marcar como cargado para no bloquear UI
-          _cache = { uid, filtros: [], categoria: '', cargado: true };
+          const nuevoTiempo = leerLS(LS_TIEMPO, null);
+          _cache = {
+            uid,
+            filtros: [],
+            categoria: "",
+            filtroTiempo: nuevoTiempo,
+            cargado: true,
+          };
           setFiltros([]);
-          setCategoria('');
+          setCategoria("");
+          setFiltroTiempo(nuevoTiempo);
         }
       } else {
-        // Usuario anónimo
+        // Usuario anónimo — todo desde localStorage
         const f = leerLS(LS_CONDICIONES, []);
-        const c = leerLS(LS_CATEGORIA,   '');
-        _cache = { uid: null, filtros: f, categoria: c, cargado: true };
+        const c = leerLS(LS_CATEGORIA, "");
+        const t = leerLS(LS_TIEMPO, null); // ← NUEVO
+        _cache = {
+          uid: null,
+          filtros: f,
+          categoria: c,
+          filtroTiempo: t,
+          cargado: true,
+        };
         setFiltros(f);
         setCategoria(c);
+        setFiltroTiempo(t); // ← NUEVO
       }
 
       setListo(true);
@@ -106,85 +130,128 @@ const useFiltroSalud = (usuario) => {
     cargar();
   }, [uid]);
 
-  const persistir = useCallback(async ({ nuevasCondiciones, nuevaCategoria }) => {
-    // Actualizar caché de módulo inmediatamente
-    _cache = {
-      ..._cache,
-      ...(nuevasCondiciones !== undefined && { filtros:   nuevasCondiciones }),
-      ...(nuevaCategoria    !== undefined && { categoria: nuevaCategoria    }),
-    };
+  const persistir = useCallback(
+    async ({ nuevasCondiciones, nuevaCategoria, nuevoTiempo }) => {
+      _cache = {
+        ..._cache,
+        ...(nuevasCondiciones !== undefined && { filtros: nuevasCondiciones }),
+        ...(nuevaCategoria !== undefined && { categoria: nuevaCategoria }),
+        ...(nuevoTiempo !== undefined && { filtroTiempo: nuevoTiempo }), // ← NUEVO
+      };
 
-    if (!usuario) {
-      // Anónimo: solo localStorage
-      if (nuevasCondiciones !== undefined) escribirLS(LS_CONDICIONES, nuevasCondiciones);
-      if (nuevaCategoria    !== undefined) escribirLS(LS_CATEGORIA,   nuevaCategoria);
-      return;
-    }
+      // El tiempo siempre va a localStorage (no lo enviamos a BD)
+      if (nuevoTiempo !== undefined) escribirLS(LS_TIEMPO, nuevoTiempo);
 
-    // La BD almacena categoria como array para compatibilidad con el motor de recomendaciones.
-    const token = Symbol();
-    peticionRef.current = token;
+      if (!usuario) {
+        if (nuevasCondiciones !== undefined)
+          escribirLS(LS_CONDICIONES, nuevasCondiciones);
+        if (nuevaCategoria !== undefined)
+          escribirLS(LS_CATEGORIA, nuevaCategoria);
+        return;
+      }
 
-    try {
-      await api.put('/chat/health-profile', {
-        ...(nuevasCondiciones !== undefined && { condiciones: nuevasCondiciones }),
-        ...(nuevaCategoria    !== undefined && {
-          categorias: nuevaCategoria ? [nuevaCategoria] : [],
-        }),
-      });
-    } catch {
-      // Fallo: revertir estado al último confirmado en BD
-      if (peticionRef.current === token) {
-        try {
-          const { data } = await api.get('/chat/filtros');
-          const revertFiltros   = data.condiciones ?? [];
-          const rawCat          = data.categorias;
-          const revertCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? '') : (rawCat ?? '');
+      // Solo condiciones y categoría van a la BD
+      if (nuevasCondiciones === undefined && nuevaCategoria === undefined)
+        return;
 
-          _cache = { uid, filtros: revertFiltros, categoria: revertCategoria, cargado: true };
-          setFiltros(revertFiltros);
-          setCategoria(revertCategoria);
-        } catch {
+      const token = Symbol();
+      peticionRef.current = token;
+
+      try {
+        await api.put("/chat/health-profile", {
+          ...(nuevasCondiciones !== undefined && {
+            condiciones: nuevasCondiciones,
+          }),
+          ...(nuevaCategoria !== undefined && {
+            categorias: nuevaCategoria ? [nuevaCategoria] : [],
+          }),
+        });
+      } catch {
+        if (peticionRef.current === token) {
+          try {
+            const { data } = await api.get("/chat/filtros");
+            const revertFiltros = data.condiciones ?? [];
+            const rawCat = data.categorias;
+            const revertCategoria = Array.isArray(rawCat)
+              ? (rawCat[0] ?? "")
+              : (rawCat ?? "");
+            _cache = {
+              ..._cache,
+              uid,
+              filtros: revertFiltros,
+              categoria: revertCategoria,
+              cargado: true,
+            };
+            setFiltros(revertFiltros);
+            setCategoria(revertCategoria);
+          } catch {}
         }
       }
-    }
-  }, [usuario, uid]);
+    },
+    [usuario, uid],
+  );
 
-  //  API pública: condiciones (multi-selección) 
-  const toggleFiltro = useCallback((id) => {
-    setFiltros(prev => {
-      const nuevas = prev.includes(id)
-        ? prev.filter(f => f !== id)
-        : [...prev, id];
-      persistir({ nuevasCondiciones: nuevas });
-      return nuevas;
-    });
-  }, [persistir]);
+  //  Condiciones (multi-selección)
+  const toggleFiltro = useCallback(
+    (id) => {
+      setFiltros((prev) => {
+        const nuevas = prev.includes(id)
+          ? prev.filter((f) => f !== id)
+          : [...prev, id];
+        persistir({ nuevasCondiciones: nuevas });
+        return nuevas;
+      });
+    },
+    [persistir],
+  );
 
   const limpiarFiltros = useCallback(() => {
     setFiltros([]);
     persistir({ nuevasCondiciones: [] });
   }, [persistir]);
 
-  const seleccionarCategoria = useCallback((id) => {
-    setCategoria(prev => {
-      const nueva = prev === id ? '' : id;
-      persistir({ nuevaCategoria: nueva });
-      return nueva;
-    });
-  }, [persistir]);
+  //  Categoría (radio)
+  const seleccionarCategoria = useCallback(
+    (id) => {
+      setCategoria((prev) => {
+        const nueva = prev === id ? "" : id;
+        persistir({ nuevaCategoria: nueva });
+        return nueva;
+      });
+    },
+    [persistir],
+  );
 
   const limpiarCategoria = useCallback(() => {
-    setCategoria('');
-    persistir({ nuevaCategoria: '' });
+    setCategoria("");
+    persistir({ nuevaCategoria: "" });
   }, [persistir]);
 
-  //  Limpiar todo 
+  //  Filtro de tiempo  ← NUEVO
+  const cambiarFiltroTiempo = useCallback(
+    (id) => {
+      setFiltroTiempo((prev) => {
+        const nuevo = prev === id ? null : id;
+        persistir({ nuevoTiempo: nuevo });
+        return nuevo;
+      });
+    },
+    [persistir],
+  );
 
+  const limpiarTiempo = useCallback(() => {
+    setFiltroTiempo(null);
+    persistir({ nuevoTiempo: null });
+  }, [persistir]);
+
+  //  Limpiar todo
   const limpiarTodo = useCallback(() => {
     setFiltros([]);
-    setCategoria('');
-    persistir({ nuevasCondiciones: [], nuevaCategoria: '' });
+    setCategoria("");
+    // El tiempo NO se limpia con "limpiar filtros de dieta" — es independiente.
+    // Si también querés limpiarlo, descomenta la línea de abajo:
+    // setFiltroTiempo(null); persistir({ nuevasCondiciones: [], nuevaCategoria: '', nuevoTiempo: null });
+    persistir({ nuevasCondiciones: [], nuevaCategoria: "" });
   }, [persistir]);
 
   return {
@@ -195,12 +262,17 @@ const useFiltroSalud = (usuario) => {
     limpiar: limpiarFiltros,
 
     // Categoría (radio)
-    categoria,                          
+    categoria,
     setCategoria: seleccionarCategoria,
     limpiarCategoria,
 
-    // Alias de compatibilidad 
-    categorias:     categoria ? [categoria] : [],
+    // Filtro de tiempo ← NUEVO
+    filtroTiempo,
+    cambiarFiltroTiempo,
+    limpiarTiempo,
+
+    // Alias de compatibilidad
+    categorias: categoria ? [categoria] : [],
     toggleCategoria: seleccionarCategoria,
 
     // Utilidades
