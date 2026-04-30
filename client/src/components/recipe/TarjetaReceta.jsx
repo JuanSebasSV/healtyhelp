@@ -20,13 +20,13 @@ const formatearCosto = (costo, moneda = "COP") => {
 const ESTRELLAS = [1, 2, 3, 4, 5];
 
 const IconoCheck = memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17" height="17">
     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
   </svg>
 ));
 
 const IconoPDF = memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="17" height="17">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
     <polyline points="14 2 14 8 20 8" />
   </svg>
@@ -97,6 +97,15 @@ const TarjetaReceta = memo(({
             <IconoCorazon />
           </button>
 
+          <button
+            className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
+            onClick={handleSeleccionar}
+            title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+            aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+          >
+            {seleccionada ? <IconoCheck /> : <IconoPDF />}
+          </button>
+
           {costoFormato && (
             <div className="tarjeta-costo-badge">
               <span className="tarjeta-costo-icono">🍽️</span>
@@ -132,15 +141,6 @@ const TarjetaReceta = memo(({
               </span>
             )}
           </div>
-
-          <button
-            className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
-            onClick={handleSeleccionar}
-            title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-            aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-          >
-            {seleccionada ? <IconoCheck /> : <IconoPDF />}
-          </button>
         </div>
       </div>
 

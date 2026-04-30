@@ -107,11 +107,11 @@
 /*Botón favorito*/
 .btnFav {
   position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(0, 0, 0, 0.28);
   /* FIX: backdrop-filter solo en desktop (muy costoso en móvil) */
@@ -127,8 +127,8 @@
 }
 
 .btnFav svg {
-  width: 22px;
-  height: 22px;
+  width: 17px;
+  height: 17px;
   stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 2;
   fill: none;
@@ -155,7 +155,6 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  position: relative; /* contiene al btnSeleccionar */
 }
 
 .modo-oscuro .tarjetaInfo {
@@ -248,6 +247,52 @@
   stroke: rgba(110, 231, 183, 0.7);
 }
 
+/*Botón seleccionar — esquina inferior derecha de tarjetaImg */
+.btnSeleccionar {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 3;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btnSeleccionar svg {
+  width: 17px;
+  height: 17px;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+  fill: none;
+  transition: stroke 0.2s ease;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+
+.btnSeleccionar:hover {
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(74, 182, 107, 0.6);
+  transform: scale(1.1);
+}
+.btnSeleccionar:hover svg { stroke: #4ab66b; }
+.btnSeleccionar.activo {
+  background: rgba(22, 163, 74, 0.35);
+  border-color: rgba(22, 163, 74, 0.65);
+}
+.btnSeleccionar.activo svg { stroke: #4ade80; fill: rgba(74, 222, 128, 0.15); }
+
+.tarjeta-seleccionada { outline: 2px solid #16a34a; }
+
 /* =====================================================
    RESPONSIVE MÓVIL — 2 columnas, sin descripción
    (breakpoint sincronizado con .recetasGrid en VistaInicio.css)
@@ -289,19 +334,20 @@
   }
   .btnFav svg { width: 13px; height: 13px; }
 
-  /* Botón seleccionar — compacto en info section */
+  /* Botón seleccionar — esquina inferior derecha, mismo tamaño que btnFav */
   .btnSeleccionar {
-    width: 22px;
-    height: 22px;
-    bottom: 0.45rem;
-    right: 0.45rem;
-    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    bottom: 0.35rem;
+    right: 0.35rem;
+    top: auto;
+    border-radius: 8px;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: rgba(0, 0, 0, 0.30);
+    background: rgba(0, 0, 0, 0.45);
     border-color: rgba(255, 255, 255, 0.2);
   }
-  .btnSeleccionar svg { width: 10px; height: 10px; }
+  .btnSeleccionar svg { width: 13px; height: 13px; }
 
   /* Info de tarjeta compacta */
   .tarjetaInfo {
@@ -320,24 +366,30 @@
     overflow: hidden;
   }
 
-  /* Puntuación más compacta */
+  /* Puntuación: 2 filas — estrellas+texto arriba, tiempo abajo centrado */
   .tarjetaPuntuacion {
     padding-top: 0.35rem;
-    gap: 0.25rem;
+    gap: 0.2rem 0.25rem;
     flex-wrap: wrap;
     margin-top: 0;
+    align-items: center;
   }
+
+  .estrellas-mini { flex-shrink: 0; }
 
   .estrella-ico { font-size: 0.65rem; }
   .tarjeta-prom-txt { font-size: 0.62rem; }
 
+  /* Badge de tiempo: fila propia, centrado */
   .tarjeta-tiempo {
-    font-size: 0.58rem;
-    padding: 0.1rem 0.35rem;
-    gap: 0.2rem;
+    flex-basis: 100%;
+    justify-content: center;
+    font-size: 0.62rem;
+    padding: 0.18rem 0.5rem;
+    gap: 0.22rem;
     margin-left: 0;
   }
-  .tarjeta-tiempo svg { width: 10px; height: 10px; }
+  .tarjeta-tiempo svg { width: 11px; height: 11px; }
 }
 
 /* Pantallas muy pequeñas */
@@ -346,49 +398,3 @@
   .tarjetaInfo h3 { font-size: 0.75rem; }
   .tarjeta-prom-txt { font-size: 0.58rem; }
 }
-
-/*Botón seleccionar — vive dentro de tarjetaInfo */
-.btnSeleccionar {
-  position: absolute;
-  bottom: 0.75rem;
-  right: 0.75rem;
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  z-index: 3;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.btnSeleccionar svg {
-  width: 18px;
-  height: 18px;
-  stroke: rgba(255, 255, 255, 0.9);
-  stroke-width: 2;
-  fill: none;
-  transition: stroke 0.2s ease;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
-}
-
-.btnSeleccionar:hover {
-  background: rgba(22, 101, 52, 0.35);
-  border-color: rgba(74, 182, 107, 0.6);
-  transform: scale(1.13);
-}
-.btnSeleccionar:hover svg { stroke: #4ab66b; }
-.btnSeleccionar.activo {
-  background: rgba(22, 163, 74, 0.35);
-  border-color: rgba(22, 163, 74, 0.65);
-}
-.btnSeleccionar.activo svg { stroke: #4ade80; }
-
-.tarjeta-seleccionada { outline: 2px solid #16a34a; }
