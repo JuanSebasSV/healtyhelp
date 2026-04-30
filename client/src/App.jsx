@@ -140,6 +140,7 @@ function AppContent() {
   const [activeTermsVersion, setActiveTermsVersion] = useState(null);
 
   const terminosAceptadosEnSesion = useRef(false);
+  const [backendListo, setBackendListo] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle("modo-oscuro", modoOscuro);
@@ -150,7 +151,31 @@ function AppContent() {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
   }, [favoritos]);
 
+  // Espera a que el backend esté disponible antes de disparar peticiones
   useEffect(() => {
+    let cancelled = false;
+    let intentos = 0;
+    const MAX_INTENTOS = 10;
+    const INTERVALO = 1000;
+    const ping = async () => {
+      try {
+        await api.get("/terms");
+        if (!cancelled) setBackendListo(true);
+      } catch {
+        if (!cancelled && intentos < MAX_INTENTOS) {
+          intentos++;
+          setTimeout(ping, INTERVALO);
+        } else if (!cancelled) {
+          setBackendListo(true);
+        }
+      }
+    };
+    ping();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!backendListo) return;
     let cancelled = false;
     const cargar = async () => {
       setCargandoRecetas(true);
@@ -164,17 +189,16 @@ function AppContent() {
       }
     };
     cargar();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    return () => { cancelled = true; };
+  }, [backendListo]);
 
   useEffect(() => {
+    if (!backendListo) return;
     api
       .get("/terms")
       .then(({ data }) => setActiveTermsVersion(data.terms?.version ?? "1.0.0"))
       .catch(() => setActiveTermsVersion("1.0.0"));
-  }, []);
+  }, [backendListo]);
 
   useEffect(() => {
     if (!user) {

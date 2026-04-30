@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, createContext } from "react";
 import { jwtDecode } from "jwt-decode";
-import { AuthContext } from "./authContext";
 import api from "../api/axios";
+
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,6 +12,9 @@ export const AuthProvider = ({ children }) => {
   const inactivityTimerRef = useRef(null);
   const autoLogoutEnabledRef = useRef(false);
   const autoLogoutMinutesRef = useRef(15);
+  // Ref para reintentos de checkAuth cuando el backend no está listo
+  const checkAuthRetryRef = useRef(0);
+  const checkAuthRef = useRef(null);
   //Limpiar sesión
   const limpiarSesion = useCallback(() => {
     localStorage.removeItem("token");
@@ -133,6 +137,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) {
       setUser(null);
       setLoading(false);
+      checkAuthRetryRef.current = 0;
       return;
     }
 
@@ -141,36 +146,47 @@ export const AuthProvider = ({ children }) => {
       if (decoded.exp * 1000 < Date.now()) {
         limpiarSesion();
         setLoading(false);
+        checkAuthRetryRef.current = 0;
         return;
       }
     } catch {
       limpiarSesion();
       setLoading(false);
+      checkAuthRetryRef.current = 0;
       return;
     }
 
     try {
       const { data } = await api.get("/auth/me");
       setUser(data.user);
-
-      // Arrancar/parar listeners según la preferencia guardada en BD
       applyAutoLogoutPrefs(
         data.user.autoLogoutEnabled ?? false,
         data.user.autoLogoutMinutes ?? 15,
       );
-    } catch (error) {
-      if (error.sinConexion) {
-        console.warn("[Auth] Backend no disponible, manteniendo sesión local.");
-      } else if (
-        error.response?.status === 401 ||
-        error.response?.status === 404
-      ) {
-        limpiarSesion();
-      }
-    } finally {
+      checkAuthRetryRef.current = 0;
       setLoading(false);
+    } catch (error) {
+      if (error.sinConexion && checkAuthRetryRef.current < 8) {
+        // Backend aún no disponible — reintentar silenciosamente
+        checkAuthRetryRef.current++;
+        const delay = Math.min(1000 * checkAuthRetryRef.current, 5000);
+        setTimeout(() => checkAuthRef.current?.(), delay);
+        // No llamar setLoading(false) todavía
+      } else {
+        checkAuthRetryRef.current = 0;
+        if (
+          error.response?.status === 401 ||
+          error.response?.status === 404
+        ) {
+          limpiarSesion();
+        }
+        setLoading(false);
+      }
     }
   }, [limpiarSesion, applyAutoLogoutPrefs]);
+
+  // Mantener la ref siempre actualizada para usarla en setTimeout
+  checkAuthRef.current = checkAuth;
 
   // Verificar al montar
   useEffect(() => {
