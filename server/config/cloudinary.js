@@ -1,6 +1,4 @@
-// server/config/cloudinary.js
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
 cloudinary.config({
@@ -9,39 +7,49 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-//  Storage para avatares de usuario 
-const storageAvatars = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder:           'healtyhelp/avatars',
-    allowed_formats:  ['jpg', 'jpeg', 'png', 'webp'],
-    transformation:   [{ width: 400, height: 400, crop: 'limit' }],
-  },
-});
+function createCloudinaryStorage({ folder, allowedFormats, transformation }) {
+  return {
+    _handleFile(req, file, cb) {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder, allowed_formats: allowedFormats, transformation },
+        (error, result) => {
+          if (error) return cb(error);
+          cb(null, {
+            path:     result.secure_url,
+            filename: result.public_id,
+            size:     result.bytes,
+          });
+        }
+      );
+      file.stream.pipe(uploadStream);
+    },
+
+    _removeFile(req, file, cb) {
+      cloudinary.uploader.destroy(file.filename, cb);
+    },
+  };
+}
 
 const uploadAvatar = multer({
-  storage: storageAvatars,
-  limits:  { fileSize: 2 * 1024 * 1024 }, // 2 MB
+  storage: createCloudinaryStorage({
+    folder:         'healtyhelp/avatars',
+    allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 400, height: 400, crop: 'limit' }],
+  }),
+  limits:     { fileSize: 2 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Solo se permiten imágenes'), false);
   },
 });
 
-//  Storage para imágenes de reseñas 
-const storageResenas = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder:           'healtyhelp/resenas',
-    allowed_formats:  ['jpg', 'jpeg', 'png', 'webp'],
-    // Limitamos el tamaño pero NO transformamos aquí; queremos la URL original
-    transformation:   [{ width: 1200, height: 1200, crop: 'limit', quality: 'auto' }],
-  },
-});
-
 const uploadResena = multer({
-  storage: storageResenas,
-  limits:  { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  storage: createCloudinaryStorage({
+    folder:         'healtyhelp/resenas',
+    allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, height: 1200, crop: 'limit', quality: 'auto' }],
+  }),
+  limits:     { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Solo se permiten imágenes'), false);
