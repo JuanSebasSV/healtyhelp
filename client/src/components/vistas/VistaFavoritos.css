@@ -111,7 +111,10 @@
   padding: 3rem 8rem;
   animation: fadeIn 0.4s ease;
   min-height: 80vh;
-  background: #eaf2f1;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.773), rgba(0, 0, 0, 0.486)), url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .modo-oscuro .vf-wrap2{
   background: #021613;
@@ -148,18 +151,18 @@
   align-items: flex-start;
   gap: 0.4rem;
 }
+
 .barra{
   display: flex;
   align-items: center;
   justify-content: space-between; 
-  gap: 2rem;
+  gap: 1rem;
   width: 100%;
   margin-bottom: 3rem;
   padding: 1rem 0;
-
-  
- 
+  background: #021613;
 }
+
 .vf-header h1 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(1.8rem, 3vw, 2.5rem);
@@ -228,6 +231,7 @@
   line-height: 1;
   display: flex;
   align-items: center;
+  color: #a8e6c8;
 }
  
 .vf-cat-titulo-icono {

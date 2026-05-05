@@ -8,7 +8,10 @@
   padding: 0 2rem;
   display: flex;
   flex-direction: column;
-  background: rgb(248, 245, 239);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.769), rgba(0, 0, 0, 0.486)), url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   min-height: calc(100vh - var(--navbar-h) - var(--page-py) * 3);
 }
 .modo-oscuro .vista-contacto{
@@ -24,7 +27,7 @@
 }
 
 .vista-contacto h1 {
-  color: rgb(82, 76, 65);
+  color: rgb(255, 255, 255);
   font-size: 1.8rem;
   margin-bottom: 0.3rem;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -35,7 +38,7 @@
 }
 
 .contacto-subtitulo {
-  color: rgba(88, 78, 78, 0.85);
+  color: rgba(188, 224, 208, 0.85);
   font-size: 1.05rem;
   line-height: 1.6;
   text-align: center;
@@ -241,12 +244,10 @@
 
 /*RESPONSIVE — Solo teléfonos (320px – 767px)*/
 
-/* El título hero solo existe en móvil — oculto en desktop */
 .contacto-hero-titulo {
   display: none;
 }
 
-/* El acordeón móvil no ocupa espacio en desktop */
 .contacto-acordeon {
   display: none;
 }
@@ -257,12 +258,10 @@
     min-height: unset;
   }
 
-  /* Header desktop se oculta — el título vive en el hero */
   .contacto-header {
     display: none;
   }
 
-  /* Tarjeta: columna única, sin altura fija */
   .contacto-contenedor {
     grid-template-columns: 1fr;
     height: auto;
@@ -271,7 +270,6 @@
     box-shadow: none;
   }
 
-  /* HERO: foto de fondo con título centrado */
   .contacto-info {
     height: 180px;
     min-height: 180px;
@@ -281,7 +279,7 @@
     gap: 0;
   }
 
-  /* Gradiente más oscuro para que el título resalte */
+  
   .contacto-info::before {
     background: linear-gradient(
       to bottom,
@@ -290,7 +288,6 @@
     );
   }
 
-  /* Título centrado dentro del hero */
   .contacto-hero-titulo {
     display: block;
     color: var(--blanco-puro);
@@ -301,7 +298,6 @@
     margin: 0;
   }
 
-  /* Info-items del panel original ocultos en móvil */
   .contacto-info .info-item {
     display: none;
   }
@@ -423,6 +419,8 @@
 .faq-titulo{
   text-align: center;
   margin-bottom: 2rem;
+  color: rgba(188, 224, 208, 0.85);
+  
 }
 
 .modo-oscuro .faq-tabla {

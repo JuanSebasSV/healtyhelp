@@ -41,10 +41,10 @@ const normalizarTexto = (texto) => {
 // 'todas' es solo UI — no se persiste en BD ni localStorage
 const CATEGORIAS = [
   { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
-  { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
-  { id: 'almuerzo',       nombre: 'Almuerzo',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg>' },
-  { id: 'cena',           nombre: 'Cena',              icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>' },
-  { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e26e6e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
+  { id: 'desayuno',       nombre: 'Desayuno',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' },
+  { id: 'almuerzo',       nombre: 'Almuerzo',          icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg>' },
+  { id: 'cena',           nombre: 'Cena',              icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>' },
+  { id: 'postres-snacks', nombre: 'Postres & Snacks',  icono: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>' },
 ];
 
 // opciones de filtro por tiempo
@@ -306,228 +306,98 @@ const VistaInicio = ({
               ))}
             </div>
       </div>
-       
-      <div className="contenedor-grid">    
-          {/* Stats flotantes */}
-          <aside className="columna-stats">
-            {/* Stats con íconos grandes */}
-            <div className="stats-card">
-              <div className="stat-item">
-                <div className="stat-icono-wrap">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/>
-                  </svg>
-                </div>
-                <div className="stat-info">
-                  <span className="stat-num">+120</span>
-                  <span className="stat-label">Recetas disponibles</span>
-                </div>
+      <div className="contenedor-grid">
+        {/* COLUMNA IZQUIERDA: Stats y Tip */}
+        <aside className="columna-stats">
+          <div className="glass-card stats-container">
+            <h3 className="sidebar-title">Comunidad</h3>
+            <div className="stat-row">
+              <div className="stat-icon circle-green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
               </div>
-
-              <div className="stat-divider" />
-
-              <div className="stat-item">
-                <div className="stat-icono-wrap">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                  </svg>
-                </div>
-                <div className="stat-info">
-                  <span className="stat-num">16</span>
-                  <span className="stat-label">Tipos de dieta</span>
-                </div>
-              </div>
-
-              <div className="stat-divider" />
-
-              <div className="stat-item">
-                <div className="stat-icono-wrap">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                </div>
-                <div className="stat-info">
-                  <span className="stat-num">100%</span>
-                  <span className="stat-label">Saludable</span>
-                </div>
+              <div className="stat-text">
+                <span className="stat-num">+120</span>
+                <span className="stat-label">Recetas</span>
               </div>
             </div>
 
-            {/* Tip del día */}
-            <div className="tip-card">
-              <div className="tip-header">
-                <div className="tip-icono-wrap">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a7 7 0 0 1 7 7c0 3.87-2.69 6-4 7H9c-1.31-1-4-3.13-4-7a7 7 0 0 1 7-7z"/>
-                    <path d="M9 21h6M10 17v1M14 17v1"/>
-                  </svg>
-                </div>
-                <span className="tip-titulo">Tip del día</span>
+            <div className="stat-row">
+              <div className="stat-icon circle-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
               </div>
-              <p className="tip-texto">{tipDelDia}</p>
-              <div className="tip-deco" />
+              <div className="stat-text">
+                <span className="stat-num">16</span>
+                <span className="stat-label">Dietas</span>
+              </div>
             </div>
-          </aside>
-                   
-            <main className="columna-cuerpo">  
-                        {/* ─── Botón filtro ─── */}
-              <div className="filtroModalWrapper">
-                <button className="filtroModalBtn" onClick={() => setFiltroAbierto(true)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                  </svg>
-                  ¡Busca tu Tipo de Dieta Aquí!
-                  {filtros.length > 0 && <span className="filtroModalBadge">{filtros.length}</span>}
-                </button>
+
+            <div className="stat-row">
+              <div className="stat-icon circle-teal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-
-              {/* ─── Modal filtro salud ─── */}
-              {filtroAbierto && (
-                <div className="filtroModalOverlay" onClick={(e) => { if (e.target === e.currentTarget) setFiltroAbierto(false); }}>
-                  <div className="filtroModal">
-                    <div className="filtroModalHeader">
-                      <h2>¡Busca tu Tipo de Dieta!</h2>
-                      <button className="filtroModalCerrar" onClick={() => setFiltroAbierto(false)} aria-label="Cerrar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="filtroModalBody">
-                      <div className="filtroInfo">
-                        <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
-                        {!listo && <p className="filtroInfo-cargando">Cargando tu perfil...</p>}
-                        {filtros.length > 0 && (
-                          <button className="btnLimpiar" onClick={() => { limpiar(); }}>
-                            Limpiar filtros ({filtros.length})
-                          </button>
-                        )}
-                      </div>
-                      <div className="filtroGrid">
-                        {CONDICIONES.map(c => (
-                          <button key={c.id} className={`filtroCard ${filtros.includes(c.id) ? 'activo' : ''}`} onClick={() => toggleFiltro(c.id)}>
-                            <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
-                            <span className="filtroNombre">{c.nombre}</span>
-                            {filtros.includes(c.id) && <span className="filtroCheck">✓</span>}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-             {/*  Categorías  */}
-            <section className="categorias">
-              {CATEGORIAS.map(cat => {
-                const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    className={`catBtn ${esActivo ? 'activo' : ''}`}
-                    onClick={() => handleCategoria(cat.id)}
-                  >
-                    <span className="catIcono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
-                    <span>{cat.nombre}</span>
-                  </button>
-                );
-              })}
-            </section>
-             
-                    {/* ── Buscador ── */}
-              <div className="buscador-recetas">
-                <div className="buscador-input-wrap">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Buscar receta por nombre o descripción..."
-                    value={busqueda}
-                    onChange={e => setBusqueda(e.target.value)}
-                    className="buscador-input"
-                  />
-                  {busqueda && (
-                    <button className="buscador-clear" onClick={() => setBusqueda('')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    </button>
-                  )}
-                </div>
-                {busqueda && (
-                  <span className="buscador-conteo">
-                    {recetasFiltradas.length} resultado{recetasFiltradas.length !== 1 ? 's' : ''} para "{busqueda}"
-                  </span>
-                )}
+              <div className="stat-text">
+                <span className="stat-num">100%</span>
+                <span className="stat-label">Saludable</span>
               </div>
-
-          </main> 
-
-          <aside className="columna-right">
-          {/* Widget de Tiempo (Columna Derecha) */}
-          <div className="widget-lateral">
-            <div className="widget-lateral__header">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> 
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/> 
-              </svg>
-              <span>Explorar por tiempo</span>
-            </div>
-            
-            <div className="widget-lateral__lista">
-              {TIEMPOS.map(t => (
-                <button 
-                  key={t.id} 
-                  className={`widget-lateral__item ${filtroTiempo === t.id ? 'activo' : ''}`} 
-                  onClick={() => handleFiltroTiempo(t.id)}
-                >
-                  <span className="widget-lateral__icono" dangerouslySetInnerHTML={{ __html: t.icono }} />
-                  <span>{t.nombre}</span>
-                </button>
-              ))}
-              
-              {filtroTiempo && (
-                <button className="widget-lateral__item" onClick={() => setFiltroTiempo(null)} style={{justifyContent: 'center', backgroundColor: '#fdfaf5', color: '#e74c3c'}}>
-                  ✕ Limpiar filtro
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Widget Dietas Populares */}
-          <div className="widget-lateral" style={{ marginTop: '1rem' }}>
-            <div className="widget-lateral__header">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-              <span>Dietas populares</span>
-            </div>
-            <div className="widget-lateral__tags">
-              {[
-                { label: 'Vegano',        id: 'vegano'           },
-                { label: 'Keto',          id: 'keto'             },
-                { label: 'Sin Gluten',    id: 'celiaco'          },
-                { label: 'Vegetariano',   id: 'vegetariano'      },
-                { label: 'Bajo en Sodio', id: 'bajo-sodio'       },
-              ].map(dieta => (
-                <button
-                  key={dieta.id}
-                  className={`widget-tag ${filtros.includes(dieta.id) ? 'activo' : ''}`}
-                  onClick={() => toggleFiltro(dieta.id)}
-                >
-                  {dieta.label}
-                </button>
-              ))}
-            </div>
+          <div className="glass-card tip-card-new">
+            <div className="tip-badge">TIP DEL DÍA</div>
+            <p className="tip-content">"{tipDelDia}"</p>
           </div>
         </aside>
-      </div>
 
+        {/* COLUMNA CENTRAL: Buscador y Categorías */}
+        <main className="columna-cuerpo">
+          
+          <div className="search-section">
+            <div className="search-bar-container">
+              <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input 
+                type="text" 
+                placeholder="¿Qué te apetece cocinar hoy?" 
+                value={busqueda}
+                onChange={e => setBusqueda(e.target.value)}
+              />
+              
+              {/* Botón Integrado con tu lógica original */}
+              <button className="main-filter-btn" onClick={() => setFiltroAbierto(true)}>
+                Configurar mi Dieta
+                {filtros.length > 0 && <span className="filtroModalBadge">{filtros.length}</span>}
+              </button>
+            </div>
+          </div>
 
-
-       {/* ── Recetas ── */}
-       <section className="recetasGrid">
-            <h2>Recetas recomendadas</h2>
-            <div className='recetas-linea'></div>
-
+          <section className="categorias-modern">
+            {CATEGORIAS.map(cat => (
+              <button
+                key={cat.id}
+                className={`cat-pill ${ (cat.id === 'todas' ? categoria === '' : categoria === cat.id) ? 'active' : ''}`}
+                onClick={() => handleCategoria(cat.id)}
+              >
+              <span
+                className="cat-icon"
+                dangerouslySetInnerHTML={{ __html: cat.icono }}
+              />
+              
+              <span className="cat-text">
+                {cat.nombre}
+              </span>
+              </button>
+            ))}
+          </section>
+           
+          
+         
+                 {/* ── Recetas ── */}
+          <section className="recetasGrid">
+            <div className='titulito'>
+              <h2 className="section-title">Recetas recomendadas</h2>
+              <div className='recetas-linea'></div>
+            </div>
             {cargandoRecetas ? (
               <div className="recetasCargando">
                 <div className="spinner-recetas" />
@@ -550,57 +420,152 @@ const VistaInicio = ({
               <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
             )}
           </section>
-      {/* ─── Botón flotante PDF ─── */}
-      {seleccionadas.length > 0 && (
-        <button className="btn-pdf-flotante" onClick={handlePDF} disabled={generandoPDF}>
-          {generandoPDF ? (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ animation: 'spin 1s linear infinite' }}>
-                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-              </svg>
-              Generando...
-            </>
-          ) : (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="18" x2="12" y2="12"/>
-                <line x1="9" y1="15" x2="15" y2="15"/>
-              </svg>
-              Descargar PDF ({seleccionadas.length})
-            </>
+          {/* ─── Botón flotante PDF ─── */}
+          {seleccionadas.length > 0 && (
+            <button className="btn-pdf-flotante" onClick={handlePDF} disabled={generandoPDF}>
+              {generandoPDF ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    style={{ animation: 'spin 1s linear infinite' }}>
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                  </svg>
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                  Descargar PDF ({seleccionadas.length})
+                </>
+              )}
+            </button>
           )}
-        </button>
-      )}
 
-      {/*  Modal detalle receta  */}
-      {recetaAbierta && (
-        <DetalleReceta
-          receta={recetaAbierta}
-          cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); setRespuestaIdDestacada(null); }}
-          resenaIdDestacada={resenaIdDestacada}
-          respuestaIdDestacada={respuestaIdDestacada}
-        />
-      )}
+          {/*  Scrollbar personalizado  */}
+          <div className="scrollbar-custom-track" ref={trackRef}>
+            <div
+              ref={thumbRef}
+              className={`scrollbar-custom-thumb${isDragging ? ' scrollbar-custom-thumb--dragging' : ''}`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+                dragStartY.current = e.clientY;
+                dragStartScroll.current = window.scrollY;
+              }}
+            />
+          </div>
+        </main>
+       
 
-      {/*  Scrollbar personalizado  */}
-      <div className="scrollbar-custom-track" ref={trackRef}>
-        <div
-          ref={thumbRef}
-          className={`scrollbar-custom-thumb${isDragging ? ' scrollbar-custom-thumb--dragging' : ''}`}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
-            dragStartY.current = e.clientY;
-            dragStartScroll.current = window.scrollY;
-          }}
-        />
-      </div>
+        {/* COLUMNA DERECHA: Tiempo y Populares */}
+        <aside className="columna-right">
+          {/* Widget de Tiempo */}
+          <div className="glass-card widget-modern">
+            <h4 className="widget-title">Explorar por tiempo</h4>
+            <div className="time-options">
+              {TIEMPOS.map(t => (
+                <button 
+                  key={t.id} 
+                  className={`time-btn ${filtroTiempo === t.id ? 'active' : ''}`}
+                  onClick={() => handleFiltroTiempo(t.id)}
+                >
+                  <span dangerouslySetInnerHTML={{ __html: t.icono }} />
+                  {t.nombre}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Widget Dietas Populares (Integrado con tu lógica) */}
+          <div className="glass-card widget-modern">
+            <div className="widget-lateral__header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.2rem' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a4d2e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <h4 className="widget-title" style={{ margin: 0 }}>Dietas populares</h4>
+            </div>
+            
+            <div className="tags-cloud">
+              {[
+                { label: 'Vegano',        id: 'vegano'      },
+                { label: 'Keto',          id: 'keto'        },
+                { label: 'Sin Gluten',    id: 'celiaco'     },
+                { label: 'Vegetariano',   id: 'vegetariano' },
+                { label: 'Bajo en Sodio', id: 'bajo-sodio'  },
+              ].map(dieta => (
+                <button
+                  key={dieta.id}
+                  className={`minimal-tag ${filtros.includes(dieta.id) ? 'active' : ''}`}
+                  onClick={() => toggleFiltro(dieta.id)}
+                >
+                  {dieta.label}
+                  {filtros.includes(dieta.id) && <span style={{ marginLeft: '5px' }}>✕</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+      </aside>
     </div>
-    
-  );
-};
+
+    {/* ─── Modal filtro salud (Lógica original integrada) ─── */}
+    {filtroAbierto && (
+      <div className="filtroModalOverlay" onClick={(e) => { if (e.target === e.currentTarget) setFiltroAbierto(false); }}>
+        <div className="filtroModal">
+          <div className="filtroModalHeader">
+            <h2>¡Busca tu Tipo de Dieta!</h2>
+            <button className="filtroModalCerrar" onClick={() => setFiltroAbierto(false)} aria-label="Cerrar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <div className="filtroModalBody">
+            <div className="filtroInfo">
+              <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
+              {!listo && <p className="filtroInfo-cargando">Cargando tu perfil...</p>}
+              {filtros.length > 0 && (
+                <button className="btnLimpiar" onClick={() => limpiar()}>
+                  Limpiar filtros ({filtros.length})
+                </button>
+              )}
+            </div>
+            <div className="filtroGrid">
+              {CONDICIONES.map(c => (
+                <button 
+                  key={c.id} 
+                  className={`filtroCard ${filtros.includes(c.id) ? 'activo' : ''}`} 
+                  onClick={() => toggleFiltro(c.id)}
+                >
+                  <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
+                  <span className="filtroNombre">{c.nombre}</span>
+                  {filtros.includes(c.id) && <span className="filtroCheck">✓</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/*  Modal detalle receta  */}
+    {recetaAbierta && (
+              <DetalleReceta
+              receta={recetaAbierta}
+              cerrar={() => { setRecetaAbierta(null); setResenaIdDestacada(null); setRespuestaIdDestacada(null); }}
+              resenaIdDestacada={resenaIdDestacada}
+              respuestaIdDestacada={respuestaIdDestacada}
+            />
+          )}
+      </div>
+
+
+
+        
+      );
+    };
 
 export default VistaInicio; 
