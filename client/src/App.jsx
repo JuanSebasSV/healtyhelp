@@ -114,7 +114,8 @@ const RUTAS_LIBRES = [
 ];
 
 function AppContent() {
-  const { user, checkAuth } = useAuth();
+  const { user, checkAuth, loading: authLoading } = useAuth();
+  console.log("🔑 App user:", user?._id ?? "null", "authLoading:", authLoading);
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem("modoOscuro");
@@ -175,6 +176,11 @@ function AppContent() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!backendListo) return;
+    checkAuth();
+  }, [backendListo]);
 
   useEffect(() => {
     if (!backendListo) return;

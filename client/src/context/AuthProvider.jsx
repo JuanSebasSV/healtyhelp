@@ -158,7 +158,9 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const { data } = await api.get("/auth/me");
-      setUser(data.user);
+      const userData = data.user;
+      if (userData && !userData._id && userData.id) userData._id = userData.id;
+      setUser(userData);
       applyAutoLogoutPrefs(
         data.user.autoLogoutEnabled ?? false,
         data.user.autoLogoutMinutes ?? 15,
