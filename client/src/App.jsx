@@ -171,7 +171,9 @@ function AppContent() {
       }
     };
     ping();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -189,7 +191,9 @@ function AppContent() {
       }
     };
     cargar();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [backendListo]);
 
   useEffect(() => {
@@ -365,8 +369,14 @@ function AppContent() {
                   />
                 }
               />
-              <Route path="/login" element={<Login />} />
-              <Route path="/registro" element={<Register />} />
+              <Route
+                path="/login"
+                element={user ? <Navigate to="/" replace /> : <Login />}
+              />
+              <Route
+                path="/registro"
+                element={user ? <Navigate to="/" replace /> : <Register />}
+              />
               <Route path="/google-callback" element={<GoogleCallback />} />
               <Route path="/recuperar" element={<ForgotPassword />} />
               <Route
