@@ -1,22 +1,23 @@
-// useFiltroSalud
-
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 import api from "../api/axios";
 
-//  Claves de almacenamiento local
 const LS_CONDICIONES = "hh_filtros_condiciones";
 const LS_CATEGORIA = "hh_filtro_categoria";
-const LS_TIEMPO = "hh_filtro_tiempo"; // ← NUEVO
+const LS_TIEMPO = "hh_filtro_tiempo";
+
+let _lastLogUid = undefined;
+let _lastLogCargado = undefined;
 
 let _cache = {
   uid: null,
   filtros: [],
   categoria: "",
-  filtroTiempo: null, // ← NUEVO
+  filtroTiempo: null,
   cargado: false,
 };
 
-//  Helpers localStorage
 const leerLS = (clave, fallback) => {
   try {
     const raw = localStorage.getItem(clave);
@@ -35,37 +36,37 @@ const escribirLS = (clave, valor) => {
 const limpiarLS = () => {
   localStorage.removeItem(LS_CONDICIONES);
   localStorage.removeItem(LS_CATEGORIA);
-  localStorage.removeItem(LS_TIEMPO); // ← NUEVO
+  localStorage.removeItem(LS_TIEMPO);
 };
 
-//  Hook
 const useFiltroSalud = (usuario) => {
+  const { loading: authLoading } = useContext(AuthContext);
   const uid = usuario?._id ?? null;
 
-  const cacheActual = _cache.uid === uid && _cache.cargado ? _cache : null;
+  if (uid && _cache.uid !== uid) limpiarLS();
+
+  const cacheActual = _cache.uid === uid && _cache.cargado && uid !== null ? _cache : null;
+
+  if (uid !== _lastLogUid || _cache.cargado !== _lastLogCargado) { console.log("🟡 hook init uid:", uid, "cache.uid:", _cache.uid, "cargado:", _cache.cargado, "cacheActual:", !!cacheActual); _lastLogUid = uid; _lastLogCargado = _cache.cargado; }
 
   const [filtros, setFiltros] = useState(cacheActual?.filtros ?? []);
   const [categoria, setCategoria] = useState(cacheActual?.categoria ?? "");
-  const [filtroTiempo, setFiltroTiempo] = useState(
-    cacheActual?.filtroTiempo ?? null,
-  ); // ← NUEVO
+  const [filtroTiempo, setFiltroTiempo] = useState(cacheActual?.filtroTiempo ?? null);
   const [listo, setListo] = useState(!!cacheActual?.cargado);
 
   const peticionRef = useRef(null);
-  const usuarioIdRef = useRef(uid);
+  const usuarioIdRef = useRef(undefined);
 
-  //  Sincronizar caché → state cuando cambia el usuario
   useEffect(() => {
-    const mismoUid = uid === usuarioIdRef.current;
-    const yaCargoDeBD = mismoUid && uid !== null && listo;
-    const yaCargoAnonimo = mismoUid && uid === null && listo;
-    if (yaCargoDeBD || yaCargoAnonimo) return;
+    if (authLoading) return;
+    if (uid === usuarioIdRef.current) return;
     usuarioIdRef.current = uid;
 
     if (_cache.uid === uid && _cache.cargado) {
+      console.log("🟢 usando caché uid:", uid, "filtros:", _cache.filtros);
       setFiltros(_cache.filtros);
       setCategoria(_cache.categoria);
-      setFiltroTiempo(_cache.filtroTiempo); // ← NUEVO
+      setFiltroTiempo(_cache.filtroTiempo);
       setListo(true);
       return;
     }
@@ -78,29 +79,21 @@ const useFiltroSalud = (usuario) => {
         if (_cache.uid !== uid) limpiarLS();
 
         try {
+          console.log("🔵 llamando /chat/filtros uid:", uid);
           const { data } = await api.get("/chat/filtros");
           if (cancelled) return;
+          console.log("✅ filtros recibidos:", JSON.stringify(data));
           const nuevosFiltros = data.condiciones ?? [];
           const rawCat = data.categorias;
-          const nuevaCategoria = Array.isArray(rawCat)
-            ? (rawCat[0] ?? "")
-            : (rawCat ?? "");
-          // El tiempo no se guarda en BD (es preferencia de sesión de navegación),
-          // pero sí persiste en localStorage entre recargas/cierres de pestaña.
+          const nuevaCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? "") : (rawCat ?? "");
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
-
-          _cache = {
-            uid,
-            filtros: nuevosFiltros,
-            categoria: nuevaCategoria,
-            filtroTiempo: nuevoTiempo, // ← NUEVO
-            cargado: true,
-          };
+          _cache = { uid, filtros: nuevosFiltros, categoria: nuevaCategoria, filtroTiempo: nuevoTiempo, cargado: true };
           setFiltros(nuevosFiltros);
           setCategoria(nuevaCategoria);
-          setFiltroTiempo(nuevoTiempo); // ← NUEVO
-        } catch {
+          setFiltroTiempo(nuevoTiempo);
+        } catch (err) {
           if (cancelled) return;
+          console.log("❌ error /chat/filtros:", err?.response?.status, err?.message);
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
           const filtrosActuales = _cache.uid === uid ? _cache.filtros : [];
           const categoriaActual = _cache.uid === uid ? _cache.categoria : "";
@@ -110,20 +103,13 @@ const useFiltroSalud = (usuario) => {
           setFiltroTiempo(nuevoTiempo);
         }
       } else {
-        // Usuario anónimo — todo desde localStorage
         const f = leerLS(LS_CONDICIONES, []);
         const c = leerLS(LS_CATEGORIA, "");
-        const t = leerLS(LS_TIEMPO, null); // ← NUEVO
-        _cache = {
-          uid: null,
-          filtros: f,
-          categoria: c,
-          filtroTiempo: t,
-          cargado: true,
-        };
+        const t = leerLS(LS_TIEMPO, null);
+        _cache = { uid: null, filtros: f, categoria: c, filtroTiempo: t, cargado: true };
         setFiltros(f);
         setCategoria(c);
-        setFiltroTiempo(t); // ← NUEVO
+        setFiltroTiempo(t);
       }
 
       if (!cancelled) setListo(true);
@@ -131,7 +117,7 @@ const useFiltroSalud = (usuario) => {
 
     cargar();
     return () => { cancelled = true; };
-  }, [uid]);
+  }, [uid, authLoading]);
 
   const persistir = useCallback(
     async ({ nuevasCondiciones, nuevaCategoria, nuevoTiempo }) => {
@@ -139,35 +125,26 @@ const useFiltroSalud = (usuario) => {
         ..._cache,
         ...(nuevasCondiciones !== undefined && { filtros: nuevasCondiciones }),
         ...(nuevaCategoria !== undefined && { categoria: nuevaCategoria }),
-        ...(nuevoTiempo !== undefined && { filtroTiempo: nuevoTiempo }), // ← NUEVO
+        ...(nuevoTiempo !== undefined && { filtroTiempo: nuevoTiempo }),
       };
 
-      // El tiempo siempre va a localStorage (no lo enviamos a BD)
       if (nuevoTiempo !== undefined) escribirLS(LS_TIEMPO, nuevoTiempo);
 
       if (!usuario) {
-        if (nuevasCondiciones !== undefined)
-          escribirLS(LS_CONDICIONES, nuevasCondiciones);
-        if (nuevaCategoria !== undefined)
-          escribirLS(LS_CATEGORIA, nuevaCategoria);
+        if (nuevasCondiciones !== undefined) escribirLS(LS_CONDICIONES, nuevasCondiciones);
+        if (nuevaCategoria !== undefined) escribirLS(LS_CATEGORIA, nuevaCategoria);
         return;
       }
 
-      // Solo condiciones y categoría van a la BD
-      if (nuevasCondiciones === undefined && nuevaCategoria === undefined)
-        return;
+      if (nuevasCondiciones === undefined && nuevaCategoria === undefined) return;
 
       const token = Symbol();
       peticionRef.current = token;
 
       try {
         await api.put("/chat/health-profile", {
-          ...(nuevasCondiciones !== undefined && {
-            condiciones: nuevasCondiciones,
-          }),
-          ...(nuevaCategoria !== undefined && {
-            categorias: nuevaCategoria ? [nuevaCategoria] : [],
-          }),
+          ...(nuevasCondiciones !== undefined && { condiciones: nuevasCondiciones }),
+          ...(nuevaCategoria !== undefined && { categorias: nuevaCategoria ? [nuevaCategoria] : [] }),
         });
       } catch {
         if (peticionRef.current === token) {
@@ -175,16 +152,8 @@ const useFiltroSalud = (usuario) => {
             const { data } = await api.get("/chat/filtros");
             const revertFiltros = data.condiciones ?? [];
             const rawCat = data.categorias;
-            const revertCategoria = Array.isArray(rawCat)
-              ? (rawCat[0] ?? "")
-              : (rawCat ?? "");
-            _cache = {
-              ..._cache,
-              uid,
-              filtros: revertFiltros,
-              categoria: revertCategoria,
-              cargado: true,
-            };
+            const revertCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? "") : (rawCat ?? "");
+            _cache = { ..._cache, uid, filtros: revertFiltros, categoria: revertCategoria, cargado: true };
             setFiltros(revertFiltros);
             setCategoria(revertCategoria);
           } catch {}
@@ -194,13 +163,10 @@ const useFiltroSalud = (usuario) => {
     [usuario, uid],
   );
 
-  //  Condiciones (multi-selección)
   const toggleFiltro = useCallback(
     (id) => {
       setFiltros((prev) => {
-        const nuevas = prev.includes(id)
-          ? prev.filter((f) => f !== id)
-          : [...prev, id];
+        const nuevas = prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id];
         persistir({ nuevasCondiciones: nuevas });
         return nuevas;
       });
@@ -213,7 +179,6 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevasCondiciones: [] });
   }, [persistir]);
 
-  //  Categoría (radio)
   const seleccionarCategoria = useCallback(
     (id) => {
       setCategoria((prev) => {
@@ -230,7 +195,6 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevaCategoria: "" });
   }, [persistir]);
 
-  //  Filtro de tiempo  ← NUEVO
   const cambiarFiltroTiempo = useCallback(
     (id) => {
       setFiltroTiempo((prev) => {
@@ -247,7 +211,6 @@ const useFiltroSalud = (usuario) => {
     persistir({ nuevoTiempo: null });
   }, [persistir]);
 
-  //  Limpiar todo
   const limpiarTodo = useCallback(() => {
     setFiltros([]);
     setCategoria("");
@@ -255,27 +218,18 @@ const useFiltroSalud = (usuario) => {
   }, [persistir]);
 
   return {
-    // Condiciones (multi-selección)
     filtros,
     toggleFiltro,
     limpiarFiltros,
     limpiar: limpiarFiltros,
-
-    // Categoría (radio)
     categoria,
     setCategoria: seleccionarCategoria,
     limpiarCategoria,
-
-    // Filtro de tiempo ← NUEVO
     filtroTiempo,
     cambiarFiltroTiempo,
     limpiarTiempo,
-
-    // Alias de compatibilidad
     categorias: categoria ? [categoria] : [],
     toggleCategoria: seleccionarCategoria,
-
-    // Utilidades
     limpiarTodo,
     listo,
   };
