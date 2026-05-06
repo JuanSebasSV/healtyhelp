@@ -56,7 +56,10 @@ const useFiltroSalud = (usuario) => {
 
   //  Sincronizar caché → state cuando cambia el usuario
   useEffect(() => {
-    if (uid === usuarioIdRef.current && listo) return;
+    const mismoUid = uid === usuarioIdRef.current;
+    const yaCargoDeBD = mismoUid && uid !== null && listo;
+    const yaCargoAnonimo = mismoUid && uid === null && listo;
+    if (yaCargoDeBD || yaCargoAnonimo) return;
     usuarioIdRef.current = uid;
 
     if (_cache.uid === uid && _cache.cargado) {
@@ -69,12 +72,14 @@ const useFiltroSalud = (usuario) => {
 
     setListo(false);
 
+    let cancelled = false;
     const cargar = async () => {
       if (uid) {
         if (_cache.uid !== uid) limpiarLS();
 
         try {
           const { data } = await api.get("/chat/filtros");
+          if (cancelled) return;
           const nuevosFiltros = data.condiciones ?? [];
           const rawCat = data.categorias;
           const nuevaCategoria = Array.isArray(rawCat)
@@ -95,16 +100,13 @@ const useFiltroSalud = (usuario) => {
           setCategoria(nuevaCategoria);
           setFiltroTiempo(nuevoTiempo); // ← NUEVO
         } catch {
+          if (cancelled) return;
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
-          _cache = {
-            uid,
-            filtros: [],
-            categoria: "",
-            filtroTiempo: nuevoTiempo,
-            cargado: true,
-          };
-          setFiltros([]);
-          setCategoria("");
+          const filtrosActuales = _cache.uid === uid ? _cache.filtros : [];
+          const categoriaActual = _cache.uid === uid ? _cache.categoria : "";
+          _cache = { uid, filtros: filtrosActuales, categoria: categoriaActual, filtroTiempo: nuevoTiempo, cargado: true };
+          setFiltros(filtrosActuales);
+          setCategoria(categoriaActual);
           setFiltroTiempo(nuevoTiempo);
         }
       } else {
@@ -124,10 +126,11 @@ const useFiltroSalud = (usuario) => {
         setFiltroTiempo(t); // ← NUEVO
       }
 
-      setListo(true);
+      if (!cancelled) setListo(true);
     };
 
     cargar();
+    return () => { cancelled = true; };
   }, [uid]);
 
   const persistir = useCallback(
@@ -248,9 +251,6 @@ const useFiltroSalud = (usuario) => {
   const limpiarTodo = useCallback(() => {
     setFiltros([]);
     setCategoria("");
-    // El tiempo NO se limpia con "limpiar filtros de dieta" — es independiente.
-    // Si también querés limpiarlo, descomenta la línea de abajo:
-    // setFiltroTiempo(null); persistir({ nuevasCondiciones: [], nuevaCategoria: '', nuevoTiempo: null });
     persistir({ nuevasCondiciones: [], nuevaCategoria: "" });
   }, [persistir]);
 
