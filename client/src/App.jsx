@@ -90,10 +90,12 @@ function AppContent() {
     return saved ? JSON.parse(saved) : false;
   });
   const [categoriaActiva, setCategoriaActiva]     = useState('todas');
-  const [favoritos, setFavoritos] = useState(() => {
-    const saved = localStorage.getItem('favoritos');
-    return saved ? JSON.parse(saved) : [];
-  });
+/* const [favoritos, setFavoritos] = useState(() => {
+   const saved = localStorage.getItem('favoritos');
+  return saved ? JSON.parse(saved) : [];
+  });*/
+ 
+
   const [robotIAActivo, setRobotIAActivo]         = useState(false);
   const [recetas, setRecetas]                     = useState([]);
   const [cargandoRecetas, setCargandoRecetas]     = useState(true);
@@ -107,17 +109,30 @@ function AppContent() {
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
   const [mostrarGooglePassword,  setMostrarGooglePassword]  = useState(false);
   const [activeTermsVersion,     setActiveTermsVersion]     = useState(null);
-
   const terminosAceptadosEnSesion = useRef(false);
+  const [favoritos, setFavoritos] = useState([]);
+
+  // Cargar favoritos desde BD cuando hay usuario
+useEffect(() => {
+  if (!user) {
+    setFavoritos([]);
+    return;
+  }
+  api.get('/favoritos')
+    .then(({ data }) => {
+      setFavoritos(data.favoritos.map(id => id.toString()));
+    })
+    .catch(() => setFavoritos([]));
+}, [user]);
 
   useEffect(() => {
     document.body.classList.toggle('modo-oscuro', modoOscuro);
     localStorage.setItem('modoOscuro', JSON.stringify(modoOscuro));
   }, [modoOscuro]);
 
-  useEffect(() => {
-    localStorage.setItem('favoritos', JSON.stringify(favoritos));
-  }, [favoritos]);
+ /* useEffect(() => {
+   localStorage.setItem('favoritos', JSON.stringify(favoritos));
+  }, [favoritos]);*/
 
   useEffect(() => {
     let cancelled = false;
@@ -250,13 +265,37 @@ function AppContent() {
     setRecetaPendiente({ recetaId, resenaId, respuestaId });
   }, []);
 
-  const toggleFav = useCallback((recetaId) => {
+  /*const toggleFav = useCallback((recetaId) => {
     setFavoritos(prev =>
       prev.includes(recetaId)
         ? prev.filter(id => id !== recetaId)
         : [...prev, recetaId]
     );
-  }, []);
+  }, []);*/
+  // DESPUÉS:
+const toggleFav = useCallback(async (recetaId) => {
+  if (!user) return; // solo usuarios logueados pueden guardar favoritos
+
+  // Actualización optimista — cambia la UI inmediatamente
+  setFavoritos(prev =>
+    prev.includes(recetaId)
+      ? prev.filter(id => id !== recetaId)
+      : [...prev, recetaId]
+  );
+
+  try {
+    const { data } = await api.post(`/favoritos/${recetaId}`);
+    // Sincroniza con lo que devuelve el servidor
+    setFavoritos(data.favoritos.map(id => id.toString()));
+  } catch {
+    // Si falla, revierte el cambio optimista
+    setFavoritos(prev =>
+      prev.includes(recetaId)
+        ? prev.filter(id => id !== recetaId)
+        : [...prev, recetaId]
+    );
+  }
+}, [user]);
 
   return (
     <Router>

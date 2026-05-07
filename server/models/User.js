@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+favoritos: { 
+  type: [mongoose.Schema.Types.ObjectId],
+  ref: 'Recipe',
+  default: [] 
+},
   googleId: String,
   avatar: String,
   isVerified: { type: Boolean, default: false },
