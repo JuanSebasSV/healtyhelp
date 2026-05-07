@@ -677,14 +677,19 @@
     }
   
     .columna-stats {
-      display: none;
+      order: -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .cards{
+      display: flex;
     }
     .columna-right {
       order: -1;
       margin: 0;
       display: flex;
       flex-direction: row; 
-      gap: 1rem;
       flex-wrap: wrap;
     }
     .time-options{
@@ -890,6 +895,10 @@
  
   }
 
+  .cards{
+    display: flex;
+    flex-direction: column;
+  }
   .categorias-modern {
     display: flex;
     flex-wrap: wrap;

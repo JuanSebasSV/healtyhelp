@@ -311,6 +311,7 @@ const VistaInicio = ({
         <aside className="columna-stats">
           <div className="glass-card stats-container">
             <h3 className="sidebar-title">Comunidad</h3>
+            <div className='cards'>
             <div className="stat-row">
               <div className="stat-icon circle-green">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
@@ -339,6 +340,7 @@ const VistaInicio = ({
                 <span className="stat-num">100%</span>
                 <span className="stat-label">Saludable</span>
               </div>
+            </div>
             </div>
           </div>
 
