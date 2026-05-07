@@ -7,9 +7,6 @@ const LS_CONDICIONES = "hh_filtros_condiciones";
 const LS_CATEGORIA = "hh_filtro_categoria";
 const LS_TIEMPO = "hh_filtro_tiempo";
 
-let _lastLogUid = undefined;
-let _lastLogCargado = undefined;
-
 let _cache = {
   uid: null,
   filtros: [],
@@ -47,8 +44,6 @@ const useFiltroSalud = (usuario) => {
 
   const cacheActual = _cache.uid === uid && _cache.cargado && uid !== null ? _cache : null;
 
-  if (uid !== _lastLogUid || _cache.cargado !== _lastLogCargado) { console.log("🟡 hook init uid:", uid, "cache.uid:", _cache.uid, "cargado:", _cache.cargado, "cacheActual:", !!cacheActual); _lastLogUid = uid; _lastLogCargado = _cache.cargado; }
-
   const [filtros, setFiltros] = useState(cacheActual?.filtros ?? []);
   const [categoria, setCategoria] = useState(cacheActual?.categoria ?? "");
   const [filtroTiempo, setFiltroTiempo] = useState(cacheActual?.filtroTiempo ?? null);
@@ -63,7 +58,6 @@ const useFiltroSalud = (usuario) => {
     usuarioIdRef.current = uid;
 
     if (_cache.uid === uid && _cache.cargado) {
-      console.log("🟢 usando caché uid:", uid, "filtros:", _cache.filtros);
       setFiltros(_cache.filtros);
       setCategoria(_cache.categoria);
       setFiltroTiempo(_cache.filtroTiempo);
@@ -79,10 +73,8 @@ const useFiltroSalud = (usuario) => {
         if (_cache.uid !== uid) limpiarLS();
 
         try {
-          console.log("🔵 llamando /chat/filtros uid:", uid);
           const { data } = await api.get("/chat/filtros");
           if (cancelled) return;
-          console.log("✅ filtros recibidos:", JSON.stringify(data));
           const nuevosFiltros = data.condiciones ?? [];
           const rawCat = data.categorias;
           const nuevaCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? "") : (rawCat ?? "");
@@ -93,7 +85,6 @@ const useFiltroSalud = (usuario) => {
           setFiltroTiempo(nuevoTiempo);
         } catch (err) {
           if (cancelled) return;
-          console.log("❌ error /chat/filtros:", err?.response?.status, err?.message);
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
           const filtrosActuales = _cache.uid === uid ? _cache.filtros : [];
           const categoriaActual = _cache.uid === uid ? _cache.categoria : "";

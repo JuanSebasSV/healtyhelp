@@ -8,21 +8,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Refs para el sistema de cierre automático
   const inactivityTimerRef = useRef(null);
   const autoLogoutEnabledRef = useRef(false);
   const autoLogoutMinutesRef = useRef(15);
-  // Ref para reintentos de checkAuth cuando el backend no está listo
   const checkAuthRetryRef = useRef(0);
   const checkAuthRef = useRef(null);
-  //Limpiar sesión
   const limpiarSesion = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
   }, []);
 
-  //Timer de inactividad
   const clearInactivityTimer = useCallback(() => {
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
@@ -31,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const resetInactivityTimer = useCallback(() => {
-    // Solo actúa si el auto-logout está habilitado para este usuario
     if (!autoLogoutEnabledRef.current) return;
 
     clearInactivityTimer();
@@ -41,7 +36,6 @@ export const AuthProvider = ({ children }) => {
     }, ms);
   }, [clearInactivityTimer, limpiarSesion]);
 
-  //Registrar/quitar eventos de actividad del usuario
   const ACTIVITY_EVENTS = [
     "mousemove",
     "keydown",
@@ -66,7 +60,6 @@ export const AuthProvider = ({ children }) => {
     resetInactivityTimer(); // arrancar el timer de inmediato
   }, [stopActivityListeners, resetInactivityTimer]);
 
-  //Cierre al ocultar la pestaña/ventana
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (
@@ -81,7 +74,6 @@ export const AuthProvider = ({ children }) => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [limpiarSesion]);
 
-  //Actualizar preferencias de auto-logout en vivo
   const applyAutoLogoutPrefs = useCallback(
     (enabled, minutes) => {
       autoLogoutEnabledRef.current = enabled;
@@ -96,7 +88,6 @@ export const AuthProvider = ({ children }) => {
     [startActivityListeners, stopActivityListeners],
   );
 
-  // Guarda en BD y actualiza el estado local al instante
   const updateAutoLogout = useCallback(
     async (enabled, minutes) => {
       try {
@@ -105,7 +96,6 @@ export const AuthProvider = ({ children }) => {
 
         await api.patch("/auth/preferences", payload);
 
-        // Actualizar el user en el estado
         setUser((prev) =>
           prev
             ? {
@@ -116,7 +106,6 @@ export const AuthProvider = ({ children }) => {
             : prev,
         );
 
-        // Aplicar la lógica de listeners/timer de inmediato
         applyAutoLogoutPrefs(enabled, minutes);
 
         return { success: true };
@@ -130,7 +119,6 @@ export const AuthProvider = ({ children }) => {
     [applyAutoLogoutPrefs],
   );
 
-  //checkAuth
   const checkAuth = useCallback(async () => {
     const token = localStorage.getItem("token");
 
@@ -169,11 +157,9 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     } catch (error) {
       if (error.sinConexion && checkAuthRetryRef.current < 8) {
-        // Backend aún no disponible — reintentar silenciosamente
         checkAuthRetryRef.current++;
         const delay = Math.min(1000 * checkAuthRetryRef.current, 5000);
         setTimeout(() => checkAuthRef.current?.(), delay);
-        // No llamar setLoading(false) todavía
       } else {
         checkAuthRetryRef.current = 0;
         if (
@@ -187,15 +173,12 @@ export const AuthProvider = ({ children }) => {
     }
   }, [limpiarSesion, applyAutoLogoutPrefs]);
 
-  // Mantener la ref siempre actualizada para usarla en setTimeout
   checkAuthRef.current = checkAuth;
 
-  // Verificar al montar
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  // Verificar cada 2 minutos que el usuario sigue existiendo
   useEffect(() => {
     const intervalo = setInterval(
       () => {
@@ -207,7 +190,6 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(intervalo);
   }, [user, checkAuth]);
 
-  // Detectar cambios en localStorage desde otras pestañas
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === "token" && !e.newValue) {
@@ -218,14 +200,12 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  // Limpiar listeners cuando el usuario cierra sesión
   useEffect(() => {
     if (!user) {
       stopActivityListeners();
     }
   }, [user, stopActivityListeners]);
 
-  //Funciones de auth
   const register = async (userData) => {
     try {
       const { data } = await api.post("/auth/register", userData);
@@ -261,7 +241,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", data.token);
       setUser(data.user);
 
-      // Al iniciar sesión, aplicar las preferencias del usuario recién autenticado
       applyAutoLogoutPrefs(
         data.user.autoLogoutEnabled ?? false,
         data.user.autoLogoutMinutes ?? 15,
