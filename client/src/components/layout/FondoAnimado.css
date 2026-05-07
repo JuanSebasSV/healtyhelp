@@ -1,5 +1,3 @@
-/* FondoAnimado.css */
-
 .fondoAnimado {
   position: fixed;
   top: 0;
@@ -7,108 +5,16 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)),
+    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.gradientMesh {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg,
-      var(--verde-bosque) 0%,
-      var(--fondo-grad-claro-medio) 50%,
-      var(--verde-hoja) 100%);
-  transform: translateZ(0);
-}
-
-.modo-oscuro .gradientMesh {
-  background: linear-gradient(135deg,
-      var(--fondo-oscuro-0) 0%,
-      var(--fondo-oscuro-50) 50%,
-      var(--fondo-oscuro-100) 100%);
-}
-
-.ondaLinea {
-  position: absolute;
-  width: 100%;
-  height: 200px;
-  left: 0;
-  pointer-events: none;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.ondaLinea svg {
-  position: absolute;
-  width: 200%;
-  height: 100%;
-  left: 0;
-}
-
-.ondaLinea1 {
-  top: 20%;
-  animation: ondaScroll1 20s linear infinite;
-}
-
-.ondaLinea2 {
-  top: 50%;
-  animation: ondaScroll2 25s linear infinite;
-}
-
-.ondaLinea3 {
-  top: 75%;
-  animation: ondaScroll3 30s linear infinite;
-}
-
-@keyframes ondaScroll1 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes ondaScroll2 {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-
-@keyframes ondaScroll3 {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.modo-oscuro .ondaLinea1 path {
-  stroke: rgba(107, 158, 74, 0.6) !important;
-}
-
-.modo-oscuro .ondaLinea2 path {
-  stroke: rgba(45, 90, 61, 0.5) !important;
-}
-
-.modo-oscuro .ondaLinea3 path {
-  stroke: rgba(255, 154, 60, 0.15) !important;
-}
-
-@media (max-width: 768px) {
-  .ondaLinea1,
-  .ondaLinea2,
-  .ondaLinea3 {
-    animation-play-state: paused;
-    opacity: 0.5;
-  }
-}
-
-/* En tablets (hasta 1024px)*/
-@media (min-width: 769px) and (max-width: 1024px) {
-  .ondaLinea1 { animation-duration: 35s; }
-  .ondaLinea2 { animation-duration: 45s; }
-  .ondaLinea3 { animation-duration: 55s; }
-}
-
-/* Respeta preferencia del sistema operativo de no animar */
-@media (prefers-reduced-motion: reduce) {
-  .ondaLinea1,
-  .ondaLinea2,
-  .ondaLinea3 {
-    animation: none;
-  }
+.modo-oscuro .fondoAnimado {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)),
+    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
 }
