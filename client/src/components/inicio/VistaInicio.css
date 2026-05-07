@@ -594,10 +594,11 @@
   text-align: center;
   position: relative;
   padding: 1rem 2rem;
+  
 }
 
 .frase-texto-principal {
-  font-size: 1rem; 
+  font-size: 1.1rem; 
   line-height: 1.6; 
   color: #e2e8f0; 
   font-style: italic;
@@ -1207,7 +1208,7 @@
     pointer-events: none;
     box-sizing: content-box;
   }
-
+ 
   .scrollbar-custom-thumb {
     position: absolute;
     left: 16px;
@@ -1391,8 +1392,9 @@
 @media (max-width:530px){
   .grid {
     display: grid;
-    grid-template-columns: 1fr;  /* 🔥 una sola columna */
+    grid-template-columns: 1fr;
     gap: 1rem;
+
   }
 
 }

@@ -99,7 +99,7 @@
   padding: 2rem var(--page-px);
   animation: fadeIn 0.4s ease;
   min-height: 80vh;
-  background-image: url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.673), rgba(0, 0, 0, 0.382)),url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
   background-size: cover;      
   background-position: center; 
   background-repeat: no-repeat;
@@ -111,7 +111,7 @@
   padding: 3rem 8rem;
   animation: fadeIn 0.4s ease;
   min-height: 80vh;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.773), rgba(0, 0, 0, 0.486)), url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.815), rgba(0, 0, 0, 0.486)), url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -160,7 +160,7 @@
   width: 100%;
   margin-bottom: 3rem;
   padding: 1rem 0;
-  background: #021613;
+  
 }
 
 .vf-header h1 {
