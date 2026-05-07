@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import api from "../../api/axios";
@@ -171,6 +171,17 @@ const UserProfile = () => {
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        name: user.name || "",
+        weight: user.weight || "",
+        alergia: user.alergia || "",
+      }));
+    }
+  }, [user?.name, user?.weight, user?.alergia]);
 
   const [touched, setTouched] = useState({});
   const [avisosCampo, setAvisos] = useState({});
@@ -471,7 +482,7 @@ const UserProfile = () => {
               title={avatarSrc ? "Ver foto de perfil" : ""}
             >
               <div className="avatar-anillo" />
-              {avatarSrc ? (
+              {avatarSrc && !avatarSrc.includes("googleusercontent.com") ? (
                 <img
                   src={avatarSrc}
                   alt={user?.name}
@@ -486,7 +497,12 @@ const UserProfile = () => {
               ) : null}
               <div
                 className="avatar-iniciales"
-                style={{ display: avatarSrc ? "none" : "flex" }}
+                style={{
+                  display:
+                    avatarSrc && !avatarSrc.includes("googleusercontent.com")
+                      ? "none"
+                      : "flex",
+                }}
               >
                 <span>{getInitials(user?.name)}</span>
               </div>
@@ -561,15 +577,7 @@ const UserProfile = () => {
                   <p className="stat-valor">{joinDate}</p>
                 </div>
               </div>
-              <div className="stat-item">
-                <span className="stat-icono">✅</span>
-                <div>
-                  <p className="stat-label">Cuenta</p>
-                  <p className="stat-valor">
-                    {user?.isVerified ? "Verificada" : "Sin verificar"}
-                  </p>
-                </div>
-              </div>
+
               {user?.googleId && (
                 <div className="stat-item">
                   <span className="stat-icono">🔗</span>
