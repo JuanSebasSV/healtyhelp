@@ -37,6 +37,18 @@ const normalizarTexto = (texto) => {
     : "";
 };
 
+const frasesMotivacionales = [
+  "La clave de una vida saludable no es la perfección, sino la constancia en los pequeños hábitos que construyes cada día en tu cocina.",
+  "Tu cuerpo es tu templo más sagrado; alimentarlo con ingredientes reales es la mejor forma de agradecerle por todo lo que hace por ti.",
+  "Comer de forma inteligente significa disfrutar de los sabores naturales mientras le das a tu organismo el combustible exacto que necesita.",
+  "Recuerda que cada receta que preparas es una oportunidad para sanar, nutrirte y demostrarte cuánto valoras tu propio bienestar físico.",
+  "No veas tu dieta como una restricción, sino como la libertad de elegir alimentos que te hacen sentir con energía, vitalidad y claridad mental.",
+  "La cocina es el corazón de tu salud; transformar ingredientes sencillos en platos deliciosos es el primer paso para una transformación real.",
+  "Una buena nutrición es el fundamento de una vida plena; elige siempre calidad sobre cantidad y escucha lo que tu cuerpo intenta decirte."
+];
+
+// Lógica de rotación (puedes usar la misma que ya tienes)
+const fraseDelDia = frasesMotivacionales[new Date().getDay() % frasesMotivacionales.length];
 
 // 'todas' es solo UI — no se persiste en BD ni localStorage
 const CATEGORIAS = [
@@ -393,35 +405,16 @@ const VistaInicio = ({
           </section>
            
           
-         
-                 {/* ── Recetas ── */}
-          <section className="recetasGrid">
-            <div className='titulito'>
-              <h2 className="section-title">Recetas recomendadas</h2>
-              <div className='recetas-linea'></div>
-            </div>
-            {cargandoRecetas ? (
-              <div className="recetasCargando">
-                <div className="spinner-recetas" />
-                <p>Cargando recetas...</p>
-              </div>
-            ) : (
-              <div className="grid">
-                {recetasFiltradas.map(receta => (
-                  <TarjetaReceta
-                    key={receta._id}
-                    receta={receta}
-                    toggleFav={toggleFav}
-                    esFav={favoritos.includes(receta._id)}
-                  />
-                ))}
-              </div>
-            )}
+          <div className="frase-inspiradora-container">
+            <div className="frase-decoracion-comilla">“</div>
+            <p className="frase-texto-principal">
+              {fraseDelDia}
+            </p>
+            <div className="frase-linea-decorativa"></div>
+          </div>
 
-            {!cargandoRecetas && recetasFiltradas.length === 0 && (
-              <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
-            )}
-          </section>
+
+
           {/* ─── Botón flotante PDF ─── */}
           {seleccionadas.length > 0 && (
             <button className="btn-pdf-flotante" onClick={handlePDF} disabled={generandoPDF}>
@@ -511,7 +504,36 @@ const VistaInicio = ({
             </div>
           </div>
       </aside>
-    </div>
+      </div>      
+                 {/* ── Recetas ── */}
+      <section className="recetasGrid">
+            <div className='titulito'>
+              <h2 className="section-title">Recetas recomendadas</h2>
+              <div className='recetas-linea'></div>
+            </div>
+            {cargandoRecetas ? (
+              <div className="recetasCargando">
+                <div className="spinner-recetas" />
+                <p>Cargando recetas...</p>
+              </div>
+            ) : (
+              <div className="grid">
+                {recetasFiltradas.map(receta => (
+                  <TarjetaReceta
+                    key={receta._id}
+                    receta={receta}
+                    toggleFav={toggleFav}
+                    esFav={favoritos.includes(receta._id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {!cargandoRecetas && recetasFiltradas.length === 0 && (
+              <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
+            )}
+          </section>
+ 
 
     {/* ─── Modal filtro salud (Lógica original integrada) ─── */}
     {filtroAbierto && (
