@@ -405,10 +405,6 @@
   box-shadow: 0 8px 22px rgba(77, 158, 122, 0.4);
 }
 
-/* Grid de recetas — hereda estilos globales, solo ajuste de padding */
-
-
-
 /* Responsive */
 
 @media (max-width: 768px) {

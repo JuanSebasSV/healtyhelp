@@ -1,6 +1,6 @@
 /*RobotIA.css*/
 
-/*Botón flotante  */
+/*Botón flotante*/
 .robotBoton {
   position: fixed;
   bottom: 2rem;
@@ -8,63 +8,38 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f77f00 0%, #d62828 100%);
-  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.08);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(0, 0, 0, 0.14);
   cursor: pointer;
   z-index: 1500;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 0 0 0 rgba(247,127,0,0.4),
-    0 8px 28px rgba(247,127,0,0.45),
-    0 2px 8px rgba(0,0,0,0.3);
-  animation: robotPulse 3s ease-in-out infinite;
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-              box-shadow 0.25s ease;
-}
-
-.robotBoton::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(247,127,0,0.6),
-    rgba(26,77,46,0.6),
-    rgba(247,127,0,0.6)
-  );
-  animation: robotRing 4s linear infinite;
-  z-index: -1;
-}
-
-@keyframes robotRing {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes robotPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(247,127,0,0.4),
-                0 8px 28px rgba(247,127,0,0.45),
-                0 2px 8px rgba(0,0,0,0.3);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(247,127,0,0),
-                0 12px 36px rgba(247,127,0,0.55),
-                0 2px 8px rgba(0,0,0,0.3);
-  }
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              background 0.25s ease,
+              border-color 0.25s ease;
 }
 
 .robotBoton:hover {
-  transform: scale(1.12) rotate(-5deg);
+  transform: scale(1.1);
+  background: rgba(26, 77, 46, 0.32);
+  border-color: rgba(107, 158, 74, 0.55);
   box-shadow:
-    0 0 0 0 rgba(247,127,0,0),
-    0 16px 48px rgba(247,127,0,0.6),
-    0 4px 12px rgba(0,0,0,0.35);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(26, 77, 46, 0.38),
+    0 0 0 1px rgba(107, 158, 74, 0.28);
 }
 
-/*Panel flotante  */
+/*Panel flotante*/
 .robotChat {
   position: fixed;
   bottom: 5.5rem;
@@ -116,7 +91,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: none;
 }
 
-/*Orbes decorativos (solo flotante, solo desktop)  */
+/*Orbes decorativos (solo flotante, solo desktop)*/
 .chatOrbes {
   position: absolute;
   inset: 0;
@@ -166,7 +141,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   66%  { transform: translate(-6px, 8px) scale(0.97); }
 }
 
-/*Header  */
+/*Header*/
 .robotHeader {
   display: flex;
   justify-content: space-between;
@@ -282,7 +257,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-color: rgba(214,40,40,0.5);
 }
 
-/*Área de mensajes  */
+/*Área de mensajes*/
 .robotMensajes {
   flex: 1;
   padding: 1rem;
@@ -304,7 +279,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-radius: 3px;
 }
 
-/*Bienvenida  */
+/*Bienvenida*/
 .chatBienvenida {
   text-align: center;
   padding: 0.5rem 0.25rem 0.75rem;
@@ -382,7 +357,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: flex;
 }
 
-/*Mensajes  */
+/*Mensajes*/
 .robotMensaje {
   display: flex;
   gap: 0.5rem;
@@ -447,7 +422,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-radius: 4px 12px 12px 12px;
 }
 
-/*Input  */
+/*Input*/
 .robotInput {
   padding: 0.75rem 0.9rem;
   border-top: 1px solid rgba(107,158,74,0.15);
@@ -517,7 +492,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   transform: none;
 }
 
-/*Footer  */
+/*Footer*/
 .robotFooter {
   display: flex;
   align-items: center;
@@ -541,7 +516,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   letter-spacing: 0.03em;
 }
 
-/*Typing indicator  */
+/*Typing indicator*/
 .typingIndicator {
   display: flex;
   gap: 4px;
@@ -565,7 +540,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
-/*Modo oscuro  */
+/*Modo oscuro*/
 .modo-oscuro .robotChat .chatCore {
   background:
     radial-gradient(ellipse at 0% 0%, rgba(15,40,22,0.5) 0%, transparent 60%),
@@ -587,13 +562,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     height: 50px;
     bottom: 1rem;
     right: 1rem;
-    animation: none;
-  }
-
-  .robotBoton::before {
-    inset: -2px;
-    animation: none;
-    opacity: 0.5;
   }
 
   .robotBoton svg { width: 22px; height: 22px; }
@@ -649,8 +617,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 
 /* Respeta preferencia del sistema de no animar */
 @media (prefers-reduced-motion: reduce) {
-  .robotBoton { animation: none; }
-  .robotBoton::before { animation: none; }
   .chatOrbe--1,
   .chatOrbe--2,
   .chatOrbe--3 { animation: none; }

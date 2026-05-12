@@ -52,7 +52,7 @@
   min-height: 600px;
 }
 
-/*PANEL IZQUIERDO — foto + info items centrados*/
+/*PANEL IZQUIERDO*/
 .contacto-info {
   position: relative;
   display: flex;
@@ -66,7 +66,6 @@
   isolation: isolate;
 }
 
-/* ─── PC FIX: Gradiente más denso para contrastar con fondo claro ─── */
 .contacto-info::before {
   content: '';
   position: absolute;
@@ -86,7 +85,6 @@
   z-index: 1;
 }
 
-/* ─── PC FIX: Info-items con mayor opacidad y texto con sombra reforzada ─── */
 .info-item {
   background: rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(22px) saturate(180%);
@@ -132,7 +130,6 @@
   height: 20px;
 }
 
-/* ─── PC FIX: Sombras de texto más fuertes en ambas líneas ─── */
 .info-item h3 {
   color: var(--blanco-puro);
   font-size: 0.95rem;
@@ -179,7 +176,7 @@
   color: rgba(180, 220, 160, 0.95);
 }
 
-/* ── WRAPPER para inputs con ícono de acento ── */
+/*WRAPPER inputs*/
 .campo-wrapper {
   position: relative;
   margin-bottom: 0.75rem;
@@ -189,7 +186,6 @@
   margin-bottom: 1.1rem;
 }
 
-/* Barra de acento izquierda animada */
 .campo-wrapper::before {
   content: '';
   position: absolute;
@@ -208,7 +204,6 @@
   height: 60%;
 }
 
-/* Para el textarea, la barra corre por más altura */
 .campo-wrapper.campo-textarea::before {
   top: 1.1rem;
   transform: none;
@@ -283,12 +278,10 @@
    RESPONSIVE — Solo teléfonos (320px – 767px)
    ══════════════════════════════════════════════ */
 
-/* Título hero solo en móvil */
 .contacto-hero-titulo {
   display: none;
 }
 
-/* Acordeón oculto en desktop */
 .contacto-acordeon {
   display: none;
 }
@@ -299,23 +292,19 @@
     min-height: unset;
   }
 
-  /* Header desktop se oculta */
   .contacto-header {
     display: none;
   }
 
-  /* Tarjeta: columna única, sin altura fija */
   .contacto-contenedor {
     grid-template-columns: 1fr;
     height: auto;
     min-height: unset;
     border-radius: 0;
     box-shadow: none;
-    /* Permitir que el acordeón se superponga sin cortarse */
     overflow: visible;
   }
 
-  /* ─── MÓVIL: Hero de foto — más alto para dar aire al acordeón ─── */
   .contacto-info {
     height: 240px;
     min-height: 240px;
@@ -326,7 +315,6 @@
     overflow: visible;
   }
 
-  /* Gradiente orientado a resaltar el título */
   .contacto-info::before {
     background: linear-gradient(
       to bottom,
@@ -335,7 +323,6 @@
     );
   }
 
-  /* Título centrado en el hero */
   .contacto-hero-titulo {
     display: block;
     color: var(--blanco-puro);
@@ -346,18 +333,15 @@
     margin: 0;
   }
 
-  /* Info-items del panel original ocultos en móvil */
   .contacto-info .info-item {
     display: none;
   }
 
-  /* ─── ACORDEÓN: liquid glass completo, separado del hero ─── */
   .contacto-acordeon {
     display: block;
-    margin-top: 12px;           /* espacio real entre hero e info */
+    margin-top: 12px;
     position: relative;
     z-index: 2;
-    /* Liquid glass container */
     background: linear-gradient(
       160deg,
       rgba(255, 255, 255, 0.16) 0%,
@@ -374,7 +358,6 @@
       0 -4px 24px rgba(0, 0, 0, 0.18);
   }
 
-  /* ── TRIGGER: transparente — el glass viene del contenedor ── */
   .acordeon-trigger {
     width: 100%;
     display: flex;
@@ -405,7 +388,6 @@
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
   }
 
-  /* Punto glass sutil */
   .acordeon-punto {
     width: 6px;
     height: 6px;
@@ -415,7 +397,6 @@
     flex-shrink: 0;
   }
 
-  /* ── CHEVRON: visible, limpio, gira al abrir ── */
   .acordeon-chevron {
     flex-shrink: 0;
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -437,16 +418,13 @@
     grid-template-rows: 1fr;
   }
 
-  /* ── FIX ANIMACIÓN: siempre grid, nunca cambia display durante el cierre ── */
   .acordeon-inner {
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    /* Layout siempre activo — solo el padding aparece/desaparece */
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.55rem;
-    /* Sin padding cuando está cerrado (height = 0) */
     padding: 0 1rem;
     transition: padding 0.38s ease;
   }
@@ -455,7 +433,6 @@
     padding: 0.9rem 1rem 1.1rem;
   }
 
-  /* Info-items: liquid glass igual que el contenedor ── */
   .acordeon-inner .info-item {
     display: flex;
     margin-bottom: 0;
@@ -492,7 +469,6 @@
   .info-item h3 { font-size: 0.80rem; }
   .info-item p  { font-size: 0.72rem; }
 
-  /* FORMULARIO */
   .contacto-form {
     padding: 1.5rem 1.25rem;
     border-left: none;
@@ -515,18 +491,19 @@
   }
 }
 
-/* Pantallas medianas (480–767px): 2 columnas en el acordeón */
 @media (min-width: 480px) and (max-width: 767px) {
   .acordeon-inner {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-/* Pantallas muy pequeñas */
 @media (max-width: 360px) {
   .contacto-info { height: 200px; min-height: 200px; }
   .contacto-hero-titulo { font-size: 1.6rem; }
-}.confirmacion-overlay {
+}
+
+/*MODAL DE CONFIRMACIÓN*/
+.confirmacion-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
@@ -704,4 +681,101 @@
 
 .confirmacion-btn-enviar:active {
   transform: translateY(0);
+}
+
+/*SECCIÓN FAQ*/
+.seccion-faq-unificada {
+  max-width: 1100px;
+  width: 100%;
+  margin: 3rem auto 6rem auto;
+  padding: 0 2rem;
+}
+
+.faq-titulo {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: rgba(188, 224, 208, 0.85);
+}
+
+.modo-oscuro .faq-titulo {
+  color: rgba(195, 235, 224, 0.85);
+}
+
+.faq-tabla {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.modo-oscuro .faq-tabla {
+  background: rgba(10, 30, 20, 0.6);
+  border-color: rgba(79, 119, 45, 0.2);
+}
+
+.faq-fila {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease;
+}
+
+.faq-fila:last-child {
+  border-bottom: none;
+}
+
+.modo-oscuro .faq-fila {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.faq-fila:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.faq-fila summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  font-weight: 600;
+  color: var(--verde-bosque);
+  cursor: pointer;
+}
+
+.modo-oscuro .faq-fila summary {
+  color: #e1ede7;
+}
+
+.faq-numero {
+  margin-right: 1rem;
+  color: var(--naranja);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.faq-flecha {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--naranja);
+  transition: transform 0.3s ease;
+}
+
+.faq-fila[open] {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.faq-fila[open] .faq-flecha {
+  transform: rotate(180deg);
+}
+
+.faq-respuesta {
+  padding: 0 1.5rem 1.5rem 3.2rem;
+  color: var(--gris-oscuro);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.modo-oscuro .faq-respuesta {
+  color: rgba(225, 237, 231, 0.8);
 }

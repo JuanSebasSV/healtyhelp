@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './VistaContacto.css';
@@ -37,6 +37,28 @@ const VistaContacto = () => {
   const [enviando, setEnviando] = useState(false);
   const [infoAbierta, setInfoAbierta] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [faqs, setFaqs] = useState([]);
+
+  useEffect(() => {
+    const obtenerFaqs = async () => {
+      try {
+        const respuesta = await api.get('/faqs');
+        setFaqs(respuesta.data);
+      } catch (error) {
+        console.error("Error al cargar FAQs:", error);
+        setFaqs([
+          { _id: '1', pregunta: "¿Cómo funciona Healthy Help?", respuesta: "Es una plataforma para facilitar recetas para personas que sigan dietas específicas." },
+          { _id: '2', pregunta: "¿Cómo elijo la mejor dieta para mí?", respuesta: "Puedes utilizar nuestro sistema de filtros en la página principal para ajustar las recetas según tus necesidades." },
+          { _id: '3', pregunta: "¿Las recetas incluyen información nutricional?", respuesta: "Sí, cada receta detallada en Healthy Help cuenta con un desglose de ingredientes y pasos claros para asegurar que sigas tu plan de alimentación correctamente." },
+          { _id: '4', pregunta: "¿Puedo usar la aplicación sin conexión a internet?", respuesta: "Healthy Help es una aplicación web, por lo que requiere conexión a internet para cargar nuevas recetas. Sin embargo, una vez cargada la página, puedes visualizar la información actual sin problemas." },
+          { _id: '5', pregunta: "¿Es apto para personas con alergias alimentarias?", respuesta: "Nuestra plataforma permite filtrar ingredientes a través del chatbot, pero siempre recomendamos revisar la lista completa de componentes de cada receta para garantizar tu seguridad." },
+          { _id: '6', pregunta: "¿Cómo puedo sugerir una nueva receta?", respuesta: "¡Nos encanta recibir sugerencias! Puedes usar el formulario de contacto de arriba para enviarnos tus ideas y nuestro equipo de nutrición las revisará para incluirlas." },
+          { _id: '7', pregunta: "¿Los datos de mi perfil son privados?", respuesta: "Totalmente. Utilizamos MongoDB Atlas para asegurar que tu información esté encriptada y protegida bajo los más altos estándares de seguridad actuales." },
+        ]);
+      }
+    };
+    obtenerFaqs();
+  }, []);
 
   const validarYMostrarConfirmacion = () => {
     const { nombre, email, mensaje } = datosForm;
@@ -94,6 +116,7 @@ const VistaContacto = () => {
   return (
     <div className="vista-contacto">
 
+      {/* Modal de confirmación */}
       {mostrarConfirmacion && (
         <div
           className="confirmacion-overlay"
@@ -152,6 +175,7 @@ const VistaContacto = () => {
         </div>
       )}
 
+      {/* Header */}
       <div className="contacto-header" style={{ marginBottom: '3rem' }}>
         <h1>Contáctanos</h1>
         <p className="contacto-subtitulo">
@@ -160,8 +184,10 @@ const VistaContacto = () => {
         </p>
       </div>
 
+      {/* Tarjeta principal */}
       <div className="contacto-contenedor">
 
+        {/* Panel izquierdo */}
         <div className="contacto-info">
           <span className="contacto-hero-titulo">Contáctanos</span>
 
@@ -217,6 +243,7 @@ const VistaContacto = () => {
           </div>
         </div>
 
+        {/* Acordeón móvil */}
         <div className="contacto-acordeon">
           <button
             className="acordeon-trigger"
@@ -287,6 +314,7 @@ const VistaContacto = () => {
           </div>
         </div>
 
+        {/* Panel derecho — formulario */}
         <div className="contacto-form">
           <h2>Envíanos un Mensaje</h2>
 
@@ -340,9 +368,28 @@ const VistaContacto = () => {
         </div>
 
       </div>
+
+      {/* Preguntas Frecuentes */}
+      <div className="seccion-faq-unificada">
+        <h2 className="faq-titulo">Preguntas Frecuentes</h2>
+        <div className="faq-tabla">
+          {faqs.map((faq, index) => (
+            <details key={faq._id} className="faq-fila">
+              <summary>
+                <span className="faq-numero">{index + 1}.</span>
+                {faq.pregunta}
+                <span className="faq-flecha">▼</span>
+              </summary>
+              <div className="faq-respuesta">
+                <p>{faq.respuesta}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 };
-
 
 export default VistaContacto;
