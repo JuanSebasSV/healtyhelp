@@ -278,7 +278,7 @@ useEffect(() => {
   
     const favoritosAnteriores = [...favoritos];
   
-    // Actualización optimista
+    // 1. Cambio visual instantáneo
     setFavoritos(prev =>
       prev.includes(recetaId)
         ? prev.filter(id => id !== recetaId)
@@ -287,18 +287,17 @@ useEffect(() => {
   
     try {
       const { data } = await api.post(`/favoritos/${recetaId}`);
+      // 2. Sincronizamos con el servidor tras el éxito
       setFavoritos(data.favoritos.map(id => id.toString()));
     } catch (error) {
-      // Revertimos el cambio visual
+      // 3. Si hay error (como el límite), revertimos y avisamos
       setFavoritos(favoritosAnteriores);
-  
-      // LOG PARA DEPURACIÓN: Esto te dirá qué está llegando exactamente
-      console.log("Error completo capturado:", error);
-  
-      // Intento de capturar el mensaje de diferentes formas
-      const mensajeError = error.response?.data?.error || error.message || "Error al guardar favorito";
       
+      const mensajeError = error.response?.data?.error || "Error al actualizar favoritos";
       alert(mensajeError); 
+      
+      // Mantenemos solo este log si quieres seguir monitoreando en consola
+      console.error("Error en toggleFav:", mensajeError);
     }
   }, [user, favoritos, api]);
 
