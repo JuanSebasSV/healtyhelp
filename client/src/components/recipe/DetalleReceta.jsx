@@ -35,6 +35,12 @@ const DetalleReceta = memo(
     const { user, isAuthenticated } = useAuth();
 
     const [generandoPDF, setGenerandoPDF] = React.useState(false);
+    const [modalListo, setModalListo] = React.useState(false);
+
+    React.useEffect(() => {
+      const t = setTimeout(() => setModalListo(true), 100);
+      return () => clearTimeout(t);
+    }, []);
 
     const handlePDF = async (e) => {
       e.stopPropagation();
@@ -189,6 +195,7 @@ const DetalleReceta = memo(
                 isAuthenticated={isAuthenticated}
                 resenaIdDestacada={resenaIdDestacada}
                 respuestaIdDestacada={respuestaIdDestacada}
+                modalListo={modalListo}
               />
             </div>
           </div>

@@ -130,6 +130,7 @@ function AppContent() {
   const [recetas, setRecetas] = useState([]);
   const [cargandoRecetas, setCargandoRecetas] = useState(true);
   const [recetaPendiente, setRecetaPendiente] = useState(null);
+  const recetaPendienteKey = useRef(0);
   const [versionFiltros, setVersionFiltros] = useState(0);
   const [mostrarCookies, setMostrarCookies] = useState(false);
   const [mostrarTerminos, setMostrarTerminos] = useState(false);
@@ -348,7 +349,13 @@ useEffect(() => {
 
   const handleAbrirReceta = useCallback(
     (recetaId, resenaId = null, respuestaId = null) => {
-      setRecetaPendiente({ recetaId, resenaId, respuestaId });
+      recetaPendienteKey.current += 1;
+      setRecetaPendiente({
+        recetaId,
+        resenaId,
+        respuestaId,
+        _key: recetaPendienteKey.current,
+      });
     },
     [],
   );
