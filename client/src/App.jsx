@@ -121,10 +121,11 @@ function AppContent() {
     return saved ? JSON.parse(saved) : false;
   });
   const [categoriaActiva, setCategoriaActiva] = useState("todas");
-  const [favoritos, setFavoritos] = useState(() => {
+
+  /*const [favoritos, setFavoritos] = useState(() => {
     const saved = localStorage.getItem("favoritos");
     return saved ? JSON.parse(saved) : [];
-  });
+  });*/
   const [robotIAActivo, setRobotIAActivo] = useState(false);
   const [recetas, setRecetas] = useState([]);
   const [cargandoRecetas, setCargandoRecetas] = useState(true);
@@ -139,15 +140,29 @@ function AppContent() {
 
   const terminosAceptadosEnSesion = useRef(false);
   const [backendListo, setBackendListo] = useState(false);
+  const [favoritos, setFavoritos] = useState([]);
+
+    // Cargar favoritos desde BD cuando hay usuario
+useEffect(() => {
+  if (!user) {
+    setFavoritos([]);
+    return;
+  }
+  api.get('/favoritos')
+    .then(({ data }) => {
+      setFavoritos(data.favoritos.map(id => id.toString()));
+    })
+    .catch(() => setFavoritos([]));
+}, [user]);
 
   useEffect(() => {
     document.body.classList.toggle("modo-oscuro", modoOscuro);
     localStorage.setItem("modoOscuro", JSON.stringify(modoOscuro));
   }, [modoOscuro]);
 
-  useEffect(() => {
+ /* useEffect(() => {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
-  }, [favoritos]);
+  }, [favoritos]);*/
 
   useEffect(() => {
     let cancelled = false;
@@ -221,7 +236,15 @@ function AppContent() {
 
   const resolverTerminos = useCallback(() => {
     if (!user) return;
-    if (!user.profileComplete) {
+    // Calcular igual que el backend: desde los datos reales, no desde el campo cacheado.
+    // Esto evita que el modal aparezca cuando el usuario ya tiene age/weight/height válidos
+    // pero profileComplete quedó en false por desincronización.
+    const profileRealmenteCompleto = (
+      user.age    != null && Number(user.age)    >= 18 &&
+      user.weight != null && Number(user.weight) >= 40 &&
+      user.height != null && Number(user.height) >= 50
+    );
+    if (!profileRealmenteCompleto) {
       setMostrarCompletarPerfil(true);
     }
   }, [user]);
@@ -304,8 +327,8 @@ function AppContent() {
   }, [activeTermsVersion, user, checkAuth, resolverTerminos]);
 
   const handlePerfilCompletado = useCallback(() => {
-    setMostrarCompletarPerfil(false); // cerrar inmediatamente sin esperar
-    checkAuth(); // luego refrescar usuario desde BD
+    setMostrarCompletarPerfil(false); 
+    checkAuth();
   }, [checkAuth]);
 
   const handleGooglePasswordSuccess = useCallback(() => {
@@ -330,13 +353,43 @@ function AppContent() {
     [],
   );
 
-  const toggleFav = useCallback((recetaId) => {
+  /*const toggleFav = useCallback((recetaId) => {
     setFavoritos((prev) =>
       prev.includes(recetaId)
         ? prev.filter((id) => id !== recetaId)
         : [...prev, recetaId],
     );
-  }, []);
+  }, []);*/
+
+    // DESPUÉS:
+  const toggleFav = useCallback(async (recetaId) => {
+    if (!user) return;
+  
+    const favoritosAnteriores = [...favoritos];
+  
+    // 1. Cambio visual instantáneo
+    setFavoritos(prev =>
+      prev.includes(recetaId)
+        ? prev.filter(id => id !== recetaId)
+        : [...prev, recetaId]
+    );
+  
+    try {
+      const { data } = await api.post(`/favoritos/${recetaId}`);
+      // 2. Sincronizamos con el servidor tras el éxito
+      setFavoritos(data.favoritos.map(id => id.toString()));
+    } catch (error) {
+      // 3. Si hay error (como el límite), revertimos y avisamos
+      setFavoritos(favoritosAnteriores);
+      
+      const mensajeError = error.response?.data?.error || "Error al actualizar favoritos";
+      alert(mensajeError); 
+      
+      // Mantenemos solo este log si quieres seguir monitoreando en consola
+      console.error("Error en toggleFav:", mensajeError);
+    }
+  }, [user, favoritos, api]);
+
 
   return (
     <Router>
