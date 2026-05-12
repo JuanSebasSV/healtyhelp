@@ -273,29 +273,34 @@ useEffect(() => {
     );
   }, []);*/
   // DESPUÉS:
-const toggleFav = useCallback(async (recetaId) => {
-  if (!user) return; // solo usuarios logueados pueden guardar favoritos
-
-  // Actualización optimista — cambia la UI inmediatamente
-  setFavoritos(prev =>
-    prev.includes(recetaId)
-      ? prev.filter(id => id !== recetaId)
-      : [...prev, recetaId]
-  );
-
-  try {
-    const { data } = await api.post(`/favoritos/${recetaId}`);
-    // Sincroniza con lo que devuelve el servidor
-    setFavoritos(data.favoritos.map(id => id.toString()));
-  } catch {
-    // Si falla, revierte el cambio optimista
+  const toggleFav = useCallback(async (recetaId) => {
+    if (!user) return;
+  
+    const favoritosAnteriores = [...favoritos];
+  
+    // Actualización optimista
     setFavoritos(prev =>
       prev.includes(recetaId)
         ? prev.filter(id => id !== recetaId)
         : [...prev, recetaId]
     );
-  }
-}, [user]);
+  
+    try {
+      const { data } = await api.post(`/favoritos/${recetaId}`);
+      setFavoritos(data.favoritos.map(id => id.toString()));
+    } catch (error) {
+      // Revertimos el cambio visual
+      setFavoritos(favoritosAnteriores);
+  
+      // LOG PARA DEPURACIÓN: Esto te dirá qué está llegando exactamente
+      console.log("Error completo capturado:", error);
+  
+      // Intento de capturar el mensaje de diferentes formas
+      const mensajeError = error.response?.data?.error || error.message || "Error al guardar favorito";
+      
+      alert(mensajeError); 
+    }
+  }, [user, favoritos, api]);
 
   return (
     <Router>

@@ -21,10 +21,8 @@
   background-size: cover;
 }
 .modo-oscuro .gradientMesh {
-  background: linear-gradient(135deg,
-      var(--fondo-oscuro-0) 0%,
-      var(--fondo-oscuro-50) 50%,
-      var(--fondo-oscuro-100) 100%);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)), url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+
 }
 
 .ondaLinea {
