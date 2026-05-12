@@ -125,10 +125,26 @@ svg {
   min-height: calc(100vh - var(--navbar-h));
 }
 
-.contenido-principal:has(.vistaInicio) {
+.contenido-principal:has(.vistaInicio),
+.contenido-principal:has(.vista-favoritos) {
   padding-top: 0;
   padding-left: 0;
   padding-right: 0;
+  padding-bottom: 0;
+}
+
+.App:has(.vista-favoritos) .fondoAnimado {
+  display: none;
+}
+
+.App:has(.vista-favoritos) {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.673), rgba(0, 0, 0, 0.382)),
+    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .contenido-principal:has(.vistaChatbot) {
@@ -139,10 +155,11 @@ svg {
 }
 
 @media (max-width: 900px) {
-  .contenido-principal:has(.vistaInicio) {
-    padding-left: 0.6rem;
-    padding-right: 0.6rem;
-    overflow-x: hidden; /* evita que el panel de filtros desborde la pantalla */
+  .contenido-principal:has(.vistaInicio),
+  .contenido-principal:has(.vista-favoritos) {
+    padding-left: 0;
+    padding-right: 0;
+    overflow-x: hidden;
   }
 }
 
@@ -152,7 +169,7 @@ svg {
   gap: clamp(1rem, 2.5vw, 2rem);
   width: 100%;
   margin-bottom: clamp(1rem, 2.5vw, 2rem);
-  align-items: start; /* evita que las tarjetas salten al cambiar filtro */
+  align-items: stretch;
 }
 
 .modal-overlay {
