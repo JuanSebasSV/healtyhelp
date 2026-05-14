@@ -1,6 +1,6 @@
 /*RobotIA.css*/
 
-/*Botón flotante  */
+/*Botón flotante*/
 .robotBoton {
   position: fixed;
   bottom: 2rem;
@@ -8,63 +8,38 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f77f00 0%, #d62828 100%);
-  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.08);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(0, 0, 0, 0.14);
   cursor: pointer;
   z-index: 1500;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 0 0 0 rgba(247,127,0,0.4),
-    0 8px 28px rgba(247,127,0,0.45),
-    0 2px 8px rgba(0,0,0,0.3);
-  animation: robotPulse 3s ease-in-out infinite;
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-              box-shadow 0.25s ease;
-}
-
-.robotBoton::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(247,127,0,0.6),
-    rgba(26,77,46,0.6),
-    rgba(247,127,0,0.6)
-  );
-  animation: robotRing 4s linear infinite;
-  z-index: -1;
-}
-
-@keyframes robotRing {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes robotPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(247,127,0,0.4),
-                0 8px 28px rgba(247,127,0,0.45),
-                0 2px 8px rgba(0,0,0,0.3);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(247,127,0,0),
-                0 12px 36px rgba(247,127,0,0.55),
-                0 2px 8px rgba(0,0,0,0.3);
-  }
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              background 0.25s ease,
+              border-color 0.25s ease;
 }
 
 .robotBoton:hover {
-  transform: scale(1.12) rotate(-5deg);
+  transform: scale(1.1);
+  background: rgba(26, 77, 46, 0.32);
+  border-color: rgba(107, 158, 74, 0.55);
   box-shadow:
-    0 0 0 0 rgba(247,127,0,0),
-    0 16px 48px rgba(247,127,0,0.6),
-    0 4px 12px rgba(0,0,0,0.35);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(26, 77, 46, 0.38),
+    0 0 0 1px rgba(107, 158, 74, 0.28);
 }
 
-/*Panel flotante  */
+/*Panel flotante*/
 .robotChat {
   position: fixed;
   bottom: 5.5rem;
@@ -74,20 +49,18 @@
   z-index: 1500;
   display: flex;
   flex-direction: column;
-  animation: chatEntrada 0.35s cubic-bezier(0.22,1,0.36,1);
+  animation: chatEntrada 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   border-radius: 22px;
-  padding: 1.5px;
-  background: linear-gradient(
-    145deg,
-    rgba(247,127,0,0.7) 0%,
-    rgba(26,77,46,0.5) 40%,
-    rgba(107,158,74,0.4) 70%,
-    rgba(247,127,0,0.5) 100%
-  );
+  overflow: hidden;
+  background: rgba(10, 32, 18, 0.82);
+  backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  border: 1px solid rgba(107, 158, 74, 0.38);
   box-shadow:
-    0 24px 64px rgba(0,0,0,0.45),
-    0 8px 24px rgba(26,77,46,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.05);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 24px 64px rgba(0, 0, 0, 0.38),
+    0 8px 24px rgba(0, 0, 0, 0.20);
 }
 
 @keyframes chatEntrada {
@@ -99,14 +72,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-radius: 20.5px;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at 0% 0%, rgba(26,77,46,0.35) 0%, transparent 60%),
-    radial-gradient(ellipse at 100% 100%, rgba(107,158,74,0.2) 0%, transparent 55%),
-    rgba(8, 22, 13, 0.92);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: transparent;
   position: relative;
 }
 
@@ -116,68 +83,17 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: none;
 }
 
-/*Orbes decorativos (solo flotante, solo desktop)  */
-.chatOrbes {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: 20.5px;
-  overflow: hidden;
-}
+/*Orbes decorativos*/
+.chatOrbes { display: none; }
 
-.chatOrbe {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.25;
-}
-
-.chatOrbe--1 {
-  width: 140px;
-  height: 140px;
-  top: -40px;
-  right: -30px;
-  background: radial-gradient(circle, #f77f00, transparent);
-  animation: orbeFlot 8s ease-in-out infinite;
-}
-
-.chatOrbe--2 {
-  width: 100px;
-  height: 100px;
-  bottom: 60px;
-  left: -20px;
-  background: radial-gradient(circle, #1a4d2e, transparent);
-  animation: orbeFlot 10s ease-in-out infinite reverse;
-}
-
-.chatOrbe--3 {
-  width: 80px;
-  height: 80px;
-  bottom: -20px;
-  right: 40px;
-  background: radial-gradient(circle, #6b9e4a, transparent);
-  animation: orbeFlot 6s ease-in-out infinite 2s;
-}
-
-@keyframes orbeFlot {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(8px, -12px) scale(1.05); }
-  66%  { transform: translate(-6px, 8px) scale(0.97); }
-}
-
-/*Header  */
+/*Header*/
 .robotHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.9rem 1.1rem;
-  background: linear-gradient(
-    135deg,
-    rgba(26,77,46,0.85) 0%,
-    rgba(18,55,32,0.9) 100%
-  );
-  border-bottom: 1px solid rgba(107,158,74,0.2);
+  background: rgba(8, 28, 16, 0.55);
+  border-bottom: 1px solid rgba(107, 158, 74, 0.22);
   position: relative;
   z-index: 1;
   flex-shrink: 0;
@@ -193,13 +109,15 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, rgba(247,127,0,0.3), rgba(26,77,46,0.5));
-  border: 1px solid rgba(247,127,0,0.35);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.20);
 }
 
 .robotHeader__pulse {
@@ -210,13 +128,13 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   height: 8px;
   border-radius: 50%;
   background: #4ade80;
-  box-shadow: 0 0 0 0 rgba(74,222,128,0.5);
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
   animation: pulsarVerde 2s ease-in-out infinite;
 }
 
 @keyframes pulsarVerde {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
-  50%       { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
 }
 
 .robotHeader__info {
@@ -231,7 +149,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   color: #fff;
   margin: 0;
   letter-spacing: 0.01em;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .robotHeader__estado {
@@ -239,7 +157,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   align-items: center;
   gap: 0.3rem;
   font-size: 0.68rem;
-  color: rgba(180,230,160,0.75);
+  color: rgba(195, 235, 210, 0.82);
   letter-spacing: 0.03em;
 }
 
@@ -260,9 +178,9 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,18 +189,18 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 .robotHeader__btn:hover {
-  background: rgba(247,127,0,0.25);
-  border-color: rgba(247,127,0,0.5);
+  background: rgba(107, 158, 74, 0.30);
+  border-color: rgba(107, 158, 74, 0.55);
   color: #fff;
   transform: scale(1.08);
 }
 
 .robotHeader__btn--cerrar:hover {
-  background: rgba(214,40,40,0.25);
-  border-color: rgba(214,40,40,0.5);
+  background: rgba(214, 40, 40, 0.25);
+  border-color: rgba(214, 40, 40, 0.5);
 }
 
-/*Área de mensajes  */
+/*Área de mensajes*/
 .robotMensajes {
   flex: 1;
   padding: 1rem;
@@ -290,7 +208,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   position: relative;
   z-index: 1;
   scrollbar-width: thin;
-  scrollbar-color: rgba(107,158,74,0.3) transparent;
+  scrollbar-color: rgba(107, 158, 74, 0.35) transparent;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -300,11 +218,11 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 
 .robotMensajes::-webkit-scrollbar { width: 3px; }
 .robotMensajes::-webkit-scrollbar-thumb {
-  background: rgba(107,158,74,0.35);
+  background: rgba(107, 158, 74, 0.40);
   border-radius: 3px;
 }
 
-/*Bienvenida  */
+/*Bienvenida*/
 .chatBienvenida {
   text-align: center;
   padding: 0.5rem 0.25rem 0.75rem;
@@ -314,14 +232,16 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(26,77,46,0.6), rgba(107,158,74,0.3));
-  border: 1px solid rgba(107,158,74,0.35);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 0.75rem;
-  color: rgba(180,230,160,0.9);
-  box-shadow: 0 4px 16px rgba(26,77,46,0.3);
+  color: rgba(195, 235, 210, 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.18);
 }
 
 .chatBienvenida__hoja {
@@ -339,11 +259,12 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   color: #fff;
   margin: 0 0 0.3rem;
   letter-spacing: 0.01em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
 }
 
 .chatBienvenida__sub {
   font-size: 0.76rem;
-  color: rgba(180,220,160,0.65);
+  color: rgba(205, 240, 218, 0.82);
   margin: 0 0 0.9rem;
   line-height: 1.5;
 }
@@ -359,10 +280,10 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   align-items: center;
   gap: 0.5rem;
   padding: 0.48rem 0.75rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(107,158,74,0.25);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  color: rgba(210,240,190,0.85);
+  color: rgba(220, 248, 230, 0.90);
   font-size: 0.76rem;
   cursor: pointer;
   text-align: left;
@@ -370,19 +291,19 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 .chatSugerencia:hover {
-  background: rgba(107,158,74,0.15);
-  border-color: rgba(107,158,74,0.5);
+  background: rgba(107, 158, 74, 0.22);
+  border-color: rgba(107, 158, 74, 0.50);
   color: #fff;
   transform: translateX(3px);
 }
 
 .chatSugerencia__icono {
-  color: rgba(180,230,160,0.8);
+  color: rgba(195, 235, 210, 0.85);
   flex-shrink: 0;
   display: flex;
 }
 
-/*Mensajes  */
+/*Mensajes*/
 .robotMensaje {
   display: flex;
   gap: 0.5rem;
@@ -407,16 +328,16 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 .robotMensaje.usuario .robotMensajeAvatar {
-  background: rgba(247,127,0,0.25);
-  border: 1px solid rgba(247,127,0,0.4);
-  color: rgba(255,180,80,0.9);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.90);
   order: 2;
 }
 
 .robotMensaje.ia .robotMensajeAvatar {
-  background: rgba(26,77,46,0.5);
-  border: 1px solid rgba(107,158,74,0.35);
-  color: rgba(180,230,160,0.85);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(107, 158, 74, 0.30);
+  color: rgba(195, 235, 210, 0.90);
 }
 
 .robotMensajeTexto {
@@ -429,28 +350,29 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 .robotMensaje.usuario .robotMensajeTexto {
-  background: linear-gradient(135deg, rgba(247,127,0,0.4), rgba(214,40,40,0.25));
-  border: 1px solid rgba(247,127,0,0.35);
+  background: rgba(26, 77, 46, 0.65);
+  border: 1px solid rgba(107, 158, 74, 0.42);
   color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   order: 1;
   margin-left: auto;
   max-width: 82%;
   border-radius: 12px 4px 12px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .robotMensaje.ia .robotMensajeTexto {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(220,245,205,0.95);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  color: rgba(230, 252, 238, 0.95);
   max-width: 88%;
   border-radius: 4px 12px 12px 12px;
 }
 
-/*Input  */
+/*Input*/
 .robotInput {
   padding: 0.75rem 0.9rem;
-  border-top: 1px solid rgba(107,158,74,0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
   position: relative;
   z-index: 1;
   flex-shrink: 0;
@@ -460,16 +382,16 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(107,158,74,0.25);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
   border-radius: 13px;
   padding: 0.5rem 0.5rem 0.5rem 0.8rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .robotInput__wrap:focus-within {
-  border-color: rgba(247,127,0,0.55);
-  box-shadow: 0 0 0 3px rgba(247,127,0,0.12);
+  border-color: rgba(107, 158, 74, 0.60);
+  box-shadow: 0 0 0 3px rgba(107, 158, 74, 0.14);
 }
 
 .robotInput__wrap textarea {
@@ -477,7 +399,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   background: transparent;
   border: none;
   outline: none;
-  color: rgba(220,245,205,0.95);
+  color: rgba(230, 252, 238, 0.95);
   font-size: 0.83rem;
   font-family: inherit;
   resize: none;
@@ -487,61 +409,67 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 .robotInput__wrap textarea::placeholder {
-  color: rgba(180,210,160,0.4);
+  color: rgba(195, 235, 210, 0.45);
 }
 
 .robotInput__enviar {
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: linear-gradient(135deg, #f77f00, #d62828);
-  border: none;
+  background: rgba(26, 77, 46, 0.70);
+  border: 1px solid rgba(107, 158, 74, 0.45);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow: 0 2px 8px rgba(247,127,0,0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .robotInput__enviar:hover:not(:disabled) {
-  transform: scale(1.1) rotate(-5deg);
-  box-shadow: 0 4px 16px rgba(247,127,0,0.5);
+  background: rgba(26, 77, 46, 0.90);
+  border-color: rgba(107, 158, 74, 0.70);
+  transform: scale(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 4px 14px rgba(26, 77, 46, 0.40);
 }
 
 .robotInput__enviar:disabled {
-  opacity: 0.3;
+  opacity: 0.30;
   cursor: not-allowed;
   transform: none;
 }
 
-/*Footer  */
+/*Footer*/
 .robotFooter {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
   padding: 0.45rem 1rem;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  background: rgba(0,0,0,0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.10);
   position: relative;
   z-index: 1;
   flex-shrink: 0;
 }
 
 .robotFooter svg {
-  color: rgba(107,158,74,0.6);
+  color: rgba(195, 235, 210, 0.55);
 }
 
 .robotFooter small {
   font-size: 0.68rem;
-  color: rgba(180,210,160,0.4);
+  color: rgba(205, 240, 218, 0.45);
   letter-spacing: 0.03em;
 }
 
-/*Typing indicator  */
+/*Typing indicator*/
 .typingIndicator {
   display: flex;
   gap: 4px;
@@ -553,7 +481,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(107,158,74,0.7);
+  background: rgba(107, 158, 74, 0.80);
   animation: typingDot 1.4s infinite;
 }
 
@@ -565,12 +493,29 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
-/*Modo oscuro  */
-.modo-oscuro .robotChat .chatCore {
-  background:
-    radial-gradient(ellipse at 0% 0%, rgba(15,40,22,0.5) 0%, transparent 60%),
-    radial-gradient(ellipse at 100% 100%, rgba(26,77,46,0.3) 0%, transparent 55%),
-    rgba(4, 12, 7, 0.95);
+/*Modo oscuro*/
+.modo-oscuro .robotChat {
+  background: rgba(5, 18, 10, 0.88);
+  border-color: rgba(79, 119, 45, 0.40);
+}
+
+.modo-oscuro .robotChat .robotHeader {
+  background: rgba(4, 14, 8, 0.60);
+  border-bottom-color: rgba(79, 119, 45, 0.25);
+}
+
+.modo-oscuro .robotChat .robotMensaje.usuario .robotMensajeTexto {
+  background: rgba(15, 50, 25, 0.75);
+  border-color: rgba(79, 119, 45, 0.45);
+}
+
+.modo-oscuro .robotChat .robotInput__wrap {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.modo-oscuro .robotChat .robotInput__wrap:focus-within {
+  border-color: rgba(107, 158, 74, 0.50);
 }
 
 /*RESPONSIVE — Tablets (≤ 968px)*/
@@ -587,13 +532,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     height: 50px;
     bottom: 1rem;
     right: 1rem;
-    animation: none;
-  }
-
-  .robotBoton::before {
-    inset: -2px;
-    animation: none;
-    opacity: 0.5;
   }
 
   .robotBoton svg { width: 22px; height: 22px; }
@@ -605,17 +543,9 @@ body:has(> #root > * .vistaChatbot) .robotChat {
     width: auto;
     max-width: none;
     max-height: 56vh;
-    padding: 1.5px;
-  }
-
-  .robotChat .chatCore {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: rgba(6, 18, 10, 0.97);
-  }
-
-  .chatOrbes {
-    display: none;
+    background: rgba(6, 20, 12, 0.97);
   }
 
   .robotChat .robotHeader { padding: 0.75rem 0.9rem; }
@@ -649,11 +579,6 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 
 /* Respeta preferencia del sistema de no animar */
 @media (prefers-reduced-motion: reduce) {
-  .robotBoton { animation: none; }
-  .robotBoton::before { animation: none; }
-  .chatOrbe--1,
-  .chatOrbe--2,
-  .chatOrbe--3 { animation: none; }
   .chatBienvenida__hoja { animation: none; }
   .robotHeader__pulse { animation: none; }
 }

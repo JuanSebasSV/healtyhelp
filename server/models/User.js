@@ -18,19 +18,26 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Mínimo 6 caracteres'],
     select: false
   },
-  age: {
-    type: Number,
-    min: [18, 'Debes ser mayor de 18 años'],
-    max: [100, 'La edad máxima permitida es 100 años']
+  birthDate: {
+    type: Date,
+    validate: {
+      validator: function(v) {
+        if (!v) return true;
+        const age = Math.floor((Date.now() - v.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+        return age >= 18 && age <= 120;
+      },
+      message: 'La fecha de nacimiento indica una edad inválida'
+    }
   },
   weight: { type: Number, min: 40, max: 300 }, // kg
   height: { type: Number, min: 50, max: 210 }, // cm
+  alergia: { type: String, default: '' },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
   },
-favoritos: { 
+  favoritos: { 
   type: [mongoose.Schema.Types.ObjectId],
   ref: 'Recipe',
   default: [] 

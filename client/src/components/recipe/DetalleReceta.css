@@ -177,3 +177,13 @@
   .modalContenedorReceta h2 { font-size: 1.1rem; }
   .modalCol { padding: 1rem; }
 }
+
+.modalImg-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.modalImg-wrap .modalImg {
+  width: 100%;
+  display: block;
+}

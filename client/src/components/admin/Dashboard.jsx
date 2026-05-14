@@ -62,7 +62,7 @@ const TabButton = memo(({ id, label, icon, activeTab, onClick, badge = 0 }) => (
 TabButton.displayName = "TabButton";
 
 //  Dashboard 
-const Dashboard = () => {
+const Dashboard = ({ onBadgeChange }) => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
@@ -85,11 +85,13 @@ const Dashboard = () => {
       const { data } = await api.get(
         "/admin/imagenes-resenas?estado=pendiente&solo_total=true",
       );
-      setImgPendientes(data.total ?? data.imagenes?.length ?? 0);
+      const total = data.total ?? data.imagenes?.length ?? 0;
+      setImgPendientes(total);
+      onBadgeChange?.(total);
     } catch {
       /* silencioso */
     }
-  }, []);
+  }, [onBadgeChange]);
 
   // Poll del badge — protegido contra doble-mount
   useEffect(() => {
@@ -596,6 +598,10 @@ const Dashboard = () => {
         </>
       )}
       {activeTab === "ia" && <PanelIA />}
+      {activeTab === "terms" && <TermsManager />}
+      {activeTab === "imagenes" && (
+        <ImagenesAprobacion onCambio={handleImagenesCambio} />
+      )}
     </div>
   );
 };

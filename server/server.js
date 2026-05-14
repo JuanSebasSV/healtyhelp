@@ -94,6 +94,7 @@ app.use('/api/terms',          require('./routes/terms'));
 app.use('/api/notifications',  require('./routes/notifications'));
 app.use('/api',                require('./routes/utils'));
 app.use('/api/recomendaciones', require('./routes/recomendaciones'));
+app.use('/api/contacto', require('./routes/contacto'));
 app.use('/api/favoritos', require('./routes/favoritos'));
 
 app.get('/', (req, res) => {

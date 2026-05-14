@@ -40,12 +40,14 @@ const CONDICIONES_SALUD = [
 ];
 
 const NUTRI_BASICA = [
-  { label: 'Calorías',          field: 'cal',   step: '1'   },
-  { label: 'Proteínas (g)',     field: 'prot',  step: '0.1' },
-  { label: 'Carbohidratos (g)', field: 'carb',  step: '0.1' },
-  { label: 'Grasas (g)',        field: 'gras',  step: '0.1' },
-  { label: 'Fibra (g)',         field: 'fiber', step: '0.1' },
-  { label: 'Sodio (mg)',        field: 'sodio', step: '1'   },
+  { label: 'Calorías',             field: 'cal',        step: '1'   },
+  { label: 'Proteínas (g)',        field: 'prot',       step: '0.1' },
+  { label: 'Carbohidratos (g)',    field: 'carb',       step: '0.1' },
+  { label: 'Carbohidratos netos (g)', field: 'carbsNetos', step: '0.1' },
+  { label: 'Grasas (g)',           field: 'gras',       step: '0.1' },
+  { label: 'Fibra (g)',            field: 'fiber',      step: '0.1' },
+  { label: 'Sodio (mg)',           field: 'sodio',      step: '1'   },
+  { label: 'Colesterol (mg)',      field: 'colesterol', step: '1'   },
 ];
 
 const NUTRI_MINERALES = [
@@ -53,31 +55,119 @@ const NUTRI_MINERALES = [
   { l: 'Hierro (mg)',    f: 'hierro',   s: '0.1' },
   { l: 'Potasio (mg)',   f: 'potasio',  s: '1'   },
   { l: 'Magnesio (mg)',  f: 'magnesio', s: '1'   },
+  { l: 'Cobre (mg)',     f: 'cobre',    s: '0.1' },
+  { l: 'Flúor (µg)',     f: 'fluor',    s: '1'   },
+  { l: 'Fósforo (mg)',   f: 'fosforo',  s: '1'   },
+  { l: 'Manganeso (mg)', f: 'manganeso',s: '0.1' },
+  { l: 'Selenio (µg)',   f: 'selenio',  s: '1'   },
+  { l: 'Zinc (mg)',      f: 'zinc',     s: '0.1' },
 ];
 
 const NUTRI_VITAMINAS = [
-  { l: 'Vitamina A (mcg)', f: 'vitA', s: '1'   },
-  { l: 'Vitamina C (mg)',  f: 'vitC', s: '1'   },
-  { l: 'Vitamina D (mcg)', f: 'vitD', s: '0.1' },
-  { l: 'Vitamina E (mg)',  f: 'vitE', s: '0.1' },
+  { l: 'Vitamina A (µg)',              f: 'vitA',      s: '1'   },
+  { l: 'Vitamina A (IU)',              f: 'vitAui',    s: '1'   },
+  { l: 'Vitamina B6 (mg)',             f: 'vitB6',     s: '0.1' },
+  { l: 'Vitamina B12 (µg)',            f: 'vitB12',    s: '0.1' },
+  { l: 'Vitamina C (mg)',              f: 'vitC',      s: '1'   },
+  { l: 'Vitamina D2 (µg)',             f: 'vitD2',     s: '0.1' },
+  { l: 'Vitamina D3 (µg)',             f: 'vitD3',     s: '0.1' },
+  { l: 'Vitamina D (IU)',              f: 'vitDui',    s: '1'   },
+  { l: 'Vitamina E (mg)',              f: 'vitE',      s: '0.1' },
+  { l: 'Vitamina K (µg)',              f: 'vitK',      s: '0.1' },
+  { l: 'Folato / Vit. B9 (µg)',        f: 'folato',    s: '1'   },
+  { l: 'Niacina / Vit. B3 (mg)',       f: 'niacina',   s: '0.1' },
+  { l: 'Riboflavina / Vit. B2 (mg)',   f: 'riboflavina',s:'0.1' },
+  { l: 'Tiamina / Vit. B1 (mg)',       f: 'tiamina',   s: '0.1' },
+  { l: 'Ác. pantoténico / B5 (mg)',    f: 'acidoPant', s: '0.1' },
+];
+
+const NUTRI_OTROS_MICRO = [
+  { l: 'Alfa caroteno (µg)',  f: 'alfaCaroteno', s: '1'   },
+  { l: 'Beta caroteno (µg)',  f: 'betaCaroteno', s: '1'   },
+  { l: 'Licopeno (µg)',       f: 'licopeno',     s: '1'   },
+  { l: 'Retinol (µg)',        f: 'retinol',      s: '1'   },
+  { l: 'Colina (mg)',         f: 'colina',       s: '1'   },
+  { l: 'Cafeína (mg)',        f: 'cafeina',      s: '1'   },
+  { l: 'Teobromina (mg)',     f: 'teobromina',   s: '1'   },
 ];
 
 const NUTRI_AZUCARES = [
-  { l: 'Azúcar Total (g)', f: 'azucar'   },
+  { l: 'Azúcar total (g)', f: 'azucar'   },
+  { l: 'Sacarosa (g)',     f: 'sacarosa' },
   { l: 'Glucosa (g)',      f: 'glucosa'  },
   { l: 'Fructosa (g)',     f: 'fructosa' },
+  { l: 'Lactosa (g)',      f: 'lactosa'  },
+  { l: 'Maltosa (g)',      f: 'maltosa'  },
+  { l: 'Galactosa (g)',    f: 'galactosa'},
+  { l: 'Almidón (g)',      f: 'almidon'  },
 ];
 
 const NUTRI_GRASAS = [
-  { l: 'Saturadas (g)',        f: 'grasSat'      },
-  { l: 'Monoinsaturadas (g)',  f: 'grasMonoins'  },
-  { l: 'Poliinsaturadas (g)',  f: 'grasPoliins'  },
-  { l: 'Omega-3 (g)',          f: 'omega3'       },
+  { l: 'Saturadas (g)',       f: 'grasSat'     },
+  { l: 'Monoinsaturadas (g)', f: 'grasMonoins' },
+  { l: 'Poliinsaturadas (g)', f: 'grasPoliins' },
+  { l: 'Trans (g)',           f: 'grasTrans'   },
+];
+
+const NUTRI_ACIDOS_GRASOS = [
+  { l: 'Omega 3 total (g)',              f: 'omega3' },
+  { l: 'Omega 6 total (g)',              f: 'omega6' },
+  { l: 'Ác. alfa-linolénico ALA (g)',    f: 'ala'    },
+  { l: 'Ác. docosahexaenoico DHA (g)',   f: 'dha'    },
+  { l: 'Ác. eicosapentaenoico EPA (g)',  f: 'epa'    },
+  { l: 'Ác. docosapentaenoico DPA (g)',  f: 'dpa'    },
+];
+
+const NUTRI_AMINOACIDOS = [
+  { l: 'Alanina (g)',         f: 'alanina'      },
+  { l: 'Arginina (g)',        f: 'arginina'     },
+  { l: 'Ác. aspártico (g)',   f: 'acidoAsp'     },
+  { l: 'Cistina (g)',         f: 'cistina'      },
+  { l: 'Ác. glutámico (g)',   f: 'acidoGlu'     },
+  { l: 'Glicina (g)',         f: 'glicina'      },
+  { l: 'Histidina (g)',       f: 'histidina'    },
+  { l: 'Hidroxiprolina (g)',  f: 'hidroxiprol'  },
+  { l: 'Isoleucina (g)',      f: 'isoleucina'   },
+  { l: 'Leucina (g)',         f: 'leucina'      },
+  { l: 'Lisina (g)',          f: 'lisina'       },
+  { l: 'Metionina (g)',       f: 'metionina'    },
+  { l: 'Fenilalanina (g)',    f: 'fenilalanina' },
+  { l: 'Prolina (g)',         f: 'prolina'      },
+  { l: 'Serina (g)',          f: 'serina'       },
+  { l: 'Treonina (g)',        f: 'treonina'     },
+  { l: 'Triptófano (g)',      f: 'triptofano'   },
+  { l: 'Tirosina (g)',        f: 'tirosina'     },
+  { l: 'Valina (g)',          f: 'valina'       },
 ];
 
 const DRAFT_KEY = 'recipe_form_draft';
 
-const NUTRI_VACIA = { cal: 0, prot: 0, carb: 0, gras: 0, fiber: 0, sodio: 0 };
+const NUTRI_VACIA = {
+  // Básicos
+  cal: 0, prot: 0, carb: 0, carbsNetos: 0, gras: 0, fiber: 0, sodio: 0, colesterol: 0,
+  // Minerales
+  calcio: 0, hierro: 0, potasio: 0, magnesio: 0, cobre: 0, fluor: 0,
+  fosforo: 0, manganeso: 0, selenio: 0, zinc: 0,
+  // Vitaminas
+  vitA: 0, vitAui: 0, vitB6: 0, vitB12: 0, vitC: 0,
+  vitD2: 0, vitD3: 0, vitDui: 0, vitE: 0, vitK: 0,
+  folato: 0, niacina: 0, riboflavina: 0, tiamina: 0, acidoPant: 0,
+  // Otros micronutrientes
+  alfaCaroteno: 0, betaCaroteno: 0, licopeno: 0, retinol: 0,
+  colina: 0, cafeina: 0, teobromina: 0,
+  // Azúcares
+  azucar: 0, sacarosa: 0, glucosa: 0, fructosa: 0,
+  lactosa: 0, maltosa: 0, galactosa: 0, almidon: 0,
+  // Grasas
+  grasSat: 0, grasMonoins: 0, grasPoliins: 0, grasTrans: 0,
+  // Ácidos grasos
+  omega3: 0, omega6: 0, ala: 0, dha: 0, epa: 0, dpa: 0,
+  // Aminoácidos
+  alanina: 0, arginina: 0, acidoAsp: 0, cistina: 0, acidoGlu: 0,
+  glicina: 0, histidina: 0, hidroxiprol: 0, isoleucina: 0, leucina: 0,
+  lisina: 0, metionina: 0, fenilalanina: 0, prolina: 0, serina: 0,
+  treonina: 0, triptofano: 0, tirosina: 0, valina: 0,
+};
 
 //tiempoMinutos
 const FORM_INICIAL = {
@@ -437,6 +527,16 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
                 ))}
               </div>
 
+              <h4>Carotenoides y Otros Compuestos</h4>
+              <div className="nutri-grid">
+                {NUTRI_OTROS_MICRO.map(({ l, f }) => (
+                  <div className="form-group" key={f}>
+                    <label>{l}</label>
+                    <NumeroInput value={formData.nutri[f] ?? 0} onChange={(e) => handleNutriChange(f, e.target.value)} min={0} step={0.1} />
+                  </div>
+                ))}
+              </div>
+
               <h4>Azúcares</h4>
               <div className="nutri-grid">
                 {NUTRI_AZUCARES.map(({ l, f }) => (
@@ -453,6 +553,26 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
                   <div className="form-group" key={f}>
                     <label>{l}</label>
                     <NumeroInput value={formData.nutri[f] ?? 0} onChange={(e) => handleNutriChange(f, e.target.value)} min={0} step={0.1} />
+                  </div>
+                ))}
+              </div>
+
+              <h4>Ácidos Grasos</h4>
+              <div className="nutri-grid">
+                {NUTRI_ACIDOS_GRASOS.map(({ l, f }) => (
+                  <div className="form-group" key={f}>
+                    <label>{l}</label>
+                    <NumeroInput value={formData.nutri[f] ?? 0} onChange={(e) => handleNutriChange(f, e.target.value)} min={0} step={0.01} />
+                  </div>
+                ))}
+              </div>
+
+              <h4>Aminoácidos</h4>
+              <div className="nutri-grid">
+                {NUTRI_AMINOACIDOS.map(({ l, f }) => (
+                  <div className="form-group" key={f}>
+                    <label>{l}</label>
+                    <NumeroInput value={formData.nutri[f] ?? 0} onChange={(e) => handleNutriChange(f, e.target.value)} min={0} step={0.01} />
                   </div>
                 ))}
               </div>

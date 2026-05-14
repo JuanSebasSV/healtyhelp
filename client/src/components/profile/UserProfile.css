@@ -52,22 +52,22 @@
 }
 
 .perfil-identidad {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(255, 255, 255, 0.42);
   border-radius: 24px;
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
   text-align: center;
 }
 
 .modo-oscuro .perfil-identidad {
-  background: rgba(20, 40, 25, 0.6);
-  border-color: rgba(79, 119, 45, 0.3);
+  background: rgba(20, 40, 25, 0.75);
+  border-color: rgba(79, 119, 45, 0.50);
 }
 
 /*AVATAR*/
@@ -79,20 +79,43 @@
   min-height: 110px;
   margin-bottom: 0.75rem;
   border-radius: 50%;
+  /* Base estática: sombra circular translúcida siempre visible */
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.18),
+    0 6px 24px rgba(0, 0, 0, 0.30);
 }
 
+/*
+  REWORK COMPLETO — ya no es un disco de colores girando detrás.
+  Ahora es un ANILLO HUECO REAL encima de la foto:
+  · mask CSS lo vacía en el centro → sólo el borde es visible (~8 px)
+  · z-index: 2 → flota sobre la imagen
+  · conic-gradient: 300° de vidrio casi invisible + un arco brillante que orbita
+  · Efecto: bisel de lente / reloj de lujo / halo premium
+*/
 .avatar-anillo {
   position: absolute;
-  inset: -5px;
+  inset: -5px;          /* 120 × 120 px; radio 60 px                   */
   border-radius: 50%;
+  z-index: 2;           /* encima de la foto                            */
+  pointer-events: none; /* los clics pasan a la imagen/wrapper          */
+
   background: conic-gradient(
-    var(--naranja) 0deg,
-    var(--verde-hoja) 120deg,
-    var(--verde-bosque) 240deg,
-    var(--naranja) 360deg
+    from 0deg,
+    rgba(255, 255, 255, 0.08)  0%,
+    rgba(255, 255, 255, 0.08)  60%,   /* base casi invisible             */
+    rgba(210, 250, 170, 0.30)  70%,   /* entrada suave del arco          */
+    rgba(255, 255, 255, 0.96)  79%,   /* punto máximo de luz             */
+    rgba(210, 250, 170, 0.30)  88%,   /* salida suave del arco           */
+    rgba(255, 255, 255, 0.08)  96%,
+    rgba(255, 255, 255, 0.08) 100%
   );
-  animation: girarAnillo 8s linear infinite;
-  z-index: 0;
+
+  /* Vacía el interior → deja sólo ~8 px de anillo */
+  -webkit-mask: radial-gradient(circle at center, transparent 85%, black 87%);
+  mask:         radial-gradient(circle at center, transparent 85%, black 87%);
+
+  animation: girarAnillo 6s linear infinite;
 }
 
 @keyframes girarAnillo {
@@ -108,7 +131,7 @@
   border-radius: 50%;
   object-fit: cover;
   object-position: center top;
-  border: 4px solid rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.14);
   display: block;
 }
 
@@ -121,7 +144,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.14);
 }
 
 .avatar-iniciales span {
@@ -134,31 +157,42 @@
 
 
 
-/*Botón cámara */
+/*Botón cámara — liquid glass */
 .avatar-cambiar {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 2.5px solid rgba(255, 255, 255, 0.9);
-  background: linear-gradient(135deg, var(--naranja), #d66e00);
-  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 3px 12px rgba(247, 127, 0, 0.45);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
   padding: 0;
   margin-top: -0.5rem;
 }
 
 .avatar-cambiar:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 18px rgba(247, 127, 0, 0.6);
+  background: rgba(74, 124, 47, 0.38);
+  border-color: rgba(138, 184, 96, 0.75);
+  box-shadow:
+    0 4px 20px rgba(74, 124, 47, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  color: #fff;
+  transform: scale(1.12);
 }
 
 .avatar-cambiar:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
@@ -207,7 +241,7 @@
 
 .perfil-email-display {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   word-break: break-all;
 }
 
@@ -228,7 +262,7 @@
   flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.30);
   padding-top: 1rem;
 }
 
@@ -247,7 +281,7 @@
 
 .stat-label {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.72);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 1px;
@@ -264,10 +298,10 @@
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.13);
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
   border-radius: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.90);
   font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transicion);
@@ -295,20 +329,20 @@
 
 /*CONTENIDO PRINCIPAL*/
 .perfil-contenido {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
   border-radius: 24px;
   padding: 2.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
 .modo-oscuro .perfil-contenido {
-  background: rgba(15, 30, 20, 0.6);
-  border-color: rgba(79, 119, 45, 0.25);
+  background: rgba(15, 30, 20, 0.78);
+  border-color: rgba(79, 119, 45, 0.45);
 }
 
 .perfil-header {
@@ -340,7 +374,7 @@
 }
 
 .perfil-subtitulo {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.9rem;
   margin-top: 0.4rem;
   margin-left: calc(6px + 0.75rem);
@@ -352,11 +386,11 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 1.25rem;
-  background: rgba(247, 127, 0, 0.15);
-  border: 1px solid rgba(247, 127, 0, 0.4);
+  background: rgba(247, 127, 0, 0.25);
+  border: 1.5px solid rgba(247, 127, 0, 0.65);
   border-radius: 12px;
   color: var(--naranja);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transicion);
@@ -449,15 +483,17 @@
 
 /* Secciones */
 .perfil-seccion {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.30);
+  border-left: 3px solid var(--naranja);
   border-radius: 16px;
   padding: 1.75rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
 }
 
 .modo-oscuro .perfil-seccion {
-  background: rgba(0, 0, 0, 0.15);
-  border-color: rgba(79, 119, 45, 0.2);
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(79, 119, 45, 0.40);
 }
 
 .seccion-titulo {
@@ -471,8 +507,8 @@
   font-size: 1.3rem;
   width: 36px;
   height: 36px;
-  background: rgba(247, 127, 0, 0.15);
-  border: 1px solid rgba(247, 127, 0, 0.3);
+  background: rgba(247, 127, 0, 0.25);
+  border: 1.5px solid rgba(247, 127, 0, 0.55);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -501,16 +537,16 @@
 
 .campo-label {
   font-size: 0.78rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.90);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.7px;
 }
 
 .campo-input {
   padding: 0.9rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
   border-radius: 12px;
   color: white;
   font-size: 0.95rem;
@@ -520,7 +556,7 @@
   box-sizing: border-box;
 }
 
-.campo-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+.campo-input::placeholder { color: rgba(255, 255, 255, 0.45); }
 
 .campo-input:focus {
   border-color: var(--naranja);
@@ -535,22 +571,22 @@
 
 .campo-valor {
   padding: 0.9rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.30);
   border-radius: 12px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.97);
   font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.campo-valor--bloqueado { color: rgba(255, 255, 255, 0.5); cursor: not-allowed; }
-.campo-lock { opacity: 0.4; }
+.campo-valor--bloqueado { color: rgba(255, 255, 255, 0.65); cursor: not-allowed; }
+.campo-lock { opacity: 0.55; }
 
 .campo-hint {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.60);
 }
 
 .campo-hint--error {
@@ -626,7 +662,7 @@
 }
 
 .google-titulo { font-weight: 600; color: white; font-size: 0.95rem; }
-.google-desc   { font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.2rem; }
+.google-desc   { font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); margin-top: 0.2rem; }
 
 .google-check {
   margin-left: auto;
@@ -868,8 +904,9 @@
 
 /*ZONA DE PELIGRO*/
 .perfil-seccion--peligro {
-  background: rgba(220, 38, 38, 0.05);
-  border-color: rgba(220, 38, 38, 0.2);
+  background: rgba(220, 38, 38, 0.10);
+  border: 1.5px solid rgba(220, 38, 38, 0.38);
+  border-left: 3px solid #f87171;
 }
 
 .seccion-icono--peligro {
@@ -883,7 +920,7 @@
 }
 
 .peligro-desc {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.88rem;
   line-height: 1.6;
   margin-bottom: 1.25rem;
@@ -1147,3 +1184,106 @@
   animation: girar 0.6s linear infinite;
   display: inline-block;
 }
+/*ESTADO OK en campo editable*/
+
+.campo-input--ok {
+  border-color: #22c55e !important;
+  outline-color: #22c55e !important;
+}
+
+/*CAMPO FECHA DE NACIMIENTO — layout limpio*/
+
+.campo-valor--fecha {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+}
+
+.campo-fecha-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.campo-fecha-texto {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}
+
+.campo-fecha-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/*BADGE de edad junto a fecha de nacimiento*/
+
+.campo-edad-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(79, 119, 45, 0.18);
+  border: 1px solid rgba(79, 119, 45, 0.35);
+  color: #a8e063;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/*FIELD HINTS — iguales que Register*/
+
+.field-hints {
+  list-style: none;
+  margin: 4px 0 2px 2px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field-hints li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.hint-pending { color: #c5cad4; }
+.hint-ok      { color: #22c55e; font-weight: 500; }
+
+/*AVISO INLINE — replicado desde Register*/
+
+.aviso-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+.aviso-inline--naranja {
+  background: rgba(247, 127, 0, 0.12);
+  border: 1px solid rgba(247, 127, 0, 0.40);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--naranja svg    { color: var(--naranja, #f77f00); }
+.aviso-inline--naranja strong { color: var(--naranja, #f77f00); }
+
+.aviso-inline--rojo {
+  background: rgba(220, 38, 38, 0.10);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+}
+.aviso-inline--rojo svg    { color: #f87171; }
+.aviso-inline--rojo strong { color: #f87171; }

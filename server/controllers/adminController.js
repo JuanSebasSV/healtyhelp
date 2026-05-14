@@ -4,9 +4,6 @@ const AdminInvitation = require('../models/AdminInvitation');
 const Recipe          = require('../models/Recipe');
 const crypto          = require('crypto');
 
-// 
-// Obtener todos los usuarios
-// 
 exports.getAllUsers = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: 'No autenticado' });
@@ -23,9 +20,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// 
-// Estadísticas
-// 
 exports.getStats = async (req, res) => {
   try {
     const totalUsers   = await User.countDocuments();
@@ -33,7 +27,6 @@ exports.getStats = async (req, res) => {
     const regularUsers = await User.countDocuments({ role: 'user' });
     const superAdmins  = await User.countDocuments({ isSuperAdmin: true });
 
-    // Conteo de imágenes de reseñas pendientes para el badge del dashboard
     const imagenesPendientes = await Recipe.aggregate([
       { $unwind: '$resenas' },
       { $match: { 'resenas.imagen.estado': 'pendiente' } },
@@ -55,9 +48,6 @@ exports.getStats = async (req, res) => {
   }
 };
 
-// 
-// Eliminar usuario
-// 
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,9 +85,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// 
-// Cambiar rol
-// 
 exports.updateUserRole = async (req, res) => {
   try {
     const { id }   = req.params;
@@ -144,9 +131,6 @@ exports.updateUserRole = async (req, res) => {
   }
 };
 
-// 
-// Crear log manual
-// 
 exports.createLog = async (req, res) => {
   try {
     const { action, targetUserId, metadata } = req.body;
@@ -158,9 +142,6 @@ exports.createLog = async (req, res) => {
   }
 };
 
-// 
-// Obtener logs
-// 
 exports.getLogs = async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
@@ -182,9 +163,6 @@ exports.getLogs = async (req, res) => {
   }
 };
 
-// 
-// Invitar admin
-// 
 exports.inviteAdmin = async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -214,9 +192,6 @@ exports.inviteAdmin = async (req, res) => {
   }
 };
 
-// 
-// Aceptar invitación
-// 
 exports.acceptAdminInvite = async (req, res) => {
   try {
     const { token }    = req.params;
@@ -256,9 +231,6 @@ exports.acceptAdminInvite = async (req, res) => {
   }
 };
 
-// 
-// Invitaciones pendientes
-// 
 exports.getPendingInvitations = async (req, res) => {
   try {
     const invitations = await AdminInvitation.find({ used: false })
@@ -270,13 +242,10 @@ exports.getPendingInvitations = async (req, res) => {
   }
 };
 
-// 
-// Revocar invitación
-// 
 exports.revokeInvitation = async (req, res) => {
   try {
-    const { id }       = req.params;
-    const invitation   = await AdminInvitation.findByIdAndDelete(id);
+    const { id }     = req.params;
+    const invitation = await AdminInvitation.findByIdAndDelete(id);
     if (!invitation) return res.status(404).json({ error: 'Invitación no encontrada' });
 
     await logAdminAction(req.user._id, 'REVOKE_INVITATION', null, { revokedEmail: invitation.email });
@@ -286,51 +255,36 @@ exports.revokeInvitation = async (req, res) => {
   }
 };
 
-// ═══════════════════════════════════════════════════════════════
-// 🖼️  IMÁGENES DE RESEÑAS — aprobación / rechazo
-// ═══════════════════════════════════════════════════════════════
-
-/**
- * GET /admin/imagenes-resenas?estado=pendiente|aprobada|rechazada&page=1&limit=12
- * Devuelve lista paginada de reseñas que tienen imagen, con info de usuario y receta.
- */
 exports.getImagenesResenas = async (req, res) => {
   try {
     const { estado = 'pendiente', page = 1, limit = 12 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Aggregate para extraer solo las reseñas que tienen imagen con el estado solicitado
     const pipeline = [
       { $unwind: '$resenas' },
-      {
-        $match: {
-          'resenas.imagen.estado': estado,
-        },
-      },
+      { $match: { 'resenas.imagen.estado': estado } },
       {
         $project: {
-          _id:         0,
-          recipeId:    '$_id',
-          recipeNombre: '$nombre',
-          resenaId:    '$resenas._id',
-          userId:      '$resenas.userId',
-          userName:    '$resenas.userName',
-          texto:       '$resenas.texto',
-          estrellas:   '$resenas.estrellas',
-          createdAt:   '$resenas.createdAt',
-          imagenUrl:   '$resenas.imagen.url',
+          _id:            0,
+          recipeId:       '$_id',
+          recipeNombre:   '$nombre',
+          resenaId:       '$resenas._id',
+          userId:         '$resenas.userId',
+          userName:       '$resenas.userName',
+          texto:          '$resenas.texto',
+          estrellas:      '$resenas.estrellas',
+          createdAt:      '$resenas.createdAt',
+          imagenUrl:      '$resenas.imagen.url',
           imagenPublicId: '$resenas.imagen.publicId',
-          imagenEstado: '$resenas.imagen.estado',
+          imagenEstado:   '$resenas.imagen.estado',
         },
       },
       { $sort: { createdAt: -1 } },
     ];
 
-    // Conteo total
     const totalPipeline = [...pipeline, { $count: 'total' }];
     const [{ total = 0 } = {}] = await Recipe.aggregate(totalPipeline);
 
-    // Resultados paginados
     const items = await Recipe.aggregate([
       ...pipeline,
       { $skip:  skip },
@@ -352,28 +306,22 @@ exports.getImagenesResenas = async (req, res) => {
   }
 };
 
-/**
- * PUT /admin/imagenes-resenas/:recipeId/:resenaId/aprobar
- * Setea imagen.estado = 'aprobada'
- */
 exports.aprobarImagenResena = async (req, res) => {
   try {
     const { recipeId, resenaId } = req.params;
 
-    const recipe = await Recipe.findById(recipeId);
-    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+    const updated = await Recipe.findOneAndUpdate(
+      { _id: recipeId, 'resenas._id': resenaId },
+      { $set: { 'resenas.$.imagen.estado': 'aprobada' } },
+      { new: true }
+    );
 
-    const resena = recipe.resenas.id(resenaId);
-    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
+    if (!updated) return res.status(404).json({ error: 'Receta o reseña no encontrada' });
 
-    if (!resena.imagen || !resena.imagen.estado)
-      return res.status(400).json({ error: 'Esta reseña no tiene imagen asociada' });
-
-    resena.imagen.estado = 'aprobada';
-    await recipe.save();
+    const resena = updated.resenas.id(resenaId);
 
     await logAdminAction(req.user._id, 'APPROVE_RESENA_IMAGE', null, {
-      recipeId, resenaId, userName: resena.userName,
+      recipeId, resenaId, userName: resena?.userName,
     });
 
     res.json({ success: true, message: 'Imagen aprobada. Ya es visible para todos.' });
@@ -383,10 +331,6 @@ exports.aprobarImagenResena = async (req, res) => {
   }
 };
 
-/**
- * PUT /admin/imagenes-resenas/:recipeId/:resenaId/rechazar
- * Elimina la imagen de Cloudinary y setea imagen.estado = 'rechazada'
- */
 exports.rechazarImagenResena = async (req, res) => {
   try {
     const { recipeId, resenaId } = req.params;
@@ -398,10 +342,8 @@ exports.rechazarImagenResena = async (req, res) => {
     const resena = recipe.resenas.id(resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    if (!resena.imagen?.url)
-      return res.status(400).json({ error: 'Esta reseña no tiene imagen' });
+    if (!resena.imagen) return res.status(400).json({ error: 'Esta reseña no tiene imagen asociada' });
 
-    // Eliminar de Cloudinary
     if (resena.imagen.publicId) {
       try {
         await cloudinary.uploader.destroy(resena.imagen.publicId);
@@ -410,10 +352,16 @@ exports.rechazarImagenResena = async (req, res) => {
       }
     }
 
-    resena.imagen.url      = null;
-    resena.imagen.publicId = null;
-    resena.imagen.estado   = 'rechazada';
-    await recipe.save();
+    await Recipe.findOneAndUpdate(
+      { _id: recipeId, 'resenas._id': resenaId },
+      {
+        $set: {
+          'resenas.$.imagen.estado':   'rechazada',
+          'resenas.$.imagen.url':      null,
+          'resenas.$.imagen.publicId': null,
+        },
+      }
+    );
 
     await logAdminAction(req.user._id, 'REJECT_RESENA_IMAGE', null, {
       recipeId, resenaId, userName: resena.userName,
@@ -426,21 +374,6 @@ exports.rechazarImagenResena = async (req, res) => {
   }
 };
 
-// 
-// Helper interno
-// 
-
-
-// 
-// SISTEMA DE BANEO
-// 
-
-/**
- * PUT /admin/users/:id/ban
- * Body: { motivo: string, dias: number | null }
- *   dias = null  → ban permanente
- *   dias = N     → ban temporal N días
- */
 exports.banearUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -477,9 +410,6 @@ exports.banearUsuario = async (req, res) => {
   }
 };
 
-/**
- * PUT /admin/users/:id/unban
- */
 exports.desbanearUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -501,9 +431,6 @@ exports.desbanearUsuario = async (req, res) => {
   }
 };
 
-/**
- * GET /admin/users/:id/ban
- */
 exports.getBanInfo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -521,6 +448,94 @@ exports.getBanInfo = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Error obteniendo info de ban' });
+  }
+};
+
+exports.eliminarImagenResena = async (req, res) => {
+  try {
+    const { recipeId, resenaId } = req.params;
+    const { cloudinary }         = require('../config/cloudinary');
+
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    const resena = recipe.resenas.id(resenaId);
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
+
+    const estadoActual = resena.imagen?.estado;
+    if (!estadoActual || estadoActual === 'pendiente') {
+      return res.status(400).json({ error: 'Solo se puede eliminar el historial de imágenes aprobadas o rechazadas' });
+    }
+
+    if (resena.imagen?.publicId) {
+      try {
+        await cloudinary.uploader.destroy(resena.imagen.publicId);
+      } catch (e) {
+        console.error('Error eliminando de Cloudinary:', e.message);
+      }
+    }
+
+    await Recipe.findOneAndUpdate(
+      { _id: recipeId, 'resenas._id': resenaId },
+      {
+        $unset: { 'resenas.$.imagen': '' },
+      }
+    );
+
+    await logAdminAction(req.user._id, 'DELETE_RESENA_IMAGE_HISTORY', null, {
+      recipeId, resenaId, userName: resena.userName, estadoEliminado: estadoActual,
+    });
+
+    res.json({ success: true, message: 'Registro eliminado del historial.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error eliminando imagen del historial' });
+  }
+};
+
+exports.eliminarImagenesResenasMasivo = async (req, res) => {
+  try {
+    const { items } = req.body; // [{ recipeId, resenaId }]
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Se requiere una lista de items para eliminar' });
+    }
+
+    const { cloudinary } = require('../config/cloudinary');
+    let ok = 0, fail = 0;
+
+    await Promise.allSettled(
+      items.map(async ({ recipeId, resenaId }) => {
+        try {
+          const recipe = await Recipe.findById(recipeId);
+          if (!recipe) { fail++; return; }
+
+          const resena = recipe.resenas.id(resenaId);
+          if (!resena || !resena.imagen || resena.imagen.estado === 'pendiente') { fail++; return; }
+
+          if (resena.imagen.publicId) {
+            try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch (_) {}
+          }
+
+          await Recipe.findOneAndUpdate(
+            { _id: recipeId, 'resenas._id': resenaId },
+            { $unset: { 'resenas.$.imagen': '' } }
+          );
+
+          ok++;
+        } catch {
+          fail++;
+        }
+      })
+    );
+
+    await logAdminAction(req.user._id, 'DELETE_RESENA_IMAGE_HISTORY_MASIVO', null, {
+      total: items.length, ok, fail,
+    });
+
+    res.json({ success: true, ok, fail, message: `${ok} registro${ok !== 1 ? 's' : ''} eliminado${ok !== 1 ? 's' : ''} del historial.` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error en eliminación masiva' });
   }
 };
 

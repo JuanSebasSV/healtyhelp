@@ -1,69 +1,23 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { enviarEmail, emailBase } = require('../utils/emailService');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
 
-const enviarEmail = async ({ to, subject, html }) => {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: process.env.EMAIL_FROM,   // ej: "Healthy Help <no-reply@tudominio.com>"
-      to,
-      subject,
-      html
-    })
-  });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(`Resend error: ${JSON.stringify(err)}`);
-  }
-  return res.json();
+const calcularEdad = (birthDate) => {
+  if (!birthDate) return null;
+  const hoy = new Date();
+  const nac = new Date(birthDate);
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
 };
 
-const emailBase = ({ titulo, subtitulo, contenido, footerTexto = 'Si no realizaste esta acción, ignora este correo.' }) => `
-<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background:#0d1f13;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1f13;padding:40px 16px;">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-        <tr><td align="center" style="padding-bottom:24px;">
-          <div style="display:inline-block;background:linear-gradient(135deg,#1a4d2e,#4f772d);border-radius:14px;padding:12px 24px;">
-            <span style="color:#fff;font-size:20px;font-weight:700;font-family:Georgia,serif;">🌿 Healthy Help</span>
-          </div>
-        </td></tr>
-        <tr><td style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:36px 32px;">
-          <h1 style="color:#fff;font-size:24px;font-family:Georgia,serif;margin:0 0 6px;text-align:center;">${titulo}</h1>
-          <p style="color:rgba(255,255,255,0.5);font-size:13px;text-align:center;margin:0 0 28px;">${subtitulo}</p>
-          ${contenido}
-        </td></tr>
-        <tr><td align="center" style="padding-top:20px;">
-          <p style="color:rgba(255,255,255,0.22);font-size:12px;margin:0;">${footerTexto}</p>
-          <p style="color:rgba(255,255,255,0.12);font-size:11px;margin:5px 0 0;">© Healthy Help — Cuida tu salud con confianza</p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-
 const buildUserResponse = (user) => {
-  // Calcular profileComplete dinámicamente desde los datos reales,
-  // sin confiar en el campo almacenado (puede estar desincronizado).
-  const profileComplete = !!(
-    user.age    != null && user.age    >= 18 && user.age    <= 100 &&
-    user.weight != null && user.weight >= 40 && user.weight <= 300 &&
-    user.height != null && user.height >= 50 && user.height <= 210
-  );
-
   const obj = {
     id:              user._id,
     name:            user.name,
@@ -73,12 +27,14 @@ const buildUserResponse = (user) => {
     googleId:        user.googleId,
     isVerified:      user.isVerified      || false,
     isSuperAdmin:    user.isSuperAdmin    || false,
-    age:             user.age,
+    birthDate:       user.birthDate,
+    age:             calcularEdad(user.birthDate),
     weight:          user.weight,
+    alergia: user.alergia || '',
     height:          user.height,
     termsAccepted:   user.termsAccepted   || false,
     termsVersion:    user.termsVersion    || '',
-    profileComplete,
+    profileComplete: user.profileComplete || false,
     createdAt:       user.createdAt
   };
   if (user.password !== undefined) obj.hasPassword = !!user.password;
@@ -101,18 +57,20 @@ const validarPassword = (password) => {
   return null;
 };
 
-// REGISTRO
 exports.register = async (req, res) => {
+  console.log('body registro:', req.body);
   try {
-    const { name, email, password, age, weight, height } = req.body;
+    const { name, email, password, birthDate, weight, height, alergia } = req.body;
 
     const nameError = validarNombre(name);
     if (nameError) return res.status(400).json({ error: nameError });
 
-    const edadNum = parseInt(age, 10);
-    if (!age || isNaN(edadNum)) return res.status(400).json({ error: 'La edad es requerida' });
-    if (edadNum < 18)           return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
-    if (edadNum > 100)          return res.status(400).json({ error: 'La edad máxima permitida es 100 años' });
+    if (!birthDate) return res.status(400).json({ error: 'La fecha de nacimiento es requerida' });
+    const fechaNac = new Date(birthDate);
+    if (isNaN(fechaNac.getTime())) return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
+    const edadNum = calcularEdad(fechaNac);
+    if (edadNum < 18) return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
+    if (edadNum > 120) return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -141,18 +99,19 @@ exports.register = async (req, res) => {
     const pesoNum  = weight  ? parseFloat(weight)  : null;
     const altNum   = height  ? parseFloat(height)  : null;
 
-    // profileComplete = true solo si age, weight Y height están presentes y son válidos
     const profileComplete = !!(
       edadNum >= 18 &&
-      pesoNum  && pesoNum  >= 40 && pesoNum  <= 300 &&
-      altNum   && altNum   >= 50 && altNum   <= 210
+      pesoNum && pesoNum >= 40 && pesoNum <= 300 &&
+      altNum  && altNum  >= 50 && altNum  <= 210
     );
 
     await User.create({
       name, email, password,
-      age: edadNum,
+      birthDate: fechaNac,
       ...(pesoNum && { weight: pesoNum }),
       ...(altNum  && { height: altNum  }),
+      ...(alergia  && { alergia: alergia.trim() }),
+
       profileComplete,
       isVerified:         false,
       verificationCode:   crypto.createHash('sha256').update(code).digest('hex'),
@@ -197,7 +156,6 @@ async function enviarCodigoVerificacion(email, name, code) {
   });
 }
 
-// VERIFICAR EMAIL
 exports.verifyEmail = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -217,13 +175,13 @@ exports.verifyEmail = async (req, res) => {
     user.verificationCode   = undefined;
     user.verificationExpire = undefined;
 
-    // Recalcular profileComplete con validación de rangos completa,
-    // por si quedó en false aunque los datos ya existían.
-    user.profileComplete = !!(
-      user.age    != null && user.age    >= 18 && user.age    <= 100 &&
+    const edadVerif = calcularEdad(user.birthDate);
+    const datosCompletos = !!(
+      edadVerif   != null && edadVerif   >= 18 && edadVerif   <= 120 &&
       user.weight != null && user.weight >= 40 && user.weight <= 300 &&
       user.height != null && user.height >= 50 && user.height <= 210
     );
+    if (datosCompletos) user.profileComplete = true;
 
     await user.save({ validateBeforeSave: false });
 
@@ -234,7 +192,6 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-// PERFIL DEL USUARIO AUTENTICADO
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('+password');
@@ -250,7 +207,6 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// ACEPTAR TÉRMINOS
 exports.acceptTerms = async (req, res) => {
   try {
     const { version } = req.body;
@@ -268,16 +224,14 @@ exports.acceptTerms = async (req, res) => {
   }
 };
 
-// COMPLETAR PERFIL
 exports.completeProfile = async (req, res) => {
   try {
-    // Verificar estado real en BD antes de procesar
     const userActual = await User.findById(req.user._id);
     if (!userActual) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    // Si ya tiene los 3 campos válidos, solo corregir profileComplete y responder
+    const edadActual = calcularEdad(userActual.birthDate);
     const yaCompleto = (
-      userActual.age    != null && userActual.age    >= 18 && userActual.age    <= 100 &&
+      edadActual      != null && edadActual      >= 18 && edadActual      <= 120 &&
       userActual.weight != null && userActual.weight >= 40 && userActual.weight <= 300 &&
       userActual.height != null && userActual.height >= 50 && userActual.height <= 210
     );
@@ -290,15 +244,11 @@ exports.completeProfile = async (req, res) => {
       return res.json({ success: true, user: buildUserResponse(userActual) });
     }
 
-    // Flujo normal: validar y guardar los datos enviados
-    const { age, weight, height } = req.body;
+    const { weight, height } = req.body;
 
-    const edadNum = parseInt(age, 10);
     const pesoNum = parseFloat(weight);
     const altNum  = parseFloat(height);
 
-    if (!age    || isNaN(edadNum) || edadNum < 18 || edadNum > 100)
-      return res.status(400).json({ error: 'Edad válida entre 18 y 100' });
     if (!weight || isNaN(pesoNum) || pesoNum < 40 || pesoNum > 300)
       return res.status(400).json({ error: 'Peso válido entre 40 y 300 kg' });
     if (!height || isNaN(altNum)  || altNum  < 50 || altNum  > 210)
@@ -306,7 +256,7 @@ exports.completeProfile = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { age: edadNum, weight: pesoNum, height: altNum, profileComplete: true },
+      { weight: pesoNum, height: altNum, profileComplete: true },
       { new: true, runValidators: true }
     );
 
@@ -316,7 +266,6 @@ exports.completeProfile = async (req, res) => {
   }
 };
 
-// LOGIN
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -379,7 +328,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// ESTABLECER CONTRASEÑA EN CUENTA GOOGLE
 exports.setGooglePassword = async (req, res) => {
   try {
     const { password } = req.body;
@@ -435,7 +383,6 @@ async function enviarAlertaBloqueo(email, name) {
   });
 }
 
-// OLVIDÉ CONTRASEÑA
 exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -493,7 +440,6 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// RESETEAR CONTRASEÑA
 exports.resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -522,7 +468,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// REENVIAR CÓDIGO
 exports.resendCode = async (req, res) => {
   try {
     const { email } = req.body;

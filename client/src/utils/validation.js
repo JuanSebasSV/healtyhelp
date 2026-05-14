@@ -54,7 +54,7 @@ export const validateLoginForm = (email, password) => {
   return errors;
 };
 
-export const validateRegisterForm = (name, email, password, passwordConf, age) => {
+export const validateRegisterForm = (name, email, password, passwordConf) => {
   const errors = {};
 
   // Nombre
@@ -73,9 +73,6 @@ export const validateRegisterForm = (name, email, password, passwordConf, age) =
   if (!passwordConf) errors.passwordConf = 'Confirma tu contraseña';
   else if (password !== passwordConf) errors.passwordConf = 'Las contraseñas no coinciden';
 
-  // Edad
-  const ageValidation = validateAge(age);
-  if (!ageValidation.isValid) errors.edad = ageValidation.error;
 
   return errors;
 };
