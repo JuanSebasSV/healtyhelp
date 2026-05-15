@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import api from '../../api/axios';
 import './PanelRecomendaciones.css';
 
@@ -114,25 +114,35 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
     return () => { montadoRef.current = false; };
   }, []);
 
-  // Recarga cada vez que versionFiltros cambia (incluye la carga inicial con 0)
-  useEffect(() => {
-    cargar();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [versionFiltros]);
-
-  const cargar = async () => {
+  const cargar = useCallback(async (signal) => {
     if (!montadoRef.current) return;
     setCargando(true);
     setError(null);
     try {
-      const { data } = await api.get('/recomendaciones');
+      const { data } = await api.get('/recomendaciones', { signal });
       if (montadoRef.current) setDatos(data);
-    } catch {
+    } catch (err) {
+      if (err.code === 'ERR_CANCELED') return;
       if (montadoRef.current) setError('No se pudieron cargar las recomendaciones.');
     } finally {
       if (montadoRef.current) setCargando(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    cargar(controller.signal);
+    return () => controller.abort();
+  }, [versionFiltros, cargar]);
+
+  const todasEtiquetas = useMemo(() => {
+    if (!datos?.recomendaciones) return [];
+    const { condicionesDetectadas = [], categoriasActivas = [] } = datos.recomendaciones;
+    return [
+      ...condicionesDetectadas.map(c => ({ id: c, label: c.replace(/-/g, ' '), tipo: 'condicion' })),
+      ...categoriasActivas.map(c => ({ id: c, label: LABEL_CATEGORIA[c] || c, tipo: 'categoria' })),
+    ];
+  }, [datos]);
 
   if (cargando) return (
     <div className="rec-panel">
@@ -166,20 +176,14 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
     ejercicioHoy           = [],
     hidratacion,
     comidasSaltadas        = [],
-    condicionesDetectadas  = [],
-    categoriasActivas      = [],
     nutriPromedio,
     macrosHoy              = {},
     coberturaAlimentacion  = false,
     coberturaEjercicio     = false,
+    categoriasActivas      = [],
   } = rec;
 
-  const todasEtiquetas = [
-    ...condicionesDetectadas.map(c => ({ id: c, label: c.replace(/-/g, ' '), tipo: 'condicion' })),
-    ...categoriasActivas.map(c => ({ id: c, label: LABEL_CATEGORIA[c] || c, tipo: 'categoria' })),
-  ];
-
-  const tienePerfil   = todasEtiquetas.length > 0;
+  const tienePerfil     = todasEtiquetas.length > 0;
   const tieneConsumoHoy = caloriasHoy > 0;
 
   return (

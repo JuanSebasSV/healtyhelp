@@ -1,34 +1,23 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
-import { useNavigate } from "react-router-dom";
-import TarjetaReceta from "../recipe/TarjetaReceta";
-import { generarPDFRecetas } from "../../utils/generarPDF";
-import useFiltroSalud from "../../hooks/useFiltroSalud";
-import useAuth from "../../hooks/useAuth";
-import FiltrosSalud from "./FiltrosSalud";
-import "./VistaInicio.css";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import TarjetaReceta from '../recipe/TarjetaReceta';
+import { generarPDFRecetas } from '../../utils/generarPDF';
+import useFiltroSalud from '../../hooks/useFiltroSalud';
+import useAuth from '../../hooks/useAuth';
+import FiltrosSalud from './FiltrosSalud';
+import './VistaInicio.css';
 
 const HERO_IMGS = [
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp",
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp",
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/pechuga_tfpvfm.webp",
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031326/ajo_e0n3fy.webp",
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/variedad_de_comida_ecokui.webp",
-  "https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp",
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031325/mani_y_frutas_ldhsqc.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/pechuga_tfpvfm.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031326/ajo_e0n3fy.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031316/variedad_de_comida_ecokui.webp',
+  'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031319/verduras_gbvs6u.webp',
 ];
 
 const normalizarTexto = (texto) =>
-  texto
-    ? texto
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-    : "";
+  texto ? texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 
 const VistaInicio = ({
   recetas,
@@ -42,40 +31,35 @@ const VistaInicio = ({
 }) => {
   const { loading: authLoading } = useAuth();
   const {
-    filtros,
-    toggleFiltro,
-    limpiarFiltros,
-    categoria,
-    setCategoria,
-    limpiarCategoria,
-    limpiarTodo,
-    listo,
-    filtroTiempo,
-    cambiarFiltroTiempo,
-    limpiarTiempo,
+    filtros, toggleFiltro, limpiarFiltros,
+    categoria, setCategoria, limpiarCategoria, limpiarTodo, listo,
+    filtroTiempo, cambiarFiltroTiempo, limpiarTiempo,
   } = useFiltroSalud(usuario, authLoading);
 
   const [filtroAbierto, setFiltroAbierto] = useState(false);
-  const [imagenActual, setImagenActual] = useState(0);
+  const [imagenActual,  setImagenActual]  = useState(0);
   const [seleccionadas, setSeleccionadas] = useState([]);
-  const [generandoPDF, setGenerandoPDF] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [busqueda, setBusqueda] = useState("");
+  const [generandoPDF,  setGenerandoPDF]  = useState(false);
+  const [isDragging,    setIsDragging]    = useState(false);
+  const [busqueda,      setBusqueda]      = useState('');
 
-  const thumbRef = useRef(null);
-  const trackRef = useRef(null);
-  const dragStartY = useRef(0);
+  const thumbRef        = useRef(null);
+  const trackRef        = useRef(null);
+  const dragStartY      = useRef(0);
   const dragStartScroll = useRef(0);
-  const transitandoRef = useRef(false);
-  const intervaloRef = useRef(null);
+  const transitandoRef  = useRef(false);
+  const intervaloRef    = useRef(null);
+  const imagenActualRef = useRef(0);
 
   const navigate = useNavigate();
 
+  useEffect(() => { imagenActualRef.current = imagenActual; }, [imagenActual]);
+
   useEffect(() => {
-    HERO_IMGS.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
+    const t = setTimeout(() => {
+      HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
+    }, 1500);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -83,42 +67,43 @@ const VistaInicio = ({
     const update = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const pct = max > 0 ? window.scrollY / max : 0;
-      trackRef.current?.style.setProperty("--scroll-pct", pct);
+      trackRef.current?.style.setProperty('--scroll-pct', pct);
     };
     const onScroll = () => {
       if (raf) return;
-      raf = requestAnimationFrame(() => {
-        update();
-        raf = null;
-      });
+      raf = requestAnimationFrame(() => { update(); raf = null; });
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   useEffect(() => {
     if (!isDragging) return;
+    let rafId = null;
     const onMove = (e) => {
-      const trackH = window.innerHeight * 0.6;
-      const thumbH = trackH * 0.3;
-      const maxTop = trackH - thumbH;
-      const delta = (e.clientY - dragStartY.current) / maxTop;
-      const maxScr = document.documentElement.scrollHeight - window.innerHeight;
-      window.scrollTo(
-        0,
-        Math.min(Math.max(dragStartScroll.current + delta * maxScr, 0), maxScr),
-      );
+      if (rafId !== null) return;
+      const y = e.clientY;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const trackH = window.innerHeight * 0.6;
+        const thumbH = trackH * 0.3;
+        const maxTop = trackH - thumbH;
+        const delta  = (y - dragStartY.current) / maxTop;
+        const maxScr = document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo(0, Math.min(Math.max(dragStartScroll.current + delta * maxScr, 0), maxScr));
+      });
     };
-    const onUp = () => setIsDragging(false);
-    window.addEventListener("mousemove", onMove, { passive: true });
-    window.addEventListener("mouseup", onUp);
+    const onUp = () => {
+      setIsDragging(false);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mouseup', onUp);
     return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [isDragging]);
 
@@ -127,162 +112,107 @@ const VistaInicio = ({
     return recetaPendiente.recetaId ?? recetaPendiente;
   }, [recetaPendiente]);
 
-  const cambiarImagen = useCallback(
-    (idx) => {
-      if (transitandoRef.current) return;
-      const nuevo = (idx + HERO_IMGS.length) % HERO_IMGS.length;
-      if (nuevo === imagenActual) return;
-      transitandoRef.current = true;
-      setImagenActual(nuevo);
-      setTimeout(() => {
-        transitandoRef.current = false;
-      }, 900);
-    },
-    [imagenActual],
-  );
+  const cambiarImagen = useCallback((idx) => {
+    if (transitandoRef.current) return;
+    const nuevo = (idx + HERO_IMGS.length) % HERO_IMGS.length;
+    if (nuevo === imagenActualRef.current) return;
+    transitandoRef.current = true;
+    setImagenActual(nuevo);
+    setTimeout(() => { transitandoRef.current = false; }, 900);
+  }, []);
 
   const iniciarIntervalo = useCallback(() => {
     if (intervaloRef.current) clearInterval(intervaloRef.current);
     intervaloRef.current = setInterval(() => {
-      setImagenActual((p) => (p + 1) % HERO_IMGS.length);
+      setImagenActual(p => (p + 1) % HERO_IMGS.length);
     }, 5000);
   }, []);
 
-  useEffect(() => {
-    iniciarIntervalo();
-    return () => clearInterval(intervaloRef.current);
-  }, [iniciarIntervalo]);
+  useEffect(() => { iniciarIntervalo(); return () => clearInterval(intervaloRef.current); }, [iniciarIntervalo]);
 
-  const cambiarManual = useCallback(
-    (idx) => {
-      cambiarImagen(idx);
-      iniciarIntervalo();
-    },
-    [cambiarImagen, iniciarIntervalo],
-  );
+  const cambiarManual = useCallback((idx) => {
+    cambiarImagen(idx); iniciarIntervalo();
+  }, [cambiarImagen, iniciarIntervalo]);
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "ArrowLeft") cambiarManual(imagenActual - 1);
-      if (e.key === "ArrowRight") cambiarManual(imagenActual + 1);
+      if (e.key === 'ArrowLeft')  cambiarManual(imagenActualRef.current - 1);
+      if (e.key === 'ArrowRight') cambiarManual(imagenActualRef.current + 1);
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [imagenActual, cambiarManual]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [cambiarManual]);
 
-  const toggleSeleccion = (id) =>
-    setSeleccionadas((p) =>
-      p.includes(id) ? p.filter((s) => s !== id) : [...p, id],
-    );
+  const toggleSeleccion = useCallback((id) =>
+    setSeleccionadas(p => p.includes(id) ? p.filter(s => s !== id) : [...p, id])
+  , []);
 
   const handlePDF = async () => {
     if (!seleccionadas.length) return;
     setGenerandoPDF(true);
     try {
-      await generarPDFRecetas(
-        recetas.filter((r) => seleccionadas.includes(r._id)),
-      );
+      await generarPDFRecetas(recetas.filter(r => seleccionadas.includes(r._id)));
       setSeleccionadas([]);
     } finally {
       setGenerandoPDF(false);
     }
   };
 
-  const handleToggleFiltro = useCallback(
-    (id) => {
-      toggleFiltro(id);
-      onFiltrosCambiados?.();
-    },
-    [toggleFiltro, onFiltrosCambiados],
-  );
+  const handleToggleFiltro = useCallback((id) => {
+    toggleFiltro(id); onFiltrosCambiados?.();
+  }, [toggleFiltro, onFiltrosCambiados]);
 
   const handleLimpiarTodo = useCallback(() => {
-    limpiarTodo();
-    onFiltrosCambiados?.();
+    limpiarTodo(); onFiltrosCambiados?.();
   }, [limpiarTodo, onFiltrosCambiados]);
 
-  const handleCategoria = useCallback(
-    (catId) => {
-      if (catId === "todas") {
-        limpiarCategoria();
-      } else {
-        setCategoria(catId);
-      }
-      onFiltrosCambiados?.();
-    },
-    [setCategoria, limpiarCategoria, onFiltrosCambiados],
-  );
+  const handleCategoria = useCallback((catId) => {
+    if (catId === 'todas') { limpiarCategoria(); } else { setCategoria(catId); }
+    onFiltrosCambiados?.();
+  }, [setCategoria, limpiarCategoria, onFiltrosCambiados]);
 
-  const handleFiltroTiempo = useCallback(
-    (id) => {
-      cambiarFiltroTiempo(id);
-    },
-    [cambiarFiltroTiempo],
-  );
+  const handleFiltroTiempo = useCallback((id) => {
+    cambiarFiltroTiempo(id);
+  }, [cambiarFiltroTiempo]);
 
-  const recetasFiltradas = useMemo(
-    () =>
-      recetas.filter((r) => {
-        const okCat = !categoria || r.cat === categoria;
-        const okSalud =
-          filtros.length === 0 ||
-          filtros.every((f) => (r.salud || []).includes(f));
-        const busquedaLimpia = normalizarTexto(busqueda);
-        const okBusqueda =
-          busqueda.trim() === "" ||
-          normalizarTexto(r.nombre || "").includes(busquedaLimpia) ||
-          normalizarTexto(r.desc || "").includes(busquedaLimpia);
-        const t = r.tiempoMinutos || 0;
-        const okTiempo = !filtroTiempo
-          ? true
-          : filtroTiempo === "menos15"
-            ? t > 0 && t < 15
-            : filtroTiempo === "15a30"
-              ? t >= 15 && t <= 30
-              : filtroTiempo === "mas30"
-                ? t > 30
-                : true;
-        return okCat && okSalud && okBusqueda && okTiempo;
-      }),
-    [recetas, categoria, filtros, busqueda, filtroTiempo],
-  );
+  const recetasFiltradas = useMemo(() => recetas.filter(r => {
+    const okCat   = !categoria || r.cat === categoria;
+    const okSalud = filtros.length === 0 || filtros.every(f => (r.salud || []).includes(f));
+    const busquedaLimpia = normalizarTexto(busqueda);
+    const okBusqueda = busqueda.trim() === '' ||
+      normalizarTexto(r.nombre || '').includes(busquedaLimpia) ||
+      normalizarTexto(r.desc   || '').includes(busquedaLimpia);
+    const t = r.tiempoMinutos || 0;
+    const okTiempo = !filtroTiempo ? true :
+      filtroTiempo === 'menos15' ? (t > 0 && t < 15) :
+      filtroTiempo === '15a30'   ? (t >= 15 && t <= 30) :
+      filtroTiempo === 'mas30'   ? (t > 30) : true;
+    return okCat && okSalud && okBusqueda && okTiempo;
+  }), [recetas, categoria, filtros, busqueda, filtroTiempo]);
 
   return (
     <div className="vistaInicio">
-      {/* Hero */}
+
       <div className="hero">
         {HERO_IMGS.map((img, i) => (
-          <div
-            key={i}
-            className={`hero-capa ${i === imagenActual ? "hero-capa--activa" : ""}`}
-            style={{ backgroundImage: `url('${img}')` }}
-          />
+          <div key={i} className={`hero-capa ${i === imagenActual ? 'hero-capa--activa' : ''}`}
+            style={{ backgroundImage: `url('${img}')` }} />
         ))}
         <div className="hero-gradiente" />
         <div className="hero-texto">
           <span className="hero-tag">🌿 Tu dieta, tu salud</span>
-          <h1>
-            Sabemos que llevar una dieta especial puede ser un reto, pero no
-            tienes que hacerlo solo.
-          </h1>
-          <p>
-            Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles
-            de conseguir y preparaciones sencillas pero exquisitas.
-          </p>
+          <h1>Sabemos que llevar una dieta especial puede ser un reto, pero no tienes que hacerlo solo.</h1>
+          <p>Aquí te ofrecemos recetas pensadas para ti, con ingredientes fáciles de conseguir y preparaciones sencillas pero exquisitas.</p>
           <div className="hero-linea" />
         </div>
         <div className="hero-dots">
           {HERO_IMGS.map((_, i) => (
-            <button
-              key={i}
-              className={`hero-dot ${i === imagenActual ? "activo" : ""}`}
-              onClick={() => cambiarManual(i)}
-            />
+            <button key={i} className={`hero-dot ${i === imagenActual ? 'activo' : ''}`}
+              onClick={() => cambiarManual(i)} />
           ))}
         </div>
       </div>
 
-      {/* Filtros */}
       <FiltrosSalud
         busqueda={busqueda}
         onBusquedaChange={setBusqueda}
@@ -301,15 +231,12 @@ const VistaInicio = ({
         onCerrarFiltro={() => setFiltroAbierto(false)}
       />
 
-      {/* Recetas */}
       <section className="recetasGrid">
         <div className="recetasGrid-header">
           <h2>Explorar Recetas</h2>
           {seleccionadas.length > 0 && (
             <p className="pdf-hint">
-              📄 {seleccionadas.length} receta
-              {seleccionadas.length !== 1 ? "s" : ""} seleccionada
-              {seleccionadas.length !== 1 ? "s" : ""} para PDF
+              📄 {seleccionadas.length} receta{seleccionadas.length !== 1 ? 's' : ''} seleccionada{seleccionadas.length !== 1 ? 's' : ''} para PDF
             </p>
           )}
         </div>
@@ -321,34 +248,24 @@ const VistaInicio = ({
           </div>
         ) : (
           <div className="grid">
-            {recetasFiltradas.map((receta) => {
-              const esPendiente =
-                !!pendienteId &&
-                (receta._id === pendienteId ||
-                  receta._id?.toString() === pendienteId?.toString());
+            {recetasFiltradas.map(receta => {
+              const esPendiente = !!pendienteId && (
+                receta._id === pendienteId ||
+                receta._id?.toString() === pendienteId?.toString()
+              );
               return (
                 <TarjetaReceta
-                  key={
-                    esPendiente
-                      ? `${receta._id}-${recetaPendiente?._key ?? 0}`
-                      : receta._id
-                  }
+                  key={esPendiente ? `${receta._id}-${recetaPendiente?._key ?? 0}` : receta._id}
                   receta={receta}
                   toggleFav={toggleFav}
                   esFav={favoritos.includes(receta._id)}
                   seleccionada={seleccionadas.includes(receta._id)}
                   onSeleccionar={toggleSeleccion}
                   autoAbrir={esPendiente}
-                  resenaIdDestacada={
-                    esPendiente ? recetaPendiente?.resenaId : undefined
-                  }
-                  respuestaIdDestacada={
-                    esPendiente ? recetaPendiente?.respuestaId : undefined
-                  }
+                  resenaIdDestacada={esPendiente ? recetaPendiente?.resenaId : undefined}
+                  respuestaIdDestacada={esPendiente ? recetaPendiente?.respuestaId : undefined}
                   pendienteKey={esPendiente ? recetaPendiente?._key : undefined}
-                  onPendienteResuelta={
-                    esPendiente ? onRecetaPendienteResuelta : undefined
-                  }
+                  onPendienteResuelta={esPendiente ? onRecetaPendienteResuelta : undefined}
                 />
               );
             })}
@@ -356,50 +273,29 @@ const VistaInicio = ({
         )}
 
         {!cargandoRecetas && recetasFiltradas.length === 0 && (
-          <p className="sinResultados">
-            No hay recetas disponibles con estos filtros.
-          </p>
+          <p className="sinResultados">No hay recetas disponibles con estos filtros.</p>
         )}
       </section>
 
-      {/* Botón flotante PDF */}
       {seleccionadas.length > 0 && (
-        <button
-          className="btn-pdf-flotante"
-          onClick={handlePDF}
-          disabled={generandoPDF}
-        >
+        <button className="btn-pdf-flotante" onClick={handlePDF} disabled={generandoPDF}>
           {generandoPDF ? (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                style={{ animation: "spin 1s linear infinite" }}
-              >
-                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2"
+                style={{ animation: 'spin 1s linear infinite' }}>
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
               </svg>
               Generando...
             </>
           ) : (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="12" y1="18" x2="12" y2="12" />
-                <line x1="9" y1="15" x2="15" y2="15" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <line x1="9" y1="15" x2="15" y2="15"/>
               </svg>
               Descargar PDF ({seleccionadas.length})
             </>
@@ -407,11 +303,10 @@ const VistaInicio = ({
         </button>
       )}
 
-      {/* Scrollbar personalizado */}
       <div className="scrollbar-custom-track" ref={trackRef}>
         <div
           ref={thumbRef}
-          className={`scrollbar-custom-thumb${isDragging ? " scrollbar-custom-thumb--dragging" : ""}`}
+          className={`scrollbar-custom-thumb${isDragging ? ' scrollbar-custom-thumb--dragging' : ''}`}
           onMouseDown={(e) => {
             e.preventDefault();
             setIsDragging(true);
@@ -420,6 +315,7 @@ const VistaInicio = ({
           }}
         />
       </div>
+
     </div>
   );
 };

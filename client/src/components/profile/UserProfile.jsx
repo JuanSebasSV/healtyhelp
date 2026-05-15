@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import api from "../../api/axios";
@@ -6,6 +6,10 @@ import { validatePassword, validateName } from "../../utils/validation";
 
 /*  Iconos inline  */
 import "./UserProfile.css";
+
+const PARTICULAS = Array.from({ length: 6 }, (_, i) => (
+  <div key={i} className={`particula particula-${i + 1}`} />
+));
 
 const EyeIcon = ({ open }) =>
   open ? (
@@ -149,7 +153,8 @@ const FieldHint = ({ show, items }) => {
 const UserProfile = () => {
   const { user, checkAuth, logout } = useAuth();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const fileInputRef  = useRef(null);
+  const mensajeTimer  = useRef(null);
 
   const [editando, setEditando] = useState(false);
   const [guardando, setGuardando] = useState(false);
@@ -183,12 +188,19 @@ const UserProfile = () => {
     }
   }, [user?.name, user?.weight, user?.alergia]);
 
+  useEffect(() => {
+    return () => {
+      if (mensajeTimer.current) clearTimeout(mensajeTimer.current);
+    };
+  }, []);
+
   const [touched, setTouched] = useState({});
   const [avisosCampo, setAvisos] = useState({});
 
   const mostrarMensaje = (tipo, texto) => {
+    if (mensajeTimer.current) clearTimeout(mensajeTimer.current);
     setMensaje({ tipo, texto });
-    setTimeout(() => setMensaje(null), 3500);
+    mensajeTimer.current = setTimeout(() => setMensaje(null), 3500);
   };
 
   const calcularAvisoPerf = (field, value, formActual) => {
@@ -363,7 +375,6 @@ const UserProfile = () => {
       }
     }
 
-    // Validar nombre
     const nameValidation = validateName(form.name);
     if (!nameValidation.isValid) {
       mostrarMensaje("error", nameValidation.error);
@@ -435,15 +446,15 @@ const UserProfile = () => {
     navigate("/");
   };
 
-  const getInitials = (name) => {
-    if (!name) return "?";
-    return name
+  const initials = useMemo(() => {
+    if (!user?.name) return "?";
+    return user.name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
+  }, [user?.name]);
 
   const formatBirthDate = (bd) => {
     if (!bd) return "—";
@@ -455,21 +466,21 @@ const UserProfile = () => {
     });
   };
 
-  const joinDate = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-      })
-    : "Fecha desconocida";
+  const joinDate = useMemo(() =>
+    user?.createdAt
+      ? new Date(user.createdAt).toLocaleDateString("es-ES", {
+          year: "numeric",
+          month: "long",
+        })
+      : "Fecha desconocida"
+  , [user?.createdAt]);
 
   const avatarSrc = avatarPreview || user?.avatar;
 
   return (
     <div className="perfil-pagina">
       <div className="perfil-particulas">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className={`particula particula-${i + 1}`} />
-        ))}
+        {PARTICULAS}
       </div>
 
       <div className="perfil-contenedor">
@@ -504,7 +515,7 @@ const UserProfile = () => {
                       : "flex",
                 }}
               >
-                <span>{getInitials(user?.name)}</span>
+                <span>{initials}</span>
               </div>
             </div>
 
@@ -714,7 +725,7 @@ const UserProfile = () => {
                 {editando ? (
                   <>
                     <input
-                      className={`campo-input${touched.name && !calcularAvisoPerf("name", form.name, form) && form.name ? " campo-input--ok" : ""}${touched.name && avisosCampo.name ? " campo-input--error" : ""}`}
+                      className={`campo-input${touched.name && !avisosCampo.name && form.name ? " campo-input--ok" : ""}${touched.name && avisosCampo.name ? " campo-input--error" : ""}`}
                       type="text"
                       name="name"
                       value={form.name}

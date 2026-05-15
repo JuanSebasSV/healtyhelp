@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import DetalleReceta from '../recipe/DetalleReceta';
@@ -83,6 +83,7 @@ const TIPOS_LABEL = { desayuno: 'Desayuno', almuerzo: 'Almuerzo', cena: 'Cena', 
 const TIPOS_ORDEN = ['desayuno', 'almuerzo', 'cena', 'snack'];
 const TIPOS_COLOR = { desayuno: '#f59e0b', almuerzo: '#06b6d4', cena: '#a855f7', snack: '#10b981' };
 const MAX_SNACKS  = 3;
+const TIPOS_PRINCIPALES = ['desayuno', 'almuerzo', 'cena'];
 
 //  Utilidades de fecha 
 const fechaLegible = (fechaStr) => {
@@ -128,6 +129,182 @@ const sumarNutri = (consumos) => {
   return base;
 };
 
+//Sub-componentes 
+const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar, onEliminar, onAbrir }) => (
+  <div className="seg-consumo-card" onClick={() => onAbrir(consumo)}>
+    <div className="seg-consumo-img-wrap">
+      <img src={consumo.recetaSnapshot?.img} alt={consumo.recetaSnapshot?.nombre} />
+      <span
+        className="seg-consumo-tipo-badge"
+        style={{ background: TIPOS_COLOR[consumo.tipo] }}
+      >
+        {TIPOS_LABEL[consumo.tipo]}
+      </span>
+    </div>
+    <div className="seg-consumo-info">
+      <p className="seg-consumo-nombre">{consumo.recetaSnapshot?.nombre || 'Consumo manual'}</p>
+      <p className="seg-consumo-hora">{consumo.horaBogota}</p>
+      <p className="seg-consumo-cal">{consumo.nutri?.cal || 0} kcal</p>
+    </div>
+    <div className="seg-consumo-acciones" onClick={e => e.stopPropagation()}>
+      {isEditing ? (
+        <div className="seg-tipo-selector">
+          {TIPOS_ORDEN.map(t => (
+            <button
+              key={t}
+              className={`seg-tipo-btn ${consumo.tipo === t ? 'activo' : ''}`}
+              onClick={() => onEditar(consumo._id, t)}
+            >
+              {TIPOS_LABEL[t]}
+            </button>
+          ))}
+          <button className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>x</button>
+        </div>
+      ) : (
+        <div className="seg-acciones-row">
+          <button className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
+            <IcoLapiz className="seg-btn-ico" /> Editar tipo
+          </button>
+          <button className="seg-btn-eliminar" onClick={() => onEliminar(consumo._id)}>
+            <IcoBasura className="seg-btn-ico" />
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+));
+
+const SeccionTipo = React.memo(({ tipo, consumosDia, fecha, editandoId, setEditandoId, onEditar, onEliminar, onAbrir, onAbrirModal }) => {
+  const { label, Icon, placeholder } = TIPOS_META[tipo];
+  const c = consumosDia.find(x => x.tipo === tipo);
+  return (
+    <div className="seg-tipo-seccion">
+      <p className="seg-snacks-titulo"><Icon className="seg-tipo-ico" />{label}</p>
+      {c ? (
+        <TarjetaConsumo
+          consumo={c}
+          isEditing={editandoId === c._id}
+          setEditandoId={setEditandoId}
+          onEditar={onEditar}
+          onEliminar={onEliminar}
+          onAbrir={onAbrir}
+        />
+      ) : (
+        <div className="seg-consumo-vacio">
+          <span className="seg-vacio-label"><Icon className="seg-tipo-ico" />{placeholder}</span>
+          <button
+            className="seg-btn-agregar"
+            onClick={() => onAbrirModal({ fecha, tipo })}
+          >
+            + Añadir
+          </button>
+        </div>
+      )}
+    </div>
+  );
+});
+
+const SeccionSnacks = React.memo(({ consumosDia, fecha, editandoId, setEditandoId, onEditar, onEliminar, onAbrir, onAbrirModal }) => {
+  const snacks = consumosDia.filter(c => c.tipo === 'snack');
+  const vacios = MAX_SNACKS - snacks.length;
+  return (
+    <div className="seg-tipo-seccion">
+      <p className="seg-snacks-titulo"><IcoSnack className="seg-tipo-ico" />{TIPOS_LABEL.snack}</p>
+      {snacks.map(c => (
+        <TarjetaConsumo
+          key={c._id}
+          consumo={c}
+          isEditing={editandoId === c._id}
+          setEditandoId={setEditandoId}
+          onEditar={onEditar}
+          onEliminar={onEliminar}
+          onAbrir={onAbrir}
+        />
+      ))}
+      {vacios > 0 && (
+        <div className="seg-consumo-vacio">
+          <span className="seg-vacio-label">
+            <IcoSnack className="seg-tipo-ico" />
+            {snacks.length === 0 ? 'Añadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} más`}
+          </span>
+          <button
+            className="seg-btn-agregar"
+            onClick={() => onAbrirModal({ fecha, tipo: 'snack' })}
+          >
+            + Añadir
+          </button>
+        </div>
+      )}
+      {vacios === 0 && (
+        <p className="seg-snacks-limite">Límite de {MAX_SNACKS} snacks alcanzado</p>
+      )}
+    </div>
+  );
+});
+
+const BloquesDia = React.memo(({ fecha, consumosDia, editandoId, setEditandoId, onEditar, onEliminar, onAbrir, onAbrirModal }) => (
+  <div className="seg-dia-bloque">
+    <h3 className="seg-dia-titulo">{fechaLegible(fecha)}</h3>
+    <div className="seg-consumos-lista">
+      {TIPOS_PRINCIPALES.map(t => (
+        <SeccionTipo
+          key={t}
+          tipo={t}
+          consumosDia={consumosDia}
+          fecha={fecha}
+          editandoId={editandoId}
+          setEditandoId={setEditandoId}
+          onEditar={onEditar}
+          onEliminar={onEliminar}
+          onAbrir={onAbrir}
+          onAbrirModal={onAbrirModal}
+        />
+      ))}
+      <SeccionSnacks
+        consumosDia={consumosDia}
+        fecha={fecha}
+        editandoId={editandoId}
+        setEditandoId={setEditandoId}
+        onEditar={onEditar}
+        onEliminar={onEliminar}
+        onAbrir={onAbrir}
+        onAbrirModal={onAbrirModal}
+      />
+    </div>
+  </div>
+));
+
+const BloquesDiaActual = React.memo(({ consumos, seleccionado, editandoId, setEditandoId, onEditar, onEliminar, onAbrir, onAbrirModal }) => (
+  <div className="seg-dia-bloque">
+    <div className="seg-consumos-lista">
+      {TIPOS_PRINCIPALES.map(t => (
+        <SeccionTipo
+          key={t}
+          tipo={t}
+          consumosDia={consumos}
+          fecha={seleccionado}
+          editandoId={editandoId}
+          setEditandoId={setEditandoId}
+          onEditar={onEditar}
+          onEliminar={onEliminar}
+          onAbrir={onAbrir}
+          onAbrirModal={onAbrirModal}
+        />
+      ))}
+      <SeccionSnacks
+        consumosDia={consumos}
+        fecha={seleccionado}
+        editandoId={editandoId}
+        setEditandoId={setEditandoId}
+        onEditar={onEditar}
+        onEliminar={onEliminar}
+        onAbrir={onAbrir}
+        onAbrirModal={onAbrirModal}
+      />
+    </div>
+  </div>
+));
+
 //  Componente principal 
 const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const [periodo,      setPeriodo]      = useState('dia');
@@ -144,9 +321,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const eliminandoRef = useRef(new Set());
 
-  useEffect(() => { cargarDias(); }, []);
-
-  const cargarDias = async () => {
+  const cargarDias = useCallback(async () => {
     try {
       const { data } = await api.get('/consumos/dias');
       setDias(data.dias || []);
@@ -154,19 +329,9 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     } catch {
       toast.error('Error cargando seguimiento');
     }
-  };
+  }, []);
 
-  const opciones = useCallback(() => {
-    if (periodo === 'dia')    return dias;
-    if (periodo === 'semana') {
-      const semanas = [...new Set(dias.map(lunesDeSemana))];
-      return semanas.sort((a, b) => b.localeCompare(a));
-    }
-    const meses = [...new Set(dias.map(yearMesDe))];
-    return meses.sort((a, b) => b.localeCompare(a));
-  }, [dias, periodo]);
-
-  const cargarConsumos = async (fechaSel = seleccionado, per = periodo) => {
+  const cargarConsumos = useCallback(async (fechaSel = seleccionado, per = periodo) => {
     if (!fechaSel) { setConsumos([]); setCargando(false); return; }
     setCargando(true);
     try {
@@ -180,20 +345,31 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [seleccionado, periodo]);
+
+  useEffect(() => { cargarDias(); }, [cargarDias]);
+
+  const ops = useMemo(() => {
+    if (periodo === 'dia')    return dias;
+    if (periodo === 'semana') {
+      const semanas = [...new Set(dias.map(lunesDeSemana))];
+      return semanas.sort((a, b) => b.localeCompare(a));
+    }
+    const meses = [...new Set(dias.map(yearMesDe))];
+    return meses.sort((a, b) => b.localeCompare(a));
+  }, [dias, periodo]);
 
   useEffect(() => {
-    const ops = opciones();
     if (ops.length > 0 && !ops.includes(seleccionado)) {
       setSeleccionado(ops[0]);
     }
-  }, [periodo, dias]);
+  }, [ops, seleccionado]);
 
   useEffect(() => {
     if (seleccionado) cargarConsumos();
-  }, [seleccionado, periodo]);
+  }, [seleccionado, periodo, cargarConsumos]);
 
-  const consumosPorFecha = useCallback(() => {
+  const consumosPorFecha = useMemo(() => {
     const mapa = {};
     consumos.forEach(c => {
       if (!mapa[c.fechaBogota]) mapa[c.fechaBogota] = [];
@@ -202,10 +378,10 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     return mapa;
   }, [consumos]);
 
-  const nutriAcumulado = sumarNutri(consumos);
+  const nutriAcumulado = useMemo(() => sumarNutri(consumos), [consumos]);
 
   //Handlers 
-  const handleEditarTipo = async (consumoId, nuevoTipo) => {
+  const handleEditarTipo = useCallback(async (consumoId, nuevoTipo) => {
     try {
       await api.put(`/consumos/${consumoId}/tipo`, { tipo: nuevoTipo });
       toast.success('Tipo actualizado');
@@ -214,9 +390,9 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     } catch (err) {
       toast.error(err.response?.data?.error || 'Error al editar');
     }
-  };
+  }, [cargarConsumos]);
 
-  const handleEliminar = async (id) => {
+  const handleEliminar = useCallback(async (id) => {
     if (eliminandoRef.current.has(id)) return;
     eliminandoRef.current.add(id);
     setConsumos(p => p.filter(c => c._id !== id));
@@ -229,9 +405,9 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     } finally {
       eliminandoRef.current.delete(id);
     }
-  };
+  }, [cargarConsumos, cargarDias]);
 
-  const abrirReceta = (consumo) => {
+  const abrirReceta = useCallback((consumo) => {
     const recetaCompleta = recetas.find(
       r => r._id === consumo.recetaId?.toString?.() || r._id === consumo.recetaId
     );
@@ -241,128 +417,18 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     } else {
       toast.info('Receta no disponible en la lista actual');
     }
-  };
+  }, [recetas]);
 
-  //Sub-componentes 
-  const TarjetaConsumo = ({ consumo }) => (
-    <div className="seg-consumo-card" onClick={() => abrirReceta(consumo)}>
-      <div className="seg-consumo-img-wrap">
-        <img src={consumo.recetaSnapshot?.img} alt={consumo.recetaSnapshot?.nombre} />
-        <span
-          className="seg-consumo-tipo-badge"
-          style={{ background: TIPOS_COLOR[consumo.tipo] }}
-        >
-          {TIPOS_LABEL[consumo.tipo]}
-        </span>
-      </div>
-      <div className="seg-consumo-info">
-        <p className="seg-consumo-nombre">{consumo.recetaSnapshot?.nombre || 'Consumo manual'}</p>
-        <p className="seg-consumo-hora">{consumo.horaBogota}</p>
-        <p className="seg-consumo-cal">{consumo.nutri?.cal || 0} kcal</p>
-      </div>
-      <div className="seg-consumo-acciones" onClick={e => e.stopPropagation()}>
-        {editandoId === consumo._id ? (
-          <div className="seg-tipo-selector">
-            {TIPOS_ORDEN.map(t => (
-              <button
-                key={t}
-                className={`seg-tipo-btn ${consumo.tipo === t ? 'activo' : ''}`}
-                onClick={() => handleEditarTipo(consumo._id, t)}
-              >
-                {TIPOS_LABEL[t]}
-              </button>
-            ))}
-            <button className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>x</button>
-          </div>
-        ) : (
-          <div className="seg-acciones-row">
-            <button className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
-              <IcoLapiz className="seg-btn-ico" /> Editar tipo
-            </button>
-            <button className="seg-btn-eliminar" onClick={() => handleEliminar(consumo._id)}>
-              <IcoBasura className="seg-btn-ico" />
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const cerrarDetalle = useCallback(() => { setVistaReceta(null); setRecetaSelec(null); }, []);
+  const abrirNutricion = useCallback(() => setVistaReceta('nutricion'), []);
+  const volverDetalle  = useCallback(() => setVistaReceta('detalle'), []);
+  const cerrarModal    = useCallback(() => setModalAgregar(null), []);
 
-  const SeccionTipo = ({ tipo, consumosDia, fecha }) => {
-    const { label, Icon, placeholder } = TIPOS_META[tipo];
-    const c = consumosDia.find(x => x.tipo === tipo);
-    return (
-      <div className="seg-tipo-seccion">
-        <p className="seg-snacks-titulo"><Icon className="seg-tipo-ico" />{label}</p>
-        {c ? (
-          <TarjetaConsumo consumo={c} />
-        ) : (
-          <div className="seg-consumo-vacio">
-            <span className="seg-vacio-label"><Icon className="seg-tipo-ico" />{placeholder}</span>
-            <button
-              className="seg-btn-agregar"
-              onClick={() => setModalAgregar({ fecha, tipo })}
-            >
-              + Añadir
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const SeccionSnacks = ({ consumosDia, fecha }) => {
-    const snacks = consumosDia.filter(c => c.tipo === 'snack');
-    const vacios = MAX_SNACKS - snacks.length;
-    return (
-      <div className="seg-tipo-seccion">
-        <p className="seg-snacks-titulo"><IcoSnack className="seg-tipo-ico" />{TIPOS_LABEL.snack}</p>
-        {snacks.map(c => <TarjetaConsumo key={c._id} consumo={c} />)}
-        {vacios > 0 && (
-          <div className="seg-consumo-vacio">
-            <span className="seg-vacio-label">
-              <IcoSnack className="seg-tipo-ico" />
-              {snacks.length === 0 ? 'Añadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} más`}
-            </span>
-            <button
-              className="seg-btn-agregar"
-              onClick={() => setModalAgregar({ fecha, tipo: 'snack' })}
-            >
-              + Añadir
-            </button>
-          </div>
-        )}
-        {vacios === 0 && (
-          <p className="seg-snacks-limite">Límite de {MAX_SNACKS} snacks alcanzado</p>
-        )}
-      </div>
-    );
-  };
-
-  const BloquesDia = ({ fecha, consumosDia }) => (
-    <div className="seg-dia-bloque">
-      <h3 className="seg-dia-titulo">{fechaLegible(fecha)}</h3>
-      <div className="seg-consumos-lista">
-        {['desayuno', 'almuerzo', 'cena'].map(t => (
-          <SeccionTipo key={t} tipo={t} consumosDia={consumosDia} fecha={fecha} />
-        ))}
-        <SeccionSnacks consumosDia={consumosDia} fecha={fecha} />
-      </div>
-    </div>
-  );
-
-  const BloquesDiaActual = () => (
-    <div className="seg-dia-bloque">
-      <div className="seg-consumos-lista">
-        {['desayuno', 'almuerzo', 'cena'].map(t => (
-          <SeccionTipo key={t} tipo={t} consumosDia={consumos} fecha={seleccionado} />
-        ))}
-        <SeccionSnacks consumosDia={consumos} fecha={seleccionado} />
-      </div>
-    </div>
-  );
-
-  const ops = opciones();
+  const handleAgregado = useCallback(() => {
+    cargarConsumos();
+    cargarDias();
+    setModalAgregar(null);
+  }, [cargarConsumos, cargarDias]);
 
   return (
     <div className="vista-seguimiento">
@@ -410,12 +476,31 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
             ) : consumos.length === 0 ? (
               <p className="seg-estado">Sin registros para este periodo.</p>
             ) : periodo === 'dia' ? (
-              <BloquesDiaActual />
+              <BloquesDiaActual
+                consumos={consumos}
+                seleccionado={seleccionado}
+                editandoId={editandoId}
+                setEditandoId={setEditandoId}
+                onEditar={handleEditarTipo}
+                onEliminar={handleEliminar}
+                onAbrir={abrirReceta}
+                onAbrirModal={setModalAgregar}
+              />
             ) : (
-              Object.entries(consumosPorFecha())
+              Object.entries(consumosPorFecha)
                 .sort(([a], [b]) => b.localeCompare(a))
                 .map(([fecha, consumosDia]) => (
-                  <BloquesDia key={fecha} fecha={fecha} consumosDia={consumosDia} />
+                  <BloquesDia
+                    key={fecha}
+                    fecha={fecha}
+                    consumosDia={consumosDia}
+                    editandoId={editandoId}
+                    setEditandoId={setEditandoId}
+                    onEditar={handleEditarTipo}
+                    onEliminar={handleEliminar}
+                    onAbrir={abrirReceta}
+                    onAbrirModal={setModalAgregar}
+                  />
                 ))
             )}
           </div>
@@ -437,24 +522,24 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
       {vistaReceta === 'detalle' && recetaSelec && (
         <DetalleReceta
           receta={recetaSelec}
-          cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }}
-          abrirNutricion={() => setVistaReceta('nutricion')}
+          cerrar={cerrarDetalle}
+          abrirNutricion={abrirNutricion}
         />
       )}
       {vistaReceta === 'nutricion' && recetaSelec && (
         <ModalNutricionDetallada
           nutri={recetaSelec.nutri}
-          cerrar={() => { setVistaReceta(null); setRecetaSelec(null); }}
-          volver={() => setVistaReceta('detalle')}
+          cerrar={cerrarDetalle}
+          volver={volverDetalle}
         />
       )}
 
       {modalAgregar && (
         <ModalAgregarConsumo
           fecha={modalAgregar.fecha}
-          tipo={modalAgregar.tipo}
-          cerrar={() => setModalAgregar(null)}
-          onAgregado={() => { cargarConsumos(); cargarDias(); setModalAgregar(null); }}
+          tipoSugerido={modalAgregar.tipo}
+          cerrar={cerrarModal}
+          onAgregado={handleAgregado}
         />
       )}
     </div>

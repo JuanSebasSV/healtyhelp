@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './ModalAgregarConsumo.css';
@@ -75,14 +75,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
 
   const tipoDestino = tipoSugerido || 'desayuno';
 
-  useEffect(() => {
-    const timer = setTimeout(() => buscarRecetas(busqueda), 350);
-    return () => clearTimeout(timer);
-  }, [busqueda]);
-
-  useEffect(() => { buscarRecetas(''); }, []);
-
-  const buscarRecetas = async (q) => {
+  const buscarRecetas = useCallback(async (q) => {
     setCargando(true);
     try {
       const url = q
@@ -95,13 +88,24 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
     } finally {
       setCargando(false);
     }
-  };
+  }, []);
 
-  const recetasFiltradas = filtroVista === 'todas'
-    ? recetas
-    : recetas.filter(r => CAT_A_TIPO[r.cat] === filtroVista || r.cat === filtroVista);
+  useEffect(() => {
+    if (!busqueda) {
+      buscarRecetas('');
+      return;
+    }
+    const timer = setTimeout(() => buscarRecetas(busqueda), 350);
+    return () => clearTimeout(timer);
+  }, [busqueda, buscarRecetas]);
 
-  const handleAgregar = async (recetaId) => {
+  const recetasFiltradas = useMemo(() =>
+    filtroVista === 'todas'
+      ? recetas
+      : recetas.filter(r => CAT_A_TIPO[r.cat] === filtroVista || r.cat === filtroVista)
+  , [recetas, filtroVista]);
+
+  const handleAgregar = useCallback(async (recetaId) => {
     setEnviando(true);
     try {
       await api.post('/consumos/manual', { recetaId, tipo: tipoDestino, fecha });
@@ -117,7 +121,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
     } finally {
       setEnviando(false);
     }
-  };
+  }, [tipoDestino, fecha, onAgregado]);
 
   const { Icon: IconDestino } = TIPOS_META[tipoDestino];
 

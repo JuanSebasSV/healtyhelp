@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from "react";
+import React, { useEffect, useState, memo } from "react";
 import NutricionGrafico from "./NutricionGrafico";
 import BtnConsumo from "./BtnConsumo";
 import useAuth from "../../hooks/useAuth";
@@ -34,10 +34,10 @@ const DetalleReceta = memo(
   }) => {
     const { user, isAuthenticated } = useAuth();
 
-    const [generandoPDF, setGenerandoPDF] = React.useState(false);
-    const [modalListo, setModalListo] = React.useState(false);
+    const [generandoPDF, setGenerandoPDF] = useState(false);
+    const [modalListo,   setModalListo]   = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
       const t = setTimeout(() => setModalListo(true), 100);
       return () => clearTimeout(t);
     }, []);
@@ -54,9 +54,12 @@ const DetalleReceta = memo(
 
     useEffect(() => {
       const scrollY = window.scrollY;
-      document.body.style.cssText = `position:fixed;top:-${scrollY}px;left:0;right:0;overflow-y:scroll`;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
       return () => {
-        document.body.style.cssText = "";
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
         window.scrollTo(0, scrollY);
       };
     }, []);
@@ -92,9 +95,7 @@ const DetalleReceta = memo(
                     e.stopPropagation();
                     toggleFav(receta._id);
                   }}
-                  aria-label={
-                    esFav ? "Quitar de favoritos" : "Agregar a favoritos"
-                  }
+                  aria-label={esFav ? "Quitar de favoritos" : "Agregar a favoritos"}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />

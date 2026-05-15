@@ -8,6 +8,19 @@
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - var(--navbar-h) - var(--page-py) * 3);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(26, 77, 46, 0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(107, 158, 74, 0.25) 0%, transparent 60%),
+    #060f09;
+  background-attachment: fixed;
+}
+
+.modo-oscuro .vista-contacto {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15, 45, 26, 0.60) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(26, 77, 46, 0.20) 0%, transparent 60%),
+    #030a05;
+  background-attachment: fixed;
 }
 
 /*HEADER*/
@@ -47,9 +60,25 @@
   margin: 0 auto;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
   height: 75vh;
   min-height: 600px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 24px 64px rgba(0, 0, 0, 0.28);
+}
+
+.modo-oscuro .contacto-contenedor {
+  background: rgba(0, 0, 0, 0.18);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
 /*PANEL IZQUIERDO*/
@@ -86,31 +115,32 @@
 }
 
 .info-item {
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(22px) saturate(180%);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 1.1rem 1.25rem;
   border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 0.85rem;
   transition: var(--transicion);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20);
 }
 
 .info-item:hover {
-  background: rgba(0, 0, 0, 0.56);
-  border-color: rgba(247, 127, 0, 0.55);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(247, 127, 0, 0.50);
   transform: translateX(4px);
 }
 
 .modo-oscuro .info-item {
-  background: rgba(10, 30, 15, 0.65);
-  border-color: rgba(79, 119, 45, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(107, 158, 74, 0.28);
 }
 
 .modo-oscuro .info-item:hover {
-  background: rgba(15, 45, 20, 0.78);
+  background: rgba(255, 255, 255, 0.10);
   border-color: rgba(247, 127, 0, 0.45);
 }
 
@@ -147,10 +177,11 @@
 
 /*PANEL DERECHO — formulario*/
 .contacto-form {
-  background: rgba(45, 90, 50, 0.75);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.18);
   padding: 2.5rem 2.25rem;
   display: flex;
   flex-direction: column;
@@ -159,8 +190,8 @@
 }
 
 .modo-oscuro .contacto-form {
-  background: rgba(10, 30, 15, 0.82);
-  border-left-color: rgba(79, 119, 45, 0.25);
+  background: rgba(0, 0, 0, 0.18);
+  border-left-color: rgba(255, 255, 255, 0.08);
 }
 
 .contacto-form h2 {
@@ -173,7 +204,7 @@
 }
 
 .modo-oscuro .contacto-form h2 {
-  color: rgba(180, 220, 160, 0.95);
+  color: rgba(195, 235, 210, 0.95);
 }
 
 /*WRAPPER inputs*/
@@ -218,8 +249,8 @@
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 1.25rem;
   margin-bottom: 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-left: 3px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   font-size: 0.92rem;
@@ -231,16 +262,16 @@
 
 .contacto-form input::placeholder,
 .contacto-form textarea::placeholder {
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(220, 248, 230, 0.40);
   font-size: 0.88rem;
 }
 
 .modo-oscuro .contacto-form input,
 .modo-oscuro .contacto-form textarea {
-  background: rgba(15, 40, 20, 0.45);
-  border-color: rgba(79, 119, 45, 0.25);
-  border-left-color: rgba(79, 119, 45, 0.20);
-  color: rgba(210, 235, 195, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(107, 158, 74, 0.22);
+  border-left-color: rgba(107, 158, 74, 0.18);
+  color: rgba(220, 248, 230, 0.92);
 }
 
 .modo-oscuro .contacto-form input::placeholder,
@@ -254,8 +285,8 @@
   border-color: rgba(247, 127, 0, 0.55);
   border-left-color: var(--naranja, #f77f00);
   background: rgba(255, 255, 255, 0.10);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .contacto-form textarea {
@@ -303,6 +334,10 @@
     border-radius: 0;
     box-shadow: none;
     overflow: visible;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: transparent;
+    border: none;
   }
 
   .contacto-info {
@@ -342,18 +377,14 @@
     margin-top: 12px;
     position: relative;
     z-index: 2;
-    background: linear-gradient(
-      160deg,
-      rgba(255, 255, 255, 0.16) 0%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-    backdrop-filter: blur(36px) saturate(200%) brightness(1.06);
-    -webkit-backdrop-filter: blur(36px) saturate(200%) brightness(1.06);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+    -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+    border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 20px 20px 0 0;
     overflow: hidden;
     box-shadow:
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.40),
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.22),
       inset 0 -1px 0 rgba(0, 0, 0, 0.08),
       0 -4px 24px rgba(0, 0, 0, 0.18);
   }
@@ -437,33 +468,21 @@
     display: flex;
     margin-bottom: 0;
     padding: 0.75rem 0.9rem;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(255, 255, 255, 0.04) 100%
-    );
-    backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
-    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(20px) saturate(180%) brightness(1.04);
+    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.04);
+    border: 1px solid rgba(120, 180, 90, 0.22);
     border-radius: 12px;
     gap: 0.65rem;
     box-sizing: border-box;
     width: 100%;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.35),
-      0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     transition: background 0.25s ease, box-shadow 0.25s ease;
   }
 
   .acordeon-inner .info-item:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.22) 0%,
-      rgba(255, 255, 255, 0.08) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      0 4px 14px rgba(0, 0, 0, 0.16);
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(120, 180, 90, 0.40);
   }
 
   .info-item h3 { font-size: 0.80rem; }
@@ -472,8 +491,11 @@
   .contacto-form {
     padding: 1.5rem 1.25rem;
     border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     justify-content: flex-start;
+    background: rgba(10, 28, 16, 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .contacto-form h2 {
@@ -693,31 +715,41 @@
 
 .faq-titulo {
   text-align: center;
-  margin-bottom: 2rem;
-  color: rgba(188, 224, 208, 0.85);
+  margin-bottom: 2.5rem;
+  color: var(--blanco-puro);
+  font-size: 1.8rem;
+  font-family: 'Georgia', serif;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .modo-oscuro .faq-titulo {
-  color: rgba(195, 235, 224, 0.85);
+  color: rgba(210, 240, 195, 0.95);
 }
 
 .faq-tabla {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 24px 56px rgba(0, 0, 0, 0.22);
 }
 
 .modo-oscuro .faq-tabla {
-  background: rgba(10, 30, 20, 0.6);
-  border-color: rgba(79, 119, 45, 0.2);
+  background: rgba(0, 0, 0, 0.20);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 24px 56px rgba(0, 0, 0, 0.45);
 }
 
 .faq-fila {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  transition: background 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .faq-fila:last-child {
@@ -725,57 +757,93 @@
 }
 
 .modo-oscuro .faq-fila {
-  border-bottom-color: rgba(255, 255, 255, 0.05);
-}
-
-.faq-fila:hover {
-  background: rgba(255, 255, 255, 0.2);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
 .faq-fila summary {
   list-style: none;
   display: flex;
   align-items: center;
-  padding: 1.5rem;
+  gap: 1rem;
+  padding: 1.4rem 1.75rem;
   font-weight: 600;
-  color: var(--verde-bosque);
+  font-size: 0.97rem;
+  color: var(--blanco-puro);
   cursor: pointer;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  transition: background 0.22s ease;
+  user-select: none;
+}
+
+.faq-fila summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-fila summary:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .modo-oscuro .faq-fila summary {
-  color: #e1ede7;
+  color: rgba(220, 248, 230, 0.95);
 }
 
 .faq-numero {
-  margin-right: 1rem;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(247, 127, 0, 0.18);
+  border: 1px solid rgba(247, 127, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--naranja);
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .faq-flecha {
   margin-left: auto;
-  font-size: 0.7rem;
-  color: var(--naranja);
-  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.70);
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.22s ease;
 }
 
 .faq-fila[open] {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.faq-fila[open] summary {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .faq-fila[open] .faq-flecha {
   transform: rotate(180deg);
+  background: rgba(247, 127, 0, 0.18);
+  border-color: rgba(247, 127, 0, 0.35);
+  color: var(--naranja);
 }
 
 .faq-respuesta {
-  padding: 0 1.5rem 1.5rem 3.2rem;
-  color: var(--gris-oscuro);
-  line-height: 1.6;
-  font-size: 0.95rem;
-  animation: fadeIn 0.4s ease;
+  padding: 1.2rem 1.75rem 1.4rem 4.25rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  font-size: 0.93rem;
+  animation: fadeIn 0.3s ease;
 }
 
 .modo-oscuro .faq-respuesta {
-  color: rgba(225, 237, 231, 0.8);
+  color: rgba(210, 240, 195, 0.72);
 }
