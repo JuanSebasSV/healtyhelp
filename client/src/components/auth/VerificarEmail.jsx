@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './VerificarEmail.css';
+
+const EMPTY_CODE = ['', '', '', '', '', ''];
 
 const VerificarEmail = () => {
   const navigate  = useNavigate();
@@ -11,52 +13,45 @@ const VerificarEmail = () => {
   const { login } = useAuth();
 
   const email = location.state?.email || '';
-  const [codigo, setCodigo]       = useState(['', '', '', '', '', '']);
-  const [loading, setLoading]     = useState(false);
-  const [reenviando, setReenviando] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const [error, setError]         = useState('');
-  const inputs = useRef([]);
 
-  // Redirigir si no hay email
+  const [codigo, setCodigo]         = useState(EMPTY_CODE);
+  const [loading, setLoading]       = useState(false);
+  const [reenviando, setReenviando] = useState(false);
+  const [countdown, setCountdown]   = useState(0);
+  const [error, setError]           = useState('');
+
+  const inputs = useRef([]);
+  const codigoRef = useRef(codigo);
+  codigoRef.current = codigo;
+
   useEffect(() => {
     if (!email) navigate('/registro');
   }, [email, navigate]);
 
-  // Countdown para reenviar
   useEffect(() => {
     if (countdown <= 0) return;
     const t = setTimeout(() => setCountdown(c => c - 1), 1000);
     return () => clearTimeout(t);
   }, [countdown]);
 
-  const handleChange = (i, val) => {
+  const emailOculto = useMemo(
+    () => (email ? email.replace(/(.{2}).+(@.+)/, '$1***$2') : ''),
+    [email]
+  );
+
+  const handleChange = useCallback((i, val) => {
     if (!/^\d?$/.test(val)) return;
-    const nuevo = [...codigo];
-    nuevo[i] = val;
-    setCodigo(nuevo);
+    setCodigo(prev => {
+      const nuevo = [...prev];
+      nuevo[i] = val;
+      return nuevo;
+    });
     setError('');
     if (val && i < 5) inputs.current[i + 1]?.focus();
-  };
+  }, []);
 
-  const handleKeyDown = (i, e) => {
-    if (e.key === 'Backspace' && !codigo[i] && i > 0) {
-      inputs.current[i - 1]?.focus();
-    }
-    if (e.key === 'Enter') handleVerificar();
-  };
-
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const texto = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-    const nuevo = [...codigo];
-    texto.split('').forEach((c, i) => { nuevo[i] = c; });
-    setCodigo(nuevo);
-    inputs.current[Math.min(texto.length, 5)]?.focus();
-  };
-
-  const handleVerificar = async () => {
-    const code = codigo.join('');
+  const handleVerificar = useCallback(async () => {
+    const code = codigoRef.current.join('');
     if (code.length < 6) {
       setError('Ingresa los 6 dígitos del código');
       return;
@@ -72,20 +67,38 @@ const VerificarEmail = () => {
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Código inválido o expirado');
-      setCodigo(['', '', '', '', '', '']);
+      setCodigo(EMPTY_CODE);
       inputs.current[0]?.focus();
     } finally {
       setLoading(false);
     }
-  };
+  }, [email]);
 
-  const handleReenviar = async () => {
+  const handleKeyDown = useCallback((i, e) => {
+    if (e.key === 'Backspace' && !codigoRef.current[i] && i > 0) {
+      inputs.current[i - 1]?.focus();
+    }
+    if (e.key === 'Enter') handleVerificar();
+  }, [handleVerificar]);
+
+  const handlePaste = useCallback((e) => {
+    e.preventDefault();
+    const texto = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    setCodigo(prev => {
+      const nuevo = [...prev];
+      texto.split('').forEach((c, i) => { nuevo[i] = c; });
+      return nuevo;
+    });
+    inputs.current[Math.min(texto.length, 5)]?.focus();
+  }, []);
+
+  const handleReenviar = useCallback(async () => {
     setReenviando(true);
     try {
       await api.post('/auth/resend-code', { email });
       toast.success('Código reenviado a tu correo');
       setCountdown(60);
-      setCodigo(['', '', '', '', '', '']);
+      setCodigo(EMPTY_CODE);
       setError('');
       inputs.current[0]?.focus();
     } catch (err) {
@@ -93,43 +106,39 @@ const VerificarEmail = () => {
     } finally {
       setReenviando(false);
     }
-  };
+  }, [email]);
 
-  const emailOculto = email
-    ? email.replace(/(.{2}).+(@.+)/, '$1***$2')
-    : '';
+  const codigoCompleto = useMemo(() => codigo.join('').length === 6, [codigo]);
 
   return (
     <div className="verificar-pagina">
       <div className="verificar-card">
 
-        {/*Header Healthy Help*/}
         <div className="auth-brand">
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
+            <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22" />
           </svg>
           <span className="auth-brand-nombre">Healthy Help</span>
         </div>
-        {/* Icono */}
+
         <div className="verificar-icono">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.74a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.74a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
           </svg>
         </div>
 
         <h2 className="verificar-titulo">Verifica tu correo</h2>
         <p className="verificar-desc">
-          Enviamos un código de 6 dígitos a<br/>
+          Enviamos un código de 6 dígitos a<br />
           <strong>{emailOculto}</strong>
         </p>
 
-        {/* Campos de código */}
         <div className="verificar-campos">
           {codigo.map((d, i) => (
             <input
               key={i}
               ref={el => inputs.current[i] = el}
-              className={`verificar-digito ${error ? 'verificar-digito--error' : ''} ${d ? 'verificar-digito--lleno' : ''}`}
+              className={`verificar-digito${error ? ' verificar-digito--error' : ''}${d ? ' verificar-digito--lleno' : ''}`}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -148,14 +157,14 @@ const VerificarEmail = () => {
         <button
           className="verificar-btn"
           onClick={handleVerificar}
-          disabled={loading || codigo.join('').length < 6}
+          disabled={loading || !codigoCompleto}
         >
           {loading ? (
             <span className="verificar-spinner" />
           ) : (
             <>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
               Verificar cuenta
             </>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Login.css';
@@ -9,32 +9,24 @@ import ModalGooglePassword from './ModalGooglePassword';
 const Login = () => {
   const navigate  = useNavigate();
   const { login } = useAuth();
-  const [googlePasswordData, setGooglePasswordData] = useState(null);
 
+  const [googlePasswordData, setGooglePasswordData] = useState(null);
   const [formData, setFormData] = useState(() => {
     try {
       const savedEmail = localStorage.getItem('login_email_draft');
       return { email: savedEmail || '', password: '' };
-    } catch {}
-    return { email: '', password: '' };
+    } catch {
+      return { email: '', password: '' };
+    }
   });
-
-  // Guardar solo el email
-  useEffect(() => {
-    if (formData.email) localStorage.setItem('login_email_draft', formData.email);
-    else localStorage.removeItem('login_email_draft');
-  }, [formData.email]);
-  const [loading, setLoading]         = useState(false);
+  const [loading, setLoading]           = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors]           = useState({});
-  const [lockUntil, setLockUntil]     = useState(null);
+  const [errors, setErrors]             = useState({});
+  const [lockUntil, setLockUntil]       = useState(null);
 
-  const minutosRestantes = useMemo(() => {
-    if (!lockUntil) return 15;
-    return Math.max(1, Math.ceil((new Date(lockUntil) - Date.now()) / 60000));
-  }, [lockUntil]);
+  const formDataRef = useRef(formData);
+  formDataRef.current = formData;
 
-  // Restaurar bloqueo guardado en localStorage
   useEffect(() => {
     const bloqueadoHasta = localStorage.getItem('accountLockedUntil');
     if (bloqueadoHasta && new Date(bloqueadoHasta) > new Date()) {
@@ -44,15 +36,35 @@ const Login = () => {
     }
   }, []);
 
-  const esBloqueado = lockUntil && new Date(lockUntil) > new Date();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        if (formData.email) localStorage.setItem('login_email_draft', formData.email);
+        else localStorage.removeItem('login_email_draft');
+      } catch {}
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [formData.email]);
 
-  const handleChange = (e) => {
+  const minutosRestantes = useMemo(() => {
+    if (!lockUntil) return 15;
+    return Math.max(1, Math.ceil((new Date(lockUntil) - Date.now()) / 60000));
+  }, [lockUntil]);
+
+  const esBloqueado = useMemo(
+    () => Boolean(lockUntil && new Date(lockUntil) > new Date()),
+    [lockUntil]
+  );
+
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-  };
+    setErrors(prev => (prev[name] ? { ...prev, [name]: '' } : prev));
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const togglePassword = useCallback(() => setShowPassword(p => !p), []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
     if (esBloqueado) {
@@ -60,7 +72,8 @@ const Login = () => {
       return;
     }
 
-    const validationErrors = validateLoginForm(formData.email, formData.password);
+    const { email, password } = formDataRef.current;
+    const validationErrors = validateLoginForm(email, password);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -69,7 +82,7 @@ const Login = () => {
     setLoading(true);
     setErrors({});
 
-    const result = await login({ email: formData.email, password: formData.password });
+    const result = await login({ email, password });
 
     if (result.needsGooglePassword) {
       setGooglePasswordData({ token: result.token });
@@ -89,7 +102,7 @@ const Login = () => {
       toast.error(`Cuenta bloqueada. Intenta en ${minutosRestantes} minuto(s)`);
     } else if (result.needsVerification) {
       toast.info('Debes verificar tu correo primero');
-      navigate('/verificar-email', { state: { email: formData.email } });
+      navigate('/verificar-email', { state: { email } });
     } else {
       const msg = result.attemptsLeft !== undefined
         ? `${result.error}. Intentos restantes: ${result.attemptsLeft}`
@@ -99,19 +112,25 @@ const Login = () => {
     }
 
     setLoading(false);
-  };
+  }, [esBloqueado, minutosRestantes, login, navigate]);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = useCallback(() => {
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-  };
+  }, []);
+
+  const handleModalSuccess = useCallback(() => {
+    setGooglePasswordData(null);
+    localStorage.removeItem('login_email_draft');
+    navigate('/');
+  }, [navigate]);
 
   return (
     <div className="login-page">
       <div className="login-container">
         <div className="login-header">
           <h1>
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '8px'}}>
-              <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '8px' }}>
+              <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22" />
             </svg>
             Healthy Help
           </h1>
@@ -119,7 +138,6 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
-
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -144,15 +162,15 @@ const Login = () => {
                 className={errors.password ? 'input-error' : ''}
                 autoComplete="current-password"
               />
-              <button type="button" className="toggle-password" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+              <button type="button" className="toggle-password" onClick={togglePassword} tabIndex={-1}>
                 {showPassword ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                   </svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                    <line x1="1" y1="1" x2="23" y2="23"/>
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
                   </svg>
                 )}
               </button>
@@ -168,9 +186,9 @@ const Login = () => {
 
           {esBloqueado && (
             <div className="lock-warning">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign: 'middle', marginRight: '6px'}}>
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '6px' }}>
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
               Cuenta bloqueada. Intenta en {minutosRestantes} minuto(s) —{' '}
               <Link to="/recuperar" style={{ color: 'inherit', fontWeight: 700 }}>
@@ -194,18 +212,13 @@ const Login = () => {
             <Link to="/recuperar" className="link">¿Olvidaste tu contraseña?</Link>
             <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
           </div>
-
         </form>
       </div>
 
       {googlePasswordData && (
         <ModalGooglePassword
           token={googlePasswordData.token}
-          onSuccess={() => {
-            setGooglePasswordData(null);
-            localStorage.removeItem('login_email_draft');
-            navigate('/');
-          }}
+          onSuccess={handleModalSuccess}
         />
       )}
     </div>

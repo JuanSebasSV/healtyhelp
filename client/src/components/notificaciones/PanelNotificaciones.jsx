@@ -1,8 +1,6 @@
-// components/notificaciones/PanelNotificaciones.jsx
 import React, { useEffect, useRef, useCallback } from "react";
 import "./PanelNotificaciones.css";
 
-/*Íconos*/
 const IcoReply = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -60,7 +58,17 @@ const IcoClose = () => (
   </svg>
 );
 
-/*Formatea fecha relativa*/
+const decodificar = (str) => {
+  if (!str) return "";
+  return str
+    .replace(/&amp;/g,  "&")
+    .replace(/&lt;/g,   "<")
+    .replace(/&gt;/g,   ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'");
+};
+
 const formatRelativa = (date) => {
   const diff = Date.now() - new Date(date).getTime();
   const min  = Math.floor(diff / 60000);
@@ -73,7 +81,6 @@ const formatRelativa = (date) => {
   return new Date(date).toLocaleDateString("es-ES", { day: "numeric", month: "short" });
 };
 
-/*Componente*/
 const PanelNotificaciones = ({
   notificaciones,
   noLeidas,
@@ -87,52 +94,37 @@ const PanelNotificaciones = ({
 }) => {
   const panelRef = useRef(null);
 
-  // Cerrar al hacer clic fuera
   useEffect(() => {
     const handleClick = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) {
-        onCerrar();
-      }
+      if (panelRef.current && !panelRef.current.contains(e.target)) onCerrar();
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [onCerrar]);
 
-  // Cerrar con Escape
   useEffect(() => {
     const handleKey = (e) => { if (e.key === "Escape") onCerrar(); };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
   }, [onCerrar]);
 
-  // Marcar todas las visibles como leídas cuando el panel se abre
   useEffect(() => {
     if (cargando) return;
     const noLeidasVisibles = notificaciones.filter(n => !n.leida);
     if (noLeidasVisibles.length === 0) return;
-
-    // Pequeño delay para que el usuario vea el indicador antes de que desaparezca
     const t = setTimeout(() => {
       noLeidasVisibles.forEach(n => onLeerUna(n._id));
     }, 1200);
-
     return () => clearTimeout(t);
   }, [cargando]);
-
-  const decodificar = (str) => {
-    if (!str) return "";
-    const txt = document.createElement("textarea");
-    txt.innerHTML = str;
-    return txt.value;
-  };
 
   const handleClickItem = useCallback((n) => {
     if (!n.leida) onLeerUna(n._id);
     if ((n.type === "reply" || n.type === "new_recipe") && n.recetaId) {
       onCerrar();
       const params = new URLSearchParams({ receta: n.recetaId });
-      if (n.resenaId)    params.set('resena',    n.resenaId);
-      if (n.respuestaId) params.set('respuesta', n.respuestaId);
+      if (n.resenaId)    params.set("resena",    n.resenaId);
+      if (n.respuestaId) params.set("respuesta", n.respuestaId);
       const url = `/?${params.toString()}`;
       if (onNavegar) {
         onNavegar(url);
@@ -145,7 +137,6 @@ const PanelNotificaciones = ({
   return (
     <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
 
-      {/* Header */}
       <div className="pn-header">
         <div className="pn-header-izq">
           <IcoBell />
@@ -170,7 +161,6 @@ const PanelNotificaciones = ({
         </div>
       </div>
 
-      {/* Cuerpo */}
       <div className="pn-lista">
         {cargando ? (
           <div className="pn-estado">
@@ -192,30 +182,23 @@ const PanelNotificaciones = ({
               }`}
               onClick={() => handleClickItem(n)}
             >
-              {/* Indicador de no leída */}
               {!n.leida && <span className="pn-dot" aria-hidden="true" />}
 
-              {/*Botón eliminar*/}
               <button
                 className="pn-btn-eliminar"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEliminar(n._id);
-                }}
+                onClick={(e) => { e.stopPropagation(); onEliminar(n._id); }}
                 aria-label="Eliminar notificación"
                 title="Eliminar"
               >
                 <IcoClose />
               </button>
 
-              {/* Ícono de tipo */}
               <div className={`pn-icono pn-icono--${n.type}`}>
-                {n.type === "reply"      ? <IcoReply />   :
-                 n.type === "new_recipe" ? <IcoReceta />  :
+                {n.type === "reply"      ? <IcoReply />  :
+                 n.type === "new_recipe" ? <IcoReceta /> :
                                           <IcoMessage />}
               </div>
 
-              {/* Contenido */}
               <div className="pn-contenido" style={{ paddingRight: "1.2rem" }}>
                 {n.type === "reply" ? (
                   <>

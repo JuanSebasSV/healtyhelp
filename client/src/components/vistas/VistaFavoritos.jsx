@@ -65,8 +65,13 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
     [recetas, favoritos]
   );
 
-  const contarPorCategoria = (catId) =>
-    recetasFavoritas.filter(r => r.cat === catId).length;
+  const conteoPorCategoria = useMemo(() => {
+    const counts = {};
+    recetasFavoritas.forEach(r => {
+      counts[r.cat] = (counts[r.cat] || 0) + 1;
+    });
+    return counts;
+  }, [recetasFavoritas]);
 
   const recetasFiltradas = useMemo(() => {
     if (!categoriaActiva) return [];
@@ -123,7 +128,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
         ) : (
           <div className="vf-categorias-grid">
             {CATEGORIAS.map(cat => {
-              const count = contarPorCategoria(cat.id);
+              const count = conteoPorCategoria[cat.id] || 0;
               return (
                 <button
                   key={cat.id}
@@ -151,7 +156,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
   }
 
   const catActual = CATEGORIAS.find(c => c.id === categoriaActiva);
-  const countCategoria = recetasFavoritas.filter(r => r.cat === categoriaActiva).length;
+  const countCategoria = conteoPorCategoria[categoriaActiva] || 0;
 
   return (
     <div className="vf-wrap2 vista-favoritos">

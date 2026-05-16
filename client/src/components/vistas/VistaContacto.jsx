@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './VistaContacto.css';
@@ -27,17 +27,24 @@ const esEmailPermitido = (email) => {
   return DOMINIOS_PERMITIDOS.has(partes[1].toLowerCase());
 };
 
+const FAQS_FALLBACK = [
+  { _id: '1', pregunta: '¿Cómo funciona Healthy Help?', respuesta: 'Es una plataforma para facilitar recetas para personas que sigan dietas específicas.' },
+  { _id: '2', pregunta: '¿Cómo elijo la mejor dieta para mí?', respuesta: 'Puedes utilizar nuestro sistema de filtros en la página principal para ajustar las recetas según tus necesidades.' },
+  { _id: '3', pregunta: '¿Las recetas incluyen información nutricional?', respuesta: 'Sí, cada receta detallada en Healthy Help cuenta con un desglose de ingredientes y pasos claros para asegurar que sigas tu plan de alimentación correctamente.' },
+  { _id: '4', pregunta: '¿Puedo usar la aplicación sin conexión a internet?', respuesta: 'Healthy Help es una aplicación web, por lo que requiere conexión a internet para cargar nuevas recetas. Sin embargo, una vez cargada la página, puedes visualizar la información actual sin problemas.' },
+  { _id: '5', pregunta: '¿Es apto para personas con alergias alimentarias?', respuesta: 'Nuestra plataforma permite filtrar ingredientes a través del chatbot, pero siempre recomendamos revisar la lista completa de componentes de cada receta para garantizar tu seguridad.' },
+  { _id: '6', pregunta: '¿Cómo puedo sugerir una nueva receta?', respuesta: '¡Nos encanta recibir sugerencias! Puedes usar el formulario de contacto de arriba para enviarnos tus ideas y nuestro equipo de nutrición las revisará para incluirlas.' },
+  { _id: '7', pregunta: '¿Los datos de mi perfil son privados?', respuesta: 'Totalmente. Utilizamos MongoDB Atlas para asegurar que tu información esté encriptada y protegida bajo los más altos estándares de seguridad actuales.' },
+];
+
+const FORM_VACIO = { nombre: '', email: '', asunto: '', mensaje: '' };
+
 const VistaContacto = () => {
-  const [datosForm, setDatosForm] = useState({
-    nombre: '',
-    email: '',
-    asunto: '',
-    mensaje: ''
-  });
-  const [enviando, setEnviando] = useState(false);
-  const [infoAbierta, setInfoAbierta] = useState(false);
+  const [datosForm, setDatosForm]               = useState(FORM_VACIO);
+  const [enviando, setEnviando]                 = useState(false);
+  const [infoAbierta, setInfoAbierta]           = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const [faqs, setFaqs] = useState([]);
+  const [faqs, setFaqs]                         = useState([]);
 
   useEffect(() => {
     const obtenerFaqs = async () => {
@@ -45,22 +52,22 @@ const VistaContacto = () => {
         const respuesta = await api.get('/faqs');
         setFaqs(respuesta.data);
       } catch (error) {
-        console.error("Error al cargar FAQs:", error);
-        setFaqs([
-          { _id: '1', pregunta: "¿Cómo funciona Healthy Help?", respuesta: "Es una plataforma para facilitar recetas para personas que sigan dietas específicas." },
-          { _id: '2', pregunta: "¿Cómo elijo la mejor dieta para mí?", respuesta: "Puedes utilizar nuestro sistema de filtros en la página principal para ajustar las recetas según tus necesidades." },
-          { _id: '3', pregunta: "¿Las recetas incluyen información nutricional?", respuesta: "Sí, cada receta detallada en Healthy Help cuenta con un desglose de ingredientes y pasos claros para asegurar que sigas tu plan de alimentación correctamente." },
-          { _id: '4', pregunta: "¿Puedo usar la aplicación sin conexión a internet?", respuesta: "Healthy Help es una aplicación web, por lo que requiere conexión a internet para cargar nuevas recetas. Sin embargo, una vez cargada la página, puedes visualizar la información actual sin problemas." },
-          { _id: '5', pregunta: "¿Es apto para personas con alergias alimentarias?", respuesta: "Nuestra plataforma permite filtrar ingredientes a través del chatbot, pero siempre recomendamos revisar la lista completa de componentes de cada receta para garantizar tu seguridad." },
-          { _id: '6', pregunta: "¿Cómo puedo sugerir una nueva receta?", respuesta: "¡Nos encanta recibir sugerencias! Puedes usar el formulario de contacto de arriba para enviarnos tus ideas y nuestro equipo de nutrición las revisará para incluirlas." },
-          { _id: '7', pregunta: "¿Los datos de mi perfil son privados?", respuesta: "Totalmente. Utilizamos MongoDB Atlas para asegurar que tu información esté encriptada y protegida bajo los más altos estándares de seguridad actuales." },
-        ]);
+        console.error('Error al cargar FAQs:', error);
+        setFaqs(FAQS_FALLBACK);
       }
     };
     obtenerFaqs();
   }, []);
 
-  const validarYMostrarConfirmacion = () => {
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setDatosForm(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  const toggleInfo = useCallback(() => setInfoAbierta(prev => !prev), []);
+  const cerrarConfirmacion = useCallback(() => setMostrarConfirmacion(false), []);
+
+  const validarYMostrarConfirmacion = useCallback(() => {
     const { nombre, email, mensaje } = datosForm;
 
     if (!nombre || nombre.trim().length < 2) {
@@ -89,43 +96,32 @@ const VistaContacto = () => {
     }
 
     setMostrarConfirmacion(true);
-  };
+  }, [datosForm]);
 
-  const confirmarYEnviar = async () => {
+  const confirmarYEnviar = useCallback(async () => {
     setMostrarConfirmacion(false);
     setEnviando(true);
     try {
       const token = localStorage.getItem('token');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      await api.post('/contacto', {
-        nombre: datosForm.nombre,
-        email: datosForm.email,
-        asunto: datosForm.asunto,
-        mensaje: datosForm.mensaje
-      }, { headers });
+      await api.post('/contacto', datosForm, { headers });
       toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
-      setDatosForm({ nombre: '', email: '', asunto: '', mensaje: '' });
+      setDatosForm(FORM_VACIO);
     } catch (error) {
       const msg = error.response?.data?.error || 'Error al enviar el mensaje. Intenta de nuevo.';
       toast.error(msg);
     } finally {
       setEnviando(false);
     }
-  };
+  }, [datosForm]);
 
   return (
     <div className="vista-contacto">
 
       {/* Modal de confirmación */}
       {mostrarConfirmacion && (
-        <div
-          className="confirmacion-overlay"
-          onClick={() => setMostrarConfirmacion(false)}
-        >
-          <div
-            className="confirmacion-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="confirmacion-overlay" onClick={cerrarConfirmacion}>
+          <div className="confirmacion-modal" onClick={(e) => e.stopPropagation()}>
             <div className="confirmacion-header">
               <div className="confirmacion-icono">
                 <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
@@ -158,16 +154,10 @@ const VistaContacto = () => {
             </div>
 
             <div className="confirmacion-acciones">
-              <button
-                className="confirmacion-btn-editar"
-                onClick={() => setMostrarConfirmacion(false)}
-              >
+              <button className="confirmacion-btn-editar" onClick={cerrarConfirmacion}>
                 Editar
               </button>
-              <button
-                className="confirmacion-btn-enviar"
-                onClick={confirmarYEnviar}
-              >
+              <button className="confirmacion-btn-enviar" onClick={confirmarYEnviar}>
                 Confirmar y enviar
               </button>
             </div>
@@ -247,7 +237,7 @@ const VistaContacto = () => {
         <div className="contacto-acordeon">
           <button
             className="acordeon-trigger"
-            onClick={() => setInfoAbierta(prev => !prev)}
+            onClick={toggleInfo}
             aria-expanded={infoAbierta}
           >
             <span className="acordeon-trigger-label">
@@ -321,9 +311,10 @@ const VistaContacto = () => {
           <div className="campo-wrapper">
             <input
               type="text"
+              name="nombre"
               placeholder="Nombre completo *"
               value={datosForm.nombre}
-              onChange={(e) => setDatosForm({ ...datosForm, nombre: e.target.value })}
+              onChange={handleChange}
               disabled={enviando}
             />
           </div>
@@ -331,9 +322,10 @@ const VistaContacto = () => {
           <div className="campo-wrapper">
             <input
               type="email"
+              name="email"
               placeholder="Correo electrónico *"
               value={datosForm.email}
-              onChange={(e) => setDatosForm({ ...datosForm, email: e.target.value })}
+              onChange={handleChange}
               disabled={enviando}
             />
           </div>
@@ -341,19 +333,21 @@ const VistaContacto = () => {
           <div className="campo-wrapper">
             <input
               type="text"
+              name="asunto"
               placeholder="Asunto"
               value={datosForm.asunto}
-              onChange={(e) => setDatosForm({ ...datosForm, asunto: e.target.value })}
+              onChange={handleChange}
               disabled={enviando}
             />
           </div>
 
           <div className="campo-wrapper campo-textarea">
             <textarea
+              name="mensaje"
               placeholder="Mensaje *"
               rows="5"
               value={datosForm.mensaje}
-              onChange={(e) => setDatosForm({ ...datosForm, mensaje: e.target.value })}
+              onChange={handleChange}
               disabled={enviando}
             />
           </div>

@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useChatStore from '../../hooks/useChatStore';
 import ChatCore from '../inicio/ChatCore';
@@ -50,14 +51,12 @@ const IconoChispa = ({ size = 14 }) => (
 );
 
 const capacidades = [
-  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',      desc: 'Diabetes, hipertensión, colesterol' },
-  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',         desc: 'Vegano, keto, paleo, celíaco' },
-  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',       desc: 'Ingredientes y sustitutos' },
-  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias',   desc: 'Gluten, lactosa, frutos secos' },
-  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',     desc: 'Basados en tu perfil de salud' },
+  { icono: <IconoCorazon size={14}/>, titulo: 'Condiciones crónicas',    desc: 'Diabetes, hipertensión, colesterol' },
+  { icono: <IconoSemilla size={14}/>, titulo: 'Dietas especiales',       desc: 'Vegano, keto, paleo, celíaco' },
+  { icono: <IconoZanahoria size={14}/>, titulo: 'Recetas adaptadas',     desc: 'Ingredientes y sustitutos' },
+  { icono: <IconoEscudo size={14}/>, titulo: 'Alergias e intolerancias', desc: 'Gluten, lactosa, frutos secos' },
+  { icono: <IconoChispa size={14}/>, titulo: 'Consejos nutricionales',   desc: 'Basados en tu perfil de salud' },
 ];
-
-/*Componente  */
 
 const VistaChatbot = ({ abrirFlotante }) => {
   const navigate = useNavigate();
@@ -71,10 +70,10 @@ const VistaChatbot = ({ abrirFlotante }) => {
     enviarTextoDirecto,
   } = useChatStore();
 
-  const handleMinimizar = () => {
+  const handleMinimizar = useCallback(() => {
     abrirFlotante?.();
     navigate(-1);
-  };
+  }, [abrirFlotante, navigate]);
 
   return (
     <div className="vistaChatbot">
