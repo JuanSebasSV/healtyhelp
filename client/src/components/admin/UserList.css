@@ -1,6 +1,8 @@
-/*UserList.css — Tabla de usuarios*/
+/* UserList.css — Tabla de usuarios */
 
-/*Contenedor*/
+/* @keyframes msg-spin eliminado — hereda spin de index.css */
+
+/* Contenedor */
 .user-list-container {
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(20px) saturate(160%);
@@ -16,7 +18,7 @@
   border-color: rgba(79, 119, 45, 0.25);
 }
 
-/*Header*/
+/* Header */
 .user-list-header { margin-bottom: 1.25rem; }
 .user-list-header h2 {
   font-family: 'Georgia', serif;
@@ -34,7 +36,7 @@
 }
 .modo-oscuro .user-list-empty { color: rgba(180, 210, 160, 0.45); }
 
-/*Tabla*/
+/* Tabla */
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
@@ -65,35 +67,37 @@
 }
 .modo-oscuro .user-table th { color: rgba(180, 210, 160, 0.5); }
 
+/* td — bloque único consolidado (era duplicado) */
+.user-table td {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+}
+.user-table td:first-child { width: 52px; }
+
 .user-table tbody tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   transition: var(--transicion);
 }
 .user-table tbody tr:last-child { border-bottom: none; }
-.user-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
-.user-table tbody tr.admin-row { background: rgba(129, 140, 248, 0.05); }
-
-/*Fila Super Admin*/
+.user-table tbody tr:hover       { background: rgba(255, 255, 255, 0.05); }
+.user-table tbody tr.admin-row   { background: rgba(129, 140, 248, 0.05); }
 .user-table tbody tr.super-admin-row {
   background: rgba(251, 191, 36, 0.08);
   border-left: 3px solid var(--amarillo-intenso);
 }
 
-.modo-oscuro .user-table tbody tr { border-bottom-color: rgba(79, 119, 45, 0.1); }
-.modo-oscuro .user-table tbody tr:hover { background: rgba(79, 119, 45, 0.08); }
-.modo-oscuro .user-table tbody tr.admin-row { background: rgba(129, 140, 248, 0.07); }
-
+.modo-oscuro .user-table tbody tr             { border-bottom-color: rgba(79, 119, 45, 0.1); }
+.modo-oscuro .user-table tbody tr:hover       { background: rgba(79, 119, 45, 0.08); }
+.modo-oscuro .user-table tbody tr.admin-row   { background: rgba(129, 140, 248, 0.07); }
 .modo-oscuro .user-table tbody tr.super-admin-row {
   background: rgba(251, 191, 36, 0.12);
   border-left-color: var(--ambar);
 }
 
-.user-table td {
-  padding: 0.9rem 1rem;
-  vertical-align: middle;
-}
+.banned-row { background: rgba(220, 38, 38, 0.06) !important; }
+.banned-row td { opacity: 0.8; }
 
-/*Avatar*/
+/* Avatar — bloque único consolidado (era duplicado) */
 .user-avatar {
   width: 38px;
   height: 38px;
@@ -101,8 +105,12 @@
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
 .avatar-placeholder {
   width: 100%;
   height: 100%;
@@ -115,31 +123,20 @@
   font-size: 1rem;
 }
 
-/*Nombre / email*/
-.user-name-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-.user-name {
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--blanco-puro);
-}
+/* Nombre / email */
+.user-name-cell { display: flex; flex-direction: column; gap: 0.2rem; }
+.user-name { font-weight: 600; font-size: 0.92rem; color: var(--blanco-puro); }
 .modo-oscuro .user-name { color: rgba(220, 245, 205, 0.95); }
-
-.google-badge {
-  font-size: 0.72rem;
-  color: var(--azul-medio);
-}
-.user-email {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.55);
-}
+.google-badge { font-size: 0.72rem; color: var(--azul-medio); }
+.google-badge svg { stroke: var(--azul-medio); }
+.user-email { font-size: 0.85rem; color: rgba(255, 255, 255, 0.55); }
 .modo-oscuro .user-email { color: rgba(180, 210, 160, 0.55); }
+.you-badge { font-size: 0.72rem; color: rgba(255, 255, 255, 0.4); font-style: italic; line-height: 1; }
 
-/*Select de rol*/
+/* Select de rol */
 .role-select {
+  display: flex;
+  align-items: center;
   padding: 0.42rem 0.85rem;
   background: rgba(255, 255, 255, 0.07);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
@@ -153,7 +150,6 @@
 }
 .role-select:hover { border-color: var(--naranja); }
 .role-select option { background: var(--verde-bosque); color: var(--blanco-puro); }
-
 .role-select.role-admin {
   color: var(--azul-suave);
   border-color: rgba(129, 140, 248, 0.45);
@@ -164,7 +160,6 @@
   border-color: rgba(52, 211, 153, 0.38);
   background: rgba(52, 211, 153, 0.07);
 }
-
 .modo-oscuro .role-select {
   background: rgba(10, 25, 15, 0.5);
   border-color: rgba(79, 119, 45, 0.3);
@@ -172,20 +167,26 @@
 }
 .modo-oscuro .role-select option { background: var(--verde-profundo); }
 
-/*Badges de rol (solo lectura)*/
+/* Badges de rol (solo lectura) */
 .role-badge-readonly {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-start;
 }
 
+/* Badge — bloque único consolidado (era duplicado inline-block → inline-flex) */
 .badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   padding: 0.22rem 0.7rem;
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
+.badge svg { vertical-align: middle; }
 
 .badge.super-admin {
   background: rgba(251, 191, 36, 0.15);
@@ -193,22 +194,16 @@
   color: var(--amarillo-intenso);
   font-weight: 800;
 }
-
 .badge.admin {
   background: rgba(129, 140, 248, 0.15);
   border: 1px solid rgba(129, 140, 248, 0.4);
   color: var(--azul-suave);
 }
-
 .badge.user {
   background: rgba(52, 211, 153, 0.15);
   border: 1px solid rgba(52, 211, 153, 0.35);
   color: var(--verde-menta);
 }
-
-/*Badges de estado*/
-.status-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-
 .badge.verified {
   background: rgba(52, 211, 153, 0.15);
   border: 1px solid rgba(52, 211, 153, 0.35);
@@ -220,41 +215,59 @@
   color: var(--amarillo);
 }
 
-/*Fecha*/
-.date-cell {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.48);
-}
+/* Badges de estado */
+.status-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+/* Fecha */
+.date-cell { font-size: 0.85rem; color: rgba(255, 255, 255, 0.48); }
 .modo-oscuro .date-cell { color: rgba(180, 210, 160, 0.48); }
 
-/*Botón eliminar*/
-.action-buttons { display: flex; gap: 0.4rem; }
+/* Botones de acción — bloque único consolidado (era duplicado) */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
 
+/* btn-delete — bloque único consolidado (era triplicado) */
 .btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.42rem 0.7rem;
   background: rgba(239, 68, 68, 0.1);
   border: 1.5px solid rgba(239, 68, 68, 0.25);
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
+  color: rgba(239, 68, 68, 0.75);
   transition: var(--transicion);
   line-height: 1;
 }
+.btn-delete svg { stroke: rgba(239, 68, 68, 0.75); }
 .btn-delete:hover {
   background: rgba(239, 68, 68, 0.28);
   border-color: rgba(239, 68, 68, 0.55);
+  color: var(--rojo-claro);
   transform: scale(1.1);
   box-shadow: 0 3px 10px rgba(239, 68, 68, 0.2);
 }
+.btn-delete:hover svg { stroke: var(--rojo-claro); }
 
-/*Icono protegido*/
+/* Ícono protegido — bloque único consolidado (era duplicado) */
 .protected-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   font-size: 1.2rem;
   opacity: 0.4;
   cursor: not-allowed;
 }
+.protected-badge svg { stroke: rgba(255, 255, 255, 0.3); }
 
-/*Botón admin en navbar*/
+/* Botón admin en navbar */
 .nav-admin-btn {
   background: rgba(129, 140, 248, 0.18) !important;
   border: 1.5px solid rgba(129, 140, 248, 0.4) !important;
@@ -273,204 +286,8 @@
   box-shadow: 0 4px 14px rgba(129, 140, 248, 0.25);
 }
 
-/*Responsive*/
-@media (max-width: 968px) {
-  .user-list-container {
-    padding: 0.85rem 0.7rem;
-    border-radius: 14px;
-  }
-  .user-list-header h2 { font-size: 1.1rem; }
-
-  /* En móvil ocultamos la tabla y mostramos tarjetas */
-  .table-container { overflow-x: unset; border-radius: 0; }
-
-  .user-table { display: none; }
-
-  /* Tarjetas de usuario para móvil */
-  .user-cards-movil {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-
-  .user-card-movil {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    padding: 0.9rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    transition: var(--transicion);
-  }
-  .user-card-movil:hover {
-    background: rgba(255, 255, 255, 0.09);
-  }
-  .user-card-movil.admin-row {
-    border-color: rgba(129, 140, 248, 0.3);
-    background: rgba(129, 140, 248, 0.06);
-  }
-  .user-card-movil.super-admin-row {
-    border-left: 3px solid var(--amarillo-intenso);
-    background: rgba(251, 191, 36, 0.07);
-  }
-  .user-card-movil.banned-row {
-    background: rgba(220, 38, 38, 0.06);
-    border-color: rgba(220, 38, 38, 0.2);
-  }
-
-  /* Fila superior: avatar + nombre + badges */
-  .ucard-top {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .ucard-info { flex: 1; min-width: 0; }
-  .ucard-name {
-    font-weight: 700;
-    font-size: 0.92rem;
-    color: var(--blanco-puro);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .ucard-email {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.5);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Fila media: rol + estado */
-  .ucard-mid {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  /* Fila inferior: fecha + acciones */
-  .ucard-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-  .ucard-fecha {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.38);
-  }
-  .ucard-actions {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-  }
-}
-
-@media (min-width: 969px) {
-  /* En desktop se ocultan las tarjetas móvil */
-  .user-cards-movil { display: none; }
-  .user-table { display: table; }
-}
-.user-table td {
-  vertical-align: middle;
-}
-
-/*Rol: centrar contenido verticalmente*/
-.role-select,
-.role-badge-readonly {
-  display: flex;
-  align-items: center;
-}
-
-.role-badge-readonly {
-  justify-content: flex-start;
-}
-
-/*Badge Super Admin — no debe romper la altura de la fila*/
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  white-space: nowrap;
-}
-
-/*Acciones: centrar ícono verticalmente*/
-.action-buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-delete {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.protected-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-/*Nombre*/
-.you-badge {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.4);
-  font-style: italic;
-  line-height: 1;
-}
-
-/*Avatar: centrado*/
-.user-table td:first-child {
-  width: 52px;
-}
-
-.user-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-delete {
-  color: rgba(239, 68, 68, 0.75);
-}
-.btn-delete svg {
-  stroke: rgba(239, 68, 68, 0.75);
-}
-.btn-delete:hover svg {
-  stroke: var(--rojo-claro);
-}
-
-.protected-badge svg {
-  stroke: rgba(255, 255, 255, 0.3);
-}
-
-.badge svg {
-  vertical-align: middle;
-}
-
-.google-badge svg {
-  stroke: var(--azul-medio);
-}
-
-
-.banned-row {
-  background: rgba(220, 38, 38, 0.06) !important;
-}
-.banned-row td {
-  opacity: 0.8;
-}
- 
-.ban-status {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
- 
+/* Estado ban */
+.ban-status { display: flex; flex-direction: column; gap: 3px; }
 .ban-badge {
   display: inline-flex;
   align-items: center;
@@ -485,13 +302,7 @@
   width: fit-content;
   letter-spacing: 0.02em;
 }
- 
-.ban-hasta {
-  font-size: 0.69rem;
-  color: rgba(248, 113, 113, 0.6);
-  font-weight: 500;
-}
- 
+.ban-hasta  { font-size: 0.69rem; color: rgba(248, 113, 113, 0.6); font-weight: 500; }
 .ban-motivo {
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.28);
@@ -501,20 +312,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
- 
-.ban-status-ok {
-  font-size: 0.78rem;
-  color: #6ee7b7;
-  font-weight: 600;
-}
- 
-.btn-ban {
+.ban-status-ok { font-size: 0.78rem; color: #6ee7b7; font-weight: 600; }
+
+/* btn-ban y btn-unban — base compartida consolidada */
+.btn-ban,
+.btn-unban {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(220, 38, 38, 0.1);
-  border: 1px solid rgba(220, 38, 38, 0.28);
-  color: #f87171;
   border-radius: 8px;
   padding: 5px 11px;
   font-size: 0.78rem;
@@ -523,42 +328,32 @@
   transition: var(--transicion);
   white-space: nowrap;
   font-family: inherit;
+  border: 1px solid;
+}
+.btn-ban {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.28);
+  color: #f87171;
 }
 .btn-ban:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.22);
   border-color: rgba(248, 113, 113, 0.5);
   transform: translateY(-1px);
 }
- 
 .btn-unban {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   background: rgba(110, 231, 183, 0.1);
-  border: 1px solid rgba(110, 231, 183, 0.25);
+  border-color: rgba(110, 231, 183, 0.25);
   color: #6ee7b7;
-  border-radius: 8px;
-  padding: 5px 11px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transicion);
-  white-space: nowrap;
-  font-family: inherit;
 }
 .btn-unban:hover:not(:disabled) {
   background: rgba(110, 231, 183, 0.2);
   border-color: rgba(110, 231, 183, 0.45);
   transform: translateY(-1px);
 }
- 
 .btn-ban:disabled,
-.btn-unban:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-}
-/*Botón de mensaje directo*/
+.btn-unban:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* Botón de mensaje directo */
 .btn-message {
   display: flex;
   align-items: center;
@@ -571,6 +366,7 @@
   color: rgba(165, 180, 252, 0.8);
   transition: var(--transicion);
 }
+.btn-message svg { stroke: currentColor; }
 .btn-message:hover {
   background: rgba(129, 140, 248, 0.22);
   border-color: rgba(129, 140, 248, 0.5);
@@ -578,13 +374,9 @@
   transform: scale(1.08);
   box-shadow: 0 3px 10px rgba(129, 140, 248, 0.18);
 }
-.btn-message svg { stroke: currentColor; }
 
-/*Modal de mensaje*/
-.msg-modal {
-  max-width: 460px;
-}
-
+/* Modal de mensaje */
+.msg-modal { max-width: 460px; }
 .msg-input {
   width: 100%;
   padding: 0.55rem 0.85rem;
@@ -600,7 +392,6 @@
 }
 .msg-input::placeholder { color: rgba(255,255,255,0.28); }
 .msg-input:focus { border-color: rgba(129, 140, 248, 0.5); }
-
 .msg-contador {
   display: block;
   text-align: right;
@@ -608,7 +399,6 @@
   color: rgba(255,255,255,0.25);
   margin-top: 4px;
 }
-
 .msg-btn-enviar {
   display: inline-flex;
   align-items: center;
@@ -621,7 +411,8 @@
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  /* transition: all → propiedades específicas */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-family: inherit;
 }
 .msg-btn-enviar:hover:not(:disabled) {
@@ -630,7 +421,48 @@
 }
 .msg-btn-enviar:disabled { opacity: 0.45; cursor: not-allowed; }
 
-@keyframes msg-spin {
-  to { transform: rotate(360deg); }
+.msg-spin { animation: spin 0.8s linear infinite; }
+
+/* Responsive */
+@media (max-width: 968px) {
+  .user-list-container { padding: 0.85rem 0.7rem; border-radius: 14px; }
+  .user-list-header h2 { font-size: 1.1rem; }
+  .table-container { overflow-x: unset; border-radius: 0; }
+  .user-table { display: none; }
+
+  .user-cards-movil { display: flex; flex-direction: column; gap: 0.7rem; }
+  .user-card-movil {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    transition: var(--transicion);
+  }
+  .user-card-movil:hover          { background: rgba(255, 255, 255, 0.09); }
+  .user-card-movil.admin-row      { border-color: rgba(129, 140, 248, 0.3); background: rgba(129, 140, 248, 0.06); }
+  .user-card-movil.super-admin-row { border-left: 3px solid var(--amarillo-intenso); background: rgba(251, 191, 36, 0.07); }
+  .user-card-movil.banned-row     { background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.2); }
+
+  .ucard-top { display: flex; align-items: center; gap: 0.75rem; }
+  .ucard-info { flex: 1; min-width: 0; }
+  .ucard-name {
+    font-weight: 700; font-size: 0.92rem; color: var(--blanco-puro);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ucard-email {
+    font-size: 0.78rem; color: rgba(255,255,255,0.5);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ucard-mid    { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .ucard-bottom { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .ucard-fecha  { font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+  .ucard-actions { display: flex; gap: 0.4rem; align-items: center; }
 }
-.msg-spin { animation: msg-spin 0.8s linear infinite; }
+
+@media (min-width: 969px) {
+  .user-cards-movil { display: none; }
+  .user-table { display: table; }
+}

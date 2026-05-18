@@ -1,4 +1,4 @@
-/*RecipeImport.css*/
+/* RecipeImport.css */
 
 .recipe-import {
   max-width: 900px;
@@ -15,7 +15,7 @@
 }
 .modo-oscuro .recipe-import h2 { color: rgba(210,245,185,0.97); }
 
-/*BANNER BORRADOR*/
+/* BANNER BORRADOR */
 .draft-banner {
   display: flex;
   align-items: center;
@@ -53,30 +53,33 @@
   gap: 0.65rem;
   flex-shrink: 0;
 }
+
+/* Botones del banner — base compartida */
+.btn-draft-restaurar,
+.btn-draft-descartar {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  border: 1.5px solid;
+}
 .btn-draft-restaurar {
   padding: 0.6rem 1.2rem;
   background: rgba(251,191,36,0.2);
-  border: 1.5px solid rgba(251,191,36,0.5);
-  border-radius: 10px;
+  border-color: rgba(251,191,36,0.5);
   color: var(--amarillo);
   font-weight: 700;
   font-size: 0.88rem;
-  cursor: pointer;
-  transition: var(--transicion);
 }
 .btn-draft-restaurar:hover {
   background: rgba(251,191,36,0.3);
 }
 .btn-draft-descartar {
-  padding: 0.6rem 1rem;
   background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.15);
-  border-radius: 10px;
+  border-color: rgba(255,255,255,0.15);
   color: rgba(255,255,255,0.5);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: var(--transicion);
 }
 .btn-draft-descartar:hover {
   background: rgba(255,80,80,0.12);
@@ -84,7 +87,7 @@
   color: var(--rojo-rosa);
 }
 
-/*INSTRUCCIONES*/
+/* INSTRUCCIONES */
 .import-instructions {
   background: rgba(0,0,0,0.2);
   border: 1px solid rgba(255,255,255,0.1);
@@ -139,7 +142,7 @@
 .modo-oscuro .import-options label.active { background: rgba(79,119,45,0.28); border-color: rgba(79,119,45,0.5); }
 .modo-oscuro .import-options span { color: rgba(210,245,185,0.8); }
 
-/*DROPZONE*/
+/* DROPZONE */
 .file-dropzone {
   border: 2.5px dashed rgba(255,255,255,0.2);
   border-radius: 16px;
@@ -179,7 +182,7 @@
 .file-dropzone.active .file-label span { color: rgba(255,255,255,0.95); }
 .modo-oscuro .file-dropzone { border-color: rgba(79,119,45,0.25); }
 
-/*CABECERA REVISIÓN*/
+/* CABECERA REVISIÓN */
 .review-header {
   display: flex;
   align-items: center;
@@ -211,26 +214,28 @@
   color: rgba(255,255,255,0.75);
   font-size: 0.9rem;
 }
-.sin-imagen-badge {
-  background: rgba(251,191,36,0.15);
-  border: 1px solid rgba(251,191,36,0.35);
-  color: var(--amarillo);
+
+/* Badges de revisión — base compartida */
+.sin-imagen-badge,
+.draft-auto-badge {
   padding: 0.22rem 0.7rem;
   border-radius: 20px;
   font-size: 0.78rem;
   font-weight: 600;
+  border: 1px solid;
+}
+.sin-imagen-badge {
+  background: rgba(251,191,36,0.15);
+  border-color: rgba(251,191,36,0.35);
+  color: var(--amarillo);
 }
 .draft-auto-badge {
   background: rgba(52,211,153,0.1);
-  border: 1px solid rgba(52,211,153,0.28);
+  border-color: rgba(52,211,153,0.28);
   color: var(--verde-menta);
-  padding: 0.22rem 0.7rem;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
 }
 
-/*GRID DE TARJETAS DE REVISIÓN*/
+/* GRID DE TARJETAS DE REVISIÓN */
 .review-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -317,7 +322,7 @@
   color: rgba(255,255,255,0.9);
 }
 
-/* Badges */
+/* Badges de categoría */
 .review-meta {
   display: flex;
   gap: 0.4rem;
@@ -329,10 +334,10 @@
   font-size: 0.75rem;
   font-weight: 600;
 }
-.badge.cat-desayuno      { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.35); color: var(--amarillo); }
-.badge.cat-almuerzo      { background: rgba(79,119,45,0.2);   border: 1px solid rgba(79,119,45,0.45);  color: var(--verde-btn); }
-.badge.cat-cena          { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: var(--azul-suave); }
-.badge.cat-postres-snacks{ background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); color: var(--rosa); }
+.badge.cat-desayuno       { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.35); color: var(--amarillo); }
+.badge.cat-almuerzo       { background: rgba(79,119,45,0.2);   border: 1px solid rgba(79,119,45,0.45);  color: var(--verde-btn); }
+.badge.cat-cena           { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: var(--azul-suave); }
+.badge.cat-postres-snacks { background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); color: var(--rosa); }
 .badge-salud { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
 .badge-mas   { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);  color: rgba(255,255,255,0.4); }
 
@@ -408,7 +413,7 @@
 }
 .modo-oscuro .review-nutri-resumen { background: rgba(0,0,0,0.3); }
 
-/*BOTÓN IMPORTAR*/
+/* BOTÓN IMPORTAR */
 .btn-import {
   width: 100%;
   padding: 1rem;
@@ -419,7 +424,8 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: var(--transicion);
+  /* transition: all → propiedades específicas */
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s, background 0.2s, color 0.2s;
   box-shadow: 0 4px 14px rgba(79,119,45,0.3);
 }
 .btn-import:hover:not(:disabled) {
@@ -434,7 +440,7 @@
   box-shadow: none;
 }
 
-/*MODAL EDITOR NUTRICIONAL*/
+/* MODAL EDITOR NUTRICIONAL */
 .nutri-editor-overlay {
   position: fixed;
   inset: 0;
@@ -617,7 +623,8 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  /* transition: all → propiedades específicas */
+  transition: filter 0.2s, transform 0.2s;
   box-shadow: 0 4px 12px rgba(79,119,45,0.3);
 }
 .btn-guardar-nutri:hover {
@@ -625,7 +632,7 @@
   transform: translateY(-1px);
 }
 
-/*RESPONSIVE*/
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .import-options { flex-direction: column; }
   .import-options label { min-width: 100%; }

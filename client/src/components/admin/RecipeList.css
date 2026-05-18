@@ -1,6 +1,6 @@
-/*RecipeList.css*/
+/* RecipeList.css */
 
-/*Controles*/
+/* Controles */
 .list-controls {
   display: flex;
   gap: 0.85rem;
@@ -64,7 +64,7 @@
 .modo-oscuro .search-input::placeholder { color: rgba(180, 210, 160, 0.38); }
 .modo-oscuro .filter-select option { background: var(--verde-profundo); }
 
-/*Tabla*/
+/* Tabla */
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
@@ -96,9 +96,7 @@
   transition: var(--transicion);
 }
 .recipes-table tbody tr:last-child { border-bottom: none; }
-.recipes-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
+.recipes-table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 .recipes-table td {
   padding: 0.9rem 1rem;
   vertical-align: middle;
@@ -112,7 +110,7 @@
 .modo-oscuro .recipes-table tbody tr:hover { background: rgba(79, 119, 45, 0.08); }
 .modo-oscuro .recipes-table td { color: rgba(210, 245, 185, 0.88); }
 
-/*Imagen thumbnail*/
+/* Imagen thumbnail */
 .recipe-thumbnail {
   width: 56px;
   height: 56px;
@@ -122,7 +120,19 @@
   display: block;
 }
 
-/*Nombre + descripción*/
+/* Placeholder receta sin imagen */
+.recipe-thumbnail-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Nombre + descripción */
 .recipe-name {
   display: flex;
   flex-direction: column;
@@ -140,7 +150,7 @@
 .modo-oscuro .recipe-name strong { color: rgba(210, 245, 185, 0.95); }
 .modo-oscuro .recipe-desc { color: rgba(180, 210, 160, 0.45); }
 
-/*Badges de categoría*/
+/* Badges de categoría */
 .badge {
   display: inline-block;
   padding: 0.25rem 0.7rem;
@@ -149,24 +159,22 @@
   font-weight: 700;
   text-transform: capitalize;
 }
-.badge.cat-desayuno       { background: rgba(255, 193, 7, 0.18);  color: var(--amarillo); border: 1px solid rgba(255,193,7,0.3); }
-.badge.cat-almuerzo       { background: rgba(52, 211, 153, 0.15); color: var(--verde-menta); border: 1px solid rgba(52,211,153,0.3); }
-.badge.cat-cena           { background: rgba(96, 165, 250, 0.15); color: var(--azul-claro); border: 1px solid rgba(96,165,250,0.3); }
-.badge.cat-postres-snacks { background: rgba(244, 114, 182, 0.15);color: var(--rosa); border: 1px solid rgba(244,114,182,0.3); }
+.badge.cat-desayuno       { background: rgba(255, 193, 7, 0.18);   color: var(--amarillo);    border: 1px solid rgba(255,193,7,0.3); }
+.badge.cat-almuerzo       { background: rgba(52, 211, 153, 0.15);  color: var(--verde-menta); border: 1px solid rgba(52,211,153,0.3); }
+.badge.cat-cena           { background: rgba(96, 165, 250, 0.15);  color: var(--azul-claro);  border: 1px solid rgba(96,165,250,0.3); }
+.badge.cat-postres-snacks { background: rgba(244, 114, 182, 0.15); color: var(--rosa);        border: 1px solid rgba(244,114,182,0.3); }
 
-.health-count {
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.55);
-}
+.health-count { font-size: 0.88rem; color: rgba(255, 255, 255, 0.55); }
 .modo-oscuro .health-count { color: rgba(180, 210, 160, 0.55); }
 
-/*Botones de acción*/
-.action-buttons {
-  display: flex;
-  gap: 0.4rem;
-}
+/* Botones de acción — bloque único consolidado */
+.action-buttons { display: flex; gap: 0.4rem; }
+
 .btn-edit,
 .btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.45rem 0.6rem;
   border: 1.5px solid transparent;
   border-radius: 8px;
@@ -176,18 +184,28 @@
   transition: var(--transicion);
   line-height: 1;
 }
+
+.btn-edit  { color: rgba(96, 165, 250, 0.85); }
+.btn-edit svg { stroke: rgba(96, 165, 250, 0.85); }
 .btn-edit:hover {
   background: rgba(96, 165, 250, 0.15);
   border-color: rgba(96, 165, 250, 0.4);
   transform: scale(1.1);
+  color: var(--azul-claro);
 }
+.btn-edit:hover svg { stroke: var(--azul-claro); }
+
+.btn-delete { color: rgba(239, 68, 68, 0.75); }
+.btn-delete svg { stroke: rgba(239, 68, 68, 0.75); }
 .btn-delete:hover {
   background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.4);
   transform: scale(1.1);
+  color: var(--rojo-claro);
 }
+.btn-delete:hover svg { stroke: var(--rojo-claro); }
 
-/*Estado vacío*/
+/* Estado vacío — selector agrupado */
 .recipes-empty,
 .no-results {
   text-align: center;
@@ -201,29 +219,98 @@
 .modo-oscuro .recipes-empty,
 .modo-oscuro .no-results { color: rgba(180, 210, 160, 0.5); }
 
-/*Responsive*/
+/* Buscador con ícono integrado */
+.search-box-list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 220px;
+}
+.search-box-list svg {
+  position: absolute;
+  left: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+.search-box-list .search-input { padding-left: 2.6rem; }
+
+/* Botón eliminar seleccionadas */
+.btn-bulk-delete {
+  display: flex;
+  align-items: center;
+  padding: 0.7rem 1.1rem;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: var(--rojo-claro);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+}
+.btn-bulk-delete:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Checkboxes modernos glassmorphism */
+.recipes-table input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  /* transition: all → propiedades específicas */
+  transition: background 0.2s ease, border-color 0.2s ease;
+  vertical-align: middle;
+}
+.recipes-table input[type="checkbox"]:checked {
+  background: rgba(79, 119, 45, 0.55);
+  border-color: rgba(107, 158, 74, 0.8);
+}
+.recipes-table input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid var(--blanco-puro);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.recipes-table input[type="checkbox"]:hover {
+  border-color: rgba(107, 158, 74, 0.6);
+  background: rgba(79, 119, 45, 0.15);
+}
+
+/* Responsive */
 @media (max-width: 968px) {
-  .list-controls {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
+  .list-controls { flex-direction: column; gap: 0.6rem; }
   .search-box-list,
   .search-input,
   .filter-select { width: 100%; min-width: unset; }
-
   .btn-bulk-delete { width: 100%; justify-content: center; }
 
   /* Tabla → tarjetas en móvil */
   .table-container { overflow-x: unset; border: none; border-radius: 0; }
   .recipes-table { display: none; }
 
-  /* Tarjetas de receta */
   .recipe-cards-movil {
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
   }
-
   .rcard {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -235,7 +322,6 @@
   }
   .rcard:hover { background: rgba(255, 255, 255, 0.09); }
 
-  /* Fila superior: imagen + nombre */
   .rcard-top {
     display: flex;
     align-items: center;
@@ -277,8 +363,6 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
-  /* Fila media: badge + salud */
   .rcard-mid {
     display: flex;
     align-items: center;
@@ -286,8 +370,6 @@
     padding: 0 0.9rem 0.6rem;
     flex-wrap: wrap;
   }
-
-  /* Fila inferior: checkbox + acciones */
   .rcard-bottom {
     display: flex;
     align-items: center;
@@ -303,10 +385,7 @@
     font-size: 0.78rem;
     color: rgba(255,255,255,0.4);
   }
-  .rcard-actions {
-    display: flex;
-    gap: 0.4rem;
-  }
+  .rcard-actions { display: flex; gap: 0.4rem; }
 }
 
 @media (min-width: 969px) {
@@ -316,130 +395,4 @@
 
 @media (max-width: 480px) {
   .rcard-nombre { font-size: 0.85rem; }
-}
-
-/*Buscador con ícono integrado*/
-.search-box-list {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
-  min-width: 220px;
-}
-
-.search-box-list svg {
-  position: absolute;
-  left: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-.search-box-list .search-input {
-  padding-left: 2.6rem;
-}
-
-/*Botón eliminar seleccionadas con SVG*/
-.btn-bulk-delete {
-  display: flex;
-  align-items: center;
-  padding: 0.7rem 1.1rem;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1.5px solid rgba(239, 68, 68, 0.35);
-  border-radius: 10px;
-  color: var(--rojo-claro);
-  font-weight: 700;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: var(--transicion);
-  white-space: nowrap;
-}
-.btn-bulk-delete:hover {
-  background: rgba(239, 68, 68, 0.28);
-  border-color: rgba(239, 68, 68, 0.6);
-  transform: translateY(-1px);
-}
-
-/*Acciones con SVG*/
-.btn-edit, .btn-delete {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/*Placeholder receta sin imagen*/
-.recipe-thumbnail-placeholder {
-  width: 56px;
-  height: 56px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/*Checkboxes modernos glassmorphism*/
-.recipes-table input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.06);
-  cursor: pointer;
-  flex-shrink: 0;
-  position: relative;
-  transition: all 0.2s ease;
-  vertical-align: middle;
-}
-
-.recipes-table input[type="checkbox"]:checked {
-  background: rgba(79, 119, 45, 0.55);
-  border-color: rgba(107, 158, 74, 0.8);
-}
-
-.recipes-table input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid var(--blanco-puro);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
-
-.recipes-table input[type="checkbox"]:hover {
-  border-color: rgba(107, 158, 74, 0.6);
-  background: rgba(79, 119, 45, 0.15);
-}
-
-.btn-edit {
-  color: rgba(96, 165, 250, 0.85);
-}
-.btn-edit svg {
-  stroke: rgba(96, 165, 250, 0.85);
-}
-.btn-edit:hover {
-  color: var(--azul-claro);
-}
-.btn-edit:hover svg {
-  stroke: var(--azul-claro);
-}
-
-.btn-delete {
-  color: rgba(239, 68, 68, 0.75);
-}
-.btn-delete svg {
-  stroke: rgba(239, 68, 68, 0.75);
-}
-.btn-delete:hover {
-  color: var(--rojo-claro);
-}
-.btn-delete:hover svg {
-  stroke: var(--rojo-claro);
 }

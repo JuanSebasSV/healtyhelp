@@ -1,4 +1,4 @@
-/*RecipeForm.css*/
+/* CAMBIO: eliminado @keyframes spin — ya está definido en index.css */
 
 .recipe-form {
   max-width: 960px;
@@ -28,6 +28,9 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 1.25rem;
+  /* CAMBIO: display:flex estaba duplicado más abajo, se consolida aquí */
+  display: flex;
+  align-items: center;
 }
 .form-section h4 {
   font-size: 0.88rem;
@@ -46,9 +49,7 @@
 .modo-oscuro .form-section h4 { color: rgba(180, 210, 160, 0.5); }
 
 /*  Grupos  */
-.form-group {
-  margin-bottom: 1.25rem;
-}
+.form-group { margin-bottom: 1.25rem; }
 .form-group label {
   display: block;
   margin-bottom: 0.45rem;
@@ -68,8 +69,10 @@
   color: var(--blanco-puro);
   font-size: 0.95rem;
   outline: none;
-  transition: var(--transicion);
+  /* CAMBIO: transition: var(--transicion) → propiedades específicas */
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
+  box-sizing: border-box;
 }
 .form-group input::placeholder,
 .form-group textarea::placeholder { color: rgba(255, 255, 255, 0.28); }
@@ -95,6 +98,17 @@
 .modo-oscuro .form-group textarea::placeholder { color: rgba(180, 210, 160, 0.3); }
 .modo-oscuro .form-group select option { background: var(--verde-profundo); }
 
+/* Autofill */
+.dynamic-input input:-webkit-autofill,
+.dynamic-input textarea:-webkit-autofill,
+.form-group input:-webkit-autofill,
+.form-group textarea:-webkit-autofill,
+.form-group select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px rgba(26, 77, 46, 0.8) inset !important;
+  -webkit-text-fill-color: var(--blanco-puro) !important;
+  caret-color: var(--blanco-puro);
+}
+
 /*  Grid de filas  */
 .form-row {
   display: grid;
@@ -117,7 +131,8 @@
   border: 1.5px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   cursor: pointer;
-  transition: var(--transicion);
+  /* CAMBIO: transition: var(--transicion) → propiedades específicas */
+  transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.65);
 }
@@ -125,13 +140,6 @@
   border-color: rgba(79, 119, 45, 0.5);
   background: rgba(79, 119, 45, 0.1);
   color: rgba(255, 255, 255, 0.9);
-}
-.salud-checkbox input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--verde-hoja);
-  cursor: pointer;
-  flex-shrink: 0;
 }
 .salud-checkbox input:checked + span {
   color: var(--blanco-puro);
@@ -142,6 +150,42 @@
   background: rgba(79, 119, 45, 0.18);
 }
 
+/* Checkbox personalizado */
+.salud-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.salud-checkbox input[type="checkbox"]:checked {
+  background: rgba(79, 119, 45, 0.55);
+  border-color: rgba(107, 158, 74, 0.8);
+}
+.salud-checkbox input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid var(--blanco-puro);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.salud-checkbox input[type="checkbox"]:hover {
+  border-color: rgba(107, 158, 74, 0.6);
+  background: rgba(79, 119, 45, 0.15);
+}
+
 .modo-oscuro .salud-checkbox {
   background: rgba(10, 25, 15, 0.4);
   border-color: rgba(79, 119, 45, 0.2);
@@ -149,7 +193,8 @@
 }
 .modo-oscuro .salud-checkbox:hover { color: rgba(210, 245, 185, 0.9); }
 
-/*  Inputs dinámicos (ingredientes / pasos)  */
+/* CAMBIO: .dynamic-input input/textarea unificados con .form-group input/textarea.
+   Se eliminan los !important innecesarios que existían por conflictos mal resueltos. */
 .dynamic-input {
   display: flex;
   gap: 0.5rem;
@@ -157,7 +202,30 @@
   align-items: flex-start;
 }
 .dynamic-input input,
-.dynamic-input textarea { flex: 1; }
+.dynamic-input textarea {
+  flex: 1;
+  width: 100%;
+  padding: 0.72rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: var(--blanco-puro);
+  -webkit-text-fill-color: var(--blanco-puro);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.dynamic-input input::placeholder,
+.dynamic-input textarea::placeholder { color: rgba(255, 255, 255, 0.28); }
+.dynamic-input input:focus,
+.dynamic-input textarea:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+}
+.dynamic-input textarea { resize: vertical; min-height: 60px; line-height: 1.6; }
 
 .paso-number {
   background: rgba(79, 119, 45, 0.35);
@@ -172,6 +240,7 @@
   flex-shrink: 0;
 }
 
+/* CAMBIO: .btn-remove y .btn-add tenían display:flex duplicado más abajo, consolidado aquí */
 .btn-remove {
   padding: 0.72rem 0.7rem;
   background: rgba(239, 68, 68, 0.1);
@@ -180,9 +249,12 @@
   cursor: pointer;
   color: rgba(239, 68, 68, 0.8);
   font-size: 1rem;
-  transition: var(--transicion);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   flex-shrink: 0;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-remove:hover {
   background: rgba(239, 68, 68, 0.3);
@@ -199,8 +271,10 @@
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
   margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
 }
 .btn-add:hover {
   background: rgba(79, 119, 45, 0.35);
@@ -228,7 +302,7 @@
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   text-align: left;
   margin-top: 0.5rem;
 }
@@ -260,6 +334,32 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Wrapper número en form-group */
+.form-group .numero-wrapper { width: 100%; }
+.form-group .numero-wrapper input {
+  width: 100%;
+  padding: 0.72rem 2.4rem 0.72rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: var(--blanco-puro);
+  -webkit-text-fill-color: var(--blanco-puro);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.form-group .numero-wrapper input:focus {
+  border-color: var(--naranja);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12);
+}
+.form-group .numero-flechas {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 10px 10px 0;
+}
+
 /*  Acciones del formulario  */
 .form-actions {
   display: flex;
@@ -277,7 +377,7 @@
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 .btn-cancel:hover {
   background: rgba(255, 255, 255, 0.12);
@@ -293,7 +393,7 @@
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
 }
 .btn-submit:hover:not(:disabled) {
@@ -326,30 +426,14 @@
   .salud-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 
   .dynamic-input { gap: 0.4rem; }
-  .paso-number {
-    padding: 0.55rem 0.65rem;
-    min-width: 32px;
-    font-size: 0.8rem;
-  }
+  .paso-number { padding: 0.55rem 0.65rem; min-width: 32px; font-size: 0.8rem; }
   .btn-remove { padding: 0.55rem 0.6rem; }
 
-  .form-actions {
-    flex-direction: column;
-    gap: 0.65rem;
-    margin-top: 1.25rem;
-  }
+  .form-actions { flex-direction: column; gap: 0.65rem; margin-top: 1.25rem; }
   .btn-cancel,
-  .btn-submit {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    padding: 0.9rem 1rem;
-  }
+  .btn-submit { width: 100%; text-align: center; justify-content: center; padding: 0.9rem 1rem; }
 
-  .salud-checkbox {
-    padding: 0.55rem 0.7rem;
-    font-size: 0.8rem;
-  }
+  .salud-checkbox { padding: 0.55rem 0.7rem; font-size: 0.8rem; }
 }
 
 @media (max-width: 480px) {
@@ -357,141 +441,7 @@
   .form-row { grid-template-columns: 1fr; }
   .nutri-grid { grid-template-columns: 1fr 1fr; }
   .salud-grid { grid-template-columns: 1fr; }
-
   .recipe-form h2 { font-size: 1.05rem; }
-
   .dynamic-input textarea { min-height: 48px; }
-
   .nutri-note { font-size: 0.82rem; padding: 0.7rem 0.85rem; }
-}
-
-.form-section h3 {
-  display: flex;
-  align-items: center;
-}
-
-.btn-add {
-  display: flex;
-  align-items: center;
-}
-
-.btn-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.dynamic-input input,
-.dynamic-input textarea {
-  width: 100%;
-  padding: 0.72rem 1rem;
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px;
-  color: var(--blanco-puro) !important;
-  font-size: 0.95rem;
-  outline: none;
-  transition: var(--transicion);
-  font-family: inherit;
-  box-sizing: border-box;
-  -webkit-text-fill-color: var(--blanco-puro);
-}
-
-.dynamic-input input::placeholder,
-.dynamic-input textarea::placeholder {
-  color: rgba(255, 255, 255, 0.28) !important;
-}
-
-.dynamic-input input:focus,
-.dynamic-input textarea:focus {
-  border-color: var(--naranja) !important;
-  background: rgba(255, 255, 255, 0.11) !important;
-  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12) !important;
-}
-
-.dynamic-input input:-webkit-autofill,
-.dynamic-input textarea:-webkit-autofill,
-.form-group input:-webkit-autofill,
-.form-group textarea:-webkit-autofill,
-.form-group select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px rgba(26, 77, 46, 0.8) inset !important;
-  -webkit-text-fill-color: var(--blanco-puro) !important;
-  caret-color: var(--blanco-puro);
-}
-
-.dynamic-input textarea {
-  resize: vertical;
-  min-height: 60px;
-  line-height: 1.6;
-}
-
-.salud-checkbox input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.06);
-  cursor: pointer;
-  flex-shrink: 0;
-  position: relative;
-  transition: all 0.2s ease;
-}
-
-.salud-checkbox input[type="checkbox"]:checked {
-  background: rgba(79, 119, 45, 0.55);
-  border-color: rgba(107, 158, 74, 0.8);
-}
-
-.salud-checkbox input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid var(--blanco-puro);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
-
-.salud-checkbox input[type="checkbox"]:hover {
-  border-color: rgba(107, 158, 74, 0.6);
-  background: rgba(79, 119, 45, 0.15);
-}
-
-.form-group .numero-wrapper {
-  width: 100%;
-}
-
-.form-group .numero-wrapper input {
-  width: 100%;
-  padding: 0.72rem 2.4rem 0.72rem 1rem !important;
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px;
-  color: var(--blanco-puro) !important;
-  font-size: 0.95rem;
-  outline: none;
-  transition: var(--transicion);
-  font-family: inherit;
-  box-sizing: border-box;
-  -webkit-text-fill-color: var(--blanco-puro);
-}
-
-.form-group .numero-wrapper input:focus {
-  border-color: var(--naranja) !important;
-  background: rgba(255, 255, 255, 0.11) !important;
-  box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.12) !important;
-}
-
-.form-group .numero-flechas {
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0 10px 10px 0;
 }
