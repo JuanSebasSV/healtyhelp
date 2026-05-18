@@ -1,4 +1,5 @@
-/*ImagenesAprobacion.css*/
+/* CAMBIO: eliminados @keyframes ia-fadeIn e ia-slideUp — son idénticos a fadeIn y slideUp
+   ya definidos en index.css. Se usan directamente esos nombres. */
 
 /*CONTENEDOR GENERAL*/
 .ia-contenedor {
@@ -105,7 +106,8 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
-  transition: all 0.2s ease;
+  /* CAMBIO: transition: all → propiedades específicas */
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .ia-filtro-btn:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -154,15 +156,15 @@
   font-size: 0.9rem;
 }
 
+/* CAMBIO: ia-spinner renombrado internamente para reusar la animación spin de index.css */
 .ia-spinner {
   width: 36px;
   height: 36px;
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-top-color: var(--naranja);
   border-radius: 50%;
-  animation: ia-spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
-@keyframes ia-spin { to { transform: rotate(360deg); } }
 
 .ia-vacio {
   display: flex;
@@ -190,6 +192,8 @@
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  position: relative;
+  /* CAMBIO: transition: all → propiedades específicas */
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 .ia-card:hover {
@@ -200,6 +204,12 @@
 .ia-card--naranja { border-left: 3px solid rgba(247, 127, 0, 0.55); }
 .ia-card--verde   { border-left: 3px solid rgba(107, 158, 74, 0.55); }
 .ia-card--rojo    { border-left: 3px solid rgba(220, 38, 38, 0.45); }
+
+.ia-card--seleccionada {
+  border-color: rgba(247, 127, 0, 0.6) !important;
+  background: rgba(247, 127, 0, 0.07) !important;
+  box-shadow: 0 0 0 2px rgba(247, 127, 0, 0.2);
+}
 
 /* Imagen */
 .ia-card-img-wrap {
@@ -291,6 +301,11 @@
   overflow: hidden;
 }
 
+.ia-card-comentario--vacio {
+  color: rgba(255, 255, 255, 0.28);
+  font-style: italic;
+}
+
 /* Estado badge */
 .ia-estado-badge {
   display: inline-flex;
@@ -319,7 +334,7 @@
   border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
-/* Acciones */
+/* Acciones — CAMBIO: .ia-btn-aprobar y .ia-btn-rechazar comparten base común */
 .ia-card-acciones {
   display: flex;
   gap: 0.5rem;
@@ -327,71 +342,90 @@
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.ia-btn-aprobar {
+.ia-btn-aprobar,
+.ia-btn-rechazar,
+.ia-btn-revertir,
+.ia-btn-banear,
+.ia-btn-eliminar {
   flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   padding: 0.5rem 0.75rem;
-  background: rgba(79, 119, 45, 0.18);
-  border: 1px solid rgba(107, 158, 74, 0.4);
   border-radius: 8px;
-  color: var(--verde-lima);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  font-family: inherit;
 }
-.ia-btn-aprobar svg { stroke: currentColor; flex-shrink: 0; }
+.ia-btn-aprobar svg,
+.ia-btn-rechazar svg,
+.ia-btn-banear svg,
+.ia-btn-eliminar svg { stroke: currentColor; flex-shrink: 0; }
+
+.ia-btn-aprobar:disabled,
+.ia-btn-rechazar:disabled,
+.ia-btn-revertir:disabled,
+.ia-btn-banear:disabled,
+.ia-btn-eliminar:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* Variantes individuales */
+.ia-btn-aprobar {
+  background: rgba(79, 119, 45, 0.18);
+  border: 1px solid rgba(107, 158, 74, 0.4);
+  color: var(--verde-lima);
+}
 .ia-btn-aprobar:hover:not(:disabled) {
   background: rgba(79, 119, 45, 0.32);
   border-color: rgba(107, 158, 74, 0.65);
   transform: translateY(-1px);
 }
-.ia-btn-aprobar:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .ia-btn-rechazar {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.75rem;
   background: rgba(220, 38, 38, 0.1);
   border: 1px solid rgba(220, 38, 38, 0.3);
-  border-radius: 8px;
   color: var(--rojo-claro);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
-.ia-btn-rechazar svg { stroke: currentColor; flex-shrink: 0; }
 .ia-btn-rechazar:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.22);
   border-color: rgba(220, 38, 38, 0.55);
   transform: translateY(-1px);
 }
-.ia-btn-rechazar:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .ia-btn-revertir {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 .ia-btn-revertir:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
   color: var(--blanco-puro);
 }
-.ia-btn-revertir:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.ia-btn-banear {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  color: #f87171;
+}
+.ia-btn-banear:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: rgba(248, 113, 113, 0.45);
+  transform: translateY(-1px);
+}
+
+.ia-btn-eliminar {
+  background: rgba(148, 163, 184, 0.07);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  color: rgba(148, 163, 184, 0.75);
+}
+.ia-btn-eliminar:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  transform: translateY(-1px);
+}
 
 /*MODAL IMAGEN COMPLETA*/
 .ia-modal-overlay {
@@ -404,9 +438,8 @@
   justify-content: center;
   padding: 2rem;
   backdrop-filter: blur(12px);
-  animation: ia-fadeIn 0.2s ease;
+  animation: fadeIn 0.2s ease;
 }
-@keyframes ia-fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .ia-modal-contenido {
   position: relative;
@@ -417,11 +450,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-  animation: ia-slideUp 0.25s ease;
-}
-@keyframes ia-slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  animation: slideUp 0.25s ease;
 }
 
 .ia-modal-cerrar {
@@ -439,7 +468,7 @@
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 .ia-modal-cerrar svg { width: 14px; height: 14px; stroke: currentColor; }
 .ia-modal-cerrar:hover {
@@ -464,6 +493,13 @@
   font-size: 0.83rem;
   color: rgba(255, 255, 255, 0.5);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ia-modal-comentario {
+  margin: 6px 0 0;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-style: italic;
 }
 
 .ia-modal-acciones {
@@ -491,75 +527,24 @@
   color: rgba(248, 113, 113, 0.5);
   font-size: 0.78rem;
 }
- 
-.ia-card-comentario--vacio {
-  color: rgba(255, 255, 255, 0.28);
-  font-style: italic;
-}
- 
-.ia-modal-comentario {
-  margin: 6px 0 0;
-  font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.42);
-  font-style: italic;
-}
- 
-.ia-btn-banear {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 9px;
-  border: 1px solid rgba(220, 38, 38, 0.28);
-  background: rgba(220, 38, 38, 0.1);
-  color: #f87171;
-  cursor: pointer;
-  font-size: 0.81rem;
-  font-weight: 700;
-  transition: var(--transicion);
-  font-family: inherit;
-}
-.ia-btn-banear:hover:not(:disabled) {
-  background: rgba(220, 38, 38, 0.2);
-  border-color: rgba(248, 113, 113, 0.45);
-  transform: translateY(-1px);
-}
-.ia-btn-banear:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-}
 
-/* Botón eliminar historial (individual en card) */
-.ia-btn-eliminar {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 9px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  background: rgba(148, 163, 184, 0.07);
-  color: rgba(148, 163, 184, 0.75);
+/* Checkbox dentro de la card */
+.ia-card-check-wrap {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 6px;
+  padding: 3px;
+  backdrop-filter: blur(4px);
+}
+.ia-card-check {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--naranja);
   cursor: pointer;
-  font-size: 0.81rem;
-  font-weight: 700;
-  transition: var(--transicion);
-  font-family: inherit;
-}
-.ia-btn-eliminar:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-  transform: translateY(-1px);
-}
-.ia-btn-eliminar:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
+  display: block;
 }
 
 /* Botón masivo eliminar */
@@ -577,28 +562,12 @@
 
 /*RESPONSIVE*/
 @media (max-width: 767px) {
-  .ia-cabecera {
-    flex-direction: column;
-  }
-
-  .ia-contadores {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .ia-contador {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ia-grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
-  }
-
+  .ia-cabecera { flex-direction: column; }
+  .ia-contadores { width: 100%; justify-content: space-between; }
+  .ia-contador { flex: 1; min-width: 0; }
+  .ia-grid { grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); }
   .ia-modal-overlay { padding: 1rem; }
-
   .ia-modal-img { max-height: 340px; }
-
   .ia-modal-acciones { flex-direction: column; }
 }
 
@@ -607,12 +576,7 @@
   .ia-filtro-btn { font-size: 0.78rem; padding: 0.4rem 0.75rem; }
 }
 
-
-/* ===================================================
-   SELECCIÓN MÚLTIPLE Y ACCIONES MASIVAS
-   =================================================== */
-
-/* Fila filtros + botón selección múltiple */
+/* SELECCIÓN MÚLTIPLE Y ACCIONES MASIVAS */
 .ia-filtros-wrap {
   display: flex;
   align-items: center;
@@ -622,10 +586,7 @@
   margin-bottom: 1rem;
 }
 
-.ia-filtros-wrap .ia-filtros {
-  margin-bottom: 0;
-  flex: 1;
-}
+.ia-filtros-wrap .ia-filtros { margin-bottom: 0; flex: 1; }
 
 .ia-btn-modo-seleccion {
   display: inline-flex;
@@ -640,7 +601,7 @@
   color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   font-family: inherit;
 }
 .ia-btn-modo-seleccion:hover {
@@ -653,7 +614,6 @@
   color: var(--rojo-claro);
 }
 
-/* Barra de acciones masivas */
 .ia-barra-masiva {
   display: flex;
   align-items: center;
@@ -665,7 +625,7 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  animation: ia-fadeIn 0.18s ease;
+  animation: fadeIn 0.18s ease;
 }
 
 .ia-barra-masiva-izq {
@@ -681,7 +641,6 @@
   flex-wrap: wrap;
 }
 
-/* Checkbox "seleccionar todo" */
 .ia-check-todos {
   display: inline-flex;
   align-items: center;
@@ -699,7 +658,6 @@
   cursor: pointer;
 }
 
-/* Botones masivos */
 .ia-btn-masivo {
   display: inline-flex;
   align-items: center;
@@ -709,15 +667,11 @@
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   font-family: inherit;
   white-space: nowrap;
 }
-.ia-btn-masivo:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none !important;
-}
+.ia-btn-masivo:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
 .ia-btn-masivo svg { stroke: currentColor; flex-shrink: 0; }
 
 .ia-btn-masivo--aprobar {
@@ -742,55 +696,10 @@
   transform: translateY(-1px);
 }
 
-/* Card seleccionada */
-.ia-card {
-  position: relative;
-}
-
-.ia-card--seleccionada {
-  border-color: rgba(247, 127, 0, 0.6) !important;
-  background: rgba(247, 127, 0, 0.07) !important;
-  box-shadow: 0 0 0 2px rgba(247, 127, 0, 0.2);
-}
-
-/* Checkbox dentro de la card */
-.ia-card-check-wrap {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 6px;
-  padding: 3px;
-  backdrop-filter: blur(4px);
-}
-.ia-card-check {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--naranja);
-  cursor: pointer;
-  display: block;
-}
-
-/* Responsive barra masiva */
 @media (max-width: 600px) {
-  .ia-filtros-wrap {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .ia-btn-modo-seleccion {
-    width: 100%;
-    justify-content: center;
-  }
-  .ia-barra-masiva {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .ia-barra-masiva-der {
-    width: 100%;
-  }
-  .ia-btn-masivo {
-    flex: 1;
-    justify-content: center;
-  }
+  .ia-filtros-wrap { flex-direction: column; align-items: flex-start; }
+  .ia-btn-modo-seleccion { width: 100%; justify-content: center; }
+  .ia-barra-masiva { flex-direction: column; align-items: flex-start; }
+  .ia-barra-masiva-der { width: 100%; }
+  .ia-btn-masivo { flex: 1; justify-content: center; }
 }

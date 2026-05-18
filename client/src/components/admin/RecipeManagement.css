@@ -1,16 +1,13 @@
-/*RecipeManagement.css*/
+/* RecipeManagement.css */
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* @keyframes fadeIn eliminado — ya definido en index.css */
 
-/*Contenedor raíz*/
+/* Contenedor raíz */
 .recipe-management-content {
   animation: fadeIn 0.35s ease;
 }
 
-/*Estadísticas de recetas (mini cards)*/
+/* Estadísticas de recetas (mini cards) */
 .recipe-stats {
   display: flex;
   flex-wrap: wrap;
@@ -57,7 +54,7 @@
 .modo-oscuro .recipe-stats .stat-label { color: rgba(180, 210, 160, 0.5); }
 .modo-oscuro .recipe-stats .stat-value { color: rgba(210, 245, 185, 0.97); }
 
-/*Tabs internos (Lista / Importar / Crear / Exportar)*/
+/* Tabs internos (Lista / Importar / Crear / Exportar) */
 .recipe-tabs {
   display: flex;
   gap: 0.5rem;
@@ -66,7 +63,11 @@
   align-items: center;
 }
 
+/* Botones de tabs — bloque único consolidado (era duplicado) */
 .recipe-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.6rem 1.2rem;
   background: rgba(255, 255, 255, 0.07);
   border: 1.5px solid rgba(255, 255, 255, 0.15);
@@ -88,6 +89,13 @@
   box-shadow: 0 2px 10px rgba(79, 119, 45, 0.25);
 }
 
+/* SVGs en tabs */
+.recipe-tabs button svg {
+  stroke: currentColor;
+  opacity: 0.9;
+}
+.recipe-tabs button.active svg { opacity: 1; }
+
 /* Botón exportar (distinto estilo dentro de tabs) */
 .recipe-tabs .btn-export {
   margin-left: auto;
@@ -99,13 +107,18 @@
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: var(--transicion);
+  /* transition: all → propiedades específicas */
+  transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .recipe-tabs .btn-export:hover {
   background: var(--naranja);
   border-color: var(--naranja);
   transform: translateY(-2px);
   box-shadow: 0 4px 14px rgba(247, 127, 0, 0.3);
+}
+.recipe-tabs .btn-export svg {
+  stroke: var(--blanco-puro);
+  opacity: 1;
 }
 
 .modo-oscuro .recipe-tabs button {
@@ -120,9 +133,8 @@
   color: rgba(210, 245, 185, 0.97);
 }
 
-/*Contenido (la vista activa)*/
+/* Contenido (la vista activa) */
 .recipe-content {
-  /* Glassmorphism suave para el panel de contenido */
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -130,13 +142,12 @@
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
-
 .modo-oscuro .recipe-content {
   background: rgba(10, 25, 15, 0.5);
   border-color: rgba(79, 119, 45, 0.2);
 }
 
-/*Loading*/
+/* Loading */
 .loading {
   text-align: center;
   padding: 3rem;
@@ -145,32 +156,10 @@
 }
 .modo-oscuro .loading { color: rgba(180, 210, 160, 0.6); }
 
-/*Responsive*/
+/* Responsive */
 @media (max-width: 768px) {
   .recipe-content { padding: 1.25rem; }
   .recipe-tabs { gap: 0.4rem; }
   .recipe-tabs .btn-export { margin-left: 0; width: 100%; }
   .recipe-stats .stat-card { min-width: calc(50% - 0.5rem); }
-}
-
-/*Tabs con SVG alineado*/
-.recipe-tabs button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/*Fix visibilidad SVGs en tabs*/
-.recipe-tabs button svg {
-  stroke: currentColor;
-  opacity: 0.9;
-}
-
-.recipe-tabs button.active svg {
-  opacity: 1;
-}
-
-.recipe-tabs .btn-export svg {
-  stroke: var(--blanco-puro);
-  opacity: 1;
 }
