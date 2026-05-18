@@ -1,5 +1,4 @@
-// components/admin/ImagenesAprobacion.jsx
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './ImagenesAprobacion.css';
@@ -10,8 +9,26 @@ const ESTADOS = {
   rechazada: { label: 'Rechazadas', color: 'rojo'    },
 };
 
-/*  Modal de baneo (desde panel de imágenes)  */
-const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
+const formatFecha = (f) =>
+  new Date(f).toLocaleDateString('es-ES', {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+
+const mapItem = (img) => ({
+  _id:             `${img.recipeId}_${img.resenaId}`,
+  recipeId:        img.recipeId,
+  resenaId:        img.resenaId,
+  userId:          img.userId,
+  url:             img.imagenUrl,
+  estado:          img.imagenEstado,
+  userName:        img.userName,
+  recetaNombre:    img.recipeNombre,
+  comentarioTexto: img.texto,
+  creadoEn:        img.createdAt,
+});
+
+const ModalBaneoImagen = memo(({ imagen, onClose, onBan }) => {
   const [motivo,   setMotivo]   = useState('');
   const [tipo,     setTipo]     = useState('dias');
   const [dias,     setDias]     = useState(7);
@@ -41,9 +58,7 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
         </p>
 
         {imagen.comentarioTexto && (
-          <p className="ban-modal-contexto">
-            Comentario: "{imagen.comentarioTexto}"
-          </p>
+          <p className="ban-modal-contexto">Comentario: "{imagen.comentarioTexto}"</p>
         )}
 
         <div className="ban-modal-campo">
@@ -60,10 +75,8 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
         <div className="ban-modal-campo">
           <label>Duración</label>
           <div className="ban-tipo-btns">
-            <button className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`}
-              onClick={() => setTipo('dias')}>Temporal</button>
-            <button className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`}
-              onClick={() => setTipo('permanente')}>Permanente</button>
+            <button className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`} onClick={() => setTipo('dias')}>Temporal</button>
+            <button className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`} onClick={() => setTipo('permanente')}>Permanente</button>
           </div>
         </div>
 
@@ -72,9 +85,7 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
             <label>Días de baneo</label>
             <div className="ban-dias-btns">
               {[1, 3, 7, 14, 30, 90].map(d => (
-                <button key={d}
-                  className={`ban-dias-btn ${dias === d ? 'activo' : ''}`}
-                  onClick={() => setDias(d)}>{d}d</button>
+                <button key={d} className={`ban-dias-btn ${dias === d ? 'activo' : ''}`} onClick={() => setDias(d)}>{d}d</button>
               ))}
             </div>
             <input
@@ -94,53 +105,157 @@ const ModalBaneoImagen = ({ imagen, onClose, onBan }) => {
         <div className="ban-modal-acciones">
           <button className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
           <button className="ban-btn-confirmar" onClick={handleConfirm} disabled={enviando}>
-            {enviando
-              ? '⏳ Baneando...'
-              : tipo === 'permanente'
-                ? '🔨 Banear permanentemente'
-                : `🔨 Banear por ${dias} día${dias !== 1 ? 's' : ''}`}
+            {enviando ? '⏳ Baneando...' : tipo === 'permanente' ? '🔨 Banear permanentemente' : `🔨 Banear por ${dias} día${dias !== 1 ? 's' : ''}`}
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-/*  Helper: mapea un item crudo del API al shape interno  */
-const mapItem = (img) => ({
-  _id:             `${img.recipeId}_${img.resenaId}`,
-  recipeId:        img.recipeId,
-  resenaId:        img.resenaId,
-  userId:          img.userId,
-  url:             img.imagenUrl,
-  estado:          img.imagenEstado,
-  userName:        img.userName,
-  recetaNombre:    img.recipeNombre,
-  comentarioTexto: img.texto,
-  creadoEn:        img.createdAt,
 });
+ModalBaneoImagen.displayName = 'ModalBaneoImagen';
 
-/*  Componente principal  */
+const ImageCard = memo(({
+  img, modoSeleccion, estaSeleccionado, isProcesando,
+  onToggleSeleccion, onAprobar, onRechazar, onEliminar,
+  onVerImagen, onBanear,
+}) => (
+  <div
+    className={`ia-card ia-card--${ESTADOS[img.estado]?.color || 'naranja'} ${estaSeleccionado ? 'ia-card--seleccionada' : ''}`}
+    onClick={modoSeleccion ? () => onToggleSeleccion(img._id) : undefined}
+    style={modoSeleccion ? { cursor: 'pointer' } : undefined}
+  >
+    {modoSeleccion && (
+      <div className="ia-card-check-wrap" onClick={e => e.stopPropagation()}>
+        <input type="checkbox" className="ia-card-check" checked={estaSeleccionado} onChange={() => onToggleSeleccion(img._id)} />
+      </div>
+    )}
+
+    <div
+      className="ia-card-img-wrap"
+      onClick={e => {
+        if (modoSeleccion) { e.stopPropagation(); onToggleSeleccion(img._id); return; }
+        img.url && onVerImagen(img);
+      }}
+      title={img.url ? 'Ver imagen completa' : 'Imagen eliminada de Cloudinary'}
+      style={{ cursor: img.url ? 'pointer' : 'default' }}
+    >
+      {img.url ? (
+        <>
+          <img src={img.url} alt="Imagen de reseña" className="ia-card-img" loading="lazy" />
+          {!modoSeleccion && (
+            <div className="ia-card-img-overlay">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+              Ver imagen
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="ia-card-img-eliminada">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/>
+          </svg>
+          <span>Imagen eliminada</span>
+        </div>
+      )}
+    </div>
+
+    <div className="ia-card-info">
+      <div className="ia-card-meta">
+        <span className="ia-card-usuario">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          {img.userName}
+        </span>
+        <span className="ia-card-fecha">{formatFecha(img.creadoEn)}</span>
+      </div>
+
+      {img.recetaNombre && (
+        <p className="ia-card-receta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
+          </svg>
+          {img.recetaNombre}
+        </p>
+      )}
+
+      {img.comentarioTexto
+        ? <p className="ia-card-comentario">"{img.comentarioTexto}"</p>
+        : <p className="ia-card-comentario ia-card-comentario--vacio"><em>Sin comentario</em></p>
+      }
+
+      <span className={`ia-estado-badge ia-estado-badge--${ESTADOS[img.estado]?.color || 'naranja'}`}>
+        {img.estado === 'pendiente' && '⏳ Pendiente'}
+        {img.estado === 'aprobada'  && '✅ Aprobada'}
+        {img.estado === 'rechazada' && '❌ Rechazada'}
+      </span>
+    </div>
+
+    {!modoSeleccion && (
+      <>
+        {img.estado === 'pendiente' && (
+          <div className="ia-card-acciones">
+            <button className="ia-btn-aprobar" onClick={() => onAprobar(img)} disabled={isProcesando}>
+              {isProcesando ? '⏳' : (
+                <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Aprobar</>
+              )}
+            </button>
+            <button className="ia-btn-rechazar" onClick={() => onRechazar(img)} disabled={isProcesando}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Rechazar
+            </button>
+          </div>
+        )}
+
+        {img.estado === 'aprobada' && (
+          <div className="ia-card-acciones">
+            <button className="ia-btn-revertir" onClick={() => onRechazar(img)} disabled={isProcesando}>↩ Revocar aprobación</button>
+            <button className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
+          </div>
+        )}
+
+        {img.estado === 'rechazada' && (
+          <div className="ia-card-acciones">
+            <button className="ia-btn-revertir" onClick={() => onAprobar(img)} disabled={isProcesando} title="Restaurar y aprobar esta imagen">↩ Aprobar de todas formas</button>
+            <button className="ia-btn-banear" onClick={() => onBanear(img)} disabled={isProcesando} title="Banear al usuario que subió esta imagen">🔨 Banear usuario</button>
+            <button className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
+          </div>
+        )}
+      </>
+    )}
+  </div>
+));
+ImageCard.displayName = 'ImageCard';
+
 const ImagenesAprobacion = ({ onCambio }) => {
   const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
   const cargandoRef = useRef(false);
+  const filtroRef   = useRef('pendiente');
+  const onCambioRef = useRef(onCambio);
 
-  const [imagenes,       setImagenes]       = useState([]);
-  const [cargando,       setCargando]       = useState(true);
-  const [filtro,         setFiltro]         = useState('pendiente');
-  const [totalPorEstado, setTotalPorEstado] = useState({ pendiente: 0, aprobada: 0, rechazada: 0 });
-  const [procesando,     setProcesando]     = useState(null);
+  useEffect(() => { onCambioRef.current = onCambio; }, [onCambio]);
+
+  const [imagenes,         setImagenes]         = useState([]);
+  const [cargando,         setCargando]         = useState(true);
+  const [filtro,           setFiltro]           = useState('pendiente');
+  const [totalPorEstado,   setTotalPorEstado]   = useState({ pendiente: 0, aprobada: 0, rechazada: 0 });
+  const [procesando,       setProcesando]       = useState(null);
   const [procesandoMasivo, setProcesandoMasivo] = useState(false);
-  const [imagenModal,    setImagenModal]    = useState(null);
-  const [modalBaneo,     setModalBaneo]     = useState(null);
-  const [seleccionados,  setSeleccionados]  = useState(new Set());
-  const [modoSeleccion,  setModoSeleccion]  = useState(false);
+  const [imagenModal,      setImagenModal]      = useState(null);
+  const [modalBaneo,       setModalBaneo]       = useState(null);
+  const [seleccionados,    setSeleccionados]    = useState(new Set());
+  const [modoSeleccion,    setModoSeleccion]    = useState(false);
+
+  useEffect(() => { filtroRef.current = filtro; }, [filtro]);
 
   const cargarTodo = useCallback(async () => {
     if (cargandoRef.current) return;
     cargandoRef.current = true;
     setCargando(true);
-
     try {
       const [pendRes, aprobRes, rechRes] = await Promise.all([
         api.get('/admin/imagenes-resenas?estado=pendiente&limit=100'),
@@ -154,13 +269,12 @@ const ImagenesAprobacion = ({ onCambio }) => {
 
       cacheRef.current = { pendiente: pendItems, aprobada: aprobItems, rechazada: rechItems };
 
-      const totalPend  = pendRes.data.pagination?.total  > pendItems.length  ? pendRes.data.pagination.total  : pendItems.length;
-      const totalAprob = aprobRes.data.pagination?.total > aprobItems.length ? aprobRes.data.pagination.total : aprobItems.length;
-      const totalRech  = rechRes.data.pagination?.total  > rechItems.length  ? rechRes.data.pagination.total  : rechItems.length;
-
-      setTotalPorEstado({ pendiente: totalPend, aprobada: totalAprob, rechazada: totalRech });
-      setImagenes(cacheRef.current[filtro] ?? []);
-
+      setTotalPorEstado({
+        pendiente: pendRes.data.pagination?.total  > pendItems.length  ? pendRes.data.pagination.total  : pendItems.length,
+        aprobada:  aprobRes.data.pagination?.total > aprobItems.length ? aprobRes.data.pagination.total : aprobItems.length,
+        rechazada: rechRes.data.pagination?.total  > rechItems.length  ? rechRes.data.pagination.total  : rechItems.length,
+      });
+      setImagenes(cacheRef.current[filtroRef.current] ?? []);
     } catch (error) {
       toast.error('Error cargando imágenes');
       console.error(error);
@@ -176,17 +290,16 @@ const ImagenesAprobacion = ({ onCambio }) => {
   }, [cargarTodo]);
 
   useEffect(() => {
-    if (cacheRef.current[filtro] !== null) {
-      setImagenes(cacheRef.current[filtro]);
+    const curr = filtroRef.current;
+    if (cacheRef.current[curr] !== null) {
+      setImagenes(cacheRef.current[curr]);
     } else {
       cargarTodo();
     }
-    // Limpiar selección al cambiar filtro
     setSeleccionados(new Set());
     setModoSeleccion(false);
   }, [filtro, cargarTodo]);
 
-  // --- Selección múltiple ---
   const toggleSeleccion = useCallback((id) => {
     setSeleccionados(prev => {
       const next = new Set(prev);
@@ -196,58 +309,91 @@ const ImagenesAprobacion = ({ onCambio }) => {
   }, []);
 
   const toggleTodos = useCallback(() => {
-    if (seleccionados.size === imagenes.length) {
-      setSeleccionados(new Set());
-    } else {
-      setSeleccionados(new Set(imagenes.map(i => i._id)));
-    }
-  }, [imagenes, seleccionados.size]);
+    setSeleccionados(prev =>
+      prev.size === imagenes.length
+        ? new Set()
+        : new Set(imagenes.map(i => i._id))
+    );
+  }, [imagenes]);
 
   const salirModoSeleccion = useCallback(() => {
     setModoSeleccion(false);
     setSeleccionados(new Set());
   }, []);
 
-  // --- Acción individual ---
-  const handleAprobar = async (id) => {
-    const img = imagenes.find(i => i._id === id);
-    if (!img) return;
-    setProcesando(id);
+  const aplicarCambioLocal = useCallback((img, accion) => {
+    const curr = filtroRef.current;
+    const estadoDestino = accion === 'aprobar' ? 'aprobada' : 'rechazada';
+
+    if (accion === 'eliminar') {
+      if (cacheRef.current[curr]) {
+        cacheRef.current[curr] = cacheRef.current[curr].filter(i => i._id !== img._id);
+      }
+      setImagenes(prev => prev.filter(i => i._id !== img._id));
+      setTotalPorEstado(prev => ({ ...prev, [curr]: Math.max(0, prev[curr] - 1) }));
+    } else {
+      const updated = { ...img, estado: estadoDestino };
+      if (cacheRef.current[curr]) {
+        cacheRef.current[curr] = cacheRef.current[curr].filter(i => i._id !== img._id);
+      }
+      if (cacheRef.current[estadoDestino]) {
+        cacheRef.current[estadoDestino] = [updated, ...cacheRef.current[estadoDestino]];
+      } else {
+        cacheRef.current[estadoDestino] = null;
+      }
+      setImagenes(prev => prev.filter(i => i._id !== img._id));
+      setTotalPorEstado(prev => ({
+        ...prev,
+        [curr]:          Math.max(0, prev[curr] - 1),
+        [estadoDestino]: prev[estadoDestino] + 1,
+      }));
+    }
+    onCambioRef.current?.();
+  }, []);
+
+  const handleAprobar = useCallback(async (img) => {
+    setProcesando(img._id);
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar`);
       toast.success('✅ Imagen aprobada');
-      cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
-      await cargarTodo();
-      onCambio?.();
+      aplicarCambioLocal(img, 'aprobar');
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al aprobar'}`);
     } finally {
       setProcesando(null);
     }
-  };
+  }, [aplicarCambioLocal]);
 
-  const handleRechazar = async (id) => {
+  const handleRechazar = useCallback(async (img) => {
     if (!window.confirm('¿Rechazar esta imagen? Se eliminará de Cloudinary.')) return;
-    const img = imagenes.find(i => i._id === id);
-    if (!img) return;
-    setProcesando(id);
+    setProcesando(img._id);
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar`);
       toast.success('Imagen rechazada');
-      cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
-      await cargarTodo();
-      onCambio?.();
+      aplicarCambioLocal(img, 'rechazar');
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al rechazar'}`);
     } finally {
       setProcesando(null);
     }
-  };
+  }, [aplicarCambioLocal]);
 
-  // --- Acción masiva ---
-  const handleMasivo = async (accion) => {
+  const handleEliminar = useCallback(async (img) => {
+    if (!window.confirm('¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.')) return;
+    setProcesando(img._id);
+    try {
+      await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}`);
+      toast.success('🗑️ Registro eliminado del historial');
+      aplicarCambioLocal(img, 'eliminar');
+    } catch (e) {
+      toast.error(`❌ ${e.response?.data?.error || 'Error al eliminar'}`);
+    } finally {
+      setProcesando(null);
+    }
+  }, [aplicarCambioLocal]);
+
+  const handleMasivo = useCallback(async (accion) => {
     if (seleccionados.size === 0) return;
-
     const esAprobar = accion === 'aprobar';
     const verbo = esAprobar ? 'aprobar' : 'rechazar';
     const n = seleccionados.size;
@@ -282,31 +428,11 @@ const ImagenesAprobacion = ({ onCambio }) => {
     setSeleccionados(new Set());
     setModoSeleccion(false);
     await cargarTodo();
-    onCambio?.();
+    onCambioRef.current?.();
     setProcesandoMasivo(false);
-  };
+  }, [seleccionados, imagenes, cargarTodo]);
 
-  // --- Eliminar del historial (individual) ---
-  const handleEliminar = async (id) => {
-    if (!window.confirm('¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.')) return;
-    const img = imagenes.find(i => i._id === id);
-    if (!img) return;
-    setProcesando(id);
-    try {
-      await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}`);
-      toast.success('🗑️ Registro eliminado del historial');
-      cacheRef.current = { pendiente: null, aprobada: null, rechazada: null };
-      await cargarTodo();
-      onCambio?.();
-    } catch (e) {
-      toast.error(`❌ ${e.response?.data?.error || 'Error al eliminar'}`);
-    } finally {
-      setProcesando(null);
-    }
-  };
-
-  // --- Eliminar masivo del historial ---
-  const handleMasivoEliminar = async () => {
+  const handleMasivoEliminar = useCallback(async () => {
     if (seleccionados.size === 0) return;
     const n = seleccionados.size;
     if (!window.confirm(
@@ -331,11 +457,11 @@ const ImagenesAprobacion = ({ onCambio }) => {
     setSeleccionados(new Set());
     setModoSeleccion(false);
     await cargarTodo();
-    onCambio?.();
+    onCambioRef.current?.();
     setProcesandoMasivo(false);
-  };
+  }, [seleccionados, imagenes, cargarTodo]);
 
-  const handleBan = async (userId, motivo, dias) => {
+  const handleBan = useCallback(async (userId, motivo, dias) => {
     try {
       const { data } = await api.put(`/admin/users/${userId}/ban`, { motivo, dias });
       toast.success(data.message || 'Usuario baneado');
@@ -343,13 +469,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
       toast.error(`❌ ${e.response?.data?.error || 'Error al banear'}`);
       throw e;
     }
-  };
-
-  const formatFecha = (f) =>
-    new Date(f).toLocaleDateString('es-ES', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-    });
+  }, []);
 
   const todosSeleccionados = imagenes.length > 0 && seleccionados.size === imagenes.length;
   const algunoSeleccionado = seleccionados.size > 0;
@@ -357,21 +477,16 @@ const ImagenesAprobacion = ({ onCambio }) => {
   return (
     <div className="ia-contenedor">
 
-      {/* Cabecera */}
       <div className="ia-cabecera">
         <div className="ia-titulo-wrap">
           <h2 className="ia-titulo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="3"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
               <polyline points="21 15 16 10 5 21"/>
             </svg>
             Aprobación de imágenes
           </h2>
-          <p className="ia-subtitulo">
-            Modera las imágenes subidas por usuarios en sus reseñas
-          </p>
+          <p className="ia-subtitulo">Modera las imágenes subidas por usuarios en sus reseñas</p>
         </div>
 
         <div className="ia-contadores">
@@ -390,7 +505,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
         </div>
       </div>
 
-      {/* Filtros + botón modo selección */}
       <div className="ia-filtros-wrap">
         <div className="ia-filtros">
           {Object.entries(ESTADOS).map(([key, { label }]) => (
@@ -400,9 +514,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
               onClick={() => setFiltro(key)}
             >
               {label}
-              {totalPorEstado[key] > 0 && (
-                <span className="ia-badge">{totalPorEstado[key]}</span>
-              )}
+              {totalPorEstado[key] > 0 && <span className="ia-badge">{totalPorEstado[key]}</span>}
             </button>
           ))}
         </div>
@@ -414,20 +526,14 @@ const ImagenesAprobacion = ({ onCambio }) => {
           >
             {modoSeleccion ? (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 Cancelar selección
               </>
             ) : (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7" rx="1"/>
-                  <rect x="14" y="3" width="7" height="7" rx="1"/>
-                  <rect x="3" y="14" width="7" height="7" rx="1"/>
-                  <rect x="14" y="14" width="7" height="7" rx="1"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
                 </svg>
                 Selección múltiple
               </>
@@ -436,16 +542,11 @@ const ImagenesAprobacion = ({ onCambio }) => {
         )}
       </div>
 
-      {/* Barra de acciones masivas */}
       {modoSeleccion && (
         <div className="ia-barra-masiva">
           <div className="ia-barra-masiva-izq">
             <label className="ia-check-todos">
-              <input
-                type="checkbox"
-                checked={todosSeleccionados}
-                onChange={toggleTodos}
-              />
+              <input type="checkbox" checked={todosSeleccionados} onChange={toggleTodos} />
               <span>
                 {todosSeleccionados
                   ? `Todos (${imagenes.length})`
@@ -459,34 +560,14 @@ const ImagenesAprobacion = ({ onCambio }) => {
           <div className="ia-barra-masiva-der">
             {filtro === 'pendiente' && (
               <>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--aprobar"
-                  onClick={() => handleMasivo('aprobar')}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
+                <button className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      Aprobar {algunoSeleccionado ? `(${seleccionados.size})` : ''}
-                    </>
+                    <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Aprobar {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>
                   )}
                 </button>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--rechazar"
-                  onClick={() => handleMasivo('rechazar')}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
+                <button className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳' : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                      </svg>
-                      Rechazar {algunoSeleccionado ? `(${seleccionados.size})` : ''}
-                    </>
+                    <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>Rechazar {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>
                   )}
                 </button>
               </>
@@ -494,60 +575,22 @@ const ImagenesAprobacion = ({ onCambio }) => {
 
             {filtro === 'aprobada' && (
               <>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--rechazar"
-                  onClick={() => handleMasivo('rechazar')}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
+                <button className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : `↩ Revocar (${seleccionados.size})`}
                 </button>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--eliminar"
-                  onClick={handleMasivoEliminar}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
-                  {procesandoMasivo ? '⏳' : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6M14 11v6"/>
-                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                      </svg>
-                      Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}
-                    </>
-                  )}
+                <button className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
+                  {procesandoMasivo ? '⏳' : (<><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>)}
                 </button>
               </>
             )}
 
             {filtro === 'rechazada' && (
               <>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--aprobar"
-                  onClick={() => handleMasivo('aprobar')}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
+                <button className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : `↩ Aprobar (${seleccionados.size})`}
                 </button>
-                <button
-                  className="ia-btn-masivo ia-btn-masivo--eliminar"
-                  onClick={handleMasivoEliminar}
-                  disabled={!algunoSeleccionado || procesandoMasivo}
-                >
-                  {procesandoMasivo ? '⏳' : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6M14 11v6"/>
-                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                      </svg>
-                      Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}
-                    </>
-                  )}
+                <button className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
+                  {procesandoMasivo ? '⏳' : (<><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>)}
                 </button>
               </>
             )}
@@ -555,7 +598,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
         </div>
       )}
 
-      {/* Contenido */}
       {cargando ? (
         <div className="ia-loading">
           <div className="ia-spinner" />
@@ -563,258 +605,59 @@ const ImagenesAprobacion = ({ onCambio }) => {
         </div>
       ) : imagenes.length === 0 ? (
         <div className="ia-vacio">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" strokeWidth="1.2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
             <polyline points="21 15 16 10 5 21"/>
           </svg>
           <p>No hay imágenes {ESTADOS[filtro].label.toLowerCase()} en este momento</p>
         </div>
       ) : (
         <div className="ia-grid">
-          {imagenes.map(img => {
-            const estaSeleccionado = seleccionados.has(img._id);
-            return (
-              <div
-                key={img._id}
-                className={`ia-card ia-card--${ESTADOS[img.estado]?.color || 'naranja'} ${estaSeleccionado ? 'ia-card--seleccionada' : ''}`}
-                onClick={modoSeleccion ? () => toggleSeleccion(img._id) : undefined}
-                style={modoSeleccion ? { cursor: 'pointer' } : undefined}
-              >
-                {/* Checkbox de selección */}
-                {modoSeleccion && (
-                  <div className="ia-card-check-wrap" onClick={e => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      className="ia-card-check"
-                      checked={estaSeleccionado}
-                      onChange={() => toggleSeleccion(img._id)}
-                    />
-                  </div>
-                )}
-
-                {/* Imagen */}
-                <div
-                  className="ia-card-img-wrap"
-                  onClick={e => {
-                    if (modoSeleccion) { e.stopPropagation(); toggleSeleccion(img._id); return; }
-                    img.url && setImagenModal(img);
-                  }}
-                  title={img.url ? 'Ver imagen completa' : 'Imagen eliminada de Cloudinary'}
-                  style={{ cursor: img.url ? 'pointer' : 'default' }}
-                >
-                  {img.url ? (
-                    <>
-                      <img
-                        src={img.url}
-                        alt="Imagen de reseña"
-                        className="ia-card-img"
-                        loading="lazy"
-                      />
-                      {!modoSeleccion && (
-                        <div className="ia-card-img-overlay">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                            <line x1="11" y1="8" x2="11" y2="14"/>
-                            <line x1="8" y1="11" x2="14" y2="11"/>
-                          </svg>
-                          Ver imagen
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="ia-card-img-eliminada">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <rect x="3" y="3" width="18" height="18" rx="3"/>
-                        <line x1="9" y1="9" x2="15" y2="15"/>
-                        <line x1="15" y1="9" x2="9" y2="15"/>
-                      </svg>
-                      <span>Imagen eliminada</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="ia-card-info">
-                  <div className="ia-card-meta">
-                    <span className="ia-card-usuario">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                      </svg>
-                      {img.userName}
-                    </span>
-                    <span className="ia-card-fecha">{formatFecha(img.creadoEn)}</span>
-                  </div>
-
-                  {img.recetaNombre && (
-                    <p className="ia-card-receta">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
-                        <path d="M7 2v20"/>
-                      </svg>
-                      {img.recetaNombre}
-                    </p>
-                  )}
-
-                  {img.comentarioTexto ? (
-                    <p className="ia-card-comentario">"{img.comentarioTexto}"</p>
-                  ) : (
-                    <p className="ia-card-comentario ia-card-comentario--vacio">
-                      <em>Sin comentario</em>
-                    </p>
-                  )}
-
-                  <span className={`ia-estado-badge ia-estado-badge--${ESTADOS[img.estado]?.color || 'naranja'}`}>
-                    {img.estado === 'pendiente' && '⏳ Pendiente'}
-                    {img.estado === 'aprobada'  && '✅ Aprobada'}
-                    {img.estado === 'rechazada' && '❌ Rechazada'}
-                  </span>
-                </div>
-
-                {/* Acciones individuales — ocultas en modo selección */}
-                {!modoSeleccion && (
-                  <>
-                    {img.estado === 'pendiente' && (
-                      <div className="ia-card-acciones">
-                        <button
-                          className="ia-btn-aprobar"
-                          onClick={() => handleAprobar(img._id)}
-                          disabled={procesando === img._id}
-                        >
-                          {procesando === img._id ? '⏳' : (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <polyline points="20 6 9 17 4 12"/>
-                              </svg>
-                              Aprobar
-                            </>
-                          )}
-                        </button>
-                        <button
-                          className="ia-btn-rechazar"
-                          onClick={() => handleRechazar(img._id)}
-                          disabled={procesando === img._id}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M18 6L6 18M6 6l12 12"/>
-                          </svg>
-                          Rechazar
-                        </button>
-                      </div>
-                    )}
-
-                    {img.estado === 'aprobada' && (
-                      <div className="ia-card-acciones">
-                        <button
-                          className="ia-btn-revertir"
-                          onClick={() => handleRechazar(img._id)}
-                          disabled={procesando === img._id}
-                        >
-                          ↩ Revocar aprobación
-                        </button>
-                        <button
-                          className="ia-btn-eliminar"
-                          onClick={() => handleEliminar(img._id)}
-                          disabled={procesando === img._id}
-                          title="Eliminar del historial"
-                        >
-                          🗑️ Eliminar
-                        </button>
-                      </div>
-                    )}
-
-                    {img.estado === 'rechazada' && (
-                      <div className="ia-card-acciones">
-                        <button
-                          className="ia-btn-revertir"
-                          onClick={() => handleAprobar(img._id)}
-                          disabled={procesando === img._id}
-                          title="Restaurar y aprobar esta imagen"
-                        >
-                          ↩ Aprobar de todas formas
-                        </button>
-                        <button
-                          className="ia-btn-banear"
-                          onClick={() => setModalBaneo(img)}
-                          disabled={procesando === img._id}
-                          title="Banear al usuario que subió esta imagen"
-                        >
-                          🔨 Banear usuario
-                        </button>
-                        <button
-                          className="ia-btn-eliminar"
-                          onClick={() => handleEliminar(img._id)}
-                          disabled={procesando === img._id}
-                          title="Eliminar del historial"
-                        >
-                          🗑️ Eliminar
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-
-              </div>
-            );
-          })}
+          {imagenes.map(img => (
+            <ImageCard
+              key={img._id}
+              img={img}
+              modoSeleccion={modoSeleccion}
+              estaSeleccionado={seleccionados.has(img._id)}
+              isProcesando={procesando === img._id}
+              onToggleSeleccion={toggleSeleccion}
+              onAprobar={handleAprobar}
+              onRechazar={handleRechazar}
+              onEliminar={handleEliminar}
+              onVerImagen={setImagenModal}
+              onBanear={setModalBaneo}
+            />
+          ))}
         </div>
       )}
 
-      {/* Modal imagen completa */}
       {imagenModal && (
         <div className="ia-modal-overlay" onClick={() => setImagenModal(null)}>
           <div className="ia-modal-contenido" onClick={e => e.stopPropagation()}>
             <button className="ia-modal-cerrar" onClick={() => setImagenModal(null)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
             <img src={imagenModal.url} alt="Vista completa" className="ia-modal-img" />
             <div className="ia-modal-info">
               <span className="ia-card-usuario">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
                 {imagenModal.userName}
               </span>
-              {imagenModal.recetaNombre && (
-                <span className="ia-card-receta"> — {imagenModal.recetaNombre}</span>
-              )}
-              {imagenModal.comentarioTexto && (
-                <p className="ia-modal-comentario">"{imagenModal.comentarioTexto}"</p>
-              )}
+              {imagenModal.recetaNombre && <span className="ia-card-receta"> — {imagenModal.recetaNombre}</span>}
+              {imagenModal.comentarioTexto && <p className="ia-modal-comentario">"{imagenModal.comentarioTexto}"</p>}
             </div>
             {imagenModal.estado === 'pendiente' && (
               <div className="ia-modal-acciones">
-                <button
-                  className="ia-btn-aprobar"
-                  onClick={() => { handleAprobar(imagenModal._id); setImagenModal(null); }}
-                  disabled={procesando === imagenModal._id}
-                >✅ Aprobar imagen</button>
-                <button
-                  className="ia-btn-rechazar"
-                  onClick={() => { handleRechazar(imagenModal._id); setImagenModal(null); }}
-                  disabled={procesando === imagenModal._id}
-                >❌ Rechazar imagen</button>
+                <button className="ia-btn-aprobar" onClick={() => { handleAprobar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>✅ Aprobar imagen</button>
+                <button className="ia-btn-rechazar" onClick={() => { handleRechazar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>❌ Rechazar imagen</button>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Modal de baneo */}
       {modalBaneo && (
         <ModalBaneoImagen
           imagen={modalBaneo}
@@ -822,7 +665,6 @@ const ImagenesAprobacion = ({ onCambio }) => {
           onBan={handleBan}
         />
       )}
-
     </div>
   );
 };

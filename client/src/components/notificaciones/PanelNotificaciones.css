@@ -5,14 +5,12 @@
   right: 0;
   width: 360px;
   max-width: calc(100vw - 2rem);
-  background: rgba(12, 28, 18, 0.92);
+  background: rgba(12,28,18,0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
   z-index: 1000;
   overflow: hidden;
   animation: pn-aparecer 0.18s ease;
@@ -35,14 +33,8 @@
 }
 
 @keyframes pn-aparecer {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /*Header*/
@@ -51,7 +43,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.1rem 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .pn-header-izq {
@@ -60,9 +52,7 @@
   gap: 0.5rem;
 }
 
-.pn-header-izq svg {
-  color: rgba(167, 213, 136, 0.8);
-}
+.pn-header-izq svg { color: rgba(167,213,136,0.8); }
 
 .pn-titulo {
   font-size: 0.92rem;
@@ -87,19 +77,19 @@
   align-items: center;
   gap: 0.3rem;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255,255,255,0.5);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.3rem 0.65rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease;
   font-family: inherit;
 }
 .pn-btn-leer-todas:hover {
-  border-color: rgba(167, 213, 136, 0.4);
-  color: rgba(167, 213, 136, 0.9);
+  border-color: rgba(167,213,136,0.4);
+  color: rgba(167,213,136,0.9);
 }
 
 /*Lista*/
@@ -107,13 +97,11 @@
   max-height: 420px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
 }
-.pn-lista::-webkit-scrollbar {
-  width: 4px;
-}
+.pn-lista::-webkit-scrollbar { width: 4px; }
 .pn-lista::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   border-radius: 4px;
 }
 
@@ -124,26 +112,19 @@
   gap: 0.75rem;
   padding: 0.85rem 1.1rem;
   position: relative;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   cursor: default;
   transition: background 0.15s ease;
 }
-.pn-item:last-child {
-  border-bottom: none;
-}
-.pn-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
+.pn-item:last-child { border-bottom: none; }
+.pn-item:hover { background: rgba(255,255,255,0.04); }
 
 .pn-item.no-leida {
-  background: rgba(79, 119, 45, 0.08);
+  background: rgba(79,119,45,0.08);
   cursor: pointer;
 }
-.pn-item.no-leida:hover {
-  background: rgba(79, 119, 45, 0.14);
-}
+.pn-item.no-leida:hover { background: rgba(79,119,45,0.14); }
 
-/* Punto indicador de no leída */
 .pn-dot {
   position: absolute;
   top: 1rem;
@@ -153,7 +134,10 @@
   border-radius: 50%;
   background: var(--verde-hoja, #6db33f);
   flex-shrink: 0;
+  transition: opacity 0.4s ease-out;
 }
+
+.pn-item.leida .pn-dot { opacity: 0; }
 
 /*Ícono de tipo*/
 .pn-icono {
@@ -169,15 +153,15 @@
 }
 
 .pn-icono--reply {
-  background: rgba(79, 119, 45, 0.18);
-  border: 1px solid rgba(79, 119, 45, 0.3);
-  color: rgba(167, 213, 136, 0.9);
+  background: rgba(79,119,45,0.18);
+  border: 1px solid rgba(79,119,45,0.3);
+  color: rgba(167,213,136,0.9);
 }
 
 .pn-icono--message {
-  background: rgba(129, 140, 248, 0.15);
-  border: 1px solid rgba(129, 140, 248, 0.3);
-  color: rgba(165, 180, 252, 0.9);
+  background: rgba(129,140,248,0.15);
+  border: 1px solid rgba(129,140,248,0.3);
+  color: rgba(165,180,252,0.9);
 }
 
 /*Contenido*/
@@ -188,22 +172,16 @@
 
 .pn-texto {
   font-size: 0.83rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255,255,255,0.75);
   line-height: 1.45;
   margin: 0 0 0.25rem;
 }
-.pn-texto strong {
-  color: var(--blanco-puro);
-  font-weight: 700;
-}
-.pn-texto em {
-  color: rgba(167, 213, 136, 0.8);
-  font-style: normal;
-}
+.pn-texto strong { color: var(--blanco-puro); font-weight: 700; }
+.pn-texto em { color: rgba(167,213,136,0.8); font-style: normal; }
 
 .pn-preview {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255,255,255,0.38);
   font-style: italic;
   margin: 0 0 0.3rem;
   line-height: 1.4;
@@ -214,7 +192,7 @@
 
 .pn-fecha {
   font-size: 0.71rem;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255,255,255,0.28);
   font-weight: 500;
 }
 
@@ -228,17 +206,8 @@
   padding: 2.5rem 1.5rem;
   text-align: center;
 }
-.pn-vacio p {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.35);
-  margin: 0;
-}
-.pn-vacio span {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.2);
-  line-height: 1.45;
-}
+.pn-vacio p { font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.35); margin: 0; }
+.pn-vacio span { font-size: 0.78rem; color: rgba(255,255,255,0.2); line-height: 1.45; }
 
 /*Estado cargando*/
 .pn-estado {
@@ -248,26 +217,90 @@
   gap: 0.6rem;
   padding: 2rem;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255,255,255,0.3);
 }
 
 .pn-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: rgba(167, 213, 136, 0.6);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: rgba(167,213,136,0.6);
   border-radius: 50%;
+  will-change: transform;
   animation: pn-spin 0.8s linear infinite;
   flex-shrink: 0;
 }
 
-@keyframes pn-spin {
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes pn-spin { to { transform: rotate(360deg); } }
+
+/*Header derecho*/
+.pn-header-der {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/*Responsive*/
+/*Botón cerrar modal*/
+.pn-btn-cerrar-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+.pn-btn-cerrar-modal:hover {
+  background: rgba(220,38,38,0.2);
+  border-color: rgba(220,38,38,0.4);
+  color: rgba(255,120,120,0.9);
+  transform: scale(1.08);
+}
+
+/*Botón eliminar notificación*/
+.pn-btn-eliminar {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.5rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.pn-item:hover .pn-btn-eliminar,
+.pn-item:focus-within .pn-btn-eliminar { opacity: 1; }
+
+.pn-btn-eliminar:hover {
+  color: rgba(255,120,120,0.85);
+  background: rgba(220,38,38,0.15);
+  border-color: rgba(220,38,38,0.3);
+}
+
+/*Item con navegación*/
+.pn-clickable { cursor: pointer; }
+.pn-clickable:hover .pn-texto em {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 @media (max-width: 480px) {
   .pn-panel {
     width: calc(100vw - 1rem);
@@ -276,86 +309,7 @@
   }
 }
 
-/* Item con navegación */
-.pn-clickable {
-  cursor: pointer;
-}
-.pn-clickable:hover .pn-texto em {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-/*Header derecho*/
-.pn-header-der {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/*Botón X cerrar modal*/
-.pn-btn-cerrar-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.55);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  padding: 0;
-}
-.pn-btn-cerrar-modal:hover {
-  background: rgba(220, 38, 38, 0.2);
-  border-color: rgba(220, 38, 38, 0.4);
-  color: rgba(255, 120, 120, 0.9);
-  transform: scale(1.08);
-}
-
-/*Botón eliminar notificación (visible en hover)*/
-.pn-btn-eliminar {
-  position: absolute;
-  top: 0.55rem;
-  right: 0.5rem;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.35);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  opacity: 0;
-  transition:
-    opacity 0.15s ease,
-    color 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
-  flex-shrink: 0;
-  z-index: 2;
-}
-
-.pn-item:hover .pn-btn-eliminar,
-.pn-item:focus-within .pn-btn-eliminar {
-  opacity: 1;
-}
-
-.pn-btn-eliminar:hover {
-  color: rgba(255, 120, 120, 0.85);
-  background: rgba(220, 38, 38, 0.15);
-  border-color: rgba(220, 38, 38, 0.3);
-}
-
-/* Transición suave al marcar como leída */
-.pn-dot {
-  transition: opacity 0.4s ease-out;
-}
-
-.pn-item.leida .pn-dot {
-  opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .pn-spinner { animation: none; will-change: auto; }
+  .pn-panel   { animation: none; }
 }

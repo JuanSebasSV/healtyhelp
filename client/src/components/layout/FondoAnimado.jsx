@@ -1,7 +1,7 @@
+import { memo } from 'react';
 import './FondoAnimado.css';
 
-const FondoAnimado = () => {
-  return <div className="fondoAnimado" />;
-};
+const FondoAnimado = memo(() => <div className="fondoAnimado" />);
+FondoAnimado.displayName = 'FondoAnimado';
 
 export default FondoAnimado;

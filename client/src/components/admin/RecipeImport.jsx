@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './RecipeImport.css';
 
 const STORAGE_KEY = 'healtyhelp_import_draft';
 
-// Secciones nutricionales
 const NUTRI_SECCIONES = [
   {
     titulo: '🔥 Macros principales',
     campos: [
-      { key: 'cal',      label: 'Calorías',        unidad: 'kcal' },
-      { key: 'carb',     label: 'Carbohidratos',    unidad: 'g' },
-      { key: 'gras',     label: 'Grasas',           unidad: 'g' },
-      { key: 'prot',     label: 'Proteínas',        unidad: 'g' },
-      { key: 'fiber',    label: 'Fibra',            unidad: 'g' },
-      { key: 'carbNetos',label: 'Carbs netos',      unidad: 'g' },
-      { key: 'sodio',    label: 'Sodio',            unidad: 'mg' },
-      { key: 'colesterol',label:'Colesterol',       unidad: 'mg' },
+      { key: 'cal',        label: 'Calorías',        unidad: 'kcal' },
+      { key: 'carb',       label: 'Carbohidratos',   unidad: 'g'    },
+      { key: 'gras',       label: 'Grasas',          unidad: 'g'    },
+      { key: 'prot',       label: 'Proteínas',       unidad: 'g'    },
+      { key: 'fiber',      label: 'Fibra',           unidad: 'g'    },
+      { key: 'carbNetos',  label: 'Carbs netos',     unidad: 'g'    },
+      { key: 'sodio',      label: 'Sodio',           unidad: 'mg'   },
+      { key: 'colesterol', label: 'Colesterol',      unidad: 'mg'   },
     ],
   },
   {
@@ -34,37 +33,36 @@ const NUTRI_SECCIONES = [
   {
     titulo: '💊 Vitaminas',
     campos: [
-      { key: 'vitA',  label: 'Vitamina A',  unidad: 'µg' },
-      { key: 'vitC',  label: 'Vitamina C',  unidad: 'mg' },
-      { key: 'vitD',  label: 'Vitamina D',  unidad: 'µg' },
-      { key: 'vitE',  label: 'Vitamina E',  unidad: 'mg' },
-      { key: 'vitK',  label: 'Vitamina K',  unidad: 'µg' },
-      { key: 'vitB12',label: 'Vitamina B12',unidad: 'µg' },
-      { key: 'vitB6', label: 'Vitamina B6', unidad: 'mg' },
-      { key: 'folato',label: 'Folato B9',   unidad: 'µg' },
+      { key: 'vitA',   label: 'Vitamina A',   unidad: 'µg' },
+      { key: 'vitC',   label: 'Vitamina C',   unidad: 'mg' },
+      { key: 'vitD',   label: 'Vitamina D',   unidad: 'µg' },
+      { key: 'vitE',   label: 'Vitamina E',   unidad: 'mg' },
+      { key: 'vitK',   label: 'Vitamina K',   unidad: 'µg' },
+      { key: 'vitB12', label: 'Vitamina B12', unidad: 'µg' },
+      { key: 'vitB6',  label: 'Vitamina B6',  unidad: 'mg' },
+      { key: 'folato', label: 'Folato B9',    unidad: 'µg' },
     ],
   },
   {
     titulo: '🧈 Grasas detalladas',
     campos: [
-      { key: 'grasSat',    label: 'Saturadas',      unidad: 'g' },
-      { key: 'grasMonoins',label: 'Monoinsaturadas',unidad: 'g' },
-      { key: 'grasPoliins',label: 'Poliinsaturadas',unidad: 'g' },
-      { key: 'grasTrans',  label: 'Trans',          unidad: 'g' },
-      { key: 'omega3',     label: 'Omega-3',        unidad: 'g' },
-      { key: 'omega6',     label: 'Omega-6',        unidad: 'g' },
+      { key: 'grasSat',     label: 'Saturadas',       unidad: 'g' },
+      { key: 'grasMonoins', label: 'Monoinsaturadas', unidad: 'g' },
+      { key: 'grasPoliins', label: 'Poliinsaturadas', unidad: 'g' },
+      { key: 'grasTrans',   label: 'Trans',           unidad: 'g' },
+      { key: 'omega3',      label: 'Omega-3',         unidad: 'g' },
+      { key: 'omega6',      label: 'Omega-6',         unidad: 'g' },
     ],
   },
 ];
 
-// Modal editor nutricional 
-const NutriEditorModal = ({ receta, onGuardar, onCerrar }) => {
-  const [nutri, setNutri]           = useState({ ...(receta.nutri || {}) });
-  const [seccionAbierta, setSeccion]= useState(0);
+const NutriEditorModal = memo(({ receta, onGuardar, onCerrar }) => {
+  const [nutri,          setNutri]   = useState({ ...(receta.nutri || {}) });
+  const [seccionAbierta, setSeccion] = useState(0);
 
-  const handleChange = (key, val) => {
+  const handleChange = useCallback((key, val) => {
     setNutri(prev => ({ ...prev, [key]: parseFloat(val) || 0 }));
-  };
+  }, []);
 
   return (
     <div className="nutri-editor-overlay" onClick={onCerrar}>
@@ -119,75 +117,73 @@ const NutriEditorModal = ({ receta, onGuardar, onCerrar }) => {
       </div>
     </div>
   );
-};
+});
+NutriEditorModal.displayName = 'NutriEditorModal';
 
-// Tarjeta de revisión individual 
-const ReviewCard = ({ receta, index, onChange }) => {
+const ReviewCard = memo(({ receta, index, onChange }) => {
   const [editandoNutri, setEditandoNutri] = useState(false);
-  const nutri = receta.nutri || {};
+  const nutri        = receta.nutri || {};
   const saludVisible = (receta.salud || []).slice(0, 3);
   const saludExtra   = (receta.salud || []).length - 3;
+
+  const handleNombre = useCallback(e => onChange(index, 'nombre', e.target.value), [index, onChange]);
+  const handleDesc   = useCallback(e => onChange(index, 'desc',   e.target.value), [index, onChange]);
+  const handleImg    = useCallback(e => onChange(index, 'img',    e.target.value), [index, onChange]);
+
+  const handleGuardarNutri = useCallback(nuevoNutri => {
+    onChange(index, 'nutri', nuevoNutri);
+    setEditandoNutri(false);
+  }, [index, onChange]);
 
   return (
     <>
       <div className="review-card">
-        {/* Imagen */}
         <div className="review-img-wrap">
           {receta.img
-            ? <img src={receta.img} alt={receta.nombre} onError={e => { e.target.style.display='none'; }} />
+            ? <img src={receta.img} alt={receta.nombre} onError={e => { e.target.style.display = 'none'; }} />
             : <div className="review-img-placeholder">🍽️</div>
           }
         </div>
 
         <div className="review-card-body">
-          {/* Nombre editable */}
           <input
             className="review-field-nombre"
             value={receta.nombre || ''}
-            onChange={e => onChange(index, 'nombre', e.target.value)}
+            onChange={handleNombre}
             placeholder="Nombre de la receta"
           />
 
-          {/* Descripción editable */}
           <textarea
             className="review-field-desc"
             value={receta.desc || ''}
-            onChange={e => onChange(index, 'desc', e.target.value)}
+            onChange={handleDesc}
             rows={2}
             placeholder="Descripción..."
           />
 
-          {/* Badges categoría + salud */}
           <div className="review-meta">
             <span className={`badge cat-${receta.cat}`}>{receta.cat}</span>
             {saludVisible.map(s => (
-              <span key={s} className="badge-salud">{s.replace(/-/g,' ')}</span>
+              <span key={s} className="badge-salud">{s.replace(/-/g, ' ')}</span>
             ))}
-            {saludExtra > 0 && (
-              <span className="badge-mas">+{saludExtra}</span>
-            )}
+            {saludExtra > 0 && <span className="badge-mas">+{saludExtra}</span>}
           </div>
 
-          {/* Resumen nutricional */}
           <div className="review-nutri-resumen">
             <span>🔥 {nutri.cal || 0} kcal</span>
             <span>🥩 {nutri.prot || 0}g prot</span>
             <span>🍞 {nutri.carb || 0}g carb</span>
             <span>🧈 {nutri.gras || 0}g gras</span>
-            <button
-              className="btn-editar-nutri"
-              onClick={() => setEditandoNutri(true)}
-            >
+            <button className="btn-editar-nutri" onClick={() => setEditandoNutri(true)}>
               ✏️ Editar
             </button>
           </div>
 
-          {/* URL imagen */}
           <div className="review-img-field">
             <input
               className="image-url-input"
               value={receta.img || ''}
-              onChange={e => onChange(index, 'img', e.target.value)}
+              onChange={handleImg}
               placeholder="https://... URL de la imagen (opcional)"
             />
             <span className={`image-status ${receta.img ? 'ok' : 'empty'}`}>
@@ -200,27 +196,25 @@ const ReviewCard = ({ receta, index, onChange }) => {
       {editandoNutri && (
         <NutriEditorModal
           receta={receta}
-          onGuardar={nuevoNutri => {
-            onChange(index, 'nutri', nuevoNutri);
-            setEditandoNutri(false);
-          }}
+          onGuardar={handleGuardarNutri}
           onCerrar={() => setEditandoNutri(false)}
         />
       )}
     </>
   );
-};
+});
+ReviewCard.displayName = 'ReviewCard';
 
-//  Componente principal 
 const RecipeImport = ({ onSuccess }) => {
-  const [recetas,    setRecetas]    = useState(null);   // array de recetas en revisión
+  const [recetas,    setRecetas]    = useState(null);
   const [mode,       setMode]       = useState('add');
   const [loading,    setLoading]    = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [hasDraft,   setHasDraft]   = useState(false);
-  const [paso,       setPaso]       = useState('upload'); // 'upload' | 'review'
+  const [paso,       setPaso]       = useState('upload');
 
-  //  Recuperar borrador al montar 
+  const draftTimerRef = useRef(null);
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -239,28 +233,24 @@ const RecipeImport = ({ onSuccess }) => {
     }
   }, []);
 
-  //  Guardar en localStorage al cambiar 
   useEffect(() => {
-    if (recetas && recetas.length > 0) {
+    if (!recetas || recetas.length === 0) return;
+    clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ recipes: recetas, mode }));
       } catch {}
-    }
+    }, 500);
+    return () => clearTimeout(draftTimerRef.current);
   }, [recetas, mode]);
 
-  //  Drag & drop 
-  const handleDrag = e => {
-    e.preventDefault(); e.stopPropagation();
+  const handleDrag = useCallback(e => {
+    e.preventDefault();
+    e.stopPropagation();
     setDragActive(e.type === 'dragenter' || e.type === 'dragover');
-  };
-  const handleDrop = e => {
-    e.preventDefault(); e.stopPropagation();
-    setDragActive(false);
-    processFile(e.dataTransfer.files[0]);
-  };
-  const handleFileChange = e => processFile(e.target.files[0]);
+  }, []);
 
-  const processFile = file => {
+  const processFile = useCallback(file => {
     if (!file) return;
     if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
       toast.error('❌ Solo se aceptan archivos .json');
@@ -283,28 +273,35 @@ const RecipeImport = ({ onSuccess }) => {
       }
     };
     reader.readAsText(file);
-  };
+  }, []);
 
-  //  Editar campo de una receta 
-  const handleChange = (index, field, value) => {
+  const handleDrop = useCallback(e => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    processFile(e.dataTransfer.files[0]);
+  }, [processFile]);
+
+  const handleFileChange = useCallback(e => processFile(e.target.files[0]), [processFile]);
+
+  const handleChange = useCallback((index, field, value) => {
     setRecetas(prev => {
       const copia = [...prev];
       copia[index] = { ...copia[index], [field]: value };
       return copia;
     });
-  };
+  }, []);
 
-  //  Descartar borrador 
-  const clearDraft = () => {
+  const clearDraft = useCallback(() => {
+    clearTimeout(draftTimerRef.current);
     localStorage.removeItem(STORAGE_KEY);
     setRecetas(null);
     setHasDraft(false);
     setPaso('upload');
     toast.info('🗑️ Borrador descartado');
-  };
+  }, []);
 
-  //  Importar a la BD 
-  const handleImport = async () => {
+  const handleImport = useCallback(async () => {
     if (!recetas || recetas.length === 0) return;
 
     if (mode === 'replace') {
@@ -322,7 +319,7 @@ const RecipeImport = ({ onSuccess }) => {
         throw new Error(data.error || 'El servidor no confirmó la importación');
       }
 
-      // limpiar localStorage
+      clearTimeout(draftTimerRef.current);
       localStorage.removeItem(STORAGE_KEY);
       toast.success(`✅ ${data.result.created} recetas importadas correctamente a la base de datos`);
       setRecetas(null);
@@ -336,15 +333,13 @@ const RecipeImport = ({ onSuccess }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [recetas, mode, onSuccess]);
 
-  // RENDER — PASO UPLOAD
   if (paso === 'upload') {
     return (
       <div className="recipe-import">
         <h2>📤 Importar Recetas desde JSON</h2>
 
-        {/* Modo de importación */}
         <div className="import-options">
           <label className={mode === 'add' ? 'active' : ''}>
             <input type="radio" value="add" checked={mode === 'add'} onChange={() => setMode('add')} />
@@ -356,7 +351,6 @@ const RecipeImport = ({ onSuccess }) => {
           </label>
         </div>
 
-        {/* Instrucciones */}
         <div className="import-instructions">
           <h3>📝 Formato del archivo JSON:</h3>
           <pre>{`[
@@ -373,7 +367,6 @@ const RecipeImport = ({ onSuccess }) => {
 ]`}</pre>
         </div>
 
-        {/* Dropzone */}
         <div
           className={`file-dropzone ${dragActive ? 'active' : ''}`}
           onDragEnter={handleDrag}
@@ -398,14 +391,12 @@ const RecipeImport = ({ onSuccess }) => {
     );
   }
 
-  // RENDER — PASO REVIEW
   const sinImagen = recetas.filter(r => !r.img).length;
 
   return (
     <div className="recipe-import">
       <h2>📤 Importar Recetas desde JSON</h2>
 
-      {/* Banner borrador */}
       {hasDraft && (
         <div className="draft-banner">
           <div className="draft-banner-info">
@@ -416,28 +407,20 @@ const RecipeImport = ({ onSuccess }) => {
             </div>
           </div>
           <div className="draft-banner-actions">
-            <button className="btn-draft-descartar" onClick={clearDraft}>
-              🗑️ Descartar
-            </button>
+            <button className="btn-draft-descartar" onClick={clearDraft}>🗑️ Descartar</button>
           </div>
         </div>
       )}
 
-      {/* Cabecera de revisión */}
       <div className="review-header">
-        <button className="btn-back-step" onClick={() => setPaso('upload')}>
-          ← Cargar otro archivo
-        </button>
+        <button className="btn-back-step" onClick={() => setPaso('upload')}>← Cargar otro archivo</button>
         <div className="review-header-info">
           <span className="review-count">{recetas.length} receta{recetas.length !== 1 ? 's' : ''} para importar</span>
-          {sinImagen > 0 && (
-            <span className="sin-imagen-badge">⚠️ {sinImagen} sin imagen</span>
-          )}
+          {sinImagen > 0 && <span className="sin-imagen-badge">⚠️ {sinImagen} sin imagen</span>}
           <span className="draft-auto-badge">💾 Guardado automático activo</span>
         </div>
       </div>
 
-      {/* Grid de tarjetas editables */}
       <div className="review-grid">
         {recetas.map((receta, i) => (
           <ReviewCard
@@ -449,12 +432,7 @@ const RecipeImport = ({ onSuccess }) => {
         ))}
       </div>
 
-      {/* Botón importar */}
-      <button
-        onClick={handleImport}
-        disabled={loading}
-        className="btn-import"
-      >
+      <button onClick={handleImport} disabled={loading} className="btn-import">
         {loading
           ? '⏳ Importando...'
           : `📤 Importar ${recetas.length} Receta${recetas.length !== 1 ? 's' : ''} a la BD`}

@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './FiltrosSalud.css';
-
-//  Datos estáticos de filtros 
 
 const CATEGORIAS = [
   { id: 'todas',          nombre: 'Todas',             icono: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' },
@@ -38,30 +36,19 @@ const CONDICIONES = [
   { id: 'sindrome-intestino',   nombre: 'Síndrome Intestino Irritable',  icono: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-80v-240q0-50 35-85t85-35h80q50 0 85-35t35-85q0-17-11.5-28.5T400-600q-33 0-56.5-23.5T320-680v-200h80v200q50 0 85 35t35 85q0 83-58.5 141.5T320-360h-80q-17 0-28.5 11.5T200-320v240h-80Zm240 0h-80v-80q0-50 35-85t85-35h160q83 0 141.5-58.5T760-480v-40q0-83-58.5-141.5T560-720q-33 0-56.5-23.5T480-800v-80h80v80q117 0 198.5 81.5T840-520v40q0 117-81.5 198.5T560-200H400q-17 0-28.5 11.5T360-160v80Z"/></svg>' },
 ];
 
-//  Componente 
-
 const FiltrosSalud = ({
-  // estado del buscador
   busqueda,
   onBusquedaChange,
   resultadosBusqueda,
-
-  // estado de categoría
   categoria,
   onCategoria,
-
-  // estado de tiempo
   filtroTiempo,
   onFiltroTiempo,
   onLimpiarTiempo,
-
-  // estado de condiciones de salud (modal)
   filtros,
   onToggleFiltro,
   onLimpiarTodo,
   listo,
-
-  // control del modal
   filtroAbierto,
   onAbrirFiltro,
   onCerrarFiltro,
@@ -70,10 +57,8 @@ const FiltrosSalud = ({
 
   return (
     <>
-      {/*  Panel unificado  */}
       <div className="filtros-bloque">
 
-        {/* Fila 1: buscador + botón dieta */}
         <div className="filtros-top-row">
           <div className="buscador-input-wrap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,10 +93,8 @@ const FiltrosSalud = ({
 
         <hr className="filtros-bloque__sep" />
 
-        {/* Fila 2: categorías + separador vertical + tiempo */}
         <div className="filtros-segunda-fila">
 
-          {/* Tarjetas de categoría */}
           <div className="cats-scroll-outer">
             <div className="cats-scroll-inner">
               {CATEGORIAS.map(cat => {
@@ -132,7 +115,6 @@ const FiltrosSalud = ({
 
           <div className="filtros-vsep" aria-hidden="true" />
 
-          {/* Control de tiempo */}
           <div className="tiempo-wrapper">
             <span className="tiempo-etiqueta">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -163,7 +145,6 @@ const FiltrosSalud = ({
 
         </div>
 
-        {/* Conteo de búsqueda */}
         {busqueda && (
           <span className="buscador-conteo">
             {resultadosBusqueda} resultado{resultadosBusqueda !== 1 ? 's' : ''} para &ldquo;{busqueda}&rdquo;
@@ -172,7 +153,6 @@ const FiltrosSalud = ({
 
       </div>
 
-      {/*  Modal de condiciones de salud  */}
       {filtroAbierto && (
         <div
           className="filtroModalOverlay"
@@ -198,17 +178,20 @@ const FiltrosSalud = ({
                 )}
               </div>
               <div className="filtroGrid">
-                {CONDICIONES.map(c => (
-                  <button
-                    key={c.id}
-                    className={`filtroCard ${filtros.includes(c.id) ? 'activo' : ''}`}
-                    onClick={() => onToggleFiltro(c.id)}
-                  >
-                    <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
-                    <span className="filtroNombre">{c.nombre}</span>
-                    {filtros.includes(c.id) && <span className="filtroCheck">✓</span>}
-                  </button>
-                ))}
+                {CONDICIONES.map(c => {
+                  const activo = filtros.includes(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      className={`filtroCard ${activo ? 'activo' : ''}`}
+                      onClick={() => onToggleFiltro(c.id)}
+                    >
+                      <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
+                      <span className="filtroNombre">{c.nombre}</span>
+                      {activo && <span className="filtroCheck">✓</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -218,4 +201,4 @@ const FiltrosSalud = ({
   );
 };
 
-export default FiltrosSalud;
+export default memo(FiltrosSalud);

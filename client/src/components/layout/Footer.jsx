@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Footer.css';
 
-const Footer = () => {
-  const navigate   = useNavigate();
-  const { user }   = useAuth();
+const Footer = memo(() => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const irA = (ruta, requiereAuth = false) => {
+  const irA = useCallback((ruta, requiereAuth = false) => {
     if (requiereAuth && !user) {
       navigate('/registro');
     } else {
       navigate(ruta);
     }
-  };
+  }, [navigate, user]);
 
   return (
     <footer className="footer">
@@ -84,6 +84,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = 'Footer';
 
 export default Footer;

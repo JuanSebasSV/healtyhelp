@@ -1,5 +1,3 @@
-/* UserProfile.css */
-
 /*PÁGINA CONTENEDOR*/
 .perfil-pagina {
   min-height: calc(100vh - 64px);
@@ -20,6 +18,7 @@
   position: absolute;
   border-radius: 50%;
   opacity: 0.12;
+  will-change: transform;
   animation: flotar 6s ease-in-out infinite;
 }
 
@@ -79,42 +78,30 @@
   min-height: 110px;
   margin-bottom: 0.75rem;
   border-radius: 50%;
-  /* Base estática: sombra circular translúcida siempre visible */
   box-shadow:
     0 0 0 1.5px rgba(255, 255, 255, 0.18),
     0 6px 24px rgba(0, 0, 0, 0.30);
 }
 
-/*
-  REWORK COMPLETO — ya no es un disco de colores girando detrás.
-  Ahora es un ANILLO HUECO REAL encima de la foto:
-  · mask CSS lo vacía en el centro → sólo el borde es visible (~8 px)
-  · z-index: 2 → flota sobre la imagen
-  · conic-gradient: 300° de vidrio casi invisible + un arco brillante que orbita
-  · Efecto: bisel de lente / reloj de lujo / halo premium
-*/
 .avatar-anillo {
   position: absolute;
-  inset: -5px;          /* 120 × 120 px; radio 60 px                   */
+  inset: -5px;
   border-radius: 50%;
-  z-index: 2;           /* encima de la foto                            */
-  pointer-events: none; /* los clics pasan a la imagen/wrapper          */
-
+  z-index: 2;
+  pointer-events: none;
   background: conic-gradient(
     from 0deg,
     rgba(255, 255, 255, 0.08)  0%,
-    rgba(255, 255, 255, 0.08)  60%,   /* base casi invisible             */
-    rgba(210, 250, 170, 0.30)  70%,   /* entrada suave del arco          */
-    rgba(255, 255, 255, 0.96)  79%,   /* punto máximo de luz             */
-    rgba(210, 250, 170, 0.30)  88%,   /* salida suave del arco           */
+    rgba(255, 255, 255, 0.08)  60%,
+    rgba(210, 250, 170, 0.30)  70%,
+    rgba(255, 255, 255, 0.96)  79%,
+    rgba(210, 250, 170, 0.30)  88%,
     rgba(255, 255, 255, 0.08)  96%,
     rgba(255, 255, 255, 0.08) 100%
   );
-
-  /* Vacía el interior → deja sólo ~8 px de anillo */
   -webkit-mask: radial-gradient(circle at center, transparent 85%, black 87%);
   mask:         radial-gradient(circle at center, transparent 85%, black 87%);
-
+  will-change: transform;
   animation: girarAnillo 6s linear infinite;
 }
 
@@ -155,9 +142,6 @@
   letter-spacing: -1px;
 }
 
-
-
-/*Botón cámara — liquid glass */
 .avatar-cambiar {
   width: 42px;
   height: 42px;
@@ -171,7 +155,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-color 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              color 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow:
     0 2px 10px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.65),
@@ -203,7 +191,6 @@
   flex-shrink: 0;
 }
 
-/*Botón quitar foto*/
 .btn-quitar-avatar {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -212,7 +199,7 @@
   font-size: 0.75rem;
   padding: 0.28rem 0.8rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: border-color 0.2s ease, color 0.2s ease;
   margin-top: -0.25rem;
   display: flex;
   align-items: center;
@@ -230,7 +217,6 @@
   flex-shrink: 0;
 }
 
-/* Nombre y email */
 .perfil-nombre {
   font-size: 1.4rem;
   font-weight: 700;
@@ -255,7 +241,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Stats */
 .perfil-stats {
   width: 100%;
   display: flex;
@@ -293,7 +278,6 @@
   font-weight: 500;
 }
 
-/* Botón cerrar sesión */
 .btn-cerrar-sesion {
   width: 100%;
   margin-top: 0.5rem;
@@ -304,7 +288,7 @@
   color: rgba(255, 255, 255, 0.90);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,7 +301,6 @@
   color: var(--naranja);
 }
 
-/* Decoración vegetal */
 .sidebar-deco {
   position: absolute;
   bottom: -20px;
@@ -380,7 +363,6 @@
   margin-left: calc(6px + 0.75rem);
 }
 
-/* Botones editar/guardar */
 .btn-editar {
   display: flex;
   align-items: center;
@@ -393,7 +375,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
 }
 
@@ -414,7 +396,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .btn-cancelar:hover {
@@ -434,7 +416,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
 }
 
@@ -451,13 +433,13 @@
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
+  will-change: transform;
   animation: girar 0.6s linear infinite;
   display: inline-block;
 }
 
 @keyframes girar { to { transform: rotate(360deg); } }
 
-/* Mensajes feedback */
 .perfil-mensaje {
   padding: 0.9rem 1.25rem;
   border-radius: 12px;
@@ -481,7 +463,6 @@
   color: #ff8a8a;
 }
 
-/* Secciones */
 .perfil-seccion {
   background: rgba(255, 255, 255, 0.10);
   border: 1.5px solid rgba(255, 255, 255, 0.30);
@@ -522,7 +503,6 @@
   letter-spacing: 0.3px;
 }
 
-/* Campos */
 .campos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -550,7 +530,7 @@
   border-radius: 12px;
   color: white;
   font-size: 0.95rem;
-  transition: var(--transicion);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   outline: none;
   width: 100%;
   box-sizing: border-box;
@@ -615,7 +595,6 @@
 .req-ok    { color: rgba(107, 158, 74, 0.95); }
 .req-falta { color: rgba(255, 138, 138, 0.8); }
 
-/* inputWrapper para el ojo */
 .perfil-seccion .inputWrapper {
   position: relative;
   display: flex;
@@ -641,7 +620,6 @@
 
 .perfil-seccion .eyeButton:hover { color: rgba(255, 255, 255, 0.8); }
 
-/* Sección Google */
 .perfil-seccion--google {
   background: rgba(66, 133, 244, 0.06);
   border-color: rgba(66, 133, 244, 0.2);
@@ -680,7 +658,6 @@
   flex-shrink: 0;
 }
 
-/* Decoración inferior */
 .perfil-deco-bottom {
   display: flex;
   align-items: center;
@@ -715,7 +692,7 @@
   .sidebar-deco     { display: none; }
 }
 
-/*Móvil ≤ 640px: columna única*/
+/*Móvil ≤ 640px*/
 @media (max-width: 640px) {
   .perfil-pagina {
     padding: 1.25rem 0.875rem;
@@ -723,13 +700,11 @@
     min-height: calc(100vh - 64px);
   }
 
-  /* Contenedor*/
   .perfil-contenedor {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
-  /* Sidebar*/
   .perfil-identidad {
     flex-direction: column;
     text-align: center;
@@ -738,26 +713,21 @@
     gap: 0.75rem;
   }
 
-  /* Stats*/
   .perfil-stats {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     padding-top: 0.75rem;
     width: 100%;
   }
 
-  /* Botón cerrar sesión*/
   .btn-cerrar-sesion { width: 100%; }
 
-  /* Contenido principal*/
   .perfil-contenido {
     padding: 1.25rem 1rem;
     gap: 1.25rem;
   }
 
-  /* Secciones*/
   .perfil-seccion { padding: 1.25rem 1rem; }
 
-  /* Header del perfil*/
   .perfil-header {
     flex-direction: column;
     align-items: flex-start;
@@ -767,7 +737,6 @@
   .perfil-titulo { font-size: 1.4rem; }
   .perfil-subtitulo { margin-left: 0; margin-top: 0.25rem; }
 
-  /* Botones editar/guardar/cancelar*/
   .btn-editar,
   .btn-group {
     width: 100%;
@@ -779,21 +748,17 @@
     justify-content: center;
   }
 
-  /* Campos: una columna */
   .campos-grid { grid-template-columns: 1fr; }
 
-  /* Campo valor*/
   .campo-valor {
     word-break: break-all;
     white-space: normal;
     font-size: 0.88rem;
   }
 
-  /* Google vinculo*/
   .google-vinculo { flex-wrap: wrap; gap: 0.75rem; }
   .google-desc    { font-size: 0.78rem; }
 
-  /* Partículas*/
   .particula-1 { width: 50px;  height: 50px; }
   .particula-3 { width: 70px;  height: 70px; }
   .particula-6 { width: 55px;  height: 55px; }
@@ -821,9 +786,12 @@
   cursor: pointer;
 }
 
+.avatar-wrapper--clickable .avatar-img {
+  transition: filter 0.2s ease;
+}
+
 .avatar-wrapper--clickable:hover .avatar-img {
   filter: brightness(0.88);
-  transition: filter 0.2s ease;
 }
 
 /*MODAL VER FOTO*/
@@ -935,7 +903,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .btn-eliminar-cuenta:hover {
@@ -1045,7 +1013,7 @@
   color: rgba(255, 255, 255, 0.7);
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .modal-eliminar__btn-cancelar:hover {
@@ -1062,7 +1030,7 @@
   color: #f87171;
   font-weight: 700;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .modal-eliminar__btn-confirmar:hover:not(:disabled) {
@@ -1131,7 +1099,7 @@
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-  transition: var(--transicion);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 14px rgba(79, 119, 45, 0.3);
 }
 
@@ -1155,7 +1123,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transicion);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 3px 12px rgba(0,0,0,0.25);
   z-index: 3;
   padding: 0;
@@ -1172,7 +1140,7 @@
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  transition: var(--transicion);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .spinner-small {
@@ -1181,18 +1149,17 @@
   border: 2px solid rgba(255,255,255,0.3);
   border-top-color: white;
   border-radius: 50%;
+  will-change: transform;
   animation: girar 0.6s linear infinite;
   display: inline-block;
 }
-/*ESTADO OK en campo editable*/
 
 .campo-input--ok {
   border-color: #22c55e !important;
   outline-color: #22c55e !important;
 }
 
-/*CAMPO FECHA DE NACIMIENTO — layout limpio*/
-
+/*CAMPO FECHA DE NACIMIENTO*/
 .campo-valor--fecha {
   flex-direction: column;
   align-items: flex-start;
@@ -1221,8 +1188,6 @@
   flex-shrink: 0;
 }
 
-/*BADGE de edad junto a fecha de nacimiento*/
-
 .campo-edad-badge {
   display: inline-flex;
   align-items: center;
@@ -1237,8 +1202,7 @@
   flex-shrink: 0;
 }
 
-/*FIELD HINTS — iguales que Register*/
-
+/*FIELD HINTS*/
 .field-hints {
   list-style: none;
   margin: 4px 0 2px 2px;
@@ -1259,8 +1223,7 @@
 .hint-pending { color: #c5cad4; }
 .hint-ok      { color: #22c55e; font-weight: 500; }
 
-/*AVISO INLINE — replicado desde Register*/
-
+/*AVISO INLINE*/
 .aviso-inline {
   display: flex;
   align-items: flex-start;
@@ -1287,3 +1250,13 @@
 }
 .aviso-inline--rojo svg    { color: #f87171; }
 .aviso-inline--rojo strong { color: #f87171; }
+
+@media (prefers-reduced-motion: reduce) {
+  .particula,
+  .avatar-anillo,
+  .spinner,
+  .spinner-small {
+    animation: none;
+    will-change: auto;
+  }
+}

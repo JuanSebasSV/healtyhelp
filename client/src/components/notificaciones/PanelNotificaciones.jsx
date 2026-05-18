@@ -1,84 +1,80 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import "./PanelNotificaciones.css";
+import { useEffect, useRef, useCallback, memo } from 'react';
+import './PanelNotificaciones.css';
 
-const IcoReply = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 10 4 15 9 20" />
-    <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+const IcoReply = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
   </svg>
-);
+));
+IcoReply.displayName = 'IcoReply';
 
-const IcoMessage = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+const IcoMessage = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
-);
+));
+IcoMessage.displayName = 'IcoMessage';
 
-const IcoCheck = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12" />
+const IcoCheck = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
   </svg>
-);
+));
+IcoCheck.displayName = 'IcoCheck';
 
-const IcoBell = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+const IcoBell = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </svg>
-);
+));
+IcoBell.displayName = 'IcoBell';
 
-const IcoReceta = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z" />
-    <path d="M7 21h10" />
-    <path d="M12 11v10" />
+const IcoReceta = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"/>
+    <path d="M7 21h10"/><path d="M12 11v10"/>
   </svg>
-);
+));
+IcoReceta.displayName = 'IcoReceta';
 
-const IcoEmpty = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
-    style={{ opacity: 0.3 }}>
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    <line x1="1" y1="1" x2="23" y2="23" />
+const IcoEmpty = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
   </svg>
-);
+));
+IcoEmpty.displayName = 'IcoEmpty';
 
-const IcoClose = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
+const IcoClose = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
-);
-
-const decodificar = (str) => {
-  if (!str) return "";
-  return str
-    .replace(/&amp;/g,  "&")
-    .replace(/&lt;/g,   "<")
-    .replace(/&gt;/g,   ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&apos;/g, "'");
-};
+));
+IcoClose.displayName = 'IcoClose';
 
 const formatRelativa = (date) => {
   const diff = Date.now() - new Date(date).getTime();
   const min  = Math.floor(diff / 60000);
   const hrs  = Math.floor(min / 60);
   const days = Math.floor(hrs / 24);
-  if (min < 1)  return "Ahora mismo";
+  if (min < 1)  return 'Ahora mismo';
   if (min < 60) return `Hace ${min} min`;
   if (hrs < 24) return `Hace ${hrs} h`;
-  if (days < 7) return `Hace ${days} día${days !== 1 ? "s" : ""}`;
-  return new Date(date).toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+  if (days < 7) return `Hace ${days} día${days !== 1 ? 's' : ''}`;
+  return new Date(date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+};
+
+const decodeCache = new Map();
+const decodificar = (str) => {
+  if (!str) return '';
+  if (decodeCache.has(str)) return decodeCache.get(str);
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  const result = txt.value;
+  decodeCache.set(str, result);
+  return result;
 };
 
 const PanelNotificaciones = ({
@@ -92,47 +88,54 @@ const PanelNotificaciones = ({
   onNavegar,
   esMobil = false,
 }) => {
-  const panelRef = useRef(null);
+  const panelRef    = useRef(null);
+  const onCerrarRef = useRef(onCerrar);
+  const onLeerUnaRef = useRef(onLeerUna);
+  const notificacionesRef = useRef(notificaciones);
+
+  useEffect(() => { onCerrarRef.current   = onCerrar;       }, [onCerrar]);
+  useEffect(() => { onLeerUnaRef.current  = onLeerUna;      }, [onLeerUna]);
+  useEffect(() => { notificacionesRef.current = notificaciones; }, [notificaciones]);
 
   useEffect(() => {
-    const handleClick = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) onCerrar();
+    const handler = (e) => {
+      if (e.type === 'keydown') {
+        if (e.key === 'Escape') onCerrarRef.current();
+        return;
+      }
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        onCerrarRef.current();
+      }
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [onCerrar]);
-
-  useEffect(() => {
-    const handleKey = (e) => { if (e.key === "Escape") onCerrar(); };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [onCerrar]);
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('keydown',   handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('keydown',   handler);
+    };
+  }, []);
 
   useEffect(() => {
     if (cargando) return;
-    const noLeidasVisibles = notificaciones.filter(n => !n.leida);
+    const noLeidasVisibles = notificacionesRef.current.filter(n => !n.leida);
     if (noLeidasVisibles.length === 0) return;
     const t = setTimeout(() => {
-      noLeidasVisibles.forEach(n => onLeerUna(n._id));
+      noLeidasVisibles.forEach(n => onLeerUnaRef.current(n._id));
     }, 1200);
     return () => clearTimeout(t);
   }, [cargando]);
 
   const handleClickItem = useCallback((n) => {
-    if (!n.leida) onLeerUna(n._id);
-    if ((n.type === "reply" || n.type === "new_recipe") && n.recetaId) {
-      onCerrar();
+    if (!n.leida) onLeerUnaRef.current(n._id);
+    if ((n.type === 'reply' || n.type === 'new_recipe') && n.recetaId) {
+      onCerrarRef.current();
       const params = new URLSearchParams({ receta: n.recetaId });
-      if (n.resenaId)    params.set("resena",    n.resenaId);
-      if (n.respuestaId) params.set("respuesta", n.respuestaId);
+      if (n.resenaId)    params.set('resena',    n.resenaId);
+      if (n.respuestaId) params.set('respuesta', n.respuestaId);
       const url = `/?${params.toString()}`;
-      if (onNavegar) {
-        onNavegar(url);
-      } else {
-        window.location.href = url;
-      }
+      if (onNavegar) { onNavegar(url); } else { window.location.href = url; }
     }
-  }, [onLeerUna, onCerrar, onNavegar]);
+  }, [onNavegar]);
 
   return (
     <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
@@ -151,10 +154,8 @@ const PanelNotificaciones = ({
           )}
           {esMobil && (
             <button className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
           )}
@@ -174,19 +175,17 @@ const PanelNotificaciones = ({
             <span>Aquí aparecerán las respuestas a tus comentarios y mensajes del equipo</span>
           </div>
         ) : (
-          notificaciones.map((n) => (
+          notificaciones.map(n => (
             <div
               key={n._id}
-              className={`pn-item ${!n.leida ? "no-leida" : "leida"} pn-tipo-${n.type} ${
-                (n.type === "reply" || n.type === "new_recipe") && n.recetaId ? "pn-clickable" : ""
-              }`}
+              className={`pn-item ${!n.leida ? 'no-leida' : 'leida'} pn-tipo-${n.type} ${(n.type === 'reply' || n.type === 'new_recipe') && n.recetaId ? 'pn-clickable' : ''}`}
               onClick={() => handleClickItem(n)}
             >
               {!n.leida && <span className="pn-dot" aria-hidden="true" />}
 
               <button
                 className="pn-btn-eliminar"
-                onClick={(e) => { e.stopPropagation(); onEliminar(n._id); }}
+                onClick={e => { e.stopPropagation(); onEliminar(n._id); }}
                 aria-label="Eliminar notificación"
                 title="Eliminar"
               >
@@ -194,45 +193,44 @@ const PanelNotificaciones = ({
               </button>
 
               <div className={`pn-icono pn-icono--${n.type}`}>
-                {n.type === "reply"      ? <IcoReply />  :
-                 n.type === "new_recipe" ? <IcoReceta /> :
+                {n.type === 'reply'      ? <IcoReply />   :
+                 n.type === 'new_recipe' ? <IcoReceta />  :
                                           <IcoMessage />}
               </div>
 
-              <div className="pn-contenido" style={{ paddingRight: "1.2rem" }}>
-                {n.type === "reply" ? (
+              <div className="pn-contenido" style={{ paddingRight: '1.2rem' }}>
+                {n.type === 'reply' ? (
                   <>
                     <p className="pn-texto">
-                      <strong>{n.fromUserName}</strong> respondió{" "}
+                      <strong>{n.fromUserName}</strong> respondió{' '}
                       {n.parentUserName && n.parentUserName !== n.toUserName
                         ? <>a <em>@{n.parentUserName}</em> en</>
                         : <>a tu comentario en</>
-                      }{" "}
-                      <em>{n.recetaNombre || "una receta"}</em>
+                      }{' '}
+                      <em>{n.recetaNombre || 'una receta'}</em>
                     </p>
                     {n.respuestaTexto && (
                       <p className="pn-preview">"{decodificar(n.respuestaTexto)}"</p>
                     )}
                   </>
-                ) : n.type === "new_recipe" ? (
+                ) : n.type === 'new_recipe' ? (
                   <>
                     <p className="pn-texto"><strong>Nueva receta disponible</strong></p>
                     <p className="pn-preview">
                       <em>{n.recetaNombre}</em>
                       {n.recetaCat && ` · ${n.recetaCat}`}
-                      {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(", ")}`}
+                      {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(', ')}`}
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="pn-texto">
-                      Mensaje de <strong>{n.adminName || "Administrador"}</strong>
+                      Mensaje de <strong>{n.adminName || 'Administrador'}</strong>
                       {n.asunto && <> — <em>{n.asunto}</em></>}
                     </p>
                     {n.mensaje && (
                       <p className="pn-preview">
-                        {decodificar(n.mensaje).slice(0, 120)}
-                        {n.mensaje.length > 120 ? "…" : ""}
+                        {decodificar(n.mensaje).slice(0, 120)}{n.mensaje.length > 120 ? '…' : ''}
                       </p>
                     )}
                   </>

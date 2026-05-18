@@ -37,7 +37,7 @@
 .sr-estrella {
   font-size: 1.5rem;
   line-height: 1;
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease;
   user-select: none;
 }
 .sr-estrella.llena { color: var(--ambar); }
@@ -272,6 +272,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
+/* backdrop-filter eliminado; fondo ligeramente opaco logra el mismo efecto visual */
 .sr-imagen-pendiente {
   display: flex;
   flex-direction: column;
@@ -282,8 +283,7 @@
   min-height: 108px;
   border: 2px dashed rgba(247, 127, 0, 0.4);
   border-radius: 12px;
-  background: rgba(247, 127, 0, 0.07);
-  backdrop-filter: blur(8px);
+  background: rgba(247, 127, 0, 0.1);
   padding: 20px 16px;
   margin: 8px 0;
   text-align: center;
@@ -333,6 +333,7 @@
 
 .sr-edit-pendiente { width: 280px; max-width: 100%; }
 
+/* backdrop-filter eliminado (fondo era 90% opaco, blur era invisible); box-shadow removido de transition */
 .sr-edit-quitar-btn {
   position: absolute;
   top: -9px;
@@ -348,9 +349,8 @@
   align-items: center;
   justify-content: center;
   z-index: 3;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
 }
 .sr-edit-quitar-btn:hover {
   background: rgba(220, 38, 38, 0.85);
@@ -574,7 +574,6 @@
 
 .sr-resp-lista { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.35rem; }
 
-/*Hilo visual de conversación  */
 .sr-resp-item {
   position: relative;
   display: flex;
@@ -583,12 +582,10 @@
   padding: 0.65rem 0;
 }
 
-/* Indentación por profundidad */
 .sr-resp-item--depth-1 { margin-left: 2.2rem; }
 .sr-resp-item--depth-2 { margin-left: 3.8rem; }
 .sr-resp-item--depth-3 { margin-left: 5rem; }
 
-/* Línea vertical de hilo (solo depth > 0) */
 .sr-resp-hilo {
   position: absolute;
   left: -1.15rem;
@@ -599,17 +596,26 @@
   border-radius: 2px;
 }
 
-/* Destacada desde notificación */
+/* Highlight: ::before pinta fondo+sombra estáticos; solo opacity se anima (composited) */
 .sr-resp-item--destacada {
   background: rgba(79, 119, 45, 0.08);
   border-radius: 8px;
   padding-left: 0.5rem;
-  animation: sr-resp-pulse-highlight 1.8s ease-out;
+}
+.sr-resp-item--destacada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(79, 119, 45, 0.14);
+  pointer-events: none;
+  will-change: opacity;
+  animation: sr-resp-pulse-highlight 1.8s ease-out both;
 }
 
 @keyframes sr-resp-pulse-highlight {
-  0%   { background: rgba(79, 119, 45, 0.22); }
-  100% { background: rgba(79, 119, 45, 0.08); }
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .sr-resp-avatar {
@@ -755,7 +761,6 @@
 .sr-paginacion button:disabled { opacity: 0.25; cursor: not-allowed; }
 .sr-paginacion span { font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 600; }
 
-/*Chip de mención (cita al responder)  */
 .sr-mencion-chip {
   display: inline-flex;
   align-items: baseline;
@@ -786,7 +791,6 @@
   font-style: italic;
 }
 
-/*Botón responder inline (dentro de cada respuesta)  */
 .sr-btn-responder--inline {
   display: inline-flex;
   align-items: center;
@@ -802,18 +806,14 @@
   transition: color 0.15s ease;
   font-family: inherit;
 }
-.sr-btn-responder--inline:hover {
-  color: rgba(167, 213, 136, 0.9);
-}
+.sr-btn-responder--inline:hover { color: rgba(167, 213, 136, 0.9); }
 
-/*Formulario de respuesta inline  */
 .sr-resp-form--inline {
   margin-top: 0.5rem;
   margin-left: 0;
   padding-left: 0;
 }
 
-/*Indicador "respondiendo a" sobre el textarea  */
 .sr-resp-citando {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.38);
@@ -831,7 +831,6 @@
   font-weight: 600;
 }
 
-/*Contador de caracteres  */
 .sr-resp-contador {
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.25);
@@ -855,8 +854,7 @@
 }
 
 @keyframes sr-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
 .sr-spin {
@@ -865,14 +863,25 @@
   flex-shrink: 0;
 }
 
-@keyframes sr-destacar {
-  0%   { box-shadow: 0 0 0 0   rgba(107, 158, 74, 0);    background: rgba(79, 119, 45, 0);   }
-  30%  { box-shadow: 0 0 0 4px rgba(107, 158, 74, 0.5);  background: rgba(79, 119, 45, 0.18); }
-  100% { box-shadow: 0 0 0 0   rgba(107, 158, 74, 0);    background: rgba(79, 119, 45, 0);   }
-}
-
+/* Highlight: ::before pinta fondo+sombra estáticos; solo opacity se anima (composited) */
 .sr-item--destacada {
-  animation: sr-destacar 2s ease 0.5s both;
   border-radius: 12px;
   scroll-margin-top: 80px;
+}
+.sr-item--destacada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: rgba(79, 119, 45, 0.18);
+  box-shadow: 0 0 0 4px rgba(107, 158, 74, 0.5);
+  pointer-events: none;
+  will-change: opacity;
+  animation: sr-destacar 2s ease 0.5s both;
+}
+
+@keyframes sr-destacar {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  100% { opacity: 0; }
 }

@@ -147,6 +147,9 @@ const VistaInicio = ({
     setSeleccionadas(p => p.includes(id) ? p.filter(s => s !== id) : [...p, id])
   , []);
 
+  const handleAbrirFiltro  = useCallback(() => setFiltroAbierto(true),  []);
+  const handleCerrarFiltro = useCallback(() => setFiltroAbierto(false), []);
+
   const handlePDF = async () => {
     if (!seleccionadas.length) return;
     setGenerandoPDF(true);
@@ -227,8 +230,8 @@ const VistaInicio = ({
         onLimpiarTodo={handleLimpiarTodo}
         listo={listo}
         filtroAbierto={filtroAbierto}
-        onAbrirFiltro={() => setFiltroAbierto(true)}
-        onCerrarFiltro={() => setFiltroAbierto(false)}
+        onAbrirFiltro={handleAbrirFiltro}
+        onCerrarFiltro={handleCerrarFiltro}
       />
 
       <section className="recetasGrid">

@@ -1,19 +1,17 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './ModalCompletarPerfil.css';
 
-/*AVISOS*/
 const AVISOS = {
-  fechaNac_menor:    { titulo: 'Acceso restringido.',       mensaje: 'Debes tener al menos 18 años.',                                        variante: 'naranja' },
-  fechaNac_invalida: { titulo: 'Fecha inválida.',           mensaje: 'Ingresa una fecha de nacimiento válida.',                              variante: 'rojo'    },
-  fechaNac_futura:   { titulo: 'Fecha inválida.',           mensaje: 'La fecha de nacimiento no puede ser en el futuro.',                    variante: 'rojo'    },
-  weight_bajo:       { titulo: 'Peso mínimo 40 kg.',        mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones.', variante: 'naranja' },
-  weight_alto:       { titulo: 'Peso fuera de rango.',      mensaje: 'El valor máximo aceptado es 300 kg.',                                 variante: 'rojo'    },
-  height_baja:       { titulo: 'Altura mínima 50 cm.',      mensaje: 'Ingresa una altura válida entre 50 y 210 cm.',                        variante: 'naranja' },
-  height_alta:       { titulo: 'Altura fuera de rango.',    mensaje: 'El valor máximo aceptado es 210 cm.',                                 variante: 'rojo'    },
+  fechaNac_menor:    { titulo: 'Acceso restringido.',    mensaje: 'Debes tener al menos 18 años.',                                        variante: 'naranja' },
+  fechaNac_invalida: { titulo: 'Fecha inválida.',        mensaje: 'Ingresa una fecha de nacimiento válida.',                              variante: 'rojo'    },
+  fechaNac_futura:   { titulo: 'Fecha inválida.',        mensaje: 'La fecha de nacimiento no puede ser en el futuro.',                    variante: 'rojo'    },
+  weight_bajo:       { titulo: 'Peso mínimo 40 kg.',     mensaje: 'Healthy Help requiere al menos 40 kg para calcular recomendaciones.', variante: 'naranja' },
+  weight_alto:       { titulo: 'Peso fuera de rango.',   mensaje: 'El valor máximo aceptado es 300 kg.',                                 variante: 'rojo'    },
+  height_baja:       { titulo: 'Altura mínima 50 cm.',   mensaje: 'Ingresa una altura válida entre 50 y 210 cm.',                        variante: 'naranja' },
+  height_alta:       { titulo: 'Altura fuera de rango.', mensaje: 'El valor máximo aceptado es 210 cm.',                                 variante: 'rojo'    },
 };
-
 
 const calcEdadDesde = (fechaStr) => {
   if (!fechaStr) return null;
@@ -26,7 +24,6 @@ const calcEdadDesde = (fechaStr) => {
   return edad;
 };
 
-/*Calcula qué aviso mostrar por campo*/
 const calcularAviso = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
@@ -40,26 +37,21 @@ const calcularAviso = (field, value) => {
       if (edad < 18) return 'fechaNac_menor';
       return null;
     }
-    case 'weight': {
-      if (!value) return null;
-      if (isNaN(n) || n <= 0) return null;
+    case 'weight':
+      if (!value || isNaN(n) || n <= 0) return null;
       if (n < 40)  return 'weight_bajo';
       if (n > 300) return 'weight_alto';
       return null;
-    }
-    case 'height': {
-      if (!value) return null;
-      if (isNaN(n) || n <= 0) return null;
+    case 'height':
+      if (!value || isNaN(n) || n <= 0) return null;
       if (n < 50)  return 'height_baja';
       if (n > 210) return 'height_alta';
       return null;
-    }
     default:
       return null;
   }
 };
 
-/*Validación de error por campo*/
 const validarCampo = (field, value) => {
   const n = parseFloat(value);
   switch (field) {
@@ -72,49 +64,68 @@ const validarCampo = (field, value) => {
       if (edad < 18) return 'Debes ser mayor de 18 años';
       return '';
     }
-    case 'weight': {
+    case 'weight':
       if (!value) return 'El peso es requerido';
       if (isNaN(n) || n < 40 || n > 300) return 'Peso válido entre 40 y 300 kg';
       return '';
-    }
-    case 'height': {
+    case 'height':
       if (!value) return 'La altura es requerida';
       if (isNaN(n) || n < 50 || n > 210) return 'Altura válida entre 50 y 210 cm';
       return '';
-    }
     default:
       return '';
   }
 };
 
-/*FIELD HINT*/
-const FieldHint = ({ field, value, touched }) => {
-  if (!touched) return null;
+const InfoIcon = memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    style={{ flexShrink: 0, marginTop: '1px' }}>
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+));
+InfoIcon.displayName = 'InfoIcon';
 
-  const hints = {
-    fechaNac: (() => {
-      if (!value) return [{ ok: false, label: 'Mayor de 18 años' }];
-      const fecha = new Date(value);
-      if (isNaN(fecha.getTime()) || fecha > new Date()) return [{ ok: false, label: 'Fecha válida' }];
-      const edad = calcEdadDesde(value);
-      return [
-        { ok: edad !== null && edad >= 18 && edad <= 120,
-          label: edad !== null && edad >= 18 ? `Tienes ${edad} años — Mayor de edad` : 'Debes ser mayor de 18 años' },
-      ];
-    })(),
-    weight: value ? [
-      { ok: parseFloat(value) >= 40,  label: 'Mínimo 40 kg' },
-      { ok: parseFloat(value) <= 300, label: 'Máximo 300 kg' },
-    ] : [],
-    height: value ? [
-      { ok: parseFloat(value) >= 50,  label: 'Mínimo 50 cm' },
-      { ok: parseFloat(value) <= 210, label: 'Máximo 210 cm' },
-    ] : [],
-  };
+const AvisoInline = memo(({ titulo, mensaje, variante = 'naranja' }) => (
+  <div className={`completar-aviso completar-aviso--${variante}`}>
+    <InfoIcon />
+    <span><strong>{titulo}</strong> {mensaje}</span>
+  </div>
+));
+AvisoInline.displayName = 'AvisoInline';
 
-  const items = hints[field] || [];
-  if (items.length === 0) return null;
-  if (items.every(i => i.ok)) return null;
+const FieldHint = memo(({ field, value, touched }) => {
+  const items = useMemo(() => {
+    if (!touched) return null;
+    switch (field) {
+      case 'fechaNac': {
+        if (!value) return [{ ok: false, label: 'Mayor de 18 años' }];
+        const fecha = new Date(value);
+        if (isNaN(fecha.getTime()) || fecha > new Date()) return [{ ok: false, label: 'Fecha válida' }];
+        const edad = calcEdadDesde(value);
+        return [{
+          ok:    edad !== null && edad >= 18 && edad <= 120,
+          label: edad !== null && edad >= 18 ? `Tienes ${edad} años — Mayor de edad` : 'Debes ser mayor de 18 años',
+        }];
+      }
+      case 'weight':
+        return value ? [
+          { ok: parseFloat(value) >= 40,  label: 'Mínimo 40 kg'  },
+          { ok: parseFloat(value) <= 300, label: 'Máximo 300 kg' },
+        ] : [];
+      case 'height':
+        return value ? [
+          { ok: parseFloat(value) >= 50,  label: 'Mínimo 50 cm'  },
+          { ok: parseFloat(value) <= 210, label: 'Máximo 210 cm' },
+        ] : [];
+      default:
+        return [];
+    }
+  }, [field, value, touched]);
+
+  if (!items || items.length === 0 || items.every(i => i.ok)) return null;
 
   return (
     <ul className="field-hints">
@@ -131,39 +142,24 @@ const FieldHint = ({ field, value, touched }) => {
       ))}
     </ul>
   );
-};
+});
+FieldHint.displayName = 'FieldHint';
 
-/*AVISO INLINE*/
-const InfoIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-    style={{ flexShrink: 0, marginTop: '1px' }}>
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="12" y1="8" x2="12" y2="12"/>
-    <line x1="12" y1="16" x2="12.01" y2="16"/>
-  </svg>
-);
-
-const AvisoInline = ({ titulo, mensaje, variante = 'naranja' }) => (
-  <div className={`completar-aviso completar-aviso--${variante}`}>
-    <InfoIcon />
-    <span><strong>{titulo}</strong> {mensaje}</span>
-  </div>
-);
-
-/*NUMERO INPUT — igual que Register*/
-const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, step }) => {
+const NumeroInput = memo(({ name, value, onChange, onBlur, placeholder, min, max, step }) => {
   const s = parseFloat(step) || 1;
-  const increment = () => {
+
+  const increment = useCallback(() => {
     const v = parseFloat(value) || (min ?? 0);
     if (max !== undefined && v >= max) return;
     onChange({ target: { name, value: String(parseFloat((v + s).toFixed(4))) } });
-  };
-  const decrement = () => {
+  }, [value, min, max, s, name, onChange]);
+
+  const decrement = useCallback(() => {
     const v = parseFloat(value) || (min ?? 0);
     if (min !== undefined && v <= min) return;
     onChange({ target: { name, value: String(parseFloat((v - s).toFixed(4))) } });
-  };
+  }, [value, min, s, name, onChange]);
+
   return (
     <div className="numero-wrapper">
       <input
@@ -188,38 +184,45 @@ const NumeroInput = ({ name, value, onChange, onBlur, placeholder, min, max, ste
       </div>
     </div>
   );
-};
+});
+NumeroInput.displayName = 'NumeroInput';
 
-/*COMPONENTE PRINCIPAL*/
+const MIN_DATE = new Date(new Date().setFullYear(new Date().getFullYear() - 120)).toISOString().split('T')[0];
+const MAX_DATE = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0];
+
 const ModalCompletarPerfil = ({ onCompletado, user }) => {
-  const [form, setForm]       = useState({ fechaNac: '', weight: '', height: '' });
-  const [errors, setErrors]   = useState({});
-  const [touched, setTouched] = useState({});
-  const [avisos, setAvisos]   = useState({});
+  const [form,     setForm]     = useState({ fechaNac: '', weight: '', height: '' });
+  const [errors,   setErrors]   = useState({});
+  const [touched,  setTouched]  = useState({});
+  const [avisos,   setAvisos]   = useState({});
   const [cargando, setCargando] = useState(false);
 
-  /*Cambio en tiempo real*/
-  const handleChange = (e) => {
+  const handleChange = useCallback(e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-
-    if (touched[name]) {
-      setErrors(prev => ({ ...prev, [name]: validarCampo(name, value) }));
-    }
+    setTouched(prev => {
+      if (!prev[name]) return prev;
+      setErrors(errs => ({ ...errs, [name]: validarCampo(name, value) }));
+      return prev;
+    });
     setAvisos(prev => ({ ...prev, [name]: calcularAviso(name, value) }));
-  };
+  }, []);
 
-  /*Blur*/
-  const handleBlur = (name) => {
+  const handleBlur = useCallback(name => {
     setTouched(prev => ({ ...prev, [name]: true }));
-    setErrors(prev => ({ ...prev, [name]: validarCampo(name, form[name]) }));
-    setAvisos(prev => ({ ...prev, [name]: calcularAviso(name, form[name]) }));
-  };
+    setForm(prev => {
+      setErrors(errs => ({ ...errs, [name]: validarCampo(name, prev[name]) }));
+      setAvisos(avs => ({ ...avs, [name]: calcularAviso(name, prev[name]) }));
+      return prev;
+    });
+  }, []);
 
-  /*Submit*/
-  const handleSubmit = async () => {
+  const handleBlurFecha   = useCallback(() => handleBlur('fechaNac'), [handleBlur]);
+  const handleBlurWeight  = useCallback(() => handleBlur('weight'),   [handleBlur]);
+  const handleBlurHeight  = useCallback(() => handleBlur('height'),   [handleBlur]);
+
+  const handleSubmit = useCallback(async () => {
     setTouched({ fechaNac: true, weight: true, height: true });
-
     const errs = {
       fechaNac: validarCampo('fechaNac', form.fechaNac),
       weight:   validarCampo('weight',   form.weight),
@@ -241,9 +244,8 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [form, onCompletado]);
 
-  /*Helper aviso*/
   const renderAviso = (field) => {
     const key = avisos[field];
     if (!key || !AVISOS[key]) return null;
@@ -255,23 +257,16 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     <div className="completar-overlay">
       <div className="completar-modal">
 
-        {/*Brand*/}
         <div className="completar-header">
           <div className="completar-brand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5
-                4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8
-                3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373
-                3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155
-                C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8 1.5 4 4 0 0 0 6.187-2.353 3.5 3.5 0 0 0 3.69-5.116A3.5 3.5 0 0 0 20.95 8 3.5 3.5 0 1 0 16 3.05a3.5 3.5 0 0 0-5.831 1.373 3.5 3.5 0 0 0-5.116 3.69 4 4 0 0 0-2.348 6.155C3.499 15.42 4.409 16.712 4.2 18.1 3.926 19.743 3.014 20.732 2 22"/>
             </svg>
             <span className="completar-brand-nombre">Healthy Help</span>
           </div>
 
           <div className="completar-icono">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
@@ -284,10 +279,8 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
           </p>
         </div>
 
-        {/*Campos*/}
         <div className="completar-body">
 
-          {/* Fecha de nacimiento */}
           <div className="completar-grupo">
             <label>Fecha de nacimiento *</label>
             <input
@@ -295,21 +288,20 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
               name="fechaNac"
               value={form.fechaNac}
               onChange={handleChange}
-              onBlur={() => handleBlur('fechaNac')}
-              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
-              min={new Date(new Date().setFullYear(new Date().getFullYear() - 120)).toISOString().split('T')[0]}
+              onBlur={handleBlurFecha}
+              max={MAX_DATE}
+              min={MIN_DATE}
             />
             <FieldHint field="fechaNac" value={form.fechaNac} touched={touched.fechaNac} />
             {renderAviso('fechaNac')}
             {touched.fechaNac && errors.fechaNac && <span className="completar-error">{errors.fechaNac}</span>}
           </div>
 
-          {/* Peso */}
           <div className="completar-grupo">
             <label>Peso (kg) *</label>
             <NumeroInput
               name="weight" value={form.weight}
-              onChange={handleChange} onBlur={() => handleBlur('weight')}
+              onChange={handleChange} onBlur={handleBlurWeight}
               placeholder="Ej: 70" min={40} max={300} step={0.5}
             />
             <FieldHint field="weight" value={form.weight} touched={touched.weight} />
@@ -317,12 +309,11 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
             {touched.weight && errors.weight && <span className="completar-error">{errors.weight}</span>}
           </div>
 
-          {/* Altura */}
           <div className="completar-grupo">
             <label>Altura (cm) *</label>
             <NumeroInput
               name="height" value={form.height}
-              onChange={handleChange} onBlur={() => handleBlur('height')}
+              onChange={handleChange} onBlur={handleBlurHeight}
               placeholder="Ej: 165" min={50} max={210} step={1}
             />
             <FieldHint field="height" value={form.height} touched={touched.height} />
@@ -331,9 +322,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
           </div>
 
           <p className="completar-nota">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth="2"
-              style={{ flexShrink: 0, marginTop: '1px' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: '1px' }}>
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
