@@ -1,3 +1,4 @@
+// motorRecomendaciones.js
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
 const LIMITES_CONDICION = {

@@ -1,3 +1,4 @@
+// adminController.js
 const User            = require('../models/User');
 const AdminLog        = require('../models/AdminLog');
 const AdminInvitation = require('../models/AdminInvitation');

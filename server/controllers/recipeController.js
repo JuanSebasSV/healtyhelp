@@ -1,3 +1,4 @@
+// recipeController.js
 const Recipe   = require('../models/Recipe');
 const AdminLog = require('../models/AdminLog');
 const { crearNotifRespuesta, crearNotifNuevaReceta } = require('./notificationController');
