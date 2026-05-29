@@ -118,7 +118,7 @@ function AppContent() {
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem("modoOscuro");
-    return saved ? JSON.parse(saved) : false;
+    return saved ? JSON.parse(saved) : true;
   });
   const [categoriaActiva, setCategoriaActiva] = useState("todas");
 

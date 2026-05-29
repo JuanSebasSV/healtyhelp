@@ -67,8 +67,16 @@ const VerificarEmail = () => {
       const { data } = await api.post('/auth/verify-email', { email, code });
       if (data.token) {
         localStorage.setItem('token', data.token);
-        toast.success('¡Cuenta verificada! Bienvenido.');
-        window.location.href = '/';
+        
+        // 1. Configuramos el mensaje para que dure 3 segundos visible
+        toast.success('¡Cuenta verificada! Bienvenido.', {
+          autoClose: 3000,
+        });
+
+        // 2. Esperamos esos mismos 3 segundos (3000 ms) antes de redirigir
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 10000);
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Código inválido o expirado');

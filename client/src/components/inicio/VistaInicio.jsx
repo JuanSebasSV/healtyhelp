@@ -5,7 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import TarjetaReceta from "../recipe/TarjetaReceta";
 import { generarPDFRecetas } from "../../utils/generarPDF";
 import useFiltroSalud from "../../hooks/useFiltroSalud";

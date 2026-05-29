@@ -626,7 +626,7 @@ const Register = () => {
 
     if (result.success || result.needsVerification) {
       localStorage.removeItem(STORAGE_KEY);
-      toast.success("¡Cuenta creada! Revisa tu correo para verificar.");
+      toast.success("¡Datos Validados! Revisa tu correo para verificar.");
       navigate("/verificar-email", { state: { email: datos.email } });
     } else {
       toast.error(result.error || "Error al crear la cuenta");
