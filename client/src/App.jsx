@@ -23,6 +23,7 @@ import PrivateRoute from "./components/layout/PrivateRoute";
 import api from "./api/axios";
 import useAuth from "./hooks/useAuth";
 
+
 const UserProfile = lazy(() => import("./components/profile/UserProfile"));
 const Login = lazy(() => import("./components/auth/Login"));
 const Register = lazy(() => import("./components/auth/Register"));
@@ -31,6 +32,7 @@ const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("./components/auth/ResetPassword"));
 const VerificarEmail = lazy(() => import("./components/auth/VerificarEmail"));
 const VistaInicio = lazy(() => import("./components/inicio/VistaInicio"));
+const DetalleReceta = lazy(() => import("./components/recipe/DetalleReceta")); // o la ruta real donde esté tu archivo
 const VistaSeguimiento = lazy(
   () => import("./components/vistas/VistaSeguimiento"),
 );
@@ -356,6 +358,7 @@ useEffect(() => {
         respuestaId,
         _key: recetaPendienteKey.current,
       });
+
     },
     [],
   );
@@ -456,6 +459,7 @@ useEffect(() => {
                     <VistaSeguimiento
                       recetas={recetas}
                       versionFiltros={versionFiltros}
+                      
                     />
                   </PrivateRoute>
                 }
@@ -528,7 +532,7 @@ useEffect(() => {
             </Routes>
           </Suspense>
         </main>
-
+              
         <Footer />
 
         {user && (

@@ -130,14 +130,14 @@ const PanelNotificaciones = ({
     if (!n.leida) onLeerUna(n._id);
     if ((n.type === "reply" || n.type === "new_recipe") && n.recetaId) {
       onCerrar();
-      const params = new URLSearchParams({ receta: n.recetaId });
-      if (n.resenaId)    params.set('resena',    n.resenaId);
-      if (n.respuestaId) params.set('respuesta', n.respuestaId);
-      const url = `/?${params.toString()}`;
       if (onNavegar) {
-        onNavegar(url);
+        // Pasar los IDs directamente en lugar de construir una URL
+        onNavegar(n.recetaId, n.resenaId || null, n.respuestaId || null);
       } else {
-        window.location.href = url;
+        const params = new URLSearchParams({ receta: n.recetaId });
+        if (n.resenaId)    params.set('resena',    n.resenaId);
+        if (n.respuestaId) params.set('respuesta', n.respuestaId);
+        window.location.href = `/?${params.toString()}`;
       }
     }
   }, [onLeerUna, onCerrar, onNavegar]);

@@ -400,7 +400,7 @@ const Navbar = ({
                   onLeerUna={handleLeerUna}
                   onEliminar={handleEliminarNotif}
                   onCerrar={handleCerrarPanel}
-                  onNavegar={handleNavNotif}
+                  onNavegar={onAbrirReceta}
                 />
               )}
             </div>
