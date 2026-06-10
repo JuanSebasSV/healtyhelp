@@ -80,7 +80,7 @@ const Footer = memo(() => {
       </div>
 
       <div className="footerCopy">
-        © 2025 Healthy Help. Todos los derechos reservados.
+        © 2026 Healthy Help. Todos los derechos reservados.
       </div>
     </footer>
   );
