@@ -53,13 +53,38 @@ const DetalleReceta = memo(
     };
 
     useEffect(() => {
+      // Solo bloquear en escritorio (pointer: fine = mouse/trackpad).
+      // En móvil/tablet táctil (pointer: coarse) no se toca el scroll
+      // para no romper el desplazamiento interno del modal en iOS/Android.
+      const esEscritorio = window.matchMedia('(pointer: fine)').matches;
+      if (!esEscritorio) return;
+
       const scrollY = window.scrollY;
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = 'hidden';
-      if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+      const html = document.documentElement;
+      const body = document.body;
+
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      // Fijar el body en su posición actual: bloquea el scroll incluso si
+      // el elemento <html> es el que realmente scrollea (caso típico en
+      // layouts donde body/html tienen min-height: 100% / 100vh).
+      body.style.position = 'fixed';
+      body.style.top = `-${scrollY}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+
       return () => {
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
+        html.style.overflow = '';
+        body.style.overflow = '';
+        body.style.position = '';
+        body.style.top = '';
+        body.style.left = '';
+        body.style.right = '';
+        body.style.width = '';
+        body.style.paddingRight = '';
         window.scrollTo(0, scrollY);
       };
     }, []);
