@@ -53,6 +53,7 @@ const VistaInicio = ({
     filtroTiempo,
     cambiarFiltroTiempo,
     limpiarTiempo,
+    alergia,  
   } = useFiltroSalud(usuario, authLoading);
 
   const [filtroAbierto, setFiltroAbierto] = useState(false);
@@ -243,9 +244,28 @@ const VistaInicio = ({
               : filtroTiempo === "mas30"
                 ? t > 30
                 : true;
-        return okCat && okSalud && okBusqueda && okTiempo;
+
+                const okAlergia = (() => {
+                  if (!alergia || !alergia.trim()) return true;
+                  const palabrasAlergia = alergia
+                    .split(',')
+                    .map(a => normalizarTexto(a.trim()))
+                    .filter(Boolean);
+                  if (palabrasAlergia.length === 0) return true;
+                  const textoReceta = normalizarTexto(
+                    [
+                      r.nombre || '',
+                      r.desc || '',
+                      ...(r.ingredientes || []),
+                    ].join(' ')
+                  );
+                  return !palabrasAlergia.some(a => textoReceta.includes(a));
+                })();
+
+                
+        return okCat && okSalud && okBusqueda && okTiempo && okAlergia;
       }),
-    [recetas, categoria, filtros, busqueda, filtroTiempo],
+    [recetas, categoria, filtros, busqueda, filtroTiempo, alergia],
   );
 
   return (
