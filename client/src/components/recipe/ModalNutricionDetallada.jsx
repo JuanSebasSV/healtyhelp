@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import './ModalNutricionDetallada.css';
 
 const FilaNutri = memo(({ nombre, valor, unidad }) => (
@@ -24,6 +24,48 @@ const IconoVolver = memo(() => (
 IconoVolver.displayName = 'IconoVolver';
 
 const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
+
+  useEffect(() => {
+    // Solo bloquear en escritorio (pointer: fine = mouse/trackpad).
+    // En móvil/tablet táctil (pointer: coarse) se omite por completo
+    // para no bloquear el scroll interno del modal en iOS/Android.
+    const esEscritorio = window.matchMedia('(pointer: fine)').matches;
+    if (!esEscritorio) return;
+
+    // Si DetalleReceta ya bloqueó el scroll (body en position: fixed),
+    // no lo volvemos a bloquear ni lo liberamos al desmontar: evita que
+    // al hacer "Volver" se desbloquee el fondo mientras DetalleReceta
+    // todavía está abierto.
+    const yaEstabaBloqueado = document.body.style.position === 'fixed';
+    if (yaEstabaBloqueado) return;
+
+    const scrollY = window.scrollY;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const html = document.documentElement;
+    const body = document.body;
+
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+
+    return () => {
+      html.style.overflow = '';
+      body.style.overflow = '';
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.width = '';
+      body.style.paddingRight = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   return (
     <div className="modal-overlay" onClick={cerrar}>
       <div className="modalNutriWrapper" onClick={e => e.stopPropagation()}>
