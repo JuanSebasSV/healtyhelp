@@ -223,7 +223,6 @@ const useFiltroSalud = (usuario) => {
     toggleCategoria: seleccionarCategoria,
     limpiarTodo,
     listo,
-    alergia: usuario?.alergia || '', 
   };
 };
 
