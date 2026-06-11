@@ -156,7 +156,15 @@ const Dashboard = ({ onBadgeChange }) => {
     setLimpiandoNotifs(true);
     try {
       const { data } = await api.delete('/notifications/limpiar-huerfanas');
-      toast.success(`Limpieza completada: ${data.borradas} notificación${data.borradas !== 1 ? 'es' : ''} eliminada${data.borradas !== 1 ? 's' : ''}`);
+      const borradas = Number(data?.borradas ?? 0);
+      if (borradas === 0) {
+        toast.info('No se encontraron notificaciones huérfanas');
+      } else {
+        const plural = borradas !== 1;
+        toast.success(
+          `Limpieza completada: ${borradas} notificación${plural ? 'es' : ''} eliminada${plural ? 's' : ''}`
+        );
+      }
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error limpiando notificaciones');
     } finally {
@@ -315,13 +323,25 @@ const Dashboard = ({ onBadgeChange }) => {
       {activeTab === 'recipes' && (
         <>
           <div className="admin-recipes-toolbar">
-            <button onClick={handleLimpiarNotifs} disabled={limpiandoNotifs} className="btn-limpiar-notifs">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-              </svg>
-              {limpiandoNotifs ? 'Limpiando...' : 'Limpiar notificaciones huérfanas'}
+            <button
+              onClick={handleLimpiarNotifs}
+              disabled={limpiandoNotifs}
+              className="btn-limpiar-notifs"
+              aria-busy={limpiandoNotifs}
+              title="Eliminar notificaciones de recetas que ya no existen en el sistema"
+            >
+              {limpiandoNotifs ? (
+                'Limpiando...'
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                  </svg>
+                  Limpiar notificaciones huérfanas
+                </>
+              )}
             </button>
           </div>
           <RecipeManagement />

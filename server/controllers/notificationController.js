@@ -1,7 +1,8 @@
 const Notification = require("../models/Notification");
-const User = require("../models/User");
+const User         = require("../models/User");
+const Recipe       = require("../models/Recipe");
 
-// GET /api/notifications
+// ─── GET /api/notifications ───────────────────────────────────────────────────
 // Devuelve las últimas 30 notificaciones del usuario autenticado
 exports.getMisNotificaciones = async (req, res) => {
   try {
@@ -14,12 +15,12 @@ exports.getMisNotificaciones = async (req, res) => {
 
     res.json({ success: true, notificaciones: notifs, noLeidas });
   } catch (error) {
-    console.error(error);
+    console.error("getMisNotificaciones error:", error);
     res.status(500).json({ error: "Error obteniendo notificaciones" });
   }
 };
 
-// PUT /api/notifications/leer-todas
+// ─── PUT /api/notifications/leer-todas ───────────────────────────────────────
 // Marca todas las notificaciones del usuario como leídas
 exports.leerTodas = async (req, res) => {
   try {
@@ -29,11 +30,12 @@ exports.leerTodas = async (req, res) => {
     );
     res.json({ success: true });
   } catch (error) {
+    console.error("leerTodas error:", error);
     res.status(500).json({ error: "Error marcando notificaciones" });
   }
 };
 
-// PUT /api/notifications/:id/leer
+// ─── PUT /api/notifications/:id/leer ─────────────────────────────────────────
 // Marca una notificación específica como leída
 exports.leerUna = async (req, res) => {
   try {
@@ -46,26 +48,27 @@ exports.leerUna = async (req, res) => {
       return res.status(404).json({ error: "Notificación no encontrada" });
     res.json({ success: true, notificacion: notif });
   } catch (error) {
+    console.error("leerUna error:", error);
     res.status(500).json({ error: "Error marcando notificación" });
   }
 };
 
-// GET /api/notifications/no-leidas
+// ─── GET /api/notifications/no-leidas ────────────────────────────────────────
 // Devuelve solo el conteo de no leídas (para el badge del navbar)
 exports.contarNoLeidas = async (req, res) => {
   try {
     const count = await Notification.countDocuments({
       userId: req.user._id,
-      leida: false,
+      leida:  false,
     });
     res.json({ success: true, noLeidas: count });
   } catch (error) {
+    console.error("contarNoLeidas error:", error);
     res.status(500).json({ error: "Error contando notificaciones" });
   }
 };
 
-// POST /api/notifications/mensaje
-// Solo admins 
+// ─── POST /api/notifications/mensaje (solo admins) ───────────────────────────
 exports.enviarMensaje = async (req, res) => {
   try {
     const { userId, asunto = "", mensaje } = req.body;
@@ -82,20 +85,81 @@ exports.enviarMensaje = async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
 
     await Notification.create({
-      userId: destino._id,
-      type: "message",
-      adminId: req.user._id,
+      userId:    destino._id,
+      type:      "message",
+      adminId:   req.user._id,
       adminName: req.user.name,
-      asunto: asunto.trim().slice(0, 120),
-      mensaje: mensaje.trim(),
+      asunto:    asunto.trim().slice(0, 120),
+      mensaje:   mensaje.trim(),
     });
 
     res.status(201).json({ success: true, message: "Mensaje enviado" });
   } catch (error) {
-    console.error(error);
+    console.error("enviarMensaje error:", error);
     res.status(500).json({ error: "Error enviando mensaje" });
   }
 };
+
+// ─── DELETE /api/notifications/limpiar-huerfanas (solo admins) ───────────────
+// Elimina notificaciones de tipo new_recipe cuya receta ya no existe.
+// Estrategia: 3 queries en total en lugar del patrón N+1 original.
+exports.limpiarNotifHuerfanas = async (req, res) => {
+  try {
+    // 1. Obtener todos los recetaIds referenciados en notificaciones new_recipe
+    const notifs = await Notification.find(
+      { type: "new_recipe" },
+      { _id: 1, recetaId: 1 },
+    ).lean();
+
+    if (!notifs.length) return res.json({ success: true, borradas: 0 });
+
+    // 2. Identificar qué recetas siguen existiendo (una sola query)
+    const recetaIds = [...new Set(
+      notifs.map((n) => n.recetaId?.toString()).filter(Boolean),
+    )];
+
+    const existentes = await Recipe.find(
+      { _id: { $in: recetaIds } },
+      { _id: 1 },
+    ).lean();
+
+    const existentesSet = new Set(existentes.map((r) => r._id.toString()));
+
+    // 3. Filtrar huérfanas y eliminar de una sola vez
+    const huerfanasIds = notifs
+      .filter((n) => !n.recetaId || !existentesSet.has(n.recetaId.toString()))
+      .map((n) => n._id);
+
+    if (!huerfanasIds.length) return res.json({ success: true, borradas: 0 });
+
+    const { deletedCount } = await Notification.deleteMany({
+      _id: { $in: huerfanasIds },
+    });
+
+    res.json({ success: true, borradas: deletedCount });
+  } catch (error) {
+    console.error("limpiarNotifHuerfanas error:", error);
+    res.status(500).json({ error: "Error limpiando notificaciones" });
+  }
+};
+
+// ─── DELETE /api/notifications/:id ───────────────────────────────────────────
+exports.eliminarUna = async (req, res) => {
+  try {
+    const notif = await Notification.findOneAndDelete({
+      _id:    req.params.id,
+      userId: req.user._id,
+    });
+    if (!notif)
+      return res.status(404).json({ error: "Notificación no encontrada" });
+    res.json({ success: true });
+  } catch (error) {
+    console.error("eliminarUna error:", error);
+    res.status(500).json({ error: "Error eliminando notificación" });
+  }
+};
+
+// ─── Helpers internos (no expuestos como rutas HTTP) ─────────────────────────
 
 exports.crearNotifRespuesta = async ({
   destinatarioId,
@@ -112,19 +176,19 @@ exports.crearNotifRespuesta = async ({
 
   try {
     await Notification.create({
-      userId: destinatarioId,
-      type: "reply",
+      userId:         destinatarioId,
+      type:           "reply",
       fromUserId,
       fromUserName,
       recetaId,
       recetaNombre,
       resenaId,
-      respuestaId, 
+      respuestaId,
       respuestaTexto: respuestaTexto?.slice(0, 120) || "",
     });
   } catch (err) {
     // No interrumpir el flujo principal si falla la notificación
-    console.error("Error creando notificación de respuesta:", err.message);
+    console.error("crearNotifRespuesta error:", err.message);
   }
 };
 
@@ -139,8 +203,8 @@ exports.crearNotifNuevaReceta = async ({
     if (!usuarios.length) return;
 
     const notifs = usuarios.map((u) => ({
-      userId: u._id,
-      type: "new_recipe",
+      userId:      u._id,
+      type:        "new_recipe",
       recetaId,
       recetaNombre,
       recetaCat,
@@ -149,38 +213,6 @@ exports.crearNotifNuevaReceta = async ({
 
     await Notification.insertMany(notifs, { ordered: false });
   } catch (err) {
-    console.error("Error creando notificaciones de nueva receta:", err.message);
-  }
-};
-
-exports.limpiarNotifHuerfanas = async (req, res) => {
-  try {
-    const Recipe = require("../models/Recipe");
-    const notifs = await Notification.find({ type: "new_recipe" });
-    let borradas = 0;
-    for (const n of notifs) {
-      const existe = await Recipe.findById(n.recetaId);
-      if (!existe) {
-        await Notification.deleteOne({ _id: n._id });
-        borradas++;
-      }
-    }
-    res.json({ success: true, borradas });
-  } catch (error) {
-    res.status(500).json({ error: "Error limpiando notificaciones" });
-  }
-};
-
-exports.eliminarUna = async (req, res) => {
-  try {
-    const notif = await Notification.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user._id,
-    });
-    if (!notif)
-      return res.status(404).json({ error: "Notificación no encontrada" });
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: "Error eliminando notificación" });
+    console.error("crearNotifNuevaReceta error:", err.message);
   }
 };

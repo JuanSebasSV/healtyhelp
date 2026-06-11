@@ -1,4 +1,13 @@
-/* CAMBIO: eliminados @keyframes fadeIn y spin — ya están definidos en index.css */
+/*Dashboard.css*/
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /*  Contenedor raíz  */
 .admin-dashboard {
@@ -48,8 +57,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  /* CAMBIO: transition: var(--transicion) animaba "all". Ahora solo las propiedades que cambian en hover */
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
 }
 .btn-back:hover {
   background: rgba(255, 255, 255, 0.15);
@@ -73,8 +81,7 @@
   padding: 0.4rem;
   border-radius: 14px;
   width: fit-content;
-  /* CAMBIO: backdrop-filter eliminado del contenedor de tabs — el costo GPU
-     no justifica el efecto en un elemento de navegación pequeño */
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -85,18 +92,10 @@
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  /* CAMBIO: transition: var(--transicion) → propiedades específicas */
-  transition: color 0.3s ease, background 0.3s ease;
+  transition: var(--transicion);
   color: rgba(255, 255, 255, 0.55);
   background: transparent;
-  /* CAMBIO: position: relative estaba duplicado más abajo — se conserva aquí únicamente */
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
 }
-.main-tab svg { flex-shrink: 0; }
 .main-tab:hover {
   color: rgba(255, 255, 255, 0.85);
   background: rgba(255, 255, 255, 0.07);
@@ -104,8 +103,7 @@
 .main-tab.active {
   background: rgba(255, 255, 255, 0.15);
   color: var(--blanco-puro);
-  /* CAMBIO: backdrop-filter eliminado del tab activo — el efecto es imperceptible
-     dentro de un contenedor que ya tiene fondo semitransparente */
+  backdrop-filter: blur(8px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -139,8 +137,7 @@
 .search-box svg {
   position: absolute;
   left: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
-  stroke: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   pointer-events: none;
   flex-shrink: 0;
 }
@@ -154,7 +151,7 @@
   color: var(--blanco-puro);
   font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
   width: 100%;
 }
 .search-box input::placeholder { color: rgba(255, 255, 255, 0.35); }
@@ -173,7 +170,7 @@
   color: var(--blanco-puro);
   font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
   min-width: 190px;
   cursor: pointer;
 }
@@ -203,10 +200,9 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
   white-space: nowrap;
 }
-.btn-export svg { stroke: var(--blanco-puro); }
 .btn-export:hover {
   background: var(--naranja);
   border-color: var(--naranja);
@@ -230,9 +226,8 @@
   color: var(--blanco-puro);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
 }
-.pagination button svg { stroke: var(--blanco-puro); vertical-align: middle; }
 .pagination button:disabled {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.1);
@@ -292,7 +287,7 @@
   padding: 20px;
   animation: fadeIn 0.2s ease;
 }
-
+ 
 .ban-modal {
   background: rgba(15, 26, 20, 0.92);
   backdrop-filter: blur(24px);
@@ -310,20 +305,20 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   animation: slideUp 0.25s ease;
 }
-
+ 
 .ban-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
+ 
 .ban-modal-header h3 {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
   color: #f87171;
 }
-
+ 
 .ban-modal-cerrar {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -333,7 +328,7 @@
   cursor: pointer;
   padding: 5px 10px;
   border-radius: 8px;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: var(--transicion);
   font-family: inherit;
 }
 .ban-modal-cerrar:hover {
@@ -341,7 +336,7 @@
   border-color: rgba(248, 113, 113, 0.3);
   color: #f87171;
 }
-
+ 
 .ban-modal-usuario {
   margin: 0;
   padding: 12px 14px;
@@ -352,7 +347,7 @@
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.78);
 }
-
+ 
 .ban-modal-contexto {
   margin: -8px 0 0;
   font-size: 0.79rem;
@@ -363,13 +358,13 @@
   background: rgba(247, 127, 0, 0.05);
   border-radius: 0 8px 8px 0;
 }
-
+ 
 .ban-modal-campo {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
+ 
 .ban-modal-campo label {
   font-size: 0.78rem;
   font-weight: 700;
@@ -377,7 +372,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-
+ 
 .ban-opcional {
   font-weight: 400;
   text-transform: none;
@@ -385,7 +380,7 @@
   font-size: 0.76rem;
   opacity: 0.65;
 }
-
+ 
 .ban-modal-campo textarea {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -395,7 +390,7 @@
   font-size: 0.86rem;
   resize: vertical;
   font-family: inherit;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s;
   line-height: 1.5;
 }
 .ban-modal-campo textarea:focus {
@@ -403,13 +398,15 @@
   border-color: rgba(220, 38, 38, 0.4);
   background: rgba(255, 255, 255, 0.07);
 }
-.ban-modal-campo textarea::placeholder { color: rgba(255, 255, 255, 0.22); }
-
+.ban-modal-campo textarea::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+ 
 .ban-tipo-btns {
   display: flex;
   gap: 8px;
 }
-
+ 
 .ban-tipo-btn {
   flex: 1;
   padding: 9px;
@@ -420,7 +417,7 @@
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: var(--transicion);
   font-family: inherit;
 }
 .ban-tipo-btn:hover:not(.activo) {
@@ -437,13 +434,13 @@
   border-color: rgba(248, 113, 113, 0.4);
   color: #f87171;
 }
-
+ 
 .ban-dias-btns {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
-
+ 
 .ban-dias-btn {
   padding: 5px 13px;
   border-radius: 8px;
@@ -453,7 +450,7 @@
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: var(--transicion);
   font-family: inherit;
 }
 .ban-dias-btn:hover:not(.activo) {
@@ -465,7 +462,7 @@
   border-color: rgba(107, 158, 74, 0.5);
   color: #a8e063;
 }
-
+ 
 .ban-dias-input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -476,15 +473,17 @@
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s;
   margin-top: 4px;
 }
 .ban-dias-input:focus {
   outline: none;
   border-color: rgba(79, 119, 45, 0.45);
 }
-.ban-dias-input::placeholder { color: rgba(255, 255, 255, 0.22); }
-
+.ban-dias-input::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+ 
 .ban-aviso-permanente {
   margin: 0;
   padding: 11px 14px;
@@ -495,14 +494,14 @@
   color: #f87171;
   line-height: 1.5;
 }
-
+ 
 .ban-modal-acciones {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 2px;
 }
-
+ 
 .ban-btn-cancelar {
   padding: 9px 18px;
   border-radius: 10px;
@@ -512,7 +511,7 @@
   cursor: pointer;
   font-size: 0.87rem;
   font-weight: 600;
-  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: var(--transicion);
   font-family: inherit;
 }
 .ban-btn-cancelar:hover:not(:disabled) {
@@ -520,8 +519,11 @@
   color: rgba(255, 255, 255, 0.75);
   border-color: rgba(255, 255, 255, 0.2);
 }
-.ban-btn-cancelar:disabled { opacity: 0.4; cursor: not-allowed; }
-
+.ban-btn-cancelar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+ 
 .ban-btn-confirmar {
   padding: 9px 20px;
   border-radius: 10px;
@@ -531,7 +533,7 @@
   cursor: pointer;
   font-size: 0.87rem;
   font-weight: 700;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transicion);
   font-family: inherit;
   box-shadow: 0 4px 16px rgba(220, 38, 38, 0.18);
 }
@@ -556,6 +558,7 @@
     margin: 0.75rem auto;
   }
 
+  /* Header apilado */
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
@@ -563,7 +566,9 @@
     margin-bottom: 1.25rem;
     padding-bottom: 1rem;
   }
-  .admin-header h1 { font-size: 1.35rem; }
+  .admin-header h1 {
+    font-size: 1.35rem;
+  }
   .admin-subtitle { font-size: 0.82rem; }
   .btn-back {
     width: 100%;
@@ -571,6 +576,7 @@
     padding: 0.7rem 1rem;
   }
 
+  /* Tabs: scroll horizontal suave sin cortar */
   .admin-main-tabs {
     width: 100%;
     max-width: 100%;
@@ -591,6 +597,7 @@
     white-space: nowrap;
   }
 
+  /* Controles apilados */
   .admin-controls {
     grid-template-columns: 1fr;
     gap: 0.65rem;
@@ -598,6 +605,7 @@
   .filter-box select { width: 100%; min-width: unset; }
   .btn-export { width: 100%; justify-content: center; }
 
+  /* Paginación compacta */
   .pagination { gap: 0.6rem; }
   .pagination button { padding: 0.5rem 0.9rem; font-size: 0.82rem; }
   .page-info { font-size: 0.82rem; }
@@ -608,6 +616,7 @@
   .admin-header h1 { font-size: 1.1rem; }
   .main-tab { font-size: 0.78rem; padding: 0.5rem 0.65rem; min-width: 80px; }
 
+  /* Modal ban full screen en móvil pequeño */
   .ban-modal {
     padding: 18px 14px;
     border-radius: 14px;
@@ -627,14 +636,49 @@
   gap: 0;
 }
 
+.main-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.main-tab svg { flex-shrink: 0; }
+
 .btn-back {
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
-.btn-back svg { stroke: rgba(255, 255, 255, 0.88); }
 
-/*  Badge de notificación en pestañas  */
+/*  Fix visibilidad SVGs en controles  */
+.search-box svg {
+  color: rgba(255, 255, 255, 0.5);
+  stroke: rgba(255, 255, 255, 0.5);
+}
+
+.btn-export svg {
+  stroke: var(--blanco-puro);
+}
+
+.btn-back svg {
+  stroke: rgba(255, 255, 255, 0.88);
+}
+
+.pagination button svg {
+  stroke: var(--blanco-puro);
+  vertical-align: middle;
+}
+
+/* 
+   Badge de notificación en pestañas (ej: imágenes pendientes)
+ */
+ 
+/* Pestaña con badge — necesita position relative */
+.main-tab {
+  position: relative; /* asegurarse de que ya lo tiene o añadirlo */
+}
+ 
 .main-tab-badge {
   display: inline-flex;
   align-items: center;
@@ -649,10 +693,79 @@
   color: #fff;
   line-height: 1;
   margin-left: 0.4rem;
+  /* Pequeña animación para llamar la atención */
   animation: badge-pulse 2s ease-in-out infinite;
 }
-
+ 
 @keyframes badge-pulse {
-  0%, 100% { opacity: 1;    transform: scale(1);    }
+  0%, 100% { opacity: 1;   transform: scale(1);    }
   50%       { opacity: 0.8; transform: scale(1.12); }
+}
+
+/*  Toolbar de recetas  */
+.admin-recipes-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+/*  Botón limpiar notificaciones huérfanas  */
+.btn-limpiar-notifs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.25rem;
+  background: rgba(220, 38, 38, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(220, 38, 38, 0.3);
+  border-radius: 10px;
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+}
+.btn-limpiar-notifs svg {
+  stroke: #f87171;
+  flex-shrink: 0;
+  transition: var(--transicion);
+}
+.btn-limpiar-notifs:hover:not(:disabled):not([aria-busy="true"]) {
+  background: rgba(220, 38, 38, 0.22);
+  border-color: rgba(248, 113, 113, 0.55);
+  color: #fca5a5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.22);
+}
+.btn-limpiar-notifs:hover:not(:disabled):not([aria-busy="true"]) svg {
+  stroke: #fca5a5;
+}
+.btn-limpiar-notifs:disabled,
+.btn-limpiar-notifs[aria-busy="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.modo-oscuro .btn-limpiar-notifs {
+  background: rgba(220, 38, 38, 0.09);
+  border-color: rgba(220, 38, 38, 0.22);
+}
+.modo-oscuro .btn-limpiar-notifs:hover:not(:disabled):not([aria-busy="true"]) {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: rgba(248, 113, 113, 0.45);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.18);
+}
+
+/*  Responsive: botón limpiar  */
+@media (max-width: 968px) {
+  .admin-recipes-toolbar {
+    justify-content: stretch;
+  }
+  .btn-limpiar-notifs {
+    width: 100%;
+    justify-content: center;
+  }
 }
