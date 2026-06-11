@@ -118,11 +118,12 @@
 .modo-oscuro .buscador-input-wrap:focus-within { border-color: rgba(247,127,0,0.5); }
 .modo-oscuro .buscador-input-wrap svg { stroke: rgba(255,255,255,0.45); }
 .modo-oscuro .buscador-input-wrap:focus-within svg { stroke: rgba(247,127,0,0.7); }
-.modo-oscuro .buscador-input { color: rgba(210,240,190,0.9); }
+.modo-oscuro .buscador-input { color: rgba(200, 231, 179, 0.9); }
 .modo-oscuro .buscador-input::placeholder { color: rgba(150,190,130,0.35); }
 .modo-oscuro .buscador-clear svg { stroke: rgba(255,255,255,0.4); }
 .modo-oscuro .buscador-clear:hover svg { stroke: rgba(220,38,38,0.8); }
 .modo-oscuro .buscador-conteo { color: rgba(255,255,255,0.45); }
+.modo-oscuro .buscador-input:focus-within {color: #194436;}
 
 /*Botón Tu Tipo de Dieta*/
 .filtroModalBtn {
