@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import { getTipoPorHora } from '../../utils/bogotaTime';
 import './BtnConsumo.css';
 
 const TOOLTIP_KEY = 'consumo_tooltip_visto';
@@ -10,13 +11,6 @@ const MAX_TOOLTIP  = 5;
 
 const getTooltipCount  = () => parseInt(sessionStorage.getItem(TOOLTIP_KEY) || '0', 10);
 const incrementTooltip = () => sessionStorage.setItem(TOOLTIP_KEY, String(getTooltipCount() + 1));
-
-const getTipoBogota = () => {
-  const hora = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' })).getHours();
-  if (hora >= 6  && hora < 12) return 'desayuno';
-  if (hora >= 12 && hora < 17) return 'almuerzo';
-  return 'cena';
-};
 
 const TIPO_EMOJIS = { desayuno: '🌅', almuerzo: '☀️', cena: '🌙' };
 
@@ -158,7 +152,7 @@ const BtnConsumo = ({ recetaId }) => {
   if (cargando) return null;
 
   const registrado = !!consumoId;
-  const tipoBogota = getTipoBogota();
+  const tipoBogota = getTipoPorHora();
 
   return (
     <div className="btnConsumo-wrapper" ref={wrapperRef}>
