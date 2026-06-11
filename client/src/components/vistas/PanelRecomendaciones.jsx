@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import api from '../../api/axios';
 import './PanelRecomendaciones.css';
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
+// Iconos 
 
 const IcoAlerta    = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><path d="M10 2L18.5 17H1.5L10 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="10" cy="14.5" r="0.8" fill="currentColor"/></svg>;
 const IcoOk        = () => <svg viewBox="0 0 20 20" fill="none" className="rec-ico"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M6 10.5L8.5 13L14 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -22,7 +22,7 @@ const IcoBulletAlarm    = () => <svg viewBox="0 0 20 20" fill="none" className="
 const IcoSinFiltro      = () => <svg viewBox="0 0 20 20" fill="none" className="rec-sin-ico" aria-hidden="true"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M8.5 5v10M11.5 5v10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeDasharray="1 2" opacity=".4"/></svg>;
 const IcoSinMancuerna   = () => <svg viewBox="0 0 20 20" fill="none" className="rec-sin-ico" aria-hidden="true"><path d="M2 10h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><rect x="1" y="7.5" width="2.5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5"/><rect x="3.5" y="6" width="2" height="8" rx="1" stroke="currentColor" strokeWidth="1.5"/><rect x="14.5" y="6" width="2" height="8" rx="1" stroke="currentColor" strokeWidth="1.5"/><rect x="16.5" y="7.5" width="2.5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5"/></svg>;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers
 
 const COLOR_NIVEL = { ok: 'verde', advertencia: 'amarillo', atencion: 'naranja', info: 'azul' };
 
@@ -36,7 +36,7 @@ const LABEL_CATEGORIA = {
   'postres-snacks': 'Postres & Snacks',
 };
 
-// ─── Barra de progreso calórico ───────────────────────────────────────────────
+// Barra de progreso calórico
 
 const BarraProgreso = ({ calHoy, calObjetivo, progreso }) => {
   const exceso    = progreso > 100;
@@ -64,7 +64,7 @@ const BarraProgreso = ({ calHoy, calObjetivo, progreso }) => {
   );
 };
 
-// ─── Panel de macros de hoy ───────────────────────────────────────────────────
+// Panel de macros de hoy 
 
 const MacrosHoy = ({ macrosHoy }) => {
   if (!macrosHoy || (!macrosHoy.carbPct && !macrosHoy.protPct && !macrosHoy.grasPct)) return null;
@@ -90,19 +90,7 @@ const MacrosHoy = ({ macrosHoy }) => {
   );
 };
 
-// ─── Componente ───────────────────────────────────────────────────────────────
-
-/**
- * PanelRecomendaciones
- *
- * Props:
- *   - versionFiltros: number  ← clave que sube en 1 cada vez que cambian los
- *     filtros del usuario (condiciones o categorías). Cuando cambia, este panel
- *     recarga desde /recomendaciones automáticamente, sin polling ni cookies.
- *
- * La fuente de verdad sigue siendo la BD (via /recomendaciones), nunca el estado
- * local del cliente. versionFiltros es solo una señal de "algo cambió, recarga".
- */
+// Componente 
 const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
   const [datos,    setDatos]    = useState(null);
   const [cargando, setCargando] = useState(true);
@@ -137,11 +125,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
 
   const todasEtiquetas = useMemo(() => {
     if (!datos?.recomendaciones) return [];
-    const { condicionesDetectadas = [], categoriasActivas = [] } = datos.recomendaciones;
-    return [
-      ...condicionesDetectadas.map(c => ({ id: c, label: c.replace(/-/g, ' '), tipo: 'condicion' })),
-      ...categoriasActivas.map(c => ({ id: c, label: LABEL_CATEGORIA[c] || c, tipo: 'categoria' })),
-    ];
+    const { condicionesDetectadas = [] } = datos.recomendaciones;
+    return condicionesDetectadas.map(c => ({ id: c, label: c.replace(/-/g, ' '), tipo: 'condicion' }));
   }, [datos]);
 
   if (cargando) return (
@@ -189,7 +174,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
   return (
     <div className="rec-panel">
 
-      {/* ─── Encabezado ─── */}
+      {/* Encabezado */}
       <div className="rec-header">
         <h2 className="rec-titulo">
           Recomendaciones para <span className="rec-nombre">{nombre?.split(' ')[0] || 'ti'}</span>
@@ -208,7 +193,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         )}
       </div>
 
-      {/* ─── Stats IMC / calorías / nutrientes ─── */}
+      {/* Stats IMC / calorías / nutrientes  */}
       {(imc || caloriasObjetivo || nutriPromedio) && (
         <div className="rec-stats">
           {imc && (
@@ -259,7 +244,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Barra de progreso calórico de hoy ─── */}
+      {/*  Barra de progreso calórico de hoy  */}
       {caloriasObjetivo && tieneConsumoHoy && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoHoy />Balance calórico de hoy</h3>
@@ -272,7 +257,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Contexto horario en tiempo real ─── */}
+      {/*  Contexto horario en tiempo real  */}
       {contextoHorario.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoReloj />Ahora mismo</h3>
@@ -285,7 +270,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Alertas generales (perfil + histórico) ─── */}
+      {/*  Alertas generales (perfil + histórico)  */}
       {alertas.length > 0 && (
         <div className="rec-seccion">
           {alertas.map((a, i) => (
@@ -297,7 +282,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Alertas de hoy (micronutrientes en tiempo real) ─── */}
+      {/*  Alertas de hoy (micronutrientes en tiempo real)  */}
       {alertasHoy.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoAlerta />Alertas nutricionales de hoy</h3>
@@ -310,7 +295,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Actividad física sugerida para hoy ─── */}
+      {/*  Actividad física sugerida para hoy  */}
       {ejercicioHoy.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoEjercicio />Actividad recomendada para hoy</h3>
@@ -324,7 +309,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Hidratación ─── */}
+      {/*  Hidratación  */}
       {hidratacion && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoAgua />Hidratación</h3>
@@ -338,7 +323,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Comidas saltadas ─── */}
+      {/*  Comidas saltadas  */}
       {comidasSaltadas.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoCalendario />Hábitos de comida</h3>
@@ -352,7 +337,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Momento del día activo ─── */}
+      {/*  Momento del día activo  */}
       {categoriasActivas.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoReloj />Consejos para tu momento del día</h3>
@@ -363,7 +348,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         </div>
       )}
 
-      {/* ─── Alimentación ─── */}
+      {/*  Alimentación  */}
       <div className="rec-seccion">
         <h3 className="rec-sec-titulo"><IcoComida />Alimentación</h3>
         {coberturaAlimentacion && alimentacion.length > 0 ? (
@@ -380,7 +365,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         )}
       </div>
 
-      {/* ─── Ejercicio general (basado en condición + IMC) ─── */}
+      {/*  Ejercicio general (basado en condición + IMC)  */}
       <div className="rec-seccion">
         <h3 className="rec-sec-titulo"><IcoEjercicio />Actividad Física General</h3>
         {coberturaEjercicio && ejercicio.length > 0 ? (
