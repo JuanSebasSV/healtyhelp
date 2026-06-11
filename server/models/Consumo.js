@@ -12,7 +12,6 @@ const consumoSchema = new mongoose.Schema(
       ref: 'Recipe',
       required: true,
     },
-    // Snapshot básico de la receta para mostrar sin refetch
     recetaSnapshot: {
       nombre: String,
       img:    String,
@@ -23,17 +22,14 @@ const consumoSchema = new mongoose.Schema(
       enum: ['desayuno', 'almuerzo', 'cena', 'snack'],
       required: true,
     },
-    // Fecha en zona Bogotá — se guarda como string 'YYYY-MM-DD'
     fechaBogota: {
       type: String,
       required: true,
     },
-    // Hora de registro en Bogotá — string 'HH:mm'
     horaBogota: {
       type: String,
       required: true,
     },
-    // Snapshot nutricional de la receta al momento del consumo
     nutri: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
@@ -42,7 +38,15 @@ const consumoSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-// Índices para consultas rápidas
 consumoSchema.index({ userId: 1, fechaBogota: 1 });
+
+consumoSchema.index(
+  { userId: 1, fechaBogota: 1, tipo: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { tipo: { $in: ['desayuno', 'almuerzo', 'cena'] } },
+    name: 'unique_comida_principal',
+  }
+);
 
 module.exports = mongoose.model('Consumo', consumoSchema);
