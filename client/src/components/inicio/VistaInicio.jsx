@@ -5,7 +5,9 @@ import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
 import useAuth from '../../hooks/useAuth';
 import FiltrosSalud from './FiltrosSalud';
+import { recetaEsSegura } from '../../utils/sinonimosIngredientes';
 import './VistaInicio.css';
+
 
 const HERO_IMGS = [
   'https://res.cloudinary.com/dqwqmipco/image/upload/q_auto,f_auto/v1774031315/ensalada_fs6t5u.webp',
@@ -205,11 +207,11 @@ const VistaInicio = ({
             ...(r.ingredientes || []),
           ].join(' ')
         );
-        return !palabrasAlergia.some(a => textoReceta.includes(a));
+        return recetaEsSegura(textoReceta, palabrasAlergia);
       })();
     
     return okCat && okSalud && okBusqueda && okTiempo && okAlergia;
-  }), [recetas, categoria, filtros, busqueda, filtroTiempo, alergia]);
+  }), [recetas, categoria, filtros, busqueda, filtroTiempo, alergia,]);
 
   return (
     <div className="vistaInicio">
