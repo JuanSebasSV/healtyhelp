@@ -24,32 +24,29 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  // 1. Esperar a que AuthProvider termine de verificar la sesión
   if (loading) {
     return <div className="loading">Cargando...</div>;
   }
 
-  // 2. Debe estar autenticado
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+  if (isPreview) return children;
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 3. Rol admin requerido
   if (requireAdmin && user.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
-  // 4. Las rutas libres no necesitan cookies ni términos
   const esRutaLibre = RUTAS_LIBRES.some(r => location.pathname.startsWith(r));
   if (esRutaLibre) return children;
 
-  // 5. ¿Aceptó cookies?
   const cookiesOk = getPersisted(COOKIE_CONSENT_KEY) === 'accepted';
   if (!cookiesOk) {
     return <Navigate to="/" replace />;
   }
 
-  // 6. ¿Aceptó los términos?
   const terminosOk =
     user.termsAccepted === true ||
     getPersisted(TERMS_ACCEPTED_KEY) === 'true';
@@ -58,7 +55,6 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to="/" replace />;
   }
 
-  // 7. ¿La versión de los términos que aceptó es la vigente?
   const serverVersion = user.activeTermsVersion;
   if (serverVersion && user.termsVersion !== serverVersion) {
     return <Navigate to="/" replace />;

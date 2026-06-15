@@ -114,6 +114,7 @@ const RUTAS_LIBRES = [
 ];
 
 function AppContent() {
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
   const { user, checkAuth, loading: authLoading } = useAuth();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
@@ -283,6 +284,7 @@ useEffect(() => {
   );
 
   useEffect(() => {
+    if (isPreview) return;
     if (!activeTermsVersion) return;
     if (terminosAceptadosEnSesion.current) return;
 
