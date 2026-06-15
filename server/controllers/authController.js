@@ -66,6 +66,9 @@ exports.register = async (req, res) => {
     const nameError = validarNombre(name);
     if (nameError) return res.status(400).json({ error: nameError });
 
+    const pwdError = validarPassword(password);
+    if (pwdError) return res.status(400).json({ error: pwdError });
+
     if (!birthDate) return res.status(400).json({ error: 'La fecha de nacimiento es requerida' });
     const fechaNac = new Date(birthDate);
     if (isNaN(fechaNac.getTime())) return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
