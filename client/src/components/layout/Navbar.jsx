@@ -248,6 +248,8 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
   }, []);
 
   const ejecutarCerrarSesion = useCallback(() => {
+
+    
     logout();
     setMenuAbierto(false);
     setDropdownAbierto(false);

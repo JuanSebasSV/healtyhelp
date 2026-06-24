@@ -8,6 +8,7 @@ const mejorarFotoGoogle = (url) => {
   return url.replace(/=s\d+-c$/, '=s400-c').replace(/=s\d+$/, '=s400');
 };
 
+
 passport.use(
   new GoogleStrategy(
     {

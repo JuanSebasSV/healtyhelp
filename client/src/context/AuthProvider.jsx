@@ -13,7 +13,12 @@ export const AuthProvider = ({ children }) => {
   const autoLogoutMinutesRef = useRef(15);
   const checkAuthRetryRef = useRef(0);
   const checkAuthRef = useRef(null);
+  const visibilityTimerRef = useRef(null);
   const limpiarSesion = useCallback(() => {
+    if (visibilityTimerRef.current) {
+      clearTimeout(visibilityTimerRef.current);
+      visibilityTimerRef.current = null;
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
@@ -62,16 +67,26 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (
-        document.visibilityState === "hidden" &&
-        autoLogoutEnabledRef.current
-      ) {
-        limpiarSesion();
+      if (!autoLogoutEnabledRef.current) return;
+  
+      if (document.visibilityState === "hidden") {
+        const ms = autoLogoutMinutesRef.current * 60 * 1000;
+        visibilityTimerRef.current = setTimeout(() => {
+          limpiarSesion();
+        }, ms);
+      } else {
+        if (visibilityTimerRef.current) {
+          clearTimeout(visibilityTimerRef.current);
+          visibilityTimerRef.current = null;
+        }
       }
     };
+  
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () =>
+    return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (visibilityTimerRef.current) clearTimeout(visibilityTimerRef.current);
+    };
   }, [limpiarSesion]);
 
   const applyAutoLogoutPrefs = useCallback(
