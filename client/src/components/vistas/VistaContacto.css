@@ -7,16 +7,17 @@
   flex-direction: column;
   min-height: calc(100vh - var(--navbar-h) - var(--page-py) * 3);
   background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(26, 77, 46, 0.55) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(107, 158, 74, 0.25) 0%, transparent 60%),
-    #060f09;
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(66, 178, 144, 0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(59, 138, 127, 0.25) 0%, transparent 60%),
+    #091610;
+    border-radius: 15px;
 }
 
 .modo-oscuro .vista-contacto {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15, 45, 26, 0.60) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(26, 77, 46, 0.20) 0%, transparent 60%),
-    #030a05;
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15, 45, 30, 0.6) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(26, 77, 59, 0.2) 0%, transparent 60%),
+    #091613;
 }
 
 /*HEADER*/
