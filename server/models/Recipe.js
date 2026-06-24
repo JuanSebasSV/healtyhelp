@@ -103,18 +103,25 @@ const resenaSchema = new mongoose.Schema(
     //  Votos de utilidad 
     likes:      { type: [mongoose.Schema.Types.ObjectId], default: [] },
     dislikes:   { type: [mongoose.Schema.Types.ObjectId], default: [] },
-
-    //  Respuestas anidadas 
     respuestas: { type: [respuestaSchema], default: [] },
 
-    //  Imagen adjunta (flujo de aprobación) 
-    imagen: {
-      url:       { type: String, default: null },   // URL pública de Cloudinary
-      publicId:  { type: String, default: null },   // public_id para destroy()
-      estado:    {
-        type:    String,
-        enum:    ['pendiente', 'aprobada', 'rechazada'],
-        default: 'pendiente',
+    //  Imágenes adjuntas (flujo de aprobación, máx 5) 
+    imagenes: {
+      type: [
+        {
+          url:      { type: String, default: null },
+          publicId: { type: String, default: null },
+          estado:   {
+            type:    String,
+            enum:    ['pendiente', 'aprobada', 'rechazada'],
+            default: 'pendiente',
+          },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: function (arr) { return arr.length <= 5; },
+        message:   'Máximo 5 imágenes por reseña',
       },
     },
   },

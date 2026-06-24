@@ -6,7 +6,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-/*  Interceptor de REQUEST: adjuntar token  */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -16,23 +15,42 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-/*  Interceptor de RESPONSE: manejo de errores globales  */
+let _ultimoAvisoSinConexion = 0;
+const _avisarSinConexion = () => {
+  const ahora = Date.now();
+  if (ahora - _ultimoAvisoSinConexion < 10_000) return;
+  _ultimoAvisoSinConexion = ahora;
+  if (!navigator.onLine) {
+    console.info('[Red] Sin conexión a internet.');
+  } else {
+    console.info('[API] No se pudo conectar al servidor. Puede ser una pérdida de conexión momentánea.');
+  }
+};
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (!navigator.onLine) {
+      _avisarSinConexion();
+      return Promise.reject(Object.assign(new Error('sin_conexion'), { sinConexion: true, silencioso: true }));
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Sin respuesta del servidor → backend caído o sin red
+    if (error.silencioso) return Promise.reject(error);
+
     if (!error.response) {
-      console.error(
-        '[API] No se pudo conectar al servidor. ' +
-        'Verifica que el backend esté corriendo en ' +
-        (import.meta.env.VITE_API_URL || 'http://localhost:5000')
-      );
-      // Enriquecer el error para que los componentes puedan mostrarlo
+      _avisarSinConexion();
       error.sinConexion = true;
       return Promise.reject(error);
     }
 
-    // 401 → sesión expirada o token inválido
     if (error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
