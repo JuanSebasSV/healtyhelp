@@ -88,14 +88,25 @@ const PanelNotificaciones = ({
   onNavegar,
   esMobil = false,
 }) => {
-  const panelRef    = useRef(null);
-  const onCerrarRef = useRef(onCerrar);
-  const onLeerUnaRef = useRef(onLeerUna);
+  const panelRef          = useRef(null);
+  const onCerrarRef       = useRef(onCerrar);
+  const onLeerUnaRef      = useRef(onLeerUna);
   const notificacionesRef = useRef(notificaciones);
 
-  useEffect(() => { onCerrarRef.current   = onCerrar;       }, [onCerrar]);
-  useEffect(() => { onLeerUnaRef.current  = onLeerUna;      }, [onLeerUna]);
+  useEffect(() => { onCerrarRef.current      = onCerrar;       }, [onCerrar]);
+  useEffect(() => { onLeerUnaRef.current     = onLeerUna;      }, [onLeerUna]);
   useEffect(() => { notificacionesRef.current = notificaciones; }, [notificaciones]);
+
+  useEffect(() => {
+    if (panelRef.current) panelRef.current.scrollTop = 0;
+  }, []);
+
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -138,110 +149,113 @@ const PanelNotificaciones = ({
   }, [onNavegar]);
 
   return (
-    <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
+    <>
+      <div className="pn-overlay" onClick={onCerrar} aria-hidden="true" />
+      <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
 
-      <div className="pn-header">
-        <div className="pn-header-izq">
-          <IcoBell />
-          <span className="pn-titulo">Notificaciones</span>
-          {noLeidas > 0 && <span className="pn-badge-header">{noLeidas}</span>}
-        </div>
-        <div className="pn-header-der">
-          {noLeidas > 0 && (
-            <button className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
-              <IcoCheck /> Leer todas
-            </button>
-          )}
-          {esMobil && (
-            <button className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="pn-lista">
-        {cargando ? (
-          <div className="pn-estado">
-            <div className="pn-spinner" />
-            Cargando...
+        <div className="pn-header">
+          <div className="pn-header-izq">
+            <IcoBell />
+            <span className="pn-titulo">Notificaciones</span>
+            {noLeidas > 0 && <span className="pn-badge-header">{noLeidas}</span>}
           </div>
-        ) : notificaciones.length === 0 ? (
-          <div className="pn-vacio">
-            <IcoEmpty />
-            <p>Sin notificaciones</p>
-            <span>Aquí aparecerán las respuestas a tus comentarios y mensajes del equipo</span>
-          </div>
-        ) : (
-          notificaciones.map(n => (
-            <div
-              key={n._id}
-              className={`pn-item ${!n.leida ? 'no-leida' : 'leida'} pn-tipo-${n.type} ${(n.type === 'reply' || n.type === 'new_recipe') && n.recetaId ? 'pn-clickable' : ''}`}
-              onClick={() => handleClickItem(n)}
-            >
-              {!n.leida && <span className="pn-dot" aria-hidden="true" />}
-
-              <button
-                className="pn-btn-eliminar"
-                onClick={e => { e.stopPropagation(); onEliminar(n._id); }}
-                aria-label="Eliminar notificación"
-                title="Eliminar"
-              >
-                <IcoClose />
+          <div className="pn-header-der">
+            {noLeidas > 0 && (
+              <button className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
+                <IcoCheck /> Leer todas
               </button>
+            )}
+            {esMobil && (
+              <button className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
 
-              <div className={`pn-icono pn-icono--${n.type}`}>
-                {n.type === 'reply'      ? <IcoReply />   :
-                 n.type === 'new_recipe' ? <IcoReceta />  :
-                                          <IcoMessage />}
-              </div>
-
-              <div className="pn-contenido" style={{ paddingRight: '1.2rem' }}>
-                {n.type === 'reply' ? (
-                  <>
-                    <p className="pn-texto">
-                      <strong>{n.fromUserName}</strong> respondió{' '}
-                      {n.parentUserName && n.parentUserName !== n.toUserName
-                        ? <>a <em>@{n.parentUserName}</em> en</>
-                        : <>a tu comentario en</>
-                      }{' '}
-                      <em>{n.recetaNombre || 'una receta'}</em>
-                    </p>
-                    {n.respuestaTexto && (
-                      <p className="pn-preview">"{decodificar(n.respuestaTexto)}"</p>
-                    )}
-                  </>
-                ) : n.type === 'new_recipe' ? (
-                  <>
-                    <p className="pn-texto"><strong>Nueva receta disponible</strong></p>
-                    <p className="pn-preview">
-                      <em>{n.recetaNombre}</em>
-                      {n.recetaCat && ` · ${n.recetaCat}`}
-                      {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(', ')}`}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="pn-texto">
-                      Mensaje de <strong>{n.adminName || 'Administrador'}</strong>
-                      {n.asunto && <> — <em>{n.asunto}</em></>}
-                    </p>
-                    {n.mensaje && (
-                      <p className="pn-preview">
-                        {decodificar(n.mensaje).slice(0, 120)}{n.mensaje.length > 120 ? '…' : ''}
-                      </p>
-                    )}
-                  </>
-                )}
-                <span className="pn-fecha">{formatRelativa(n.createdAt)}</span>
-              </div>
+        <div className="pn-lista">
+          {cargando ? (
+            <div className="pn-estado">
+              <div className="pn-spinner" />
+              Cargando...
             </div>
-          ))
-        )}
+          ) : notificaciones.length === 0 ? (
+            <div className="pn-vacio">
+              <IcoEmpty />
+              <p>Sin notificaciones</p>
+              <span>Aquí aparecerán las respuestas a tus comentarios y mensajes del equipo</span>
+            </div>
+          ) : (
+            notificaciones.map(n => (
+              <div
+                key={n._id}
+                className={`pn-item ${!n.leida ? 'no-leida' : 'leida'} pn-tipo-${n.type} ${(n.type === 'reply' || n.type === 'new_recipe') && n.recetaId ? 'pn-clickable' : ''}`}
+                onClick={() => handleClickItem(n)}
+              >
+                {!n.leida && <span className="pn-dot" aria-hidden="true" />}
+
+                <button
+                  className="pn-btn-eliminar"
+                  onClick={e => { e.stopPropagation(); onEliminar(n._id); }}
+                  aria-label="Eliminar notificación"
+                  title="Eliminar"
+                >
+                  <IcoClose />
+                </button>
+
+                <div className={`pn-icono pn-icono--${n.type}`}>
+                  {n.type === 'reply'      ? <IcoReply />  :
+                   n.type === 'new_recipe' ? <IcoReceta /> :
+                                             <IcoMessage />}
+                </div>
+
+                <div className="pn-contenido" style={{ paddingRight: '1.2rem' }}>
+                  {n.type === 'reply' ? (
+                    <>
+                      <p className="pn-texto">
+                        <strong>{n.fromUserName}</strong> respondió{' '}
+                        {n.parentUserName && n.parentUserName !== n.toUserName
+                          ? <>a <em>@{n.parentUserName}</em> en</>
+                          : <>a tu comentario en</>
+                        }{' '}
+                        <em>{n.recetaNombre || 'una receta'}</em>
+                      </p>
+                      {n.respuestaTexto && (
+                        <p className="pn-preview">"{decodificar(n.respuestaTexto)}"</p>
+                      )}
+                    </>
+                  ) : n.type === 'new_recipe' ? (
+                    <>
+                      <p className="pn-texto"><strong>Nueva receta disponible</strong></p>
+                      <p className="pn-preview">
+                        <em>{n.recetaNombre}</em>
+                        {n.recetaCat && ` · ${n.recetaCat}`}
+                        {n.recetaSalud?.length > 0 && ` · ${n.recetaSalud.join(', ')}`}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="pn-texto">
+                        Mensaje de <strong>{n.adminName || 'Administrador'}</strong>
+                        {n.asunto && <> — <em>{n.asunto}</em></>}
+                      </p>
+                      {n.mensaje && (
+                        <p className="pn-preview">
+                          {decodificar(n.mensaje).slice(0, 120)}{n.mensaje.length > 120 ? '…' : ''}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  <span className="pn-fecha">{formatRelativa(n.createdAt)}</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
