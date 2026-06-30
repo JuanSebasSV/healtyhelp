@@ -10,7 +10,6 @@ export const isValidEmail = validateEmail;
 //Valida nombre — sin números, sin símbolos, sin letras repetidas 4+ veces seguidas
 
 export const validateName = (name) => {
-  const errors = [];
   if (!name || !name.trim()) {
     return { isValid: false, error: 'El nombre es requerido' };
   }

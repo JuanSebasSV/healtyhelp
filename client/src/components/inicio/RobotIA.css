@@ -7,8 +7,8 @@
   height: 60px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
     inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
@@ -21,8 +21,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.25s ease,
-              background 0.25s ease,
+              background-color 0.25s ease,
               border-color 0.25s ease;
 }
 
@@ -50,9 +49,9 @@
   animation: chatEntrada 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   border-radius: 22px;
   overflow: hidden;
-  background: rgba(10, 32, 18, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10, 32, 18, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(107, 158, 74, 0.38);
   box-shadow:
     inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
@@ -81,7 +80,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   display: none;
 }
 
-/*Orbes decorativos*/
+/*Orbes decorativos (renderizados en ChatCore, no usados visualmente) */
 .chatOrbes { display: none; }
 
 /*Header*/
@@ -138,8 +137,8 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 }
 
 @keyframes pulsarVerde {
-  0%, 100% { transform: scale(1);   opacity: 0.5; }
-  50%       { transform: scale(2.5); opacity: 0;   }
+  0%, 100% { transform: scale(1);   opacity: 0.55; }
+  50%       { transform: scale(1.6); opacity: 0;   }
 }
 
 .robotHeader__info {
@@ -190,7 +189,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
 .robotHeader__btn:hover {
@@ -292,7 +291,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   font-size: 0.76rem;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
 .chatSugerencia:hover {
@@ -429,7 +428,7 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, opacity 0.2s ease;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     0 2px 8px rgba(0, 0, 0, 0.18);
@@ -523,8 +522,8 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   border-color: rgba(107, 158, 74, 0.50);
 }
 
-/*RESPONSIVE — Tablets (≤ 968px)*/
-@media (max-width: 968px) {
+/*RESPONSIVE — Tablets (≤ 1023px)*/
+@media (max-width: 1023px) {
   .robotBoton { bottom: 1.5rem; right: 1.5rem; }
   .robotChat  { width: 330px; right: 1.5rem; bottom: 5rem; }
 }
@@ -570,8 +569,8 @@ body:has(> #root > * .vistaChatbot) .robotChat {
   .robotChat .robotFooter small { font-size: 0.64rem; }
 }
 
-/*RESPONSIVE — Muy pequeños (≤ 380px)*/
-@media (max-width: 380px) {
+/*RESPONSIVE — Muy pequeños (≤ 430px)*/
+@media (max-width: 430px) {
   .robotBoton { width: 44px; height: 44px; right: 0.75rem; bottom: 0.75rem; }
   .robotBoton svg { width: 19px; height: 19px; }
 
@@ -584,6 +583,14 @@ body:has(> #root > * .vistaChatbot) .robotChat {
 
 /* Respeta preferencia del sistema de no animar */
 @media (prefers-reduced-motion: reduce) {
-  .chatBienvenida__hoja { animation: none; }
-  .robotHeader__pulse { animation: none; }
+  .chatBienvenida__hoja,
+  .robotHeader__pulse,
+  .robotBoton,
+  .robotChat,
+  .robotMensaje,
+  .robotInput__enviar,
+  .typingIndicator span {
+    animation: none;
+    transition: none;
+  }
 }

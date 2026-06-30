@@ -48,16 +48,7 @@ const VistaContacto = () => {
   const [faqs, setFaqs]                         = useState([]);
 
   useEffect(() => {
-    const obtenerFaqs = async () => {
-      try {
-        const respuesta = await api.get('/faqs');
-        setFaqs(respuesta.data);
-      } catch (error) {
-        console.error('Error al cargar FAQs:', error);
-        setFaqs(FAQS_FALLBACK);
-      }
-    };
-    obtenerFaqs();
+    setFaqs(FAQS_FALLBACK);
   }, []);
 
   const handleChange = useCallback((e) => {

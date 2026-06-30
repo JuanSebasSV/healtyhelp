@@ -188,21 +188,24 @@ exports.getRecipeStats = async (req, res) => {
   }
 };
 
-// ⭐ SISTEMA DE RESEÑAS
+// SISTEMA DE RESEÑAS
 const serializarResena = (r, userId) => {
-  const esAutor    = userId && r.userId.toString() === userId.toString();
-  const imgAprobada = r.imagen?.estado === 'aprobada';
-  const imgPendiente = r.imagen?.estado === 'pendiente' && esAutor;
+const esAutor = userId && r.userId.toString() === userId.toString();
 
-  let imagenCliente = null;
-  if (r.imagen && r.imagen.estado) {
-    if (imgAprobada) {
-      imagenCliente = { url: r.imagen.url, estado: 'aprobada' };
-    } else if (imgPendiente) {
-      imagenCliente = { url: null, estado: 'pendiente' };
-    }
-    // rechazada → null para todos
-  }
+  const imagenesRaw = (r.imagenes && r.imagenes.length > 0)
+    ? r.imagenes
+    : (r.imagen?.estado ? [r.imagen] : []);
+
+  const imagenesCliente = imagenesRaw
+    .filter(img => {
+      if (img.estado === 'aprobada') return true;
+      if (img.estado === 'pendiente' && esAutor) return true;
+      return false;
+    })
+    .map(img => ({
+      url:    img.estado === 'aprobada' ? img.url : null,
+      estado: img.estado,
+    }));
 
   return {
     _id:        r._id,
@@ -214,7 +217,7 @@ const serializarResena = (r, userId) => {
     updatedAt:  r.updatedAt,
     likes:      r.likes.length,
     dislikes:   r.dislikes.length,
-    imagen:     imagenCliente,
+    imagenes:   imagenesCliente,
     miVoto: userId
       ? r.likes.some(id => id.toString() === userId.toString())    ? 'like'
       : r.dislikes.some(id => id.toString() === userId.toString()) ? 'dislike'
@@ -300,13 +303,12 @@ exports.crearResena = async (req, res) => {
       texto:     texto.trim(),
     };
 
-    // Si multer adjuntó imagen (campo "imagen")
-    if (req.file) {
-      nuevaResena.imagen = {
-        url:      req.file.path,
-        publicId: req.file.filename,
+    if (req.files && req.files.length > 0) {
+      nuevaResena.imagenes = req.files.map(f => ({
+        url:      f.path,
+        publicId: f.filename,
         estado:   'pendiente',
-      };
+      }));
     }
 
     recipe.resenas.push(nuevaResena);
@@ -329,7 +331,8 @@ exports.crearResena = async (req, res) => {
 
 exports.subirImagenResena = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
+    if (!req.files || req.files.length === 0)
+      return res.status(400).json({ error: 'No se recibió ninguna imagen' });
 
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
@@ -337,32 +340,32 @@ exports.subirImagenResena = async (req, res) => {
     const resena = recipe.resenas.id(req.params.resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    // Solo el autor puede adjuntar imagen
     if (resena.userId.toString() !== req.user._id.toString())
       return res.status(403).json({ error: 'No puedes modificar esta reseña' });
 
-    // Si ya tiene imagen aprobada, no se permite reemplazar
-    if (resena.imagen?.estado === 'aprobada')
-      return res.status(400).json({ error: 'La imagen ya fue aprobada y no puede ser reemplazada' });
-
-    // Si hay imagen previa pendiente en Cloudinary, borrarla antes
     const { cloudinary } = require('../config/cloudinary');
+
+    if (!resena.imagenes) resena.imagenes = [];
     if (resena.imagen?.publicId) {
-      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+      resena.imagenes.push({ url: resena.imagen.url, publicId: resena.imagen.publicId, estado: resena.imagen.estado });
+      resena.imagen = undefined;
     }
 
-    resena.imagen = {
-      url:      req.file.path,
-      publicId: req.file.filename,
-      estado:   'pendiente',
-    };
+    const disponibles = 5 - resena.imagenes.length;
+    if (disponibles <= 0)
+      return res.status(400).json({ error: 'Ya tienes 5 imágenes en esta reseña (máximo permitido)' });
+
+    const nuevas = req.files.slice(0, disponibles);
+    for (const f of nuevas) {
+      resena.imagenes.push({ url: f.path, publicId: f.filename, estado: 'pendiente' });
+    }
 
     await recipe.save();
 
     res.json({
-      success: true,
-      message: 'Imagen subida. Pendiente de aprobación (≈3 días).',
-      imagen:  { url: null, estado: 'pendiente' },
+      success:  true,
+      message:  `${nuevas.length} imagen(es) subida(s). Pendientes de aprobación (≈3 días).`,
+      imagenes: nuevas.map(() => ({ url: null, estado: 'pendiente' })),
     });
   } catch (error) {
     console.error(error);
@@ -412,10 +415,15 @@ exports.borrarResena = async (req, res) => {
     const esAutor = resena.userId.toString() === req.user._id.toString();
     if (!esAutor && !esAdmin) return res.status(403).json({ error: 'No puedes borrar esta reseña' });
 
-    // Eliminar imagen de Cloudinary si existe
-    if (resena.imagen?.publicId) {
-      const { cloudinary } = require('../config/cloudinary');
-      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+    const { cloudinary } = require('../config/cloudinary');
+    const todasLasImagenes = [
+      ...(resena.imagenes || []),
+      ...(resena.imagen?.publicId ? [resena.imagen] : []),
+    ];
+    for (const img of todasLasImagenes) {
+      if (img.publicId) {
+        try { await cloudinary.uploader.destroy(img.publicId); } catch {}
+      }
     }
 
     resena.deleteOne();
@@ -555,20 +563,34 @@ exports.borrarRespuesta = async (req, res) => {
 exports.quitarImagenResena = async (req, res) => {
   try {
     const { cloudinary } = require('../config/cloudinary');
+    const { idx } = req.body; // índice de la imagen a eliminar
+    if (idx === undefined || idx === null)
+      return res.status(400).json({ error: 'Se requiere el índice de la imagen a eliminar' });
+
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const resena = recipe.resenas.find(r => r.userId.toString() === req.user._id.toString());
     if (!resena) return res.status(404).json({ error: 'No tienes reseña en esta receta' });
-    if (!resena.imagen || !resena.imagen.estado)
-      return res.status(400).json({ error: 'Esta reseña no tiene imagen' });
 
-    if (resena.imagen.publicId) {
-      try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch {}
+    // Migración: campo antiguo
+    if (!resena.imagenes || resena.imagenes.length === 0) {
+      if (resena.imagen?.estado) {
+        resena.imagenes = [{ url: resena.imagen.url, publicId: resena.imagen.publicId, estado: resena.imagen.estado }];
+        resena.imagen   = undefined;
+      } else {
+        return res.status(400).json({ error: 'Esta reseña no tiene imágenes' });
+      }
     }
-    resena.imagen.url      = null;
-    resena.imagen.publicId = null;
-    resena.imagen.estado   = undefined;
+
+    const imagen = resena.imagenes[idx];
+    if (!imagen) return res.status(404).json({ error: 'Imagen no encontrada en esa posición' });
+
+    if (imagen.publicId) {
+      try { await cloudinary.uploader.destroy(imagen.publicId); } catch {}
+    }
+
+    resena.imagenes.splice(idx, 1);
     await recipe.save();
 
     res.json({ success: true, message: 'Imagen eliminada correctamente' });

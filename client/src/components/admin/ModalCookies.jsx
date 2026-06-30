@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
 import './ModalCookies.css';
 
-export const COOKIE_KEY   = 'hh_cookie_consent';
-export const COOKIE_AGE   = 60 * 60 * 24 * 365;
+const COOKIE_KEY = 'hh_cookie_consent';
+const COOKIE_AGE = 60 * 60 * 24 * 365;
 
-export const getCookie = (name) => {
-  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : null;
-};
-
-export const setCookie = (name, value, maxAge = COOKIE_AGE) => {
+const setCookie = (name, value, maxAge = COOKIE_AGE) => {
   document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 };
-
-export const cookiesAceptadas = () =>
-  getCookie(COOKIE_KEY) === 'accepted' || localStorage.getItem(COOKIE_KEY) === 'accepted';
 
 const ModalCookies = ({ onAceptar }) => {
   const [visible,  setVisible]  = useState(false);

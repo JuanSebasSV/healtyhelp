@@ -1,7 +1,7 @@
 .footer {
   background: rgba(18, 72, 59, 0.52);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid rgba(120, 180, 90, 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
@@ -69,7 +69,7 @@
 .footerSeccion li {
   margin-bottom: 0.65rem;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: transform 0.25s ease, color 0.25s ease;
   color: rgba(220, 248, 230, 0.75);
   font-size: 0.9rem;
   display: flex;

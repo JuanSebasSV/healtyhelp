@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { isValidEmail } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
@@ -14,24 +14,19 @@ const ForgotPassword = () => {
   const [enviado, setEnviado] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const emailRef    = useRef(email);
-  emailRef.current  = email;
-
   const manejarRecuperar = useCallback(async () => {
-    const val = emailRef.current;
-
-    if (!val) {
+    if (!email) {
       setError('El correo es requerido');
       return;
     }
-    if (!isValidEmail(val)) {
+    if (!isValidEmail(email)) {
       setError('El correo no es válido');
       return;
     }
 
     setLoading(true);
 
-    const result = await forgotPassword(val);
+    const result = await forgotPassword(email);
 
     if (result.success) {
       setEnviado(true);
@@ -43,7 +38,7 @@ const ForgotPassword = () => {
     }
 
     setLoading(false);
-  }, [forgotPassword, navigate]);
+  }, [email, forgotPassword, navigate]);
 
   const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter') manejarRecuperar();

@@ -1,16 +1,13 @@
 .nutriPanel {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 18px;
   padding: 1.5rem;
   text-align: center;
-  position: sticky;
-  top: 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   contain: layout style;
-  will-change: transform;
 }
 
 .modo-oscuro .nutriPanel {
@@ -25,14 +22,12 @@
   font-family: 'Georgia', serif;
 }
 
-/* will-change: filter promueve el SVG a capa propia; drop-shadow se composita una vez */
 .nutriChart {
   width: 200px;
   height: 200px;
   margin: 1rem auto;
   display: block;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
-  will-change: filter;
 }
 
 .nutriLeyenda {
@@ -115,7 +110,6 @@
   font-weight: 700;
   cursor: pointer;
   transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-  will-change: transform;
 }
 .btnNutriDetalle:hover {
   background: var(--naranja);
@@ -124,7 +118,14 @@
   box-shadow: 0 6px 20px rgba(247, 127, 0, 0.35);
 }
 
-@media (max-width: 968px) {
-  .nutriPanel { position: static; will-change: auto; }
+@media (max-width: 1023px) {
   .nutriChart { width: 180px; height: 180px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nutriFila,
+  .btnNutriDetalle {
+    animation: none;
+    transition: none;
+  }
 }

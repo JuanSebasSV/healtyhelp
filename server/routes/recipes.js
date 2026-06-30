@@ -22,7 +22,7 @@ router.get   ('/:id/resenas',                              getResenas);
 // crearResena
 router.post  ('/:id/resenas',
   protect,
-  uploadResena.single('imagen'),
+  uploadResena.array('imagenes', 5),
   crearResena
 );
 
@@ -30,15 +30,14 @@ router.put   ('/:id/resenas',                protect,      editarResena);
 router.delete('/:id/resenas/:resenaId',      protect,      borrarResena);
 router.post  ('/:id/resenas/:resenaId/voto', protect,      votarResena);
 
-//  Imagen en reseña existente 
-router.delete('/:id/resenas/imagen', protect, quitarImagenResena);
-
 router.post(
   '/:id/resenas/:resenaId/imagen',
   protect,
-  uploadResena.single('imagen'),
+  uploadResena.array('imagenes', 5),
   subirImagenResena
 );
+
+router.delete('/:id/resenas/imagen', protect, quitarImagenResena);
 
 //  Respuestas 
 router.post  ('/:id/resenas/:resenaId/respuestas',            protect, responderResena);

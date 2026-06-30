@@ -12,8 +12,8 @@
   flex-direction: column;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   animation: slideUp 0.3s ease both;
@@ -44,7 +44,6 @@
   z-index: 10;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  will-change: transform;
 }
 .modalNutriWrapper .btn-cerrar-modal svg {
   width: 15px;
@@ -181,8 +180,18 @@
   .nutriValor { font-size: 0.82rem; }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 430px) {
   .modalNutriWrapper { width: calc(100% - 1rem); border-radius: 14px; }
   .modalNutriDetalle { padding: 0.85rem; }
   .modalNutriHeader h2 { font-size: 0.9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modalNutriWrapper,
+  .modalNutriWrapper .btn-cerrar-modal,
+  .modalNutriWrapper .btn-volver-nutri,
+  .nutriItemDetalle {
+    animation: none;
+    transition: none;
+  }
 }

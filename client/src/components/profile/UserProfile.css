@@ -3,35 +3,6 @@
   min-height: calc(100vh - 64px);
   padding: 3rem 2rem;
   position: relative;
-  overflow: hidden;
-}
-
-/*PARTÍCULAS DECORATIVAS*/
-.perfil-particulas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.particula {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.12;
-  will-change: transform;
-  animation: flotar 6s ease-in-out infinite;
-}
-
-.particula-1 { width: 80px;  height: 80px;  background: var(--naranja);      top: 10%;    left: 5%;   animation-delay: 0s;   }
-.particula-2 { width: 50px;  height: 50px;  background: var(--verde-hoja);   top: 30%;    right: 8%;  animation-delay: 1s;   }
-.particula-3 { width: 120px; height: 120px; background: var(--verde-bosque); bottom: 20%; left: 10%;  animation-delay: 2s;   }
-.particula-4 { width: 40px;  height: 40px;  background: var(--naranja);      bottom: 35%; right: 15%; animation-delay: 0.5s; }
-.particula-5 { width: 60px;  height: 60px;  background: var(--verde-hoja);   top: 60%;    left: 30%;  animation-delay: 1.5s; }
-.particula-6 { width: 90px;  height: 90px;  background: var(--naranja);      top: 5%;     right: 30%; animation-delay: 3s;   }
-
-@keyframes flotar {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%       { transform: translateY(-20px) scale(1.05); }
 }
 
 /*LAYOUT PRINCIPAL*/
@@ -52,7 +23,8 @@
 
 .perfil-identidad {
   background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1.5px solid rgba(255, 255, 255, 0.42);
   border-radius: 24px;
   padding: 2.5rem 2rem;
@@ -148,8 +120,8 @@
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.55);
   background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(16px) saturate(1.8);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  backdrop-filter: blur(8px) saturate(1.4);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
   color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
   display: flex;
@@ -313,7 +285,8 @@
 /*CONTENIDO PRINCIPAL*/
 .perfil-contenido {
   background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1.5px solid rgba(255, 255, 255, 0.38);
   border-radius: 24px;
   padding: 2.5rem;
@@ -915,7 +888,8 @@
 /*MODAL ELIMINAR CUENTA*/
 .modal-eliminar-cuenta {
   background: rgba(15, 25, 18, 0.92);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(220, 38, 38, 0.25);
   border-radius: 20px;
   padding: 2.5rem 2rem;
@@ -1046,7 +1020,8 @@
 /*MODAL MENORES*/
 .modal-menor {
   background: rgba(15, 25, 18, 0.92);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(247, 127, 0, 0.25);
   border-radius: 20px;
   padding: 2.5rem 2rem;

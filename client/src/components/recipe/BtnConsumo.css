@@ -180,3 +180,14 @@
   width: 13px;
   height: 13px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .btnConsumo,
+  .btnConsumo--señalar::before,
+  .btnConsumo-spinner,
+  .btnConsumo-tooltip,
+  .btnConsumo-tooltip-cerrar {
+    animation: none;
+    transition: none;
+  }
+}

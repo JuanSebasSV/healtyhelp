@@ -43,6 +43,7 @@ const useTermsGuard = (user, activeTermsVersion) => {
 
   //  Paso 1: decidir si mostrar el banner de cookies 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     const cookieConsent = getPersistedValue(COOKIE_CONSENT_KEY);
     if (cookieConsent === 'accepted') {
       setCookiesReady(true);
@@ -51,17 +52,10 @@ const useTermsGuard = (user, activeTermsVersion) => {
     }
   }, []);
 
-  //  Paso 2: cuando las cookies están listas, evaluar los términos 
-  useEffect(() => {
-    if (!cookiesReady || !activeTermsVersion) return;
-    evaluarTerminos();
-  }, [cookiesReady, activeTermsVersion, user]);
-
-  const evaluarTerminos = useCallback(() => {
+const evaluarTerminos = useCallback(() => {
     if (!activeTermsVersion) return;
 
     if (user) {
-      // El objeto `user` debe incluir `termsAccepted` y `termsVersion`
       if (!user.termsAccepted || user.termsVersion !== activeTermsVersion) {
         setEsActualizacion(
           !!user.termsAccepted && user.termsVersion !== activeTermsVersion
@@ -84,6 +78,12 @@ const useTermsGuard = (user, activeTermsVersion) => {
       }
     }
   }, [user, activeTermsVersion]);
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!cookiesReady || !activeTermsVersion) return;
+    evaluarTerminos();
+  }, [cookiesReady, activeTermsVersion, user, evaluarTerminos]);
 
   //  Handlers 
   const handleCookiesAceptadas = useCallback(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { validateResetPasswordForm } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
@@ -41,9 +41,6 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword]     = useState(false);
   const [showPasswordConf, setShowPasswordConf] = useState(false);
 
-  const formDataRef     = useRef(formData);
-  formDataRef.current   = formData;
-
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -53,7 +50,7 @@ const ResetPassword = () => {
   const handleSubmit = useCallback(async (e) => {
     e?.preventDefault();
 
-    const { password, passwordConf } = formDataRef.current;
+    const { password, passwordConf } = formData;
     const validationErrors = validateResetPasswordForm(password, passwordConf);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -80,7 +77,7 @@ const ResetPassword = () => {
     }
 
     setLoading(false);
-  }, [token, resetPassword, navigate]);
+  }, [formData, token, resetPassword, navigate]);
 
   const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter') handleSubmit(e);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
@@ -33,7 +33,7 @@ const VistaInicio = ({
 }) => {
   const { loading: authLoading } = useAuth();
   const {
-    filtros, toggleFiltro, limpiarFiltros,
+    filtros, toggleFiltro,
     categoria, setCategoria, limpiarCategoria, limpiarTodo, listo,
     filtroTiempo, cambiarFiltroTiempo, limpiarTiempo, alergia,
   } = useFiltroSalud(usuario, authLoading);
@@ -53,59 +53,77 @@ const VistaInicio = ({
   const intervaloRef    = useRef(null);
   const imagenActualRef = useRef(0);
 
-  const navigate = useNavigate();
-
   useEffect(() => { imagenActualRef.current = imagenActual; }, [imagenActual]);
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    const id = (window.requestIdleCallback || ((cb) => setTimeout(cb, 1)))(() => {
       HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
-    }, 1500);
-    return () => clearTimeout(t);
+    });
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(id);
+      else clearTimeout(id);
+    };
   }, []);
 
   useEffect(() => {
-    let raf = null;
-    const update = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = max > 0 ? window.scrollY / max : 0;
-      trackRef.current?.style.setProperty('--scroll-pct', pct);
+    let raf = 0;
+    let targetPct = 0;
+    let currentPct = 0;
+    const tick = () => {
+      raf = 0;
+      currentPct += (targetPct - currentPct) * 0.4;
+      if (Math.abs(targetPct - currentPct) < 0.0005) currentPct = targetPct;
+      trackRef.current?.style.setProperty('--scroll-pct', currentPct);
+      if (currentPct !== targetPct) raf = requestAnimationFrame(tick);
     };
     const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => { update(); raf = null; });
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      targetPct = max > 0 ? window.scrollY / max : 0;
+      if (!raf) raf = requestAnimationFrame(tick);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    update();
-    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf); };
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
     if (!isDragging) return;
-    let rafId = null;
+    let rafId = 0;
+    let target = dragStartScroll.current;
+    const STEP_MAX = 28;
+    const tick = () => {
+      rafId = 0;
+      const maxScr = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScr <= 0) return;
+      const cur = window.scrollY;
+      const diff = target - cur;
+      if (Math.abs(diff) < 1) return;
+      const step = Math.sign(diff) * Math.min(Math.abs(diff), STEP_MAX);
+      window.scrollTo({ top: Math.round(cur + step), behavior: 'instant' });
+      rafId = requestAnimationFrame(tick);
+    };
     const onMove = (e) => {
-      if (rafId !== null) return;
-      const y = e.clientY;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const trackH = window.innerHeight * 0.6;
-        const thumbH = trackH * 0.3;
-        const maxTop = trackH - thumbH;
-        const delta  = (y - dragStartY.current) / maxTop;
-        const maxScr = document.documentElement.scrollHeight - window.innerHeight;
-        window.scrollTo(0, Math.min(Math.max(dragStartScroll.current + delta * maxScr, 0), maxScr));
-      });
+      const trackH = window.innerHeight * 0.6;
+      const thumbH = trackH * 0.3;
+      const maxTop = trackH - thumbH;
+      const track = ((e.clientY - dragStartY.current) / maxTop) * 0.55;
+      const maxScr = document.documentElement.scrollHeight - window.innerHeight;
+      target = Math.max(0, Math.min(maxScr, dragStartScroll.current + track * maxScr));
+      if (!rafId) rafId = requestAnimationFrame(tick);
     };
     const onUp = () => {
       setIsDragging(false);
-      if (rafId !== null) cancelAnimationFrame(rafId);
+      cancelAnimationFrame(rafId);
     };
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseup', onUp);
     return () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      if (rafId !== null) cancelAnimationFrame(rafId);
+      cancelAnimationFrame(rafId);
     };
   }, [isDragging]);
 

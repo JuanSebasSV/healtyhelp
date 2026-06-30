@@ -1,3 +1,4 @@
+// Seccionresenas.jsx
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import api from "../../api/axios";
 import { toast } from "react-toastify";
@@ -260,116 +261,120 @@ const Estrellas = memo(({ valor, onChange, readonly = false }) => {
 Estrellas.displayName = "Estrellas";
 
 //ImagenResena
-const ImagenResena = memo(({ imagen, esPropia }) => {
-  if (!imagen?.estado || imagen.estado === "rechazada") return null;
-  if (imagen.estado === "pendiente" && !esPropia) return null;
+const ImagenesResena = memo(({ imagenes = [], esPropia }) => {
+  const visibles = imagenes.filter(img => {
+    if (!img?.estado || img.estado === "rechazada") return false;
+    if (img.estado === "pendiente" && !esPropia) return false;
+    return true;
+  });
 
-  if (imagen.estado === "aprobada") {
-    return (
-      <div className="sr-imagen-wrap">
-        <img
-          src={imagen.url}
-          alt="Imagen del comentario"
-          className="sr-imagen"
-          loading="lazy"
-        />
-      </div>
-    );
-  }
+  if (visibles.length === 0) return null;
 
   return (
-    <div className="sr-imagen-pendiente">
-      <IcoImage size={28} className="sr-imagen-pendiente-icono" />
-      <span className="sr-imagen-pendiente-titulo">
-        <IcoClock
-          size={13}
-          style={{ marginRight: "5px", verticalAlign: "middle" }}
-        />
-        En revisión
-      </span>
-      <span className="sr-imagen-pendiente-sub">
-        Tu imagen fue recibida y está pendiente de aprobación
-      </span>
+    <div className="sr-imagenes-wrap">
+      {visibles.map((img, i) =>
+        img.estado === "aprobada" ? (
+          <div key={i} className="sr-imagen-wrap">
+            <img
+              src={img.url}
+              alt={`Imagen ${i + 1} del comentario`}
+              className="sr-imagen"
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div key={i} className="sr-imagen-pendiente">
+            <IcoImage size={28} className="sr-imagen-pendiente-icono" />
+            <span className="sr-imagen-pendiente-titulo">
+              <IcoClock size={13} style={{ marginRight: "5px", verticalAlign: "middle" }} />
+              En revisión
+            </span>
+            <span className="sr-imagen-pendiente-sub">
+              Tu imagen está pendiente de aprobación
+            </span>
+          </div>
+        )
+      )}
     </div>
   );
 });
-ImagenResena.displayName = "ImagenResena";
+ImagenesResena.displayName = "ImagenesResena";
 
 //SelectorImagen
-const SelectorImagen = memo(({ imagen, onChange, onRemove }) => {
+const SelectorImagenes = memo(({ imagenes, onChange, onRemove }) => {
   const inputRef = useRef(null);
+  const MAX = 5;
 
-  const handleFile = useCallback(
+  const handleFiles = useCallback(
     (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (!file.type.startsWith("image/")) {
-        toast.error("Solo se permiten imágenes");
+      const nuevas = Array.from(e.target.files);
+      const validas = nuevas.filter((f) => {
+        if (!f.type.startsWith("image/")) { toast.error(`${f.name}: solo se permiten imágenes`); return false; }
+        if (f.size > 5 * 1024 * 1024)    { toast.error(`${f.name}: máximo 5 MB`);               return false; }
+        return true;
+      });
+      if (imagenes.length + validas.length > MAX) {
+        toast.error(`Puedes adjuntar máximo ${MAX} imágenes`);
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("La imagen no puede superar 5 MB");
-        return;
-      }
-      onChange(file);
+      onChange([...imagenes, ...validas]);
+      e.target.value = "";
     },
-    [onChange],
+    [imagenes, onChange],
   );
 
   const handleClick = useCallback(() => inputRef.current?.click(), []);
 
-  useEffect(() => {
-    if (!imagen) return;
-    const url = URL.createObjectURL(imagen);
-    return () => URL.revokeObjectURL(url);
-  }, [imagen]);
-
   return (
     <div className="sr-selector-imagen">
-      {!imagen ? (
-        <button
-          type="button"
-          className="sr-btn-adjuntar"
-          onClick={handleClick}
-          title="Adjuntar imagen (requiere aprobación)"
-        >
-          <IcoImagePlus size={14} />
-          Adjuntar imagen
-        </button>
-      ) : (
-        <div className="sr-preview-wrap">
-          <img
-            src={URL.createObjectURL(imagen)}
-            alt="Vista previa"
-            className="sr-preview-img"
-          />
+      <div className="sr-previews-grid">
+        {imagenes.map((img, i) => {
+          const url = URL.createObjectURL(img);
+          return (
+            <div key={i} className="sr-preview-wrap">
+              <img src={url} alt={`Vista previa ${i + 1}`} className="sr-preview-img" />
+              <button
+                type="button"
+                className="sr-btn-quitar-img"
+                onClick={() => onRemove(i)}
+                title="Quitar imagen"
+              >
+                <IcoX size={10} />
+              </button>
+            </div>
+          );
+        })}
+        {imagenes.length < MAX && (
           <button
             type="button"
-            className="sr-btn-quitar-img"
-            onClick={onRemove}
-            title="Quitar imagen"
+            className="sr-btn-adjuntar"
+            onClick={handleClick}
+            title="Adjuntar imagen (requiere aprobación)"
           >
-            <IcoX size={10} />
+            <IcoImagePlus size={14} />
+            {imagenes.length === 0 ? "Adjuntar imagen" : "Agregar más"}
           </button>
-          <span className="sr-preview-aviso">
-            <IcoInfo size={12} />
-            Requiere aprobación (≈3 días)
-          </span>
-        </div>
+        )}
+      </div>
+      {imagenes.length > 0 && (
+        <span className="sr-preview-aviso">
+          <IcoInfo size={12} />
+          {imagenes.length}/{MAX} — Requieren aprobación (≈3 días)
+        </span>
       )}
       <input
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        multiple
         style={{ display: "none" }}
-        onChange={handleFile}
+        onChange={handleFiles}
       />
     </div>
   );
 });
-SelectorImagen.displayName = "SelectorImagen";
+SelectorImagenes.displayName = "SelectorImagenes";
 
-//Chip de mención (referencia a respuesta citada)
 const MencionChip = memo(({ nombre, texto }) => {
   if (!nombre) return null;
   const preview = texto
@@ -384,7 +389,6 @@ const MencionChip = memo(({ nombre, texto }) => {
 });
 MencionChip.displayName = "MencionChip";
 
-//Un item de respuesta (recursivo)
 const RespuestaItem = memo(
   ({
     rp,
@@ -431,7 +435,6 @@ const RespuestaItem = memo(
         rp.userId?.toString() === user.id?.toString());
     const esAdmin = user?.role === "admin";
 
-    // Indentación máxima visual en 3 niveles; luego se queda plano
     const visualDepth = Math.min(depth, 3);
 
     const handleEnviar = useCallback(async () => {
@@ -442,7 +445,6 @@ const RespuestaItem = memo(
           `/recipes/${recetaId}/resenas/${resenaId}/respuestas`,
           {
             texto: texto.trim(),
-            // Enviamos la referencia al padre inmediato
             parentRespuestaId: rp._id,
             parentUserName: rp.userName,
             parentTexto: rp.texto,
@@ -590,7 +592,6 @@ const SeccionRespuestas = memo(
     const [respuestas, setRespuestas] = useState(respInit || []);
     const [texto, setTexto] = useState("");
     const [enviando, setEnviando] = useState(false);
-    // Expandir directamente si ya hay una respuesta destacada en el array inicial
     const [expandido, setExpandido] = useState(
       () =>
         !!(
@@ -602,7 +603,6 @@ const SeccionRespuestas = memo(
 
     useEffect(() => {
       if (!respuestaIdDestacada) return;
-      // Expandir siempre que haya un ID destacado, incluso si la respuesta fue borrada
       setExpandido(true);
     }, [respuestaIdDestacada]);
 
@@ -764,14 +764,12 @@ const SeccionRespuestas = memo(
 );
 SeccionRespuestas.displayName = "SeccionRespuestas";
 
-//Helper: ¿es la reseña del usuario actual?
 const esDelUsuario = (r, user) =>
   user &&
   (r.userId?.toString() === user._id?.toString() ||
     r.userId?.toString() === user.id?.toString());
 
 //SeccionResenas
-// Compara dos IDs de MongoDB de forma segura
 const idIgual = (a, b) => a && b && String(a) === String(b);
 
 const SeccionResenas = ({
@@ -790,17 +788,16 @@ const SeccionResenas = ({
   const [totalPags, setTotalPags] = useState(1);
   const [orden, setOrden] = useState("reciente");
   const [refresco, setRefresco] = useState(0);
-  // true mientras buscamos en qué página está la respuesta destacada
   const [buscandoPagina, setBuscandoPagina] = useState(false);
   useEffect(() => {
     setBuscandoPagina(!!(respuestaIdDestacada || resenaIdDestacada));
-  }, []);
+  }, [respuestaIdDestacada, resenaIdDestacada]);
 
   const [miResena, setMiResena] = useState(null);
   const [editando, setEditando] = useState(false);
   const [formEstrellas, setFormEstrellas] = useState(5);
   const [formTexto, setFormTexto] = useState("");
-  const [formImagen, setFormImagen] = useState(null);
+  const [formImagenes, setFormImagenes] = useState([]);
   const [enviando, setEnviando] = useState(false);
 
   const resenaDestacadaRef = useRef(null);
@@ -820,7 +817,6 @@ const SeccionResenas = ({
         if (cancelled) return;
         const totalPaginas = d1.pagination.pages;
 
-        // Función que revisa si una página contiene la reseña/respuesta buscada
         const revisar = (resenas) => {
           for (const r of resenas) {
             if (resenaIdDestacada && idIgual(r._id, resenaIdDestacada))
@@ -841,7 +837,6 @@ const SeccionResenas = ({
           return;
         }
 
-        // Buscar en páginas 2
         for (let p = 2; p <= totalPaginas; p++) {
           if (cancelled) return;
           const { data } = await api.get(
@@ -853,10 +848,9 @@ const SeccionResenas = ({
             return;
           }
         }
-        // No encontrada (fue borrada)
         if (!cancelled) setPagina(1);
-      } catch {
-        /* silencioso */
+      } catch (e) {
+        console.error('Error en paginación:', e);
       } finally {
         if (!cancelled) setBuscandoPagina(false);
       }
@@ -865,10 +859,8 @@ const SeccionResenas = ({
     return () => {
       cancelled = true;
     };
-    // Solo corre una vez al montar con los IDs iniciales
-  }, [receta._id, respuestaIdDestacada, resenaIdDestacada]);
+  }, [receta._id, respuestaIdDestacada, resenaIdDestacada, refresco, orden]);
 
-  //Scroll a reseña destacada (cuando carga termina y hay ref)
   useEffect(() => {
     if (
       !resenaIdDestacada ||
@@ -912,16 +904,20 @@ const SeccionResenas = ({
         if (user) {
           const mia = data.resenas.find((r) => esDelUsuario(r, user));
 
-          const fusionarImagen = (resenaServidor, resenaLocal) => {
-            if (resenaServidor.imagen) return resenaServidor;
-            if (resenaLocal?.imagen?.estado === "pendiente") {
-              return { ...resenaServidor, imagen: resenaLocal.imagen };
+          const fusionarImagenes = (resenaServidor, resenaLocal) => {
+            if (resenaServidor.imagenes && resenaServidor.imagenes.length > 0)
+              return resenaServidor;
+            const pendientesLocales = (resenaLocal?.imagenes || []).filter(
+              (img) => img.estado === "pendiente"
+            );
+            if (pendientesLocales.length > 0) {
+              return { ...resenaServidor, imagenes: pendientesLocales };
             }
             return resenaServidor;
           };
 
           if (mia) {
-            setMiResena((prev) => fusionarImagen(mia, prev));
+            setMiResena((prev) => fusionarImagenes(mia, prev));
             setFormEstrellas(mia.estrellas);
             setFormTexto(mia.texto || "");
           } else if (pagina === 1) {
@@ -940,7 +936,7 @@ const SeccionResenas = ({
               if (mia2) {
                 encontrada = true;
                 if (!cancelled) {
-                  setMiResena((prev) => fusionarImagen(mia2, prev));
+                  setMiResena((prev) => fusionarImagenes(mia2, prev));
                   setFormEstrellas(mia2.estrellas);
                   setFormTexto(mia2.texto || "");
                 }
@@ -953,7 +949,8 @@ const SeccionResenas = ({
             }
           }
         }
-      } catch {
+      } catch (e) {
+        console.error('Error cargando reseñas:', e);
         if (!cancelled) toast.error("Error cargando reseñas");
       } finally {
         if (!cancelled) setCargandoRes(false);
@@ -976,7 +973,7 @@ const SeccionResenas = ({
       toast.error("Selecciona una puntuación");
       return;
     }
-    if (formImagen && !formTexto.trim()) {
+    if (formImagenes.length > 0 && !formTexto.trim()) {
       toast.error("Escribe un comentario para acompañar la imagen");
       return;
     }
@@ -984,11 +981,11 @@ const SeccionResenas = ({
     setEnviando(true);
     try {
       let data;
-      if (formImagen && !miResena) {
+      if (formImagenes.length > 0 && !miResena) {
         const fd = new FormData();
         fd.append("estrellas", formEstrellas);
         fd.append("texto", formTexto.trim());
-        fd.append("imagen", formImagen);
+        formImagenes.forEach((img) => fd.append("imagenes", img));
         ({ data } = await api.post(`/recipes/${receta._id}/resenas`, fd, {
           headers: { "Content-Type": "multipart/form-data" },
         }));
@@ -1007,22 +1004,11 @@ const SeccionResenas = ({
       toast.success(miResena ? "Reseña actualizada" : "Reseña publicada");
       setPuntosProm(data.puntosProm);
       setTotalResenas(data.totalResenas);
-
-      // Si se subió imagen, guardar la imagen pendiente en el estado local
-      // Si NO se subió imagen, usar exactamente lo que devuelve el servidor (sin imagen)
-      const resenaFinal = formImagen
-        ? {
-            ...data.resena,
-            imagen: data.resena.imagen ?? { estado: "pendiente" },
-          }
-        : data.resena;
-
-      setMiResena(resenaFinal);
+      setMiResena(data.resena);
       setFormEstrellas(data.resena.estrellas);
       setFormTexto(data.resena.texto || "");
-      setFormImagen(null);
+      setFormImagenes([]);
       setEditando(false);
-      // Recargar la lista para reflejar la nueva/actualizada reseña
       setPagina(1);
       setRefresco((r) => r + 1);
     } catch (error) {
@@ -1030,7 +1016,7 @@ const SeccionResenas = ({
     } finally {
       setEnviando(false);
     }
-  }, [formEstrellas, formImagen, formTexto, miResena, receta._id]);
+  }, [formEstrellas, formImagenes, formTexto, miResena, receta._id]);
 
   const handleBorrarResena = useCallback(
     async (resenaId) => {
@@ -1042,7 +1028,7 @@ const SeccionResenas = ({
         setMiResena(null);
         setFormEstrellas(5);
         setFormTexto("");
-        setFormImagen(null);
+        setFormImagenes([]);
         setEditando(false);
         setPagina(1);
         setRefresco((r) => r + 1);
@@ -1088,9 +1074,10 @@ const SeccionResenas = ({
     setEditando(false);
     setFormEstrellas(miResena.estrellas);
     setFormTexto(miResena.texto || "");
-    setFormImagen(null);
+    setFormImagenes([]);
   }, [miResena]);
-  const handleQuitarImagen = useCallback(() => setFormImagen(null), []);
+  const _handleQuitarImagen = useCallback(() => setFormImagenes([]), []);
+  void _handleQuitarImagen;
 
   const promRedondeado = Math.round(puntosProm);
 
@@ -1171,7 +1158,7 @@ const SeccionResenas = ({
               {miResena.texto && (
                 <p className="sr-mi-resena-texto">"{miResena.texto}"</p>
               )}
-              <ImagenResena imagen={miResena.imagen} esPropia />
+              <ImagenesResena imagenes={miResena.imagenes || []} esPropia />
               <SeccionRespuestas
                 recetaId={receta._id}
                 resenaId={miResena._id}
@@ -1197,7 +1184,7 @@ const SeccionResenas = ({
               <textarea
                 className="sr-textarea"
                 placeholder={
-                  formImagen
+                  formImagenes.length > 0
                     ? "Escribe un comentario (obligatorio con imagen)..."
                     : "Escribe un comentario (opcional)..."
                 }
@@ -1210,78 +1197,64 @@ const SeccionResenas = ({
               />
 
               {!miResena && (
-                <SelectorImagen
-                  imagen={formImagen}
-                  onChange={setFormImagen}
-                  onRemove={handleQuitarImagen}
+                <SelectorImagenes
+                  imagenes={formImagenes}
+                  onChange={setFormImagenes}
+                  onRemove={(i) =>
+                    setFormImagenes((prev) => prev.filter((_, idx) => idx !== i))
+                  }
                 />
               )}
 
-              {miResena?.imagen && miResena.imagen.estado !== "rechazada" && (
+              {(miResena?.imagenes || []).filter(img => img.estado !== "rechazada").length > 0 && (
                 <div className="sr-edit-imagen-wrap">
-                  <div className="sr-edit-imagen-inner">
-                    {miResena.imagen.estado === "aprobada" ? (
-                      <img
-                        src={miResena.imagen.url}
-                        alt="Imagen de la reseña"
-                        className="sr-imagen sr-edit-img"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="sr-imagen-pendiente sr-edit-pendiente">
-                        <IcoImage
-                          size={28}
-                          className="sr-imagen-pendiente-icono"
-                        />
-                        <span className="sr-imagen-pendiente-titulo">
-                          <IcoClock
-                            size={13}
-                            style={{
-                              marginRight: "5px",
-                              verticalAlign: "middle",
+                  <div className="sr-previews-grid">
+                    {(miResena.imagenes || [])
+                      .filter(img => img.estado !== "rechazada")
+                      .map((img, idx) => (
+                        <div key={idx} className="sr-edit-imagen-inner">
+                          {img.estado === "aprobada" ? (
+                            <img
+                              src={img.url}
+                              alt={`Imagen ${idx + 1}`}
+                              className="sr-imagen sr-edit-img"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="sr-imagen-pendiente sr-edit-pendiente">
+                              <IcoImage size={28} className="sr-imagen-pendiente-icono" />
+                              <span className="sr-imagen-pendiente-titulo">
+                                <IcoClock size={13} style={{ marginRight: "5px", verticalAlign: "middle" }} />
+                                En revisión
+                              </span>
+                              <span className="sr-imagen-pendiente-sub">
+                                Pendiente de aprobación
+                              </span>
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            className="sr-edit-quitar-btn"
+                            title="Quitar imagen"
+                            onClick={async () => {
+                              if (!window.confirm("¿Quitar esta imagen de la reseña?")) return;
+                              try {
+                                await api.delete(`/recipes/${receta._id}/resenas/imagen`, { data: { idx } });
+                                setMiResena((prev) => ({
+                                  ...prev,
+                                  imagenes: (prev.imagenes || []).filter((_, i) => i !== idx),
+                                }));
+                                toast.success("Imagen eliminada");
+                              } catch (e) {
+                                toast.error(e.response?.data?.error || "Error al quitar imagen");
+                              }
                             }}
-                          />
-                          En revisión
-                        </span>
-                        <span className="sr-imagen-pendiente-sub">
-                          Tu imagen fue recibida y está pendiente de aprobación
-                        </span>
-                      </div>
-                    )}
-                    {miResena.imagen.estado === "aprobada" && (
-                      <div className="sr-edit-imagen-overlay">
-                        <IcoImage size={16} />
-                        <span>Imagen aprobada</span>
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      className="sr-edit-quitar-btn"
-                      title="Quitar imagen"
-                      onClick={async () => {
-                        if (
-                          !window.confirm("¿Quitar la imagen de esta reseña?")
-                        )
-                          return;
-                        try {
-                          await api.delete(
-                            `/recipes/${receta._id}/resenas/imagen`,
-                          );
-                          setMiResena((prev) => ({ ...prev, imagen: null }));
-                          toast.success("Imagen eliminada");
-                        } catch (e) {
-                          toast.error(
-                            e.response?.data?.error || "Error al quitar imagen",
-                          );
-                        }
-                      }}
-                    >
-                      <IcoX size={11} />
-                    </button>
+                          >
+                            <IcoX size={11} />
+                          </button>
+                        </div>
+                      ))}
                   </div>
-                  <p className="sr-edit-imagen-aviso">
-                    Para subir una nueva imagen crea una nueva reseña
-                  </p>
                 </div>
               )}
 
@@ -1301,7 +1274,7 @@ const SeccionResenas = ({
                   disabled={
                     enviando ||
                     !formEstrellas ||
-                    (!!formImagen && !formTexto.trim())
+                    (formImagenes.length > 0 && !formTexto.trim())
                   }
                 >
                   {enviando ? (
@@ -1366,14 +1339,6 @@ const SeccionResenas = ({
             .map((r) => {
               const esPropia = esDelUsuario(r, user);
               const esAdmin = user?.role === "admin";
-              const imagenParaMostrar =
-                esPropia &&
-                !r.imagen &&
-                miResena?.imagen?.estado === "pendiente" &&
-                miResena?.imagen?.url
-                  ? miResena.imagen
-                  : r.imagen;
-
               return (
                 <div
                   key={r._id}
@@ -1406,8 +1371,8 @@ const SeccionResenas = ({
                     )}
                   </div>
                   {r.texto && <p className="sr-texto">{r.texto}</p>}
-                  <ImagenResena
-                    imagen={imagenParaMostrar}
+                  <ImagenesResena
+                    imagenes={r.imagenes || []}
                     esPropia={!!esPropia}
                   />
                   <div className="sr-votos">

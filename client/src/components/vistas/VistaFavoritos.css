@@ -422,7 +422,20 @@
   .vf-tiempo-btn { font-size: 0.74rem; padding: 0.3rem 0.75rem; }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 430px) {
   .vf-categorias-grid { grid-template-columns: 1fr; }
   .vf-header h1 { font-size: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vf-buscador-wrap,
+  .vf-buscador-clear,
+  .vf-tarjeta,
+  .vf-cat-card,
+  .vf-corazon,
+  .vf-quitar,
+  .vf-tiempo-btn {
+    animation: none;
+    transition: none;
+  }
 }

@@ -1,19 +1,6 @@
-const TZ       = 'America/Bogota';
-const API_URL  = 'https://worldtimeapi.org/api/timezone/America%2FBogota';
-const REFRESCO = 30 * 60 * 1000;
+const TZ = 'America/Bogota';
 
-let _offset = 0;
-
-const _calibrar = () =>
-  fetch(API_URL, { cache: 'no-store' })
-    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-    .then(({ unixtime }) => { _offset = unixtime * 1000 - Date.now(); })
-    .catch(() => {});
-
-_calibrar();
-setInterval(_calibrar, REFRESCO);
-
-const _ahoraReal = () => new Date(Date.now() + _offset);
+const _ahoraReal = () => new Date();
 
 export const getHoraBogota = () =>
   parseInt(

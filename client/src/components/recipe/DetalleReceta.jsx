@@ -1,8 +1,10 @@
 import React, { useEffect, useState, memo } from "react";
+import { createPortal } from "react-dom";
 import NutricionGrafico from "./NutricionGrafico";
 import BtnConsumo from "./BtnConsumo";
 import useAuth from "../../hooks/useAuth";
 import SeccionResenas from "./SeccionResenas";
+import { optimizeCloudinary } from "../../utils/cloudinary";
 import "./DetalleReceta.css";
 import { generarPDFRecetas } from "../../utils/generarPDF";
 
@@ -29,8 +31,6 @@ const DetalleReceta = memo(
     respuestaIdDestacada,
     toggleFav,
     esFav,
-    seleccionada,
-    onSeleccionar,
   }) => {
     const { user, isAuthenticated } = useAuth();
 
@@ -89,7 +89,7 @@ const DetalleReceta = memo(
       };
     }, []);
 
-    return (
+    return createPortal(
       <div className="modal-overlay" onClick={cerrar}>
         <div
           className="modalContenedorReceta"
@@ -106,9 +106,11 @@ const DetalleReceta = memo(
           <div className="modalCol modalIzq">
             <div className="modalImg-wrap">
               <img
-                src={receta.img}
+                src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_800')}
                 alt={receta.nombre}
                 className="modalImg"
+                width="800"
+                height="500"
                 loading="lazy"
                 decoding="async"
               />
@@ -233,7 +235,8 @@ const DetalleReceta = memo(
             />
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   },
 );

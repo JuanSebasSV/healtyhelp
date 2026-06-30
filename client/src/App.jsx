@@ -23,38 +23,36 @@ import PrivateRoute from "./components/layout/PrivateRoute";
 import api from "./api/axios";
 import useAuth from "./hooks/useAuth";
 
-const UserProfile = lazy(() => import("./components/profile/UserProfile"));
-const Login = lazy(() => import("./components/auth/Login"));
-const Register = lazy(() => import("./components/auth/Register"));
-const GoogleCallback = lazy(() => import("./components/auth/GoogleCallback"));
-const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword"));
-const ResetPassword = lazy(() => import("./components/auth/ResetPassword"));
-const VerificarEmail = lazy(() => import("./components/auth/VerificarEmail"));
-const VistaInicio = lazy(() => import("./components/inicio/VistaInicio"));
-const VistaSeguimiento = lazy(
-  () => import("./components/vistas/VistaSeguimiento"),
-);
-const VistaFavoritos = lazy(() => import("./components/vistas/VistaFavoritos"));
-const VistaContacto = lazy(() => import("./components/vistas/VistaContacto"));
-const VistaChatbot = lazy(() => import("./components/vistas/VistaChatbot"));
-const Dashboard = lazy(() => import("./components/admin/Dashboard"));
-const UserList = lazy(() => import("./components/admin/UserList"));
-const Stats = lazy(() => import("./components/admin/Stats"));
-const RecipeManagement = lazy(
-  () => import("./components/admin/RecipeManagement"),
-);
-const ImagenesAprobacion = lazy(
-  () => import("./components/admin/ImagenesAprobacion"),
-);
-const RobotIA = lazy(() => import("./components/inicio/RobotIA"));
-const ModalTerminos = lazy(() => import("./components/admin/ModalTerminos"));
-const ModalCompletarPerfil = lazy(
-  () => import("./components/admin/ModalCompletarPerfil"),
-);
-const ModalCookies = lazy(() => import("./components/admin/ModalCookies"));
-const ModalGooglePassword = lazy(
-  () => import("./components/auth/ModalGooglePassword"),
-);
+const safeLazy = (importFn, nombre) => lazy(() => {
+  if (!navigator.onLine) {
+    console.info(`[Red] Sin conexión para cargar "${nombre}".`);
+    return Promise.resolve({ default: () => null });
+  }
+  return importFn();
+});
+
+const UserProfile = safeLazy(() => import("./components/profile/UserProfile"), "UserProfile");
+const Login = safeLazy(() => import("./components/auth/Login"), "Login");
+const Register = safeLazy(() => import("./components/auth/Register"), "Register");
+const GoogleCallback = safeLazy(() => import("./components/auth/GoogleCallback"), "GoogleCallback");
+const ForgotPassword = safeLazy(() => import("./components/auth/ForgotPassword"), "ForgotPassword");
+const ResetPassword = safeLazy(() => import("./components/auth/ResetPassword"), "ResetPassword");
+const VerificarEmail = safeLazy(() => import("./components/auth/VerificarEmail"), "VerificarEmail");
+const VistaInicio = safeLazy(() => import("./components/inicio/VistaInicio"), "VistaInicio");
+const VistaSeguimiento = safeLazy(() => import("./components/vistas/VistaSeguimiento"), "VistaSeguimiento");
+const VistaFavoritos = safeLazy(() => import("./components/vistas/VistaFavoritos"), "VistaFavoritos");
+const VistaContacto = safeLazy(() => import("./components/vistas/VistaContacto"), "VistaContacto");
+const VistaChatbot = safeLazy(() => import("./components/vistas/VistaChatbot"), "VistaChatbot");
+const Dashboard = safeLazy(() => import("./components/admin/Dashboard"), "Dashboard");
+const UserList = safeLazy(() => import("./components/admin/UserList"), "UserList");
+const Stats = safeLazy(() => import("./components/admin/Stats"), "Stats");
+const RecipeManagement = safeLazy(() => import("./components/admin/RecipeManagement"), "RecipeManagement");
+const ImagenesAprobacion = safeLazy(() => import("./components/admin/ImagenesAprobacion"), "ImagenesAprobacion");
+const RobotIA = safeLazy(() => import("./components/inicio/RobotIA"), "RobotIA");
+const ModalTerminos = safeLazy(() => import("./components/admin/ModalTerminos"), "ModalTerminos");
+const ModalCompletarPerfil = safeLazy(() => import("./components/admin/ModalCompletarPerfil"), "ModalCompletarPerfil");
+const ModalCookies = safeLazy(() => import("./components/admin/ModalCookies"), "ModalCookies");
+const ModalGooglePassword = safeLazy(() => import("./components/auth/ModalGooglePassword"), "ModalGooglePassword");
 
 const COOKIE_CONSENT_KEY = "hh_cookie_consent";
 const TERMS_ACCEPTED_KEY = "hh_terms_accepted";
@@ -113,9 +111,35 @@ const RUTAS_LIBRES = [
   "/verificar-email",
 ];
 
+class SinConexionBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { sinConexion: false, nombreVista: '' };
+  }
+  static getDerivedStateFromError(error) {
+    const esCargaFallida =
+      error?.message?.includes('Failed to fetch dynamically imported module') ||
+      error?.message?.includes('Importing a module script failed');
+    if (esCargaFallida) {
+      const match = error.message.match(/\/([^/]+)\.jsx/);
+      const nombre = match ? match[1] : 'esta vista';
+      console.info(`[Red] Sin conexión para cargar "${nombre}".`);
+      return { sinConexion: true, nombreVista: nombre };
+    }
+    return null;
+  }
+  componentDidCatch(error) {
+    if (!this.state.sinConexion) throw error;
+  }
+  render() {
+    if (this.state.sinConexion) return this.props.fallback ?? null;
+    return this.props.children;
+  }
+}
+
 function AppContent() {
   const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
-  const { user, checkAuth, loading: authLoading } = useAuth();
+  const { user, checkAuth } = useAuth();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem("modoOscuro");
@@ -123,10 +147,6 @@ function AppContent() {
   });
   const [categoriaActiva, setCategoriaActiva] = useState("todas");
 
-  /*const [favoritos, setFavoritos] = useState(() => {
-    const saved = localStorage.getItem("favoritos");
-    return saved ? JSON.parse(saved) : [];
-  });*/
   const [robotIAActivo, setRobotIAActivo] = useState(false);
   const [recetas, setRecetas] = useState([]);
   const [cargandoRecetas, setCargandoRecetas] = useState(true);
@@ -162,9 +182,6 @@ useEffect(() => {
     localStorage.setItem("modoOscuro", JSON.stringify(modoOscuro));
   }, [modoOscuro]);
 
- /* useEffect(() => {
-    localStorage.setItem("favoritos", JSON.stringify(favoritos));
-  }, [favoritos]);*/
 
   useEffect(() => {
     let cancelled = false;
@@ -193,7 +210,7 @@ useEffect(() => {
   useEffect(() => {
     if (!backendListo) return;
     checkAuth();
-  }, [backendListo]);
+  }, [backendListo, checkAuth]);
 
   useEffect(() => {
     if (!backendListo) return;
@@ -238,9 +255,6 @@ useEffect(() => {
 
   const resolverTerminos = useCallback(() => {
     if (!user) return;
-    // Calcular igual que el backend: desde los datos reales, no desde el campo cacheado.
-    // Esto evita que el modal aparezca cuando el usuario ya tiene age/weight/height válidos
-    // pero profileComplete quedó en false por desincronización.
     const profileRealmenteCompleto = (
       user.age    != null && Number(user.age)    >= 18 &&
       user.weight != null && Number(user.weight) >= 40 &&
@@ -300,7 +314,7 @@ useEffect(() => {
     }
 
     evaluarTerminos(activeTermsVersion);
-  }, [user, activeTermsVersion, evaluarTerminos]);
+  }, [user, activeTermsVersion, evaluarTerminos, isPreview]);
 
   const handleCookiesAceptadas = useCallback(() => {
     migrarSessionACookies();
@@ -362,21 +376,11 @@ useEffect(() => {
     [],
   );
 
-  /*const toggleFav = useCallback((recetaId) => {
-    setFavoritos((prev) =>
-      prev.includes(recetaId)
-        ? prev.filter((id) => id !== recetaId)
-        : [...prev, recetaId],
-    );
-  }, []);*/
-
-    // DESPUÉS:
   const toggleFav = useCallback(async (recetaId) => {
     if (!user) return;
   
     const favoritosAnteriores = [...favoritos];
   
-    // 1. Cambio visual instantáneo
     setFavoritos(prev =>
       prev.includes(recetaId)
         ? prev.filter(id => id !== recetaId)
@@ -385,19 +389,16 @@ useEffect(() => {
   
     try {
       const { data } = await api.post(`/favoritos/${recetaId}`);
-      // 2. Sincronizamos con el servidor tras el éxito
       setFavoritos(data.favoritos.map(id => id.toString()));
     } catch (error) {
-      // 3. Si hay error (como el límite), revertimos y avisamos
       setFavoritos(favoritosAnteriores);
       
       const mensajeError = error.response?.data?.error || "Error al actualizar favoritos";
       alert(mensajeError); 
       
-      // Mantenemos solo este log si quieres seguir monitoreando en consola
       console.error("Error en toggleFav:", mensajeError);
     }
-  }, [user, favoritos, api]);
+  }, [user, favoritos]);
 
 
   return (
@@ -411,6 +412,7 @@ useEffect(() => {
         />
 
         <main className="contenido-principal">
+          <SinConexionBoundary>
           <Suspense fallback={null}>
             <Routes>
               <Route
@@ -530,16 +532,20 @@ useEffect(() => {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
+          </SinConexionBoundary>
         </main>
 
         <Footer />
 
         {user && (
+          <SinConexionBoundary>
           <Suspense fallback={null}>
             <RobotIA activo={robotIAActivo} toggleIA={toggleRobotIA} />
           </Suspense>
+          </SinConexionBoundary>
         )}
 
+        <SinConexionBoundary>
         <Suspense fallback={null}>
           {mostrarGooglePassword && (
             <ModalGooglePassword onSuccess={handleGooglePasswordSuccess} />
@@ -565,6 +571,7 @@ useEffect(() => {
               />
             )}
         </Suspense>
+        </SinConexionBoundary>
 
         <ToastContainer
           position="top-right"
@@ -582,6 +589,67 @@ useEffect(() => {
 }
 
 function App() {
+  useEffect(() => {
+    let raf = 0;
+    let clearTimer = 0;
+    const setScroll = () => {
+      if (clearTimer) clearTimeout(clearTimer);
+      document.body.classList.add('is-scrolling');
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        clearTimer = setTimeout(() => {
+          document.body.classList.remove('is-scrolling');
+          clearTimer = 0;
+        }, 120);
+      });
+    };
+    window.addEventListener('scroll', setScroll, { passive: true });
+    window.addEventListener('wheel', setScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', setScroll);
+      window.removeEventListener('wheel', setScroll);
+      if (raf) cancelAnimationFrame(raf);
+      if (clearTimer) clearTimeout(clearTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    let pending = 0;
+    const flush = () => {
+      raf = 0;
+      if (!pending) return;
+      const dy = pending;
+      pending = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max <= 0) return;
+      const cur = window.scrollY;
+      const target = Math.max(0, Math.min(max, cur + dy));
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    };
+    const onWheel = (e) => {
+      const capped = Math.max(-60, Math.min(60, e.deltaY));
+      if (capped === 0) return;
+      e.preventDefault();
+      pending += capped;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onMouseDown = (e) => {
+      if (e.button === 1) e.preventDefault();
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, []);
+
   return (
     <AuthProvider>
       <AppContent />

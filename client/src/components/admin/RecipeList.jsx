@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, memo } from 'react';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 import './RecipeList.css';
 
 const useIsDesktop = () => {
@@ -53,7 +54,7 @@ const RecipeCard = memo(({ recipe, isSelected, onSelect, onEdit, onDelete }) => 
     <div className="rcard">
       <div className="rcard-top">
         {recipe.img
-          ? <img src={recipe.img} alt={recipe.nombre} className="rcard-img" />
+          ? <img src={optimizeCloudinary(recipe.img, 'q_auto,f_auto,w_400')} alt={recipe.nombre} className="rcard-img" width="160" height="120" loading="lazy" decoding="async" />
           : <div className="rcard-img-placeholder"><IcoNoImg size={20} /></div>
         }
         <div>
@@ -96,7 +97,7 @@ const RecipeRow = memo(({ recipe, isSelected, onSelect, onEdit, onDelete }) => {
       <td><input type="checkbox" checked={isSelected} onChange={handleSelect} /></td>
       <td>
         {recipe.img
-          ? <img src={recipe.img} alt={recipe.nombre} className="recipe-thumbnail" />
+          ? <img src={optimizeCloudinary(recipe.img, 'q_auto,f_auto,w_160')} alt={recipe.nombre} className="recipe-thumbnail" width="80" height="60" loading="lazy" decoding="async" />
           : <div className="recipe-thumbnail-placeholder"><IcoNoImg size={22} /></div>
         }
       </td>

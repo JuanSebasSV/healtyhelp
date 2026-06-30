@@ -3,6 +3,7 @@ import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import DetalleReceta from '../recipe/DetalleReceta';
 import ModalNutricionDetallada from '../recipe/ModalNutricionDetallada';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 import ModalAgregarConsumo from './ModalAgregarConsumo';
 import ResumenNutricional from './ResumenNutricional';
 import PanelRecomendaciones from './PanelRecomendaciones';
@@ -133,7 +134,7 @@ const sumarNutri = (consumos) => {
 const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar, onEliminar, onAbrir }) => (
   <div className="seg-consumo-card" onClick={() => onAbrir(consumo)}>
     <div className="seg-consumo-img-wrap">
-      <img src={consumo.recetaSnapshot?.img} alt={consumo.recetaSnapshot?.nombre} />
+      <img src={optimizeCloudinary(consumo.recetaSnapshot?.img, 'q_auto,f_auto,w_120')} alt={consumo.recetaSnapshot?.nombre} width="60" height="60" loading="lazy" decoding="async" />
       <span
         className="seg-consumo-tipo-badge"
         style={{ background: TIPOS_COLOR[consumo.tipo] }}

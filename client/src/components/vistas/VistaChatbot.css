@@ -203,9 +203,9 @@
   overflow: hidden;
   position: relative;
   z-index: 1;
-  background: rgba(10, 32, 18, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(10, 32, 18, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(107, 158, 74, 0.38);
   box-shadow:
     inset 0 1.5px 0 rgba(255, 255, 255, 0.18),
@@ -489,4 +489,17 @@
   .chatCore--expandido .robotMensajes { padding: 0.65rem 0.75rem; }
   .chatCore--expandido .robotInput    { padding: 0.55rem 0.75rem; }
   .chatCore--expandido .chatBienvenida__titulo { font-size: 1.05rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vistaChatbot__panel,
+  .vistaChatbot__historialBtn,
+  .vistaChatbot__nuevaConversacion,
+  .chatCore,
+  .chatBienvenida__hoja,
+  .robotMensaje,
+  .typingIndicator span {
+    animation: none;
+    transition: none;
+  }
 }

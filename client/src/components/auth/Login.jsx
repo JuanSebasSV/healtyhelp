@@ -22,16 +22,27 @@ const Login = () => {
   const [loading, setLoading]           = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors]             = useState({});
-  const [lockUntil, setLockUntil]       = useState(null);
 
   const formDataRef = useRef(formData);
-  formDataRef.current = formData;
+  useEffect(() => { formDataRef.current = formData; }, [formData]);
+
+  const [now, setNow] = useState(() => Date.now());
+
+  const [lockUntil, setLockUntil] = useState(() => {
+    const v = typeof window !== 'undefined' ? localStorage.getItem('accountLockedUntil') : null;
+    return v && new Date(v).getTime() > Date.now() ? v : null;
+  });
 
   useEffect(() => {
-    const bloqueadoHasta = localStorage.getItem('accountLockedUntil');
-    if (bloqueadoHasta && new Date(bloqueadoHasta) > new Date()) {
-      setLockUntil(bloqueadoHasta);
-    } else {
+    if (!lockUntil) return;
+    const id = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(id);
+  }, [lockUntil]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const v = localStorage.getItem('accountLockedUntil');
+    if (v && new Date(v).getTime() <= Date.now()) {
       localStorage.removeItem('accountLockedUntil');
     }
   }, []);
@@ -41,19 +52,19 @@ const Login = () => {
       try {
         if (formData.email) localStorage.setItem('login_email_draft', formData.email);
         else localStorage.removeItem('login_email_draft');
-      } catch {}
+      } catch (e) { console.error('Error guardando email draft:', e); }
     }, 300);
     return () => clearTimeout(timer);
   }, [formData.email]);
 
   const minutosRestantes = useMemo(() => {
     if (!lockUntil) return 15;
-    return Math.max(1, Math.ceil((new Date(lockUntil) - Date.now()) / 60000));
-  }, [lockUntil]);
+    return Math.max(1, Math.ceil((new Date(lockUntil).getTime() - now) / 60000));
+  }, [lockUntil, now]);
 
   const esBloqueado = useMemo(
-    () => Boolean(lockUntil && new Date(lockUntil) > new Date()),
-    [lockUntil]
+    () => Boolean(lockUntil && new Date(lockUntil).getTime() > now),
+    [lockUntil, now]
   );
 
   const handleChange = useCallback((e) => {

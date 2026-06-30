@@ -7,10 +7,6 @@ import { validatePassword, validateName } from "../../utils/validation";
 /*  Iconos inline  */
 import "./UserProfile.css";
 
-const PARTICULAS = Array.from({ length: 6 }, (_, i) => (
-  <div key={i} className={`particula particula-${i + 1}`} />
-));
-
 const EyeIcon = ({ open }) =>
   open ? (
     <svg
@@ -186,7 +182,7 @@ const UserProfile = () => {
         alergia: user.alergia || "",
       }));
     }
-  }, [user?.name, user?.weight, user?.alergia]);
+  }, [user]);
 
   useEffect(() => {
     return () => {
@@ -479,10 +475,6 @@ const UserProfile = () => {
 
   return (
     <div className="perfil-pagina">
-      <div className="perfil-particulas">
-        {PARTICULAS}
-      </div>
-
       <div className="perfil-contenedor">
         {/*Sidebar*/}
         <div className="perfil-sidebar">

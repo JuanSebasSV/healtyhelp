@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import './ModalGooglePassword.css';
@@ -41,11 +41,6 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
 
-  const passRef     = useRef(pass);
-  const passConfRef = useRef(passConf);
-  passRef.current     = pass;
-  passConfRef.current = passConf;
-
   const requisitos = useMemo(() => ({
     longitud:   pass.length >= 8,
     minuscula:  /[a-z]/.test(pass),
@@ -54,8 +49,8 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
   }), [pass]);
 
   const handleSubmit = useCallback(async () => {
-    const currentPass     = passRef.current;
-    const currentPassConf = passConfRef.current;
+    const currentPass     = pass;
+    const currentPassConf = passConf;
 
     const pwdError = validarPassword(currentPass);
     if (pwdError) { setError(pwdError); return; }
@@ -74,7 +69,7 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
     }
 
     setLoading(false);
-  }, [token, setGooglePassword, onSuccess]);
+  }, [pass, passConf, token, setGooglePassword, onSuccess]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !loading) handleSubmit();

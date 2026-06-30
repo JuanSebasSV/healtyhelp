@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+import React, { useState, useCallback, useMemo, memo } from "react";
 import DetalleReceta from "./DetalleReceta";
 import ModalNutricionDetallada from "./ModalNutricionDetallada";
+import { optimizeCloudinary } from "../../utils/cloudinary";
 import "./TarjetaReceta.css";
 
 const formatearCosto = (costo, moneda = "COP") => {
@@ -65,11 +66,12 @@ const TarjetaReceta = memo(
     pendienteKey,
     onPendienteResuelta,
   }) => {
-    const [vista, setVista] = useState(null);
-
-    useEffect(() => {
+    const [prevAutoAbrir, setPrevAutoAbrir] = useState(autoAbrir);
+    const [vista, setVista] = useState(autoAbrir ? "detalle" : null);
+    if (autoAbrir !== prevAutoAbrir) {
+      setPrevAutoAbrir(autoAbrir);
       if (autoAbrir) setVista("detalle");
-    }, [autoAbrir]);
+    }
 
     const prom = receta.puntosProm || 0;
     const total = receta.totalResenas || 0;
@@ -114,8 +116,10 @@ const TarjetaReceta = memo(
         >
           <div className="tarjetaImg">
             <img
-              src={receta.img}
+              src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_640')}
               alt={receta.nombre}
+              width="640"
+              height="400"
               loading="lazy"
               decoding="async"
             />

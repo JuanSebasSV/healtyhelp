@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthProvider";
+import { AuthContext } from "../context/authContext";
 import api from "../api/axios";
 
 const LS_CONDICIONES = "hh_filtros_condiciones";
@@ -19,15 +19,13 @@ const leerLS = (clave, fallback) => {
   try {
     const raw = localStorage.getItem(clave);
     return raw !== null ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
+  } catch (e) { console.error(`Error leyendo ${clave}:`, e); return fallback; }
 };
 
 const escribirLS = (clave, valor) => {
   try {
     localStorage.setItem(clave, JSON.stringify(valor));
-  } catch {}
+  } catch (e) { console.error(`Error escribiendo ${clave}:`, e); }
 };
 
 const limpiarLS = () => {
@@ -53,6 +51,7 @@ const useFiltroSalud = (usuario) => {
   const usuarioIdRef = useRef(undefined);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (authLoading) return;
     if (uid === usuarioIdRef.current) return;
     usuarioIdRef.current = uid;
@@ -83,7 +82,7 @@ const useFiltroSalud = (usuario) => {
           setFiltros(nuevosFiltros);
           setCategoria(nuevaCategoria);
           setFiltroTiempo(nuevoTiempo);
-        } catch (err) {
+        } catch {
           if (cancelled) return;
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
           const filtrosActuales = _cache.uid === uid ? _cache.filtros : [];
@@ -147,7 +146,7 @@ const useFiltroSalud = (usuario) => {
             _cache = { ..._cache, uid, filtros: revertFiltros, categoria: revertCategoria, cargado: true };
             setFiltros(revertFiltros);
             setCategoria(revertCategoria);
-          } catch {}
+          } catch (e) { console.error('Error reintentando filtros:', e); }
         }
       }
     },

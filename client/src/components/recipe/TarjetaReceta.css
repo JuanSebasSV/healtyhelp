@@ -5,8 +5,7 @@
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.35s ease;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -34,11 +33,7 @@
 }
 
 .tarjetaReceta:hover {
-  will-change: transform;
   transform: translateY(-10px) scale(1.015);
-  box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.18),
-    0 0 0 1px rgba(46, 190, 132, 0.35);
 }
 
 .modo-oscuro .tarjetaReceta {
@@ -52,35 +47,31 @@
 }
 
 .modo-oscuro .tarjetaReceta:hover {
-  box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(247, 127, 0, 0.4);
+  transform: translateY(-10px) scale(1.015);
 }
 
 /* Imagen */
 
 .tarjetaImg {
   position: relative;
-  height: 220px;
-  min-height: 220px;
+  aspect-ratio: 16 / 11;
   overflow: hidden;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
+  contain: layout paint;
 }
 
 .tarjetaImg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   filter: brightness(0.92) saturate(1.08);
   display: block;
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
-  will-change: transform;
   transform: scale(1.08);
-  filter: brightness(1) saturate(1.15);
 }
 
 .tarjetaImg::after {
@@ -316,7 +307,7 @@
 /* Responsive móvil */
 
 @media (max-width: 767px) {
-  .tarjetaInfo p { display: none !important; }
+  .tarjetaInfo p { display: none; }
 
   .tarjetaReceta {
     border-radius: 14px;
@@ -324,8 +315,7 @@
   }
 
   .tarjetaImg {
-    height: 130px;
-    min-height: 130px;
+    aspect-ratio: 16 / 10;
     border-radius: 0;
   }
 
@@ -384,7 +374,26 @@
 }
 
 @media (max-width: 360px) {
-  .tarjetaImg { height: 110px; min-height: 110px; }
   .tarjetaInfo h3 { font-size: 0.75rem; }
   .tarjeta-prom-txt { font-size: 0.58rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjetaReceta,
+  .tarjetaImg img,
+  .btnFav,
+  .btnSeleccionar,
+  .estrella-ico {
+    animation: none;
+    transition: none;
+  }
+}
+
+body.is-scrolling .tarjetaReceta:hover,
+body.is-scrolling .tarjetaReceta:hover::before {
+  transform: none;
+  background-color: #2ebe84;
+}
+body.is-scrolling .tarjetaReceta:hover .tarjetaImg img {
+  transform: none;
 }

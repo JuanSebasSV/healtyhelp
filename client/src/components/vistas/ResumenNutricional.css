@@ -151,7 +151,7 @@
 }
 
 /*Responsive*/
-@media (max-width: 968px) {
+@media (max-width: 1023px) {
   .resumen-chart {
     width: 200px;
     height: 200px;

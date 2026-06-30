@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback, useRef, createContext } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/axios";
-
-export const AuthContext = createContext();
+import { AuthContext } from "./authContext";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     }, ms);
   }, [clearInactivityTimer, limpiarSesion]);
 
-  const ACTIVITY_EVENTS = [
+const ACTIVITY_EVENTS = [
     "mousemove",
     "keydown",
     "mousedown",
@@ -49,9 +48,10 @@ export const AuthProvider = ({ children }) => {
     "scroll",
     "click",
   ];
+  const activityEventsRef = useRef(ACTIVITY_EVENTS);
 
   const stopActivityListeners = useCallback(() => {
-    ACTIVITY_EVENTS.forEach((ev) =>
+    activityEventsRef.current.forEach((ev) =>
       window.removeEventListener(ev, resetInactivityTimer),
     );
     clearInactivityTimer();
@@ -59,10 +59,10 @@ export const AuthProvider = ({ children }) => {
 
   const startActivityListeners = useCallback(() => {
     stopActivityListeners();
-    ACTIVITY_EVENTS.forEach((ev) =>
+    activityEventsRef.current.forEach((ev) =>
       window.addEventListener(ev, resetInactivityTimer, { passive: true }),
     );
-    resetInactivityTimer(); // arrancar el timer de inmediato
+    resetInactivityTimer();
   }, [stopActivityListeners, resetInactivityTimer]);
 
   useEffect(() => {
@@ -152,7 +152,8 @@ export const AuthProvider = ({ children }) => {
         checkAuthRetryRef.current = 0;
         return;
       }
-    } catch {
+    } catch (e) {
+      console.error('Token inválido:', e);
       limpiarSesion();
       setLoading(false);
       checkAuthRetryRef.current = 0;
@@ -188,9 +189,12 @@ export const AuthProvider = ({ children }) => {
     }
   }, [limpiarSesion, applyAutoLogoutPrefs]);
 
-  checkAuthRef.current = checkAuth;
+  useEffect(() => {
+    checkAuthRef.current = checkAuth;
+  }, [checkAuth]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
   }, [checkAuth]);
 
