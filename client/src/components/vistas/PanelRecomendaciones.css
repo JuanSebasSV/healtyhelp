@@ -326,7 +326,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 968px) {
+@media (max-width: 1023px) {
   .rec-panel {
     padding: 1.25rem;
     border-radius: 16px;
@@ -335,6 +335,14 @@
   .rec-stats { gap: 0.5rem; }
   .rec-stat { min-width: 100px; padding: 0.55rem 0.75rem; }
   .rec-titulo { font-size: 1.05rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rec-btn-reintentar,
+  .rec-stat {
+    animation: none;
+    transition: none;
+  }
 }
 
 /* ── Sin cobertura ── */

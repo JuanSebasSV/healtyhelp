@@ -68,7 +68,6 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   max-height: 82vh;
   overflow-y: auto;
-  will-change: transform;
 }
 
 .seg-col::-webkit-scrollbar { display: none; }
@@ -398,9 +397,21 @@
 .seg-vacio-total strong { color: var(--naranja); }
 
 /*Responsive*/
-@media (max-width: 968px) {
+@media (max-width: 1023px) {
   .seg-layout { grid-template-columns: 1fr; }
   .seg-col { max-height: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg-consumo-card,
+  .seg-periodo-btns button,
+  .seg-btn-editar,
+  .seg-btn-eliminar,
+  .seg-tipo-btn,
+  .seg-btn-agregar {
+    animation: none;
+    transition: none;
+  }
 }
 
 /*Íconos SVG*/

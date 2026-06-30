@@ -11,10 +11,9 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  /* Sin animación; este div es estático.
+     No aplicar backdrop-filter aquí: ya tiene una imagen de fondo
+     y eso fuerza repintado costoso en cada resize/scroll. */
 }
 
-.modo-oscuro .fondoAnimado {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)),
-    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
-}
+/* Modo oscuro: misma imagen, mismo degradado — no hace falta override. */

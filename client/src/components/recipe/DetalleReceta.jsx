@@ -29,8 +29,6 @@ const DetalleReceta = memo(
     respuestaIdDestacada,
     toggleFav,
     esFav,
-    seleccionada,
-    onSeleccionar,
   }) => {
     const { user, isAuthenticated } = useAuth();
 

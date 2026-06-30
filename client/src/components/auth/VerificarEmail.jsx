@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './VerificarEmail.css';
@@ -10,7 +10,6 @@ const EMPTY_CODE = ['', '', '', '', '', ''];
 const VerificarEmail = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
-  const { login } = useAuth();
 
   const email = location.state?.email || '';
 
@@ -21,8 +20,6 @@ const VerificarEmail = () => {
   const [error, setError]           = useState('');
 
   const inputs = useRef([]);
-  const codigoRef = useRef(codigo);
-  codigoRef.current = codigo;
 
   useEffect(() => {
     if (!email) navigate('/registro');
@@ -51,7 +48,7 @@ const VerificarEmail = () => {
   }, []);
 
   const handleVerificar = useCallback(async () => {
-    const code = codigoRef.current.join('');
+    const code = codigo.join('');
     if (code.length < 6) {
       setError('Ingresa los 6 dígitos del código');
       return;
@@ -72,14 +69,14 @@ const VerificarEmail = () => {
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  }, [codigo, email]);
 
   const handleKeyDown = useCallback((i, e) => {
-    if (e.key === 'Backspace' && !codigoRef.current[i] && i > 0) {
+    if (e.key === 'Backspace' && !codigo[i] && i > 0) {
       inputs.current[i - 1]?.focus();
     }
     if (e.key === 'Enter') handleVerificar();
-  }, [handleVerificar]);
+  }, [codigo, handleVerificar]);
 
   const handlePaste = useCallback((e) => {
     e.preventDefault();

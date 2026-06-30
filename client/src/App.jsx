@@ -139,7 +139,7 @@ class SinConexionBoundary extends React.Component {
 
 function AppContent() {
   const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
-  const { user, checkAuth, loading: authLoading } = useAuth();
+  const { user, checkAuth } = useAuth();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
     const saved = localStorage.getItem("modoOscuro");
@@ -210,7 +210,7 @@ useEffect(() => {
   useEffect(() => {
     if (!backendListo) return;
     checkAuth();
-  }, [backendListo]);
+  }, [backendListo, checkAuth]);
 
   useEffect(() => {
     if (!backendListo) return;
@@ -314,7 +314,7 @@ useEffect(() => {
     }
 
     evaluarTerminos(activeTermsVersion);
-  }, [user, activeTermsVersion, evaluarTerminos]);
+  }, [user, activeTermsVersion, evaluarTerminos, isPreview]);
 
   const handleCookiesAceptadas = useCallback(() => {
     migrarSessionACookies();
@@ -398,7 +398,7 @@ useEffect(() => {
       
       console.error("Error en toggleFav:", mensajeError);
     }
-  }, [user, favoritos, api]);
+  }, [user, favoritos]);
 
 
   return (

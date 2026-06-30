@@ -849,7 +849,7 @@
   .sr-imagen-pendiente { max-width: 100%; }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 430px) {
   .sr-prom-numero { font-size: 2rem; }
 }
 

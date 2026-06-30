@@ -53,7 +53,7 @@ There is **no test script, no typecheck, no formatter, no CI workflow**. Do not 
 - API base URL: `import.meta.env.VITE_API_URL` (`client/.env` → `http://localhost:5000/api`). 10s timeout.
 - `src/api/axios.js` adds `Authorization` from `localStorage.token` on every request; on `401` it clears token+user and redirects to `/login` unless the current path is public (`/login`, `/registro`, `/recuperar`, `/reset-password`, `/verificar-email`, `/`).
 - All routes are `lazy()`-loaded in `App.jsx`. Wrap them in `<Suspense>` if you add new top-level components.
-- localStorage/cookie keys: `token`, `user`, `hh_cookie_consent`, `hh_terms_accepted`, `hh_terms_version` (App.jsx:59-62).
+- localStorage/cookie keys: `token`, `user`, `hh_cookie_consent`, `hh_terms_accepted`, `hh_terms_version` (declared in both `App.jsx:57-60` and `hooks/useTermsGuard.js:6-8` — keep in sync if you change them).
 - SPA fallback for static hosts: `client/public/_redirects` (`/*    /index.html   200`). Don't delete when deploying to Netlify/Netlify-style hosts.
 - ESLint flat config (`eslint.config.js`). Unused vars prefixed with `^[A-Z_]` are allowed — use for React components/constants.
 - Style: co-located CSS per component (`Navbar.css` next to `Navbar.jsx`, etc.). No CSS-in-JS, no Tailwind.

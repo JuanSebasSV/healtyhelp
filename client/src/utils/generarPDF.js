@@ -50,7 +50,7 @@ const cabPagina = (doc) => {
   doc.text('HealtyHelp  Recetas Saludables', MG, 5);
 };
 
-const pie = (doc, pag, total, fecha) => {
+const pie = (doc, pag, total) => {
   stroke(doc, 210, 210, 210);
   doc.setLineWidth(0.25);
   doc.line(MG, H - 14, W - MG, H - 14);
@@ -422,7 +422,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
     doc.setFontSize(8.8);
     doc.setFont("helvetica", "normal");
     rgb(doc, ...GRIS_TEXTO);
-    const yAntes = y;
+    const _yAntes = y;
     y = wrap(doc, paso, MG + 7, y, ANCHO - 9, 5);
     y += 4;
   });
@@ -507,7 +507,7 @@ export const generarPDFRecetas = async (recetas) => {
     hour12: true,
   });
 
-  const fechaCorta = new Date().toLocaleDateString("es-CO", {
+  const _fechaCorta = new Date().toLocaleDateString("es-CO", {
     timeZone: "America/Bogota",
     year: "numeric",
     month: "long",

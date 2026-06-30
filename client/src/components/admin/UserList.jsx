@@ -320,19 +320,6 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
   const [procesandoBan, setProcesandoBan] = useState(null);
   const [modalMensaje,  setModalMensaje]  = useState(null);
 
-  if (!users || users.length === 0) {
-    return (
-      <div className="user-list-empty">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.3 }}>
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <line x1="23" y1="11" x2="17" y2="11"/>
-        </svg>
-        <p>No se encontraron usuarios</p>
-      </div>
-    );
-  }
-
   const currentUserId = currentUser?.id || currentUser?._id;
   const isSuperAdmin  = currentUser?.isSuperAdmin === true;
 
@@ -385,6 +372,30 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
   const handleBaneo   = useCallback(user => setModalBaneo(user),   []);
   const cerrarBaneo   = useCallback(() => setModalBaneo(null),      []);
   const cerrarMensaje = useCallback(() => setModalMensaje(null),    []);
+
+  if (!users || users.length === 0) {
+    return (
+      <div className="user-list-container">
+        <div className="user-list-header">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '6px' }}>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Gestión de Usuarios (0)
+          </h2>
+        </div>
+        <div className="user-list-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.3 }}>
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+          <p>No se encontraron usuarios</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="user-list-container">

@@ -239,7 +239,7 @@ const RecipeImport = ({ onSuccess }) => {
     draftTimerRef.current = setTimeout(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ recipes: recetas, mode }));
-      } catch {}
+      } catch (e) { console.error('Error guardando borrador:', e); }
     }, 500);
     return () => clearTimeout(draftTimerRef.current);
   }, [recetas, mode]);

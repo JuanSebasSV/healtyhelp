@@ -59,7 +59,7 @@ const Dashboard = ({ onBadgeChange }) => {
       const total = data.total ?? data.imagenes?.length ?? 0;
       setImgPendientes(total);
       onBadgeChange?.(total);
-    } catch {}
+    } catch (e) { console.error('Error cargando pendientes:', e); }
   }, [onBadgeChange]);
 
   useEffect(() => {

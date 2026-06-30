@@ -151,7 +151,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
     imc,
     caloriasObjetivo,
     caloriasHoy            = 0,
-    caloriasRestantes,
+    caloriasRestantes: _caloriasRestantes,
     progresoHoy            = 0,
     alertas                = [],
     alertasHoy             = [],

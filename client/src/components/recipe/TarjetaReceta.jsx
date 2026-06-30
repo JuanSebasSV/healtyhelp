@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+import React, { useState, useCallback, useMemo, memo } from "react";
 import DetalleReceta from "./DetalleReceta";
 import ModalNutricionDetallada from "./ModalNutricionDetallada";
 import "./TarjetaReceta.css";
@@ -65,11 +65,12 @@ const TarjetaReceta = memo(
     pendienteKey,
     onPendienteResuelta,
   }) => {
-    const [vista, setVista] = useState(null);
-
-    useEffect(() => {
+    const [prevAutoAbrir, setPrevAutoAbrir] = useState(autoAbrir);
+    const [vista, setVista] = useState(autoAbrir ? "detalle" : null);
+    if (autoAbrir !== prevAutoAbrir) {
+      setPrevAutoAbrir(autoAbrir);
       if (autoAbrir) setVista("detalle");
-    }, [autoAbrir]);
+    }
 
     const prom = receta.puntosProm || 0;
     const total = receta.totalResenas || 0;

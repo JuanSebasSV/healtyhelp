@@ -9,10 +9,6 @@
   box-sizing: border-box;
 }
 
-@media (min-width: 1600px) {
-  .vistaInicio { padding: 0 3rem; }
-}
-
 /* Hero */
 
 .hero {
@@ -20,19 +16,10 @@
   width: 100vw;
   left: 50%;
   transform: translateX(-50%);
-  height: 580px;
+  height: clamp(420px, 50vh, 580px);
   overflow: hidden;
   margin-bottom: 3rem;
   contain: layout;
-}
-
-@media (min-width: 1600px) {
-  .hero { height: 640px; }
-  .hero-texto { max-width: 50%; }
-}
-
-@media (min-width: 1920px) {
-  .hero { height: 680px; }
 }
 
 .hero-capa {
@@ -110,7 +97,7 @@
 
 .hero-texto h1 {
   font-family: 'Georgia', serif;
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-size: clamp(0.95rem, 2.5vw, 2rem);
   color: var(--blanco-puro);
   line-height: 1.35;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
@@ -157,7 +144,7 @@
   border-radius: 4px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 767px) {
   .hero { height: 480px; }
   .hero-capa { background-position: center 30%; }
   .hero-texto {
@@ -165,13 +152,13 @@
     top: 50%;
     bottom: auto;
     transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 80%;
+    width: 84%;
+    max-width: 84%;
     padding: 1.1rem 1.3rem;
     gap: 0.5rem;
   }
   .hero-texto:hover { transform: translate(-50%, calc(-50% - 4px)); }
-  .hero-texto h1 { font-size: 0.9rem !important; line-height: 1.25 !important; }
+  .hero-texto h1 { line-height: 1.25; }
   .hero-texto p {
     font-size: 0.78rem;
     line-height: 1.45;
@@ -184,9 +171,9 @@
   .hero-linea { width: 26px; height: 2px; }
 }
 
-@media (max-width: 480px) {
-  .hero { height: 420px; }
-  .hero-texto { width: 84%; max-width: 84%; padding: 1rem 1.2rem; gap: 0.45rem; }
+@media (max-width: 430px) {
+  .hero { height: 440px; }
+  .hero-texto { padding: 1rem 1.2rem; gap: 0.45rem; }
   .hero-dots { bottom: 10px; right: 12px; }
 }
 
@@ -202,7 +189,7 @@
 .recetasGrid h2 {
   text-align: center;
   color: var(--blanco-puro);
-  font-size: 2.5rem;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -261,7 +248,7 @@
 @media (max-width: 767px) {
   .recetasGrid .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     padding-left: 0;
     padding-right: 0;
@@ -273,11 +260,11 @@
     width: 100%;
     margin-bottom: 1rem;
   }
-  .recetasGrid h2 { font-size: 1.6rem; margin-bottom: 1.25rem; }
+  .recetasGrid h2 { margin-bottom: 1.25rem; }
 }
 
 @media (max-width: 360px) {
-  .recetasGrid .grid { gap: 8px !important; }
+  .recetasGrid .grid { gap: 8px; }
 }
 
 /* Botón PDF flotante */
@@ -347,5 +334,17 @@
   .scrollbar-custom-thumb--dragging {
     transition: none;
     cursor: grabbing;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-capa,
+  .hero-dot,
+  .recetasGrid,
+  .spinner-recetas,
+  .btn-pdf-flotante,
+  .scrollbar-custom-thumb {
+    animation: none;
+    transition: none;
   }
 }

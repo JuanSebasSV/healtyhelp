@@ -282,7 +282,7 @@ const RecipeForm = ({ recipe, onSuccess, onCancel }) => {
       try {
         const saved = localStorage.getItem(DRAFT_KEY);
         if (saved) return JSON.parse(saved);
-      } catch {}
+      } catch (e) { console.error('Error leyendo borrador:', e); }
     }
     return { ...FORM_INICIAL, nutri: { ...NUTRI_VACIA } };
   });

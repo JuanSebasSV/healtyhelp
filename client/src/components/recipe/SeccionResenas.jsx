@@ -791,7 +791,7 @@ const SeccionResenas = ({
   const [buscandoPagina, setBuscandoPagina] = useState(false);
   useEffect(() => {
     setBuscandoPagina(!!(respuestaIdDestacada || resenaIdDestacada));
-  }, []);
+  }, [respuestaIdDestacada, resenaIdDestacada]);
 
   const [miResena, setMiResena] = useState(null);
   const [editando, setEditando] = useState(false);
@@ -849,7 +849,8 @@ const SeccionResenas = ({
           }
         }
         if (!cancelled) setPagina(1);
-      } catch {
+      } catch (e) {
+        console.error('Error en paginación:', e);
       } finally {
         if (!cancelled) setBuscandoPagina(false);
       }
@@ -858,7 +859,7 @@ const SeccionResenas = ({
     return () => {
       cancelled = true;
     };
-  }, [receta._id, respuestaIdDestacada, resenaIdDestacada]);
+  }, [receta._id, respuestaIdDestacada, resenaIdDestacada, refresco, orden]);
 
   useEffect(() => {
     if (
@@ -948,7 +949,8 @@ const SeccionResenas = ({
             }
           }
         }
-      } catch {
+      } catch (e) {
+        console.error('Error cargando reseñas:', e);
         if (!cancelled) toast.error("Error cargando reseñas");
       } finally {
         if (!cancelled) setCargandoRes(false);
@@ -1074,7 +1076,8 @@ const SeccionResenas = ({
     setFormTexto(miResena.texto || "");
     setFormImagenes([]);
   }, [miResena]);
-  const handleQuitarImagen = useCallback(() => setFormImagenes([]), []);
+  const _handleQuitarImagen = useCallback(() => setFormImagenes([]), []);
+  void _handleQuitarImagen;
 
   const promRedondeado = Math.round(puntosProm);
 

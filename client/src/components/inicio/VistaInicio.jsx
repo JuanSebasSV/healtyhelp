@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import TarjetaReceta from '../recipe/TarjetaReceta';
 import { generarPDFRecetas } from '../../utils/generarPDF';
 import useFiltroSalud from '../../hooks/useFiltroSalud';
@@ -33,7 +33,7 @@ const VistaInicio = ({
 }) => {
   const { loading: authLoading } = useAuth();
   const {
-    filtros, toggleFiltro, limpiarFiltros,
+    filtros, toggleFiltro,
     categoria, setCategoria, limpiarCategoria, limpiarTodo, listo,
     filtroTiempo, cambiarFiltroTiempo, limpiarTiempo, alergia,
   } = useFiltroSalud(usuario, authLoading);
@@ -52,8 +52,6 @@ const VistaInicio = ({
   const transitandoRef  = useRef(false);
   const intervaloRef    = useRef(null);
   const imagenActualRef = useRef(0);
-
-  const navigate = useNavigate();
 
   useEffect(() => { imagenActualRef.current = imagenActual; }, [imagenActual]);
 

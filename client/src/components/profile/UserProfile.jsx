@@ -186,7 +186,7 @@ const UserProfile = () => {
         alergia: user.alergia || "",
       }));
     }
-  }, [user?.name, user?.weight, user?.alergia]);
+  }, [user]);
 
   useEffect(() => {
     return () => {

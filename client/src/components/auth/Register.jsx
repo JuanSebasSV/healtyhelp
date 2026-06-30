@@ -483,7 +483,7 @@ const Register = () => {
         const parsed = JSON.parse(saved);
         return { ...parsed, pass: "", passConf: "" };
       }
-    } catch {}
+    } catch (e) { console.error('Error leyendo borrador:', e); }
     return {
       nombre: "",
       email: "",
@@ -498,7 +498,8 @@ const Register = () => {
 
   // Guardar borrador (sin contraseñas)
   useEffect(() => {
-    const { pass, passConf, ...sinPass } = datos;
+    const { pass: _pass, passConf: _passConf, ...sinPass } = datos;
+    void _pass; void _passConf;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sinPass));
   }, [datos]);
 

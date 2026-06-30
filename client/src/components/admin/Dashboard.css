@@ -290,8 +290,8 @@
  
 .ban-modal {
   background: rgba(15, 26, 20, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(79, 119, 45, 0.25);
   border-radius: 20px;
   padding: 28px;

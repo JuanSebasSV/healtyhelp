@@ -113,19 +113,22 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
   const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
   const [autoLogout,         setAutoLogout]         = useState(false);
   const [toggleLoading,      setToggleLoading]      = useState(false);
-  const [esTactil,           setEsTactil]           = useState(false);
+  const [esTactil,           setEsTactil]           = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+  );
 
   const dropdownTimerRef = useRef(null);
   const dropdownRef      = useRef(null);
   const notifIntervalRef = useRef(null);
 
-  useEffect(() => {
+  const [prevAutoLogout, setPrevAutoLogout] = useState(user?.autoLogoutEnabled);
+  if (user?.autoLogoutEnabled !== prevAutoLogout) {
+    setPrevAutoLogout(user?.autoLogoutEnabled);
     setAutoLogout(user?.autoLogoutEnabled ?? false);
-  }, [user?.autoLogoutEnabled]);
+  }
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: coarse)");
-    setEsTactil(mq.matches);
     const handler = (e) => setEsTactil(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -137,7 +140,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
       const { data } = await api.get("/notifications");
       setNotificaciones(data.notificaciones || []);
       setNoLeidas(data.noLeidas || 0);
-    } catch {}
+    } catch (e) { console.error('Error cargando notificaciones:', e); }
   }, [user]);
 
   useEffect(() => {
@@ -167,7 +170,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
       await api.put("/notifications/leer-todas");
       setNotificaciones((prev) => prev.map((n) => ({ ...n, leida: true })));
       setNoLeidas(0);
-    } catch {}
+    } catch (e) { console.error('Error marcando como leídas:', e); }
   }, []);
 
   const handleEliminarNotif = useCallback(async (id) => {
@@ -178,7 +181,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
         if (eraNoLeida) setNoLeidas((c) => Math.max(0, c - 1));
         return prev.filter((n) => n._id !== id);
       });
-    } catch {}
+    } catch (e) { console.error('Error eliminando notificación:', e); }
   }, []);
 
   const handleLeerUna = useCallback(async (id) => {
@@ -188,7 +191,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
       setNoLeidas((c) => Math.max(0, c - 1));
       return prev.map((n) => (n._id === id ? { ...n, leida: true } : n));
     });
-    try { await api.put(`/notifications/${id}/leer`); } catch {}
+    try { await api.put(`/notifications/${id}/leer`); } catch (e) { console.error('Error marcando leída:', e); }
   }, []);
 
   const handleNavigate = useCallback((ruta) => {
@@ -354,7 +357,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
               )}
             </li>
 
-            {panelAbierto && esTactil && (
+            {panelAbierto && esTactil && createPortal(
               <div className="pn-modal-movil" onClick={handleCerrarPanel}>
                 <div className="pn-modal-movil__contenido" onClick={(e) => e.stopPropagation()}>
                   <PanelNotificaciones
@@ -369,7 +372,8 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
                     esMobil={true}
                   />
                 </div>
-              </div>
+              </div>,
+              document.body,
             )}
 
             {user ? (
