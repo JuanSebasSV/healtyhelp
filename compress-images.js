@@ -1,46 +1,23 @@
-/**
- * compress-images.js
- * 
- * Comprime todas las imágenes de una carpeta a WebP sin pérdida perceptible.
- * 
- * Uso:
- *   node compress-images.js                    → comprime ./images → ./images/compressed
- *   node compress-images.js ./fotos ./salida   → carpeta de entrada y salida custom
- * 
- * Requisito:
- *   npm install sharp
- */
-
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-// ─── Configuración ──────────────────────────────────────────────────────────
 
 const CONFIG = {
-  // Calidad WebP: 80 es el punto dulce (casi idéntico visualmente, 30-50% más liviano)
-  // Sube a 85-90 si tus imágenes tienen texto o detalles muy finos
   quality: 80,
 
-  // Formatos a procesar
   extensions: ['.jpg', '.jpeg', '.png', '.gif', '.tiff', '.bmp'],
 
-  // Si true, también genera versiones responsivas (320, 640, 1024px de ancho)
   generateResponsive: false,
 
-  // Ancho máximo. null = no redimensiona. Útil para no subir imágenes de 6000px a una web.
   maxWidth: null, // ejemplo: 1920
 
-  // Elimina metadata EXIF (GPS, cámara, fecha) — siempre recomendado para web
   stripMetadata: true,
 };
-
-// ─── Argumentos ─────────────────────────────────────────────────────────────
 
 const inputDir  = process.argv[2] || './images';
 const outputDir = process.argv[3] || path.join(inputDir, 'compressed');
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
@@ -58,17 +35,14 @@ async function compressImage(inputPath, outputPath, filename) {
 
   let pipeline = sharp(inputPath);
 
-  // Strip metadata EXIF (GPS, cámara, fecha, perfil de color innecesario)
   if (CONFIG.stripMetadata) {
     pipeline = pipeline.withMetadata({}); // mantiene solo lo esencial (dimensiones, orientación)
   }
 
-  // Redimensionar si excede el ancho máximo
   if (CONFIG.maxWidth) {
     pipeline = pipeline.resize({ width: CONFIG.maxWidth, withoutEnlargement: true });
   }
 
-  // Convertir a WebP con la calidad configurada
   pipeline = pipeline.webp({ quality: CONFIG.quality });
 
   const outputFile = path.join(outputPath, filename.replace(/\.[^.]+$/, '.webp'));
@@ -103,10 +77,8 @@ async function run() {
     process.exit(1);
   }
 
-  // Crear carpeta de salida si no existe
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Obtener archivos a procesar
   const files = fs.readdirSync(inputDir).filter(f => {
     const ext = path.extname(f).toLowerCase();
     return CONFIG.extensions.includes(ext);
@@ -154,7 +126,6 @@ async function run() {
     }
   }
 
-  // Resumen final
   console.log('─'.repeat(65));
   console.log(`\n📊 Resumen:`);
   console.log(`   Imágenes procesadas: ${files.length - errors} de ${files.length}`);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 import './ModalAgregarConsumo.css';
 
 const SvgDesayuno = ({ className }) => (
@@ -183,7 +184,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
           ) : (
             recetasFiltradas.map(r => (
               <div key={r._id} className="agr-receta-item">
-                <img src={r.img} alt={r.nombre} />
+                <img src={optimizeCloudinary(r.img, 'q_auto,f_auto,w_120')} alt={r.nombre} width="60" height="60" loading="lazy" decoding="async" />
                 <div className="agr-receta-info">
                   <p className="agr-receta-nombre">{r.nombre}</p>
                   <p className="agr-receta-cal">{r.nutri?.cal || 0} kcal</p>

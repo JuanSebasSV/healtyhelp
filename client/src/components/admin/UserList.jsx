@@ -3,6 +3,7 @@ import './UserList.css';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 768px)').matches);
@@ -188,7 +189,7 @@ const formatFechaReg = (dateStr) =>
 const UserAvatar = memo(({ user }) => (
   <div className="user-avatar">
     {user.avatar
-      ? <img src={user.avatar} alt={user.name} referrerPolicy="no-referrer" />
+      ? <img src={optimizeCloudinary(user.avatar, 'q_auto,f_auto,w_80')} alt={user.name} width="40" height="40" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
       : <div className="avatar-placeholder">{user.name.charAt(0).toUpperCase()}</div>
     }
   </div>

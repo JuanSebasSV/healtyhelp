@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
 import DetalleReceta from "./DetalleReceta";
 import ModalNutricionDetallada from "./ModalNutricionDetallada";
+import { optimizeCloudinary } from "../../utils/cloudinary";
 import "./TarjetaReceta.css";
 
 const formatearCosto = (costo, moneda = "COP") => {
@@ -115,8 +116,10 @@ const TarjetaReceta = memo(
         >
           <div className="tarjetaImg">
             <img
-              src={receta.img}
+              src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_640')}
               alt={receta.nombre}
+              width="640"
+              height="400"
               loading="lazy"
               decoding="async"
             />

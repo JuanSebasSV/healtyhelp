@@ -589,6 +589,67 @@ useEffect(() => {
 }
 
 function App() {
+  useEffect(() => {
+    let raf = 0;
+    let clearTimer = 0;
+    const setScroll = () => {
+      if (clearTimer) clearTimeout(clearTimer);
+      document.body.classList.add('is-scrolling');
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        clearTimer = setTimeout(() => {
+          document.body.classList.remove('is-scrolling');
+          clearTimer = 0;
+        }, 120);
+      });
+    };
+    window.addEventListener('scroll', setScroll, { passive: true });
+    window.addEventListener('wheel', setScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', setScroll);
+      window.removeEventListener('wheel', setScroll);
+      if (raf) cancelAnimationFrame(raf);
+      if (clearTimer) clearTimeout(clearTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    let pending = 0;
+    const flush = () => {
+      raf = 0;
+      if (!pending) return;
+      const dy = pending;
+      pending = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max <= 0) return;
+      const cur = window.scrollY;
+      const target = Math.max(0, Math.min(max, cur + dy));
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    };
+    const onWheel = (e) => {
+      const capped = Math.max(-60, Math.min(60, e.deltaY));
+      if (capped === 0) return;
+      e.preventDefault();
+      pending += capped;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onMouseDown = (e) => {
+      if (e.button === 1) e.preventDefault();
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, []);
+
   return (
     <AuthProvider>
       <AppContent />

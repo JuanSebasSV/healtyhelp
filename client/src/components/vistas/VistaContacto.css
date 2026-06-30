@@ -214,18 +214,21 @@
   content: '';
   position: absolute;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
   width: 3px;
-  height: 0%;
+  height: 60%;
   background: var(--naranja, #f77f00);
   border-radius: 0 3px 3px 0;
-  transition: height 0.3s ease;
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
   z-index: 1;
 }
 
 .campo-wrapper:focus-within::before {
-  height: 60%;
+  transform: scaleY(1);
 }
 
 .campo-wrapper.campo-textarea::before {
@@ -445,7 +448,6 @@
     grid-template-columns: 1fr;
     gap: 0.55rem;
     padding: 0 1rem;
-    transition: padding 0.38s ease;
   }
 
   .acordeon-contenido.abierto .acordeon-inner {

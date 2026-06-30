@@ -54,7 +54,7 @@ const BarraProgreso = ({ calHoy, calObjetivo, progreso }) => {
       <div className="rec-progreso-track">
         <div
           className={`rec-progreso-fill ${exceso ? 'rec-progreso-fill--exceso' : progreso >= 80 ? 'rec-progreso-fill--ok' : ''}`}
-          style={{ width: `${pctBarra}%` }}
+          style={{ transform: `scaleX(${pctBarra / 100})` }}
         />
       </div>
       <div className="rec-progreso-objetivo">
@@ -81,7 +81,7 @@ const MacrosHoy = ({ macrosHoy }) => {
         <div key={label} className="rec-macro-item">
           <span className="rec-macro-label">{label}</span>
           <div className="rec-macro-track">
-            <div className="rec-macro-fill" style={{ width: `${Math.min(pct, 100)}%`, background: color }} />
+            <div className="rec-macro-fill" style={{ transform: `scaleX(${Math.min(pct, 100) / 100})`, background: color }} />
           </div>
           <span className="rec-macro-pct">{pct}%</span>
         </div>

@@ -134,13 +134,15 @@
   border: none;
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: background 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: background 0.3s ease, transform 0.3s ease, border-radius 0.3s ease;
   padding: 0;
 }
 
 .hero-dot.activo {
   background: var(--dorado);
-  width: 24px;
+  transform: scaleX(3);
   border-radius: 4px;
 }
 
@@ -184,7 +186,11 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.recetasGrid { animation: fadeIn 0.6s ease; }
+.recetasGrid {
+  animation: fadeIn 0.6s ease;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1200px;
+}
 
 .recetasGrid h2 {
   text-align: center;
@@ -243,6 +249,8 @@
 .recetasGrid .grid {
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   align-items: stretch;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 2000px;
 }
 
 @media (max-width: 767px) {
@@ -319,20 +327,15 @@
     height: 30%;
     top: 0;
     transform: translateY(calc(var(--scroll-pct, 0) * 233%));
-    background: linear-gradient(180deg, #86efac 0%, #4ade80 20%, #22c55e 50%, #16a34a 70%, #22c55e 85%, #4ade80 100%);
+    background: linear-gradient(180deg, #4ade80 0%, #16a34a 50%, #22c55e 100%);
     border-radius: 999px;
-    box-shadow:
-      0 0 10px 3px rgba(74, 222, 128, 0.85),
-      0 0 24px 5px rgba(34, 197, 94, 0.55),
-      0 0 40px 8px rgba(22, 163, 74, 0.3);
-    transition: transform 0.06s linear;
+    box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.45);
     cursor: grab;
     pointer-events: auto;
-    will-change: transform;
+    contain: layout paint;
   }
 
   .scrollbar-custom-thumb--dragging {
-    transition: none;
     cursor: grabbing;
   }
 }

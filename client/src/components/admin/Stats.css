@@ -141,7 +141,8 @@
   height: 100%;
   background: linear-gradient(90deg, var(--verde-progreso), var(--verde-progreso-oscuro));
   border-radius: 6px;
-  transition: width 0.9s ease;
+  transform-origin: left center;
+  transition: transform 0.9s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);

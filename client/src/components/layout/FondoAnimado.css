@@ -5,15 +5,16 @@
   width: 100%;
   height: 100%;
   z-index: -1;
+  background-color: #07110b;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)),
-    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/q_auto,f_auto,w_2000,e_blur:2000,q_60/v1777575212/El_roble_de_Karla_xyxkyv.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  /* Sin animación; este div es estático.
-     No aplicar backdrop-filter aquí: ya tiene una imagen de fondo
-     y eso fuerza repintado costoso en cada resize/scroll. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: strict;
+  content-visibility: auto;
 }
-
-/* Modo oscuro: misma imagen, mismo degradado — no hace falta override. */

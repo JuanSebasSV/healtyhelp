@@ -143,7 +143,8 @@
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(96, 165, 250, 0.7), rgba(167, 213, 136, 0.85));
-  transition: width 0.6s ease;
+  transform-origin: left center;
+  transition: transform 0.6s ease;
 }
 
 .rec-progreso-fill--ok {
@@ -193,7 +194,8 @@
   height: 100%;
   border-radius: 999px;
   opacity: 0.8;
-  transition: width 0.5s ease;
+  transform-origin: left center;
+  transition: transform 0.5s ease;
 }
 
 .rec-macro-pct {

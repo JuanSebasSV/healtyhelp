@@ -1,4 +1,5 @@
 import React, { memo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './ModalNutricionDetallada.css';
 
 const FilaNutri = memo(({ nombre, valor, unidad }) => (
@@ -66,7 +67,7 @@ const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
     };
   }, []);
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={cerrar}>
       <div className="modalNutriWrapper" onClick={e => e.stopPropagation()}>
 
@@ -182,7 +183,8 @@ const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
 
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 });
 

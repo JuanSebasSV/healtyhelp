@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 import './RecipeImport.css';
 
 const STORAGE_KEY = 'healtyhelp_import_draft';
@@ -140,7 +141,7 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
       <div className="review-card">
         <div className="review-img-wrap">
           {receta.img
-            ? <img src={receta.img} alt={receta.nombre} onError={e => { e.target.style.display = 'none'; }} />
+            ? <img src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_400')} alt={receta.nombre} width="100" height="80" loading="lazy" decoding="async" onError={e => { e.target.style.display = 'none'; }} />
             : <div className="review-img-placeholder">🍽️</div>
           }
         </div>

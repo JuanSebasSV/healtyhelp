@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import { optimizeCloudinary } from '../../utils/cloudinary';
 import './ImagenesAprobacion.css';
 
 const ESTADOS = {
@@ -141,7 +142,7 @@ const ImageCard = memo(({
     >
       {img.url ? (
         <>
-          <img src={img.url} alt="Imagen de reseña" className="ia-card-img" loading="lazy" />
+          <img src={optimizeCloudinary(img.url, 'q_auto,f_auto,w_400')} alt="Imagen de reseña" className="ia-card-img" width="220" height="160" loading="lazy" decoding="async" />
           {!modoSeleccion && (
             <div className="ia-card-img-overlay">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -637,7 +638,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
             <button className="ia-modal-cerrar" onClick={() => setImagenModal(null)}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
-            <img src={imagenModal.url} alt="Vista completa" className="ia-modal-img" />
+            <img src={optimizeCloudinary(imagenModal.url, 'q_auto,f_auto,w_1200')} alt="Vista completa" className="ia-modal-img" width="1200" height="800" decoding="async" />
             <div className="ia-modal-info">
               <span className="ia-card-usuario">
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
