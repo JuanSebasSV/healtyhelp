@@ -10,7 +10,7 @@
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
-  z-index: 1000;
+  z-index: 9999;
   overflow: hidden;
   animation: pn-aparecer 0.18s ease;
 }
@@ -75,10 +75,10 @@
 }
 
 .pn-lista {
-  max-height: 420px;
+  max-height: calc(75vh - 80px);
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .pn-lista::-webkit-scrollbar { width: 4px; }
 .pn-lista::-webkit-scrollbar-thumb {
@@ -101,40 +101,16 @@
   will-change: transform;
 }
 
-.pn-item:nth-child(1) {
-  transform: rotate(-1.2deg) translateX(-2px);
-  border-radius: 14px 14px 14px 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.18), 0 6px 14px rgba(0,0,0,0.22);
-}
-.pn-item:nth-child(2) {
-  transform: rotate(0.8deg) translateX(2px);
-  border-radius: 10px 14px 6px 14px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.20), 0 8px 18px rgba(0,0,0,0.28);
-}
-.pn-item:nth-child(3) {
-  transform: rotate(-0.5deg) translateX(-1px);
-  border-radius: 14px 6px 14px 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.18), 0 5px 12px rgba(0,0,0,0.20);
-}
-.pn-item:nth-child(4) {
-  transform: rotate(1.1deg) translateX(1px);
-  border-radius: 6px 14px 10px 14px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.22), 0 7px 16px rgba(0,0,0,0.26);
-}
-.pn-item:nth-child(5) {
-  transform: rotate(-0.9deg) translateX(-2px);
-  border-radius: 14px 10px 6px 14px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.18), 0 6px 14px rgba(0,0,0,0.22);
-}
-.pn-item:nth-child(6) {
-  transform: rotate(0.6deg) translateX(2px);
-  border-radius: 8px 14px 14px 6px;
-  box-shadow: 0 3px 7px rgba(0,0,0,0.22), 0 8px 18px rgba(0,0,0,0.28);
-}
+.pn-item:nth-child(1),
+.pn-item:nth-child(2),
+.pn-item:nth-child(3),
+.pn-item:nth-child(4),
+.pn-item:nth-child(5),
+.pn-item:nth-child(6),
 .pn-item:nth-child(n+7) {
-  transform: rotate(-0.7deg) translateX(-1px);
-  border-radius: 14px 8px 14px 6px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.18), 0 6px 14px rgba(0,0,0,0.22);
+  transform: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.20);
 }
 
 .pn-item:hover {
@@ -197,6 +173,7 @@
 .pn-contenido {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .pn-texto {
@@ -204,6 +181,9 @@
   color: rgba(255,255,255,0.75);
   line-height: 1.45;
   margin: 0 0 0.25rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .pn-texto strong { color: var(--blanco-puro); font-weight: 700; }
 .pn-texto em { color: rgba(167,213,136,0.8); font-style: normal; }
@@ -214,9 +194,16 @@
   font-style: italic;
   margin: 0 0 0.3rem;
   line-height: 1.4;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pn-texto,
+.pn-preview,
+.pn-fecha {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .pn-fecha {
@@ -328,33 +315,32 @@
 }
 
 .pn-overlay {
-  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(2px);
+  z-index: 9998;
 }
 
 @media (max-width: 768px) {
   
   .pn-panel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto;
-    width: 100%;
-    max-width: 100%;
-    max-height: 88vh;
-    border-radius: 20px 20px 0 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    z-index: 9999;
-    padding-bottom: env(safe-area-inset-bottom, 8px);
-    animation: pn-subir 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-  }
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 2rem);
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(12,28,18,0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  z-index: 99999;
+}
 
   .pn-panel::before {
     content: '';

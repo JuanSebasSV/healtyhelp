@@ -9,7 +9,7 @@
   background: rgba(10, 38, 20, 0.92);
   border-bottom: 1px solid rgba(120, 180, 90, 0.28);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-  contain: layout paint;
+  contain: none;
 }
 
 .modo-oscuro .nav {
