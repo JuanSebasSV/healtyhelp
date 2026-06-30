@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "codebase-memory-mcp": {
+      "type": "local",
+      "command": ["C:\\Users\\WinterOS\\AppData\\Local\\Programs\\codebase-memory-mcp\\codebase-memory-mcp.exe"],
+      "enabled": true
+    }
+  },
+  "model": "minimax-coding-plan/MiniMax-M3",
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "model": "minimax-coding-plan/MiniMax-M3",
+      "permission": "allow"
+    },
+    "plan": {
+      "mode": "primary",
+      "model": "minimax-coding-plan/MiniMax-M3",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    },
+    "code-reviewer": {
+      "mode": "subagent",
+      "description": "Revisa código en busca de bugs, malas prácticas y mejoras de seguridad",
+      "model": "minimax-coding-plan/MiniMax-M3",
+      "permission": "allow"
+    },
+    "explore": {
+      "mode": "subagent",
+      "permission": "allow"
+    },
+    "scout": {
+      "mode": "subagent",
+      "permission": "allow"
+    }
+  }
+}
