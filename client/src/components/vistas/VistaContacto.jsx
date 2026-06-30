@@ -28,13 +28,14 @@ const esEmailPermitido = (email) => {
 };
 
 const FAQS_FALLBACK = [
-  { _id: '1', pregunta: '¿Cómo funciona Healthy Help?', respuesta: 'Es una plataforma para facilitar recetas para personas que sigan dietas específicas.' },
-  { _id: '2', pregunta: '¿Cómo elijo la mejor dieta para mí?', respuesta: 'Puedes utilizar nuestro sistema de filtros en la página principal para ajustar las recetas según tus necesidades.' },
-  { _id: '3', pregunta: '¿Las recetas incluyen información nutricional?', respuesta: 'Sí, cada receta detallada en Healthy Help cuenta con un desglose de ingredientes y pasos claros para asegurar que sigas tu plan de alimentación correctamente.' },
-  { _id: '4', pregunta: '¿Puedo usar la aplicación sin conexión a internet?', respuesta: 'Healthy Help es una aplicación web, por lo que requiere conexión a internet para cargar nuevas recetas. Sin embargo, una vez cargada la página, puedes visualizar la información actual sin problemas.' },
-  { _id: '5', pregunta: '¿Es apto para personas con alergias alimentarias?', respuesta: 'Nuestra plataforma permite filtrar ingredientes a través del chatbot, pero siempre recomendamos revisar la lista completa de componentes de cada receta para garantizar tu seguridad.' },
-  { _id: '6', pregunta: '¿Cómo puedo sugerir una nueva receta?', respuesta: '¡Nos encanta recibir sugerencias! Puedes usar el formulario de contacto de arriba para enviarnos tus ideas y nuestro equipo de nutrición las revisará para incluirlas.' },
-  { _id: '7', pregunta: '¿Los datos de mi perfil son privados?', respuesta: 'Totalmente. Utilizamos MongoDB Atlas para asegurar que tu información esté encriptada y protegida bajo los más altos estándares de seguridad actuales.' },
+  { _id: '1', pregunta: '¿Cómo funciona Healthy Help?', respuesta: 'Es una plataforma de recetas saludables que se adapta a ti: filtra por condición médica, tipo de dieta, tiempo de preparación o alergias, y te muestra solo las recetas que realmente puedes comer.' },
+  { _id: '2', pregunta: '¿Cómo elijo la mejor dieta para mí?', respuesta: 'En la página principal puedes activar el filtro de "Tipo de Dieta" y marcar tus condiciones (diabetes, hipertensión, vegano, keto, sin gluten, entre otras). El sistema solo mostrará recetas que cumplan con todas las condiciones seleccionadas a la vez.' },
+  { _id: '3', pregunta: '¿Las recetas incluyen información nutricional?', respuesta: 'Sí, cada receta muestra calorías, proteínas, carbohidratos, grasas y micronutrientes, además de los ingredientes, pasos de preparación y el costo aproximado por porción en pesos colombianos.' },
+  { _id: '4', pregunta: '¿Cómo registro mis alergias para que se filtren automáticamente?', respuesta: 'En tu perfil puedes escribir tus alergias alimentarias (por ejemplo "maní, banano"). El sistema oculta automáticamente cualquier receta que contenga esos ingredientes, incluso si están escritos con otro nombre o sinónimo.' },
+  { _id: '5', pregunta: '¿Puedo guardar mis recetas favoritas?', respuesta: 'Sí, con tu cuenta puedes marcar recetas como favoritas tocando el ícono de corazón. Quedan guardadas en tu perfil, así que las verás disponibles sin importar desde qué dispositivo inicies sesión.' },
+  { _id: '6', pregunta: '¿Puedo pedirle recomendaciones al asistente de IA?', respuesta: 'Sí, el chatbot puede sugerirte recetas o sustitutos de ingredientes según tus condiciones de salud, alergias o preferencias, basándose en la información de tu perfil.' },
+  { _id: '7', pregunta: '¿Cómo puedo sugerir una nueva receta?', respuesta: 'Puedes escribirnos desde la sección de Contáctanos. Revisamos cada sugerencia y, si cumple con nuestros estándares nutricionales, la agregamos al catálogo.' },
+  { _id: '8', pregunta: '¿Mis datos personales y de salud están protegidos?', respuesta: 'Sí, tu información se almacena de forma segura en nuestra base de datos y solo se usa para personalizar tu experiencia, como filtrar recetas según tus condiciones de salud o alergias.' },
 ];
 
 const FORM_VACIO = { nombre: '', email: '', asunto: '', mensaje: '' };
