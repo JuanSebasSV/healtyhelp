@@ -62,7 +62,7 @@
 .modalDer { flex: 0.8; }
 
 .modo-oscuro .modalCol {
-  background: rgba(20, 40, 25, 0.6);
+  background: rgba(20, 40, 34, 0.6);
   border-color: rgba(79, 119, 45, 0.3);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(107, 158, 74, 0.15);
 }

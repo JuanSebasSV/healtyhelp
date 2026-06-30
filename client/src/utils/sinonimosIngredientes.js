@@ -4,7 +4,7 @@
 const SINONIMOS = [
     // Frutas
     ['banano', 'banana', 'platano', 'platano maduro', 'guineo'],
-    ['pina', 'ananas', 'anana'],
+    ['piña', 'ananas', 'anana', 'pina'],
     ['fresa', 'frutilla', 'strawberry'],
     ['mora', 'blackberry', 'zarzamora'],
     ['maracuya', 'passion fruit', 'fruta de la pasion', 'parcha'],
