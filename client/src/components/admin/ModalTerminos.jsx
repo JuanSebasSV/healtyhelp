@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import './ModalTerminos.css';
 
 const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
+  useBodyScrollLock(true);
   const [scrollado,    setScrollado]    = useState(false);
   const [aceptado,     setAceptado]     = useState(false);
   const [cargando,     setCargando]     = useState(false);
@@ -41,7 +43,7 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
   const version = termsData?.version || '1.0.0';
 
   return (
-    <div className="terminos-overlay">
+    <div className="terminos-overlay" data-modal="true">
       <div className="terminos-modal">
 
         <div className="terminos-header">

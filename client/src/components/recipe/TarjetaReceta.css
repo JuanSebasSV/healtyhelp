@@ -16,22 +16,6 @@
   height: 100%;
 }
 
-.tarjetaReceta::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 5px;
-  height: 100%;
-  background-color: #2ebe84;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.tarjetaReceta:hover::before {
-  background-color: #4d9e7a;
-}
-
 .tarjetaReceta:hover {
   transform: translateY(-10px) scale(1.015);
 }
@@ -40,10 +24,6 @@
   background: rgba(10, 22, 14, 0.62);
   border-color: rgba(79, 119, 45, 0.35);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
-}
-
-.modo-oscuro .tarjetaReceta::before {
-  background-color: #4d9e7a;
 }
 
 .modo-oscuro .tarjetaReceta:hover {
@@ -58,6 +38,8 @@
   overflow: hidden;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px 16px 0 0;
+  clip-path: inset(0 round 16px 16px 0 0);
   contain: layout paint;
 }
 
@@ -68,6 +50,8 @@
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   filter: brightness(0.92) saturate(1.08);
   display: block;
+  border-radius: 16px 16px 0 0;
+  clip-path: inset(0 round 16px 16px 0 0);
 }
 
 .tarjetaReceta:hover .tarjetaImg img {
@@ -316,7 +300,6 @@
 
   .tarjetaImg {
     aspect-ratio: 16 / 10;
-    border-radius: 0;
   }
 
   .btnFav {
@@ -389,10 +372,8 @@
   }
 }
 
-body.is-scrolling .tarjetaReceta:hover,
-body.is-scrolling .tarjetaReceta:hover::before {
+body.is-scrolling .tarjetaReceta:hover {
   transform: none;
-  background-color: #2ebe84;
 }
 body.is-scrolling .tarjetaReceta:hover .tarjetaImg img {
   transform: none;

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import './ModalGooglePassword.css';
 
 const EyeIcon = ({ open }) => (
@@ -32,6 +33,7 @@ const validarPassword = (password) => {
 };
 
 const ModalGooglePassword = ({ token, onSuccess }) => {
+  useBodyScrollLock(true);
   const { setGooglePassword } = useAuth();
 
   const [pass, setPass]         = useState('');
@@ -81,7 +83,7 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
   const toggleShowConf       = useCallback(() => setShowConf(p => !p), []);
 
   return (
-    <div className="mgp-overlay">
+    <div className="mgp-overlay" data-modal="true">
       <div className="mgp-card" role="dialog" aria-modal="true" aria-labelledby="mgp-titulo">
 
         <div className="mgp-brand">

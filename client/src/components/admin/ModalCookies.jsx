@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import './ModalCookies.css';
 
 const COOKIE_KEY = 'hh_cookie_consent';
@@ -9,6 +10,7 @@ const setCookie = (name, value, maxAge = COOKIE_AGE) => {
 };
 
 const ModalCookies = ({ onAceptar }) => {
+  useBodyScrollLock(true);
   const [visible,  setVisible]  = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 
@@ -34,7 +36,7 @@ const ModalCookies = ({ onAceptar }) => {
   if (!visible) return null;
 
   return (
-    <div className={`cookies-overlay ${saliendo ? 'saliendo' : ''}`}>
+    <div className={`cookies-overlay ${saliendo ? 'saliendo' : ''}`} data-modal="true">
       <div className="cookies-card">
         <div className="cookies-glow" />
 

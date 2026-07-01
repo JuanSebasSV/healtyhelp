@@ -12,21 +12,21 @@
     "build": {
       "mode": "primary",
       "model": "minimax-coding-plan/MiniMax-M3",
-      "permission": "allow",
-      "thinking": { "type": "enabled" }
+      "permission": "allow"
     },
     "plan": {
       "mode": "primary",
       "model": "minimax-coding-plan/MiniMax-M3",
-      "permission": "allow",
-      "thinking": { "type": "enabled" }
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
     "code-reviewer": {
       "mode": "subagent",
       "description": "Revisa código en busca de bugs, malas prácticas y mejoras de seguridad",
       "model": "minimax-coding-plan/MiniMax-M3",
-      "permission": "allow",
-      "thinking": { "type": "enabled" }
+      "permission": "allow"
     },
     "explore": {
       "mode": "subagent",

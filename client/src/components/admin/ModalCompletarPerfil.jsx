@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import './ModalCompletarPerfil.css';
 
 const AVISOS = {
@@ -191,6 +192,7 @@ const MIN_DATE = new Date(new Date().setFullYear(new Date().getFullYear() - 120)
 const MAX_DATE = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0];
 
 const ModalCompletarPerfil = ({ onCompletado, user }) => {
+  useBodyScrollLock(true);
   const [form,     setForm]     = useState({ fechaNac: '', weight: '', height: '' });
   const [errors,   setErrors]   = useState({});
   const [touched,  setTouched]  = useState({});
@@ -254,7 +256,7 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
   };
 
   return (
-    <div className="completar-overlay">
+    <div className="completar-overlay" data-modal="true">
       <div className="completar-modal">
 
         <div className="completar-header">
