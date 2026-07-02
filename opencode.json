@@ -3,8 +3,9 @@
   "mcp": {
     "codebase-memory-mcp": {
       "type": "local",
-      "command": ["C:\\Users\\WinterOS\\AppData\\Local\\Programs\\codebase-memory-mcp\\codebase-memory-mcp.exe"],
-      "enabled": true
+      "command": ["codebase-memory-mcp"],
+      "enabled": true,
+      "timeout": 30000
     }
   },
   "model": "minimax-coding-plan/MiniMax-M3",
