@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import './ChatCore.css';
 
 /*Iconos*/
 const IconoRobot = ({ size = 20, color = 'currentColor' }) => (

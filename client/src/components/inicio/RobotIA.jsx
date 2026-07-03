@@ -37,7 +37,7 @@ const RobotIA = memo(({ activo, toggleIA }) => {
       </button>
 
       {activo && (
-        <div className="robotChat">
+        <div className="robotChat" data-modal="true">
           <ChatCore
             modoExpandido={false}
             chat={chat}

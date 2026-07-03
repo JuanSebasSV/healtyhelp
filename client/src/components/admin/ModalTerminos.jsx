@@ -76,7 +76,7 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
           Lee los términos completos antes de aceptar. Debes llegar al final del documento.
         </p>
 
-        <div className="terminos-contenido" onScroll={handleScroll}>
+        <div className="terminos-contenido" onScroll={handleScroll} tabIndex={0}>
           {loadingTerms && (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
               Cargando términos...

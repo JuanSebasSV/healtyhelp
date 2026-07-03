@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './VistaContacto.css';
@@ -40,10 +40,79 @@ const FAQS_FALLBACK = [
 
 const FORM_VACIO = { nombre: '', email: '', asunto: '', mensaje: '' };
 
+const INFO = [
+  {
+    id: 'correo',
+    titulo: 'Correo',
+    valor: 'healtyhelp@gmail.com',
+    href: 'mailto:healtyhelp@gmail.com',
+    icono: (
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect width="20" height="16" x="2" y="4" rx="2" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      </svg>
+    ),
+  },
+  {
+    id: 'telefono',
+    titulo: 'Teléfono',
+    valor: '+57 317 427 9162',
+    href: 'tel:+573174279162',
+    icono: (
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'ubicacion',
+    titulo: 'Ubicación',
+    valor: 'Carrera 10 No. 11 - 22, Garzón - Huila',
+    href: 'https://maps.google.com/?q=Carrera+10+No.+11-22+Garzon+Huila',
+    icono: (
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    ),
+  },
+  {
+    id: 'horario',
+    titulo: 'Horario de Atención',
+    valor: 'Lun - Vie · 12:00 PM – 6:00 PM',
+    icono: (
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+  },
+];
+
+const InfoItem = memo(({ info, variante = 'liquid' }) => {
+  const inner = (
+    <>
+      <span className="info-icono" aria-hidden="true">{info.icono}</span>
+      <div className="info-texto">
+        <h3>{info.titulo}</h3>
+        <p>{info.valor}</p>
+      </div>
+    </>
+  );
+  const className = `info-item ${variante === 'solid' ? 'info-item--solid' : ''}`;
+  return info.href ? (
+    <a className={className} href={info.href} target={info.href.startsWith('http') ? '_blank' : undefined} rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+      {inner}
+    </a>
+  ) : (
+    <div className={className}>{inner}</div>
+  );
+});
+InfoItem.displayName = 'InfoItem';
+
 const VistaContacto = () => {
   const [datosForm, setDatosForm]               = useState(FORM_VACIO);
   const [enviando, setEnviando]                 = useState(false);
-  const [infoAbierta, setInfoAbierta]           = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [faqs, setFaqs]                         = useState([]);
 
@@ -56,7 +125,6 @@ const VistaContacto = () => {
     setDatosForm(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  const toggleInfo = useCallback(() => setInfoAbierta(prev => !prev), []);
   const cerrarConfirmacion = useCallback(() => setMostrarConfirmacion(false), []);
 
   const validarYMostrarConfirmacion = useCallback(() => {
@@ -110,13 +178,12 @@ const VistaContacto = () => {
   return (
     <div className="vista-contacto">
 
-      {/* Modal de confirmación */}
       {mostrarConfirmacion && (
         <div className="confirmacion-overlay" onClick={cerrarConfirmacion}>
           <div className="confirmacion-modal" onClick={(e) => e.stopPropagation()}>
             <div className="confirmacion-header">
-              <div className="confirmacion-icono">
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+              <div className="confirmacion-icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </div>
@@ -146,10 +213,10 @@ const VistaContacto = () => {
             </div>
 
             <div className="confirmacion-acciones">
-              <button className="confirmacion-btn-editar" onClick={cerrarConfirmacion}>
+              <button type="button" className="confirmacion-btn-editar" onClick={cerrarConfirmacion}>
                 Editar
               </button>
-              <button className="confirmacion-btn-enviar" onClick={confirmarYEnviar}>
+              <button type="button" className="confirmacion-btn-enviar" onClick={confirmarYEnviar}>
                 Confirmar y enviar
               </button>
             </div>
@@ -157,214 +224,113 @@ const VistaContacto = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="contacto-header" style={{ marginBottom: '3rem' }}>
+      <header className="contacto-header">
         <h1>Contáctanos</h1>
         <p className="contacto-subtitulo">
           Estamos aquí para acompañarte en tu camino hacia una vida más saludable.
           Escríbenos, llámanos o visítanos — con gusto te orientamos.
         </p>
-      </div>
+      </header>
 
-      {/* Tarjeta principal */}
       <div className="contacto-contenedor">
 
-        {/* Panel izquierdo */}
-        <div className="contacto-info">
-          <span className="contacto-hero-titulo">Contáctanos</span>
+        <aside className="contacto-info" aria-label="Información de contacto">
+          {INFO.map(info => (
+            <InfoItem key={info.id} info={info} />
+          ))}
+        </aside>
 
-          <div className="info-item">
-            <div className="info-icono">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-              </svg>
-            </div>
-            <div>
-              <h3>Correo</h3>
-              <p>healtyhelp@gmail.com</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <div className="info-icono">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-            </div>
-            <div>
-              <h3>Teléfono</h3>
-              <p>+57 317 427 9162</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <div className="info-icono">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            </div>
-            <div>
-              <h3>Ubicación</h3>
-              <p>Carrera 10 No. 11 - 22, Garzón - Huila</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <div className="info-icono">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <div>
-              <h3>Horario de Atención</h3>
-              <p>Lun - Vie: 12:00 PM - 6:00 PM</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Acordeón móvil */}
-        <div className="contacto-acordeon">
-          <button
-            className="acordeon-trigger"
-            onClick={toggleInfo}
-            aria-expanded={infoAbierta}
-          >
-            <span className="acordeon-trigger-label">
-              <span className="acordeon-punto" />
-              Información de contacto
-            </span>
-            <svg
-              className="acordeon-chevron"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="none"
-            >
-              <polyline
-                points="6 9 12 15 18 9"
-                stroke="rgba(255,255,255,0.90)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
-          </button>
-
-          <div className={`acordeon-contenido${infoAbierta ? ' abierto' : ''}`}>
-            <div className="acordeon-inner">
-              <div className="info-item">
-                <div className="info-icono">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </div>
-                <div><h3>Correo</h3><p>healtyhelp@gmail.com</p></div>
-              </div>
-              <div className="info-item">
-                <div className="info-icono">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div><h3>Teléfono</h3><p>+57 317 427 9162</p></div>
-              </div>
-              <div className="info-item">
-                <div className="info-icono">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </div>
-                <div><h3>Ubicación</h3><p>Carrera 10 No. 11 - 22, Garzón - Huila</p></div>
-              </div>
-              <div className="info-item">
-                <div className="info-icono">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-                <div><h3>Horario de Atención</h3><p>Lun - Vie: 12:00 PM - 6:00 PM</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Panel derecho — formulario */}
-        <div className="contacto-form">
-          <h2>Envíanos un Mensaje</h2>
+        <section className="contacto-form" aria-labelledby="contacto-form-titulo">
+          <h2 id="contacto-form-titulo">Envíanos un Mensaje</h2>
 
           <div className="campo-wrapper">
+            <label htmlFor="contacto-nombre" className="sr-only">Nombre completo</label>
             <input
+              id="contacto-nombre"
               type="text"
               name="nombre"
               placeholder="Nombre completo *"
               value={datosForm.nombre}
               onChange={handleChange}
               disabled={enviando}
+              autoComplete="name"
+              maxLength={80}
+              required
             />
           </div>
 
           <div className="campo-wrapper">
+            <label htmlFor="contacto-email" className="sr-only">Correo electrónico</label>
             <input
+              id="contacto-email"
               type="email"
               name="email"
               placeholder="Correo electrónico *"
               value={datosForm.email}
               onChange={handleChange}
               disabled={enviando}
+              autoComplete="email"
+              inputMode="email"
+              spellCheck={false}
+              required
             />
           </div>
 
           <div className="campo-wrapper">
+            <label htmlFor="contacto-asunto" className="sr-only">Asunto</label>
             <input
+              id="contacto-asunto"
               type="text"
               name="asunto"
               placeholder="Asunto"
               value={datosForm.asunto}
               onChange={handleChange}
               disabled={enviando}
+              maxLength={120}
             />
           </div>
 
           <div className="campo-wrapper campo-textarea">
+            <label htmlFor="contacto-mensaje" className="sr-only">Mensaje</label>
             <textarea
+              id="contacto-mensaje"
               name="mensaje"
               placeholder="Mensaje *"
-              rows="5"
+              rows={5}
               value={datosForm.mensaje}
               onChange={handleChange}
               disabled={enviando}
+              maxLength={1000}
+              required
             />
+            <span className="campo-contador" aria-live="polite">{datosForm.mensaje.length}/1000</span>
           </div>
 
           <button
-            onClick={validarYMostrarConfirmacion}
+            type="button"
             className="btn-primario"
+            onClick={validarYMostrarConfirmacion}
             disabled={enviando}
           >
-            {enviando ? 'Enviando...' : 'Enviar Mensaje'}
+            {enviando ? 'Enviando…' : 'Enviar Mensaje'}
           </button>
-        </div>
+        </section>
 
       </div>
 
-      {/* Preguntas Frecuentes */}
-      <div className="seccion-faq-unificada">
-        <h2 className="faq-titulo">Preguntas Frecuentes</h2>
+      <section className="seccion-faq-unificada" aria-labelledby="contacto-faq-titulo">
+        <h2 id="contacto-faq-titulo" className="faq-titulo">Preguntas Frecuentes</h2>
         <div className="faq-tabla">
           {faqs.map((faq, index) => (
             <details key={faq._id} className="faq-fila">
               <summary>
-                <span className="faq-numero">{index + 1}.</span>
-                {faq.pregunta}
-                <span className="faq-flecha">▼</span>
+                <span className="faq-numero">{String(index + 1).padStart(2, '0')}</span>
+                <span className="faq-pregunta">{faq.pregunta}</span>
+                <span className="faq-flecha" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
               </summary>
               <div className="faq-respuesta">
                 <p>{faq.respuesta}</p>
@@ -372,7 +338,7 @@ const VistaContacto = () => {
             </details>
           ))}
         </div>
-      </div>
+      </section>
 
     </div>
   );

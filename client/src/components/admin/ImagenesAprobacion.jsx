@@ -17,9 +17,10 @@ const formatFecha = (f) =>
   });
 
 const mapItem = (img) => ({
-  _id:             `${img.recipeId}_${img.resenaId}`,
+  _id:             `${img.recipeId}_${img.resenaId}_${img.imagenIndex ?? 0}`,
   recipeId:        img.recipeId,
   resenaId:        img.resenaId,
+  imagenIndex:     img.imagenIndex ?? 0,
   userId:          img.userId,
   url:             img.imagenUrl,
   estado:          img.imagenEstado,
@@ -355,7 +356,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
   const handleAprobar = useCallback(async (img) => {
     setProcesando(img._id);
     try {
-      await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar`);
+      await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('✅ Imagen aprobada');
       aplicarCambioLocal(img, 'aprobar');
     } catch (e) {
@@ -369,7 +370,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
     if (!window.confirm('¿Rechazar esta imagen? Se eliminará de Cloudinary.')) return;
     setProcesando(img._id);
     try {
-      await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar`);
+      await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('Imagen rechazada');
       aplicarCambioLocal(img, 'rechazar');
     } catch (e) {
@@ -383,7 +384,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
     if (!window.confirm('¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.')) return;
     setProcesando(img._id);
     try {
-      await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}`);
+      await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('🗑️ Registro eliminado del historial');
       aplicarCambioLocal(img, 'eliminar');
     } catch (e) {
@@ -414,7 +415,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
         const img = imagenes.find(i => i._id === id);
         if (!img) return;
         try {
-          await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/${verbo}`);
+          await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/${verbo}?imagenIndex=${img.imagenIndex ?? 0}`);
           ok++;
         } catch {
           fail++;
@@ -443,7 +444,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
     setProcesandoMasivo(true);
     const items = [...seleccionados].map(id => {
       const img = imagenes.find(i => i._id === id);
-      return img ? { recipeId: img.recipeId, resenaId: img.resenaId } : null;
+      return img ? { recipeId: img.recipeId, resenaId: img.resenaId, imagenIndex: img.imagenIndex ?? 0 } : null;
     }).filter(Boolean);
 
     try {

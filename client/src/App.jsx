@@ -630,7 +630,7 @@ function App() {
     };
     const onWheel = (e) => {
       const target = e.target;
-      const modalAncestor = target && target.closest && target.closest('[data-modal], .modal-overlay, .terminos-overlay, .al-modal-overlay, .pn-modal-movil, .vistaChatbot, .rec-panel');
+      const modalAncestor = target && target.closest && target.closest('[data-modal], .modal-overlay, .terminos-overlay, .terminos-modal, .al-modal-overlay, .pn-modal-movil, .vistaChatbot, .robotChat, .rec-panel, .seg-col, .filtroModalOverlay, .filtroModal');
       if (modalAncestor) return;
       const capped = Math.max(-60, Math.min(60, e.deltaY));
       if (capped === 0) return;

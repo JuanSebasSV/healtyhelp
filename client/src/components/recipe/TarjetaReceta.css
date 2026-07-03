@@ -39,7 +39,6 @@
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 16px 16px 0 0;
-  clip-path: inset(0 round 16px 16px 0 0);
   contain: layout paint;
 }
 

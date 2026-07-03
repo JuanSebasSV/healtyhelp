@@ -507,8 +507,318 @@
   overflow-y: auto;
 }
 
-.modo-oscuro .filtroModal { background: rgba(5,18,10,0.97); border-color: rgba(79,119,45,0.3); }
-.modo-oscuro .filtroModalHeader { background: rgba(10,25,15,0.7); border-bottom-color: rgba(79,119,45,0.25); }
+.modo-oscuro .filtroModal {
+  background: linear-gradient(180deg, #0a1a10 0%, #102818 50%, #07120c 100%);
+  border: 1px solid #1a4d2e;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.40),
+    0 24px 64px rgba(0, 0, 0, 0.70),
+    inset 0 1px 0 rgba(110, 231, 183, 0.08);
+}
+.modo-oscuro .filtroModalOverlay {
+  background: rgba(6, 15, 9, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.modo-oscuro .filtroModalHeader {
+  background: linear-gradient(180deg, #1a4d2e 0%, #143220 100%);
+  border-bottom: 1px solid #2d5a3d;
+}
+.modo-oscuro .filtroModalHeader h2 {
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.60);
+}
+.modo-oscuro .filtroModalCerrar {
+  background: #143220;
+  border: 1px solid #2d5a3d;
+  color: rgba(220, 248, 230, 0.85);
+}
+.modo-oscuro .filtroModalCerrar:hover {
+  background: #c8742c;
+  border-color: #c8742c;
+  color: #ffffff;
+}
+.modo-oscuro .filtroModalBody { background: transparent; }
+.modo-oscuro .filtroInfo p { color: rgba(220, 248, 230, 0.82); }
+.modo-oscuro .btnLimpiar {
+  background: #143220;
+  border-color: #2d5a3d;
+  color: #ffb347;
+}
+.modo-oscuro .btnLimpiar:hover {
+  background: #c8742c;
+  border-color: #c8742c;
+  color: #ffffff;
+}
+.modo-oscuro .filtroGrupo { margin-top: 1.5rem; }
+.modo-oscuro .filtroGrupo:first-of-type { margin-top: 0.5rem; }
+.modo-oscuro .filtroGrupo__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.75rem;
+  padding: 0 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+}
+.modo-oscuro .filtroGrupo__titulo svg { color: currentColor; stroke: currentColor; flex-shrink: 0; }
+.modo-oscuro .filtroGrupo--medica .filtroGrupo__titulo { color: #6ee7b7; }
+.modo-oscuro .filtroGrupo--dieta .filtroGrupo__titulo { color: #ffb347; }
+.modo-oscuro .filtroGrupo--alergia .filtroGrupo__titulo { color: #f4a3a3; }
+.modo-oscuro .filtroCard {
+  background: #102818;
+  border: 1.5px solid #1a4d2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  color: rgba(220, 248, 230, 0.92);
+}
+.modo-oscuro .filtroCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, height 0.25s ease;
+  background: transparent;
+}
+.modo-oscuro .filtroCard--medica::before { background: #6ee7b7; }
+.modo-oscuro .filtroCard--dieta::before { background: #f77f00; }
+.modo-oscuro .filtroCard--alergia::before { background: #dc2626; }
+.modo-oscuro .filtroCard:hover::before { height: 3px; opacity: 1; }
+.modo-oscuro .filtroCard:hover {
+  transform: translateY(-4px);
+  border-color: #6ee7b7;
+  background: #143220;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(110, 231, 183, 0.20);
+}
+.modo-oscuro .filtroCard:active { transform: translateY(-1px); }
+.modo-oscuro .filtroCard:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
+}
+.modo-oscuro .filtroCard.activo {
+  background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 100%);
+  border-color: #6ee7b7;
+  box-shadow: 0 8px 20px rgba(110, 231, 183, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.modo-oscuro .filtroCard--dieta.activo {
+  background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
+  border-color: #ffb347;
+  box-shadow: 0 8px 20px rgba(247, 127, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.modo-oscuro .filtroCard--alergia.activo {
+  background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%);
+  border-color: #f4a3a3;
+  box-shadow: 0 8px 20px rgba(185, 28, 28, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.modo-oscuro .filtroIcono svg {
+  color: #6ee7b7;
+  stroke: #6ee7b7;
+  opacity: 0.95;
+}
+.modo-oscuro .filtroCard--medica .filtroIcono svg { color: #6ee7b7; stroke: #6ee7b7; }
+.modo-oscuro .filtroCard--dieta .filtroIcono svg { color: #ffb347; stroke: #ffb347; }
+.modo-oscuro .filtroCard--alergia .filtroIcono svg { color: #f4a3a3; stroke: #f4a3a3; }
+.modo-oscuro .filtroCard:hover .filtroIcono svg {
+  opacity: 1;
+  transform: scale(1.06);
+}
+.modo-oscuro .filtroCard.activo .filtroIcono svg {
+  color: #ffffff;
+  stroke: #ffffff;
+  fill: #ffffff;
+  opacity: 1;
+}
+.modo-oscuro .filtroNombre { color: rgba(220, 248, 230, 0.92); font-weight: 600; }
+.modo-oscuro .filtroCard.activo .filtroNombre { color: #ffffff; }
+.modo-oscuro .filtroCheck {
+  background: #c8742c;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(247, 127, 0, 0.55);
+  font-weight: 800;
+}
+
+:root:not(.modo-oscuro) .filtroModal {
+  background: #d4dec5;
+  border: 1px solid rgba(26, 77, 46, 0.18);
+  box-shadow:
+    0 24px 64px rgba(26, 77, 46, 0.18),
+    0 4px 16px rgba(26, 77, 46, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40);
+}
+:root:not(.modo-oscuro) .filtroModalHeader {
+  background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 50%, #1a4d2e 100%);
+  border-bottom: 1px solid rgba(26, 77, 46, 0.20);
+  padding: 1.6rem 2rem;
+}
+:root:not(.modo-oscuro) .filtroModalHeader h2 {
+  color: #ffffff;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
+  letter-spacing: -0.01em;
+}
+:root:not(.modo-oscuro) .filtroModalCerrar {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  color: #ffffff;
+  box-shadow: none;
+}
+:root:not(.modo-oscuro) .filtroModalCerrar:hover {
+  background: #c8742c;
+  border-color: #e0823a;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(200, 116, 44, 0.45);
+}
+:root:not(.modo-oscuro) .filtroModalOverlay {
+  background: rgba(20, 50, 38, 0.45);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+:root:not(.modo-oscuro) .filtroModalBody {
+  background: linear-gradient(180deg, #e8f1ea 0%, #d4dec5 100%);
+}
+:root:not(.modo-oscuro) .filtroInfo p {
+  color: #2d4a30;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+:root:not(.modo-oscuro) .btnLimpiar {
+  background: #ffffff;
+  border: 1.5px solid #c8742c;
+  color: #c8742c;
+  box-shadow: 0 2px 8px rgba(200, 116, 44, 0.12);
+}
+:root:not(.modo-oscuro) .btnLimpiar:hover {
+  background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
+  border-color: #c8742c;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200, 116, 44, 0.45);
+}
+:root:not(.modo-oscuro) .filtroGrupo {
+  margin-top: 1.5rem;
+}
+:root:not(.modo-oscuro) .filtroGrupo:first-of-type {
+  margin-top: 0.5rem;
+}
+:root:not(.modo-oscuro) .filtroGrupo__emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(26, 77, 46, 0.10);
+}
+:root:not(.modo-oscuro) .filtroCard {
+  background: #ffffff;
+  border: 1.5px solid rgba(26, 77, 46, 0.20);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.08);
+}
+:root:not(.modo-oscuro) .filtroCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, height 0.25s ease;
+  background: transparent;
+}
+:root:not(.modo-oscuro) .filtroCard--medica::before  { background: rgba(26, 77, 46, 0.55); }
+:root:not(.modo-oscuro) .filtroCard--dieta::before   { background: rgba(194, 65, 12, 0.55); }
+:root:not(.modo-oscuro) .filtroCard--alergia::before { background: rgba(185, 28, 28, 0.55); }
+:root:not(.modo-oscuro) .filtroCard:hover::before    { height: 3px; opacity: 1; }
+:root:not(.modo-oscuro) .filtroCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(26, 77, 46, 0.45);
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(26, 77, 46, 0.16), 0 4px 8px rgba(26, 77, 46, 0.08);
+}
+:root:not(.modo-oscuro) .filtroCard:active {
+  transform: translateY(-1px);
+}
+:root:not(.modo-oscuro) .filtroCard:focus-visible {
+  outline: 2px solid #1a4d2e;
+  outline-offset: 2px;
+}
+:root:not(.modo-oscuro) .filtroCard.activo {
+  background: linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 100%);
+  border-color: #1a4d2e;
+  box-shadow: 0 8px 20px rgba(26, 77, 46, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+:root:not(.modo-oscuro) .filtroCard--dieta.activo {
+  background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
+  border-color: #c8742c;
+  box-shadow: 0 8px 20px rgba(200, 116, 44, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+:root:not(.modo-oscuro) .filtroCard--alergia.activo {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  border-color: #b91c1c;
+  box-shadow: 0 8px 20px rgba(185, 28, 28, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+:root:not(.modo-oscuro) .filtroIcono svg {
+  color: #1a4d2e;
+  stroke: #1a4d2e;
+  transition: color 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+  opacity: 0.92;
+}
+:root:not(.modo-oscuro) .filtroCard--medica .filtroIcono svg  { color: #1a4d2e; stroke: #1a4d2e; }
+:root:not(.modo-oscuro) .filtroCard--dieta  .filtroIcono svg  { color: #c2410c; stroke: #c2410c; }
+:root:not(.modo-oscuro) .filtroCard--alergia .filtroIcono svg { color: #b91c1c; stroke: #b91c1c; }
+:root:not(.modo-oscuro) .filtroCard:hover .filtroIcono svg {
+  opacity: 1;
+  transform: scale(1.06);
+}
+:root:not(.modo-oscuro) .filtroCard.activo .filtroIcono svg {
+  color: #ffffff;
+  stroke: #ffffff;
+  fill: #ffffff;
+  opacity: 1;
+}
+:root:not(.modo-oscuro) .filtroNombre {
+  color: #1a2e22;
+  font-weight: 600;
+}
+:root:not(.modo-oscuro) .filtroCard.activo .filtroNombre {
+  color: #ffffff;
+}
+:root:not(.modo-oscuro) .filtroCheck {
+  background: #c8742c;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(200, 116, 44, 0.45);
+  font-weight: 800;
+}
+
+:root:not(.modo-oscuro) .filtroGrupo__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.75rem;
+  padding: 0 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1a4d2e;
+}
+:root:not(.modo-oscuro) .filtroGrupo__titulo svg { color: currentColor; stroke: currentColor; flex-shrink: 0; }
+:root:not(.modo-oscuro) .filtroGrupo--medica .filtroGrupo__titulo { color: #1c5f52; }
+:root:not(.modo-oscuro) .filtroGrupo--dieta  .filtroGrupo__titulo { color: #c2410c; }
+:root:not(.modo-oscuro) .filtroGrupo--alergia .filtroGrupo__titulo { color: #b91c1c; }
 
 .filtroInfo {
   display: flex;
@@ -519,7 +829,6 @@
   flex-wrap: wrap;
 }
 .filtroInfo p { color: rgba(255,255,255,0.85); margin: 0; flex: 1; min-width: 250px; }
-.modo-oscuro .filtroInfo p { color: rgba(220,240,210,0.85) !important; }
 
 .btnLimpiar {
   padding: 0.75rem 1.5rem;
@@ -576,10 +885,6 @@
   box-shadow: 0 4px 14px rgba(247,127,0,0.25);
 }
 
-.modo-oscuro .filtroCard { background: rgba(15,35,20,0.5); border-color: rgba(79,119,45,0.25); }
-.modo-oscuro .filtroCard:hover { background: rgba(25,55,30,0.65); border-color: rgba(247,127,0,0.45); }
-.modo-oscuro .filtroCard.activo { background: rgba(79,119,45,0.3); border-color: rgba(107,158,74,0.6); }
-
 .filtroIcono { font-size: 2rem; }
 .filtroIcono svg {
   width: 30px;
@@ -590,19 +895,6 @@
 }
 .filtroCard.activo .filtroIcono svg { stroke: var(--blanco-puro); fill: var(--blanco-puro); color: var(--blanco-puro); }
 
-.modo-oscuro .filtroIcono svg {
-  stroke: rgba(180,220,160,0.85) !important;
-  fill: rgba(180,220,160,0.85) !important;
-  color: rgba(180,220,160,0.85) !important;
-}
-.modo-oscuro .filtroIcono svg[fill="none"] { fill: none !important; }
-.modo-oscuro .filtroCard.activo .filtroIcono svg {
-  stroke: var(--blanco-puro) !important;
-  fill: var(--blanco-puro) !important;
-  color: var(--blanco-puro) !important;
-}
-.modo-oscuro .filtroCard.activo .filtroIcono svg[fill="none"] { fill: none !important; }
-
 .filtroNombre {
   font-size: 0.76rem;
   font-weight: 600;
@@ -610,8 +902,6 @@
   line-height: 1.3;
 }
 .filtroCard.activo .filtroNombre { color: var(--blanco-puro); }
-.modo-oscuro .filtroCard .filtroNombre { color: rgba(210,235,195,0.9); }
-.modo-oscuro .filtroCard.activo .filtroNombre { color: var(--blanco-puro); }
 
 .filtroCheck {
   position: absolute;
@@ -627,8 +917,6 @@
   justify-content: center;
   box-shadow: 0 2px 6px rgba(28,95,82,0.35);
 }
-
-.modo-oscuro .filtroCheck { background: var(--naranja); box-shadow: 0 2px 8px rgba(247,127,0,0.4); }
 
 /*Responsive*/
 @media (max-width: 767px) {

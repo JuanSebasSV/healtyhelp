@@ -30,7 +30,8 @@ exports.getStats = async (req, res) => {
 
     const imagenesPendientes = await Recipe.aggregate([
       { $unwind: '$resenas' },
-      { $match: { 'resenas.imagen.estado': 'pendiente' } },
+      { $unwind: '$resenas.imagenes' },
+      { $match: { 'resenas.imagenes.estado': 'pendiente' } },
       { $count: 'total' },
     ]);
 
@@ -263,7 +264,8 @@ exports.getImagenesResenas = async (req, res) => {
 
     const pipeline = [
       { $unwind: '$resenas' },
-      { $match: { 'resenas.imagen.estado': estado } },
+      { $unwind: { path: '$resenas.imagenes', includeArrayIndex: 'imagenIndex' } },
+      { $match: { 'resenas.imagenes.estado': estado } },
       {
         $project: {
           _id:            0,
@@ -275,9 +277,10 @@ exports.getImagenesResenas = async (req, res) => {
           texto:          '$resenas.texto',
           estrellas:      '$resenas.estrellas',
           createdAt:      '$resenas.createdAt',
-          imagenUrl:      '$resenas.imagen.url',
-          imagenPublicId: '$resenas.imagen.publicId',
-          imagenEstado:   '$resenas.imagen.estado',
+          imagenIndex:    '$imagenIndex',
+          imagenUrl:      '$resenas.imagenes.url',
+          imagenPublicId: '$resenas.imagenes.publicId',
+          imagenEstado:   '$resenas.imagenes.estado',
         },
       },
       { $sort: { createdAt: -1 } },
@@ -310,19 +313,23 @@ exports.getImagenesResenas = async (req, res) => {
 exports.aprobarImagenResena = async (req, res) => {
   try {
     const { recipeId, resenaId } = req.params;
+    const imagenIndex = parseInt(req.query.imagenIndex ?? req.body?.imagenIndex ?? 0, 10);
 
-    const updated = await Recipe.findOneAndUpdate(
-      { _id: recipeId, 'resenas._id': resenaId },
-      { $set: { 'resenas.$.imagen.estado': 'aprobada' } },
-      { new: true }
-    );
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    if (!updated) return res.status(404).json({ error: 'Receta o reseña no encontrada' });
+    const resena = recipe.resenas.id(resenaId);
+    if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    const resena = updated.resenas.id(resenaId);
+    if (!resena.imagenes || !resena.imagenes[imagenIndex]) {
+      return res.status(404).json({ error: 'Imagen no encontrada en la reseña' });
+    }
+
+    resena.imagenes[imagenIndex].estado = 'aprobada';
+    await recipe.save();
 
     await logAdminAction(req.user._id, 'APPROVE_RESENA_IMAGE', null, {
-      recipeId, resenaId, userName: resena?.userName,
+      recipeId, resenaId, imagenIndex, userName: resena.userName,
     });
 
     res.json({ success: true, message: 'Imagen aprobada. Ya es visible para todos.' });
@@ -335,6 +342,7 @@ exports.aprobarImagenResena = async (req, res) => {
 exports.rechazarImagenResena = async (req, res) => {
   try {
     const { recipeId, resenaId } = req.params;
+    const imagenIndex = parseInt(req.query.imagenIndex ?? req.body?.imagenIndex ?? 0, 10);
     const { cloudinary }         = require('../config/cloudinary');
 
     const recipe = await Recipe.findById(recipeId);
@@ -343,29 +351,27 @@ exports.rechazarImagenResena = async (req, res) => {
     const resena = recipe.resenas.id(resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    if (!resena.imagen) return res.status(400).json({ error: 'Esta reseña no tiene imagen asociada' });
+    if (!resena.imagenes || !resena.imagenes[imagenIndex]) {
+      return res.status(404).json({ error: 'Imagen no encontrada en la reseña' });
+    }
 
-    if (resena.imagen.publicId) {
+    const img = resena.imagenes[imagenIndex];
+
+    if (img.publicId) {
       try {
-        await cloudinary.uploader.destroy(resena.imagen.publicId);
+        await cloudinary.uploader.destroy(img.publicId);
       } catch (e) {
         console.error('Error eliminando de Cloudinary:', e.message);
       }
     }
 
-    await Recipe.findOneAndUpdate(
-      { _id: recipeId, 'resenas._id': resenaId },
-      {
-        $set: {
-          'resenas.$.imagen.estado':   'rechazada',
-          'resenas.$.imagen.url':      null,
-          'resenas.$.imagen.publicId': null,
-        },
-      }
-    );
+    resena.imagenes[imagenIndex].estado   = 'rechazada';
+    resena.imagenes[imagenIndex].url      = null;
+    resena.imagenes[imagenIndex].publicId = null;
+    await recipe.save();
 
     await logAdminAction(req.user._id, 'REJECT_RESENA_IMAGE', null, {
-      recipeId, resenaId, userName: resena.userName,
+      recipeId, resenaId, imagenIndex, userName: resena.userName,
     });
 
     res.json({ success: true, message: 'Imagen rechazada y eliminada de Cloudinary.' });
@@ -455,6 +461,7 @@ exports.getBanInfo = async (req, res) => {
 exports.eliminarImagenResena = async (req, res) => {
   try {
     const { recipeId, resenaId } = req.params;
+    const imagenIndex = parseInt(req.query.imagenIndex ?? req.body?.imagenIndex ?? 0, 10);
     const { cloudinary }         = require('../config/cloudinary');
 
     const recipe = await Recipe.findById(recipeId);
@@ -463,28 +470,28 @@ exports.eliminarImagenResena = async (req, res) => {
     const resena = recipe.resenas.id(resenaId);
     if (!resena) return res.status(404).json({ error: 'Reseña no encontrada' });
 
-    const estadoActual = resena.imagen?.estado;
+    if (!resena.imagenes || !resena.imagenes[imagenIndex]) {
+      return res.status(404).json({ error: 'Imagen no encontrada en la reseña' });
+    }
+
+    const estadoActual = resena.imagenes[imagenIndex].estado;
     if (!estadoActual || estadoActual === 'pendiente') {
       return res.status(400).json({ error: 'Solo se puede eliminar el historial de imágenes aprobadas o rechazadas' });
     }
 
-    if (resena.imagen?.publicId) {
+    if (resena.imagenes[imagenIndex].publicId) {
       try {
-        await cloudinary.uploader.destroy(resena.imagen.publicId);
+        await cloudinary.uploader.destroy(resena.imagenes[imagenIndex].publicId);
       } catch (e) {
         console.error('Error eliminando de Cloudinary:', e.message);
       }
     }
 
-    await Recipe.findOneAndUpdate(
-      { _id: recipeId, 'resenas._id': resenaId },
-      {
-        $unset: { 'resenas.$.imagen': '' },
-      }
-    );
+    resena.imagenes.splice(imagenIndex, 1);
+    await recipe.save();
 
     await logAdminAction(req.user._id, 'DELETE_RESENA_IMAGE_HISTORY', null, {
-      recipeId, resenaId, userName: resena.userName, estadoEliminado: estadoActual,
+      recipeId, resenaId, imagenIndex, userName: resena.userName, estadoEliminado: estadoActual,
     });
 
     res.json({ success: true, message: 'Registro eliminado del historial.' });
@@ -496,7 +503,7 @@ exports.eliminarImagenResena = async (req, res) => {
 
 exports.eliminarImagenesResenasMasivo = async (req, res) => {
   try {
-    const { items } = req.body; // [{ recipeId, resenaId }]
+    const { items } = req.body; // [{ recipeId, resenaId, imagenIndex }]
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Se requiere una lista de items para eliminar' });
     }
@@ -505,22 +512,21 @@ exports.eliminarImagenesResenasMasivo = async (req, res) => {
     let ok = 0, fail = 0;
 
     await Promise.allSettled(
-      items.map(async ({ recipeId, resenaId }) => {
+      items.map(async ({ recipeId, resenaId, imagenIndex = 0 }) => {
         try {
           const recipe = await Recipe.findById(recipeId);
           if (!recipe) { fail++; return; }
 
           const resena = recipe.resenas.id(resenaId);
-          if (!resena || !resena.imagen || resena.imagen.estado === 'pendiente') { fail++; return; }
+          if (!resena || !resena.imagenes || !resena.imagenes[imagenIndex]) { fail++; return; }
+          if (resena.imagenes[imagenIndex].estado === 'pendiente') { fail++; return; }
 
-          if (resena.imagen.publicId) {
-            try { await cloudinary.uploader.destroy(resena.imagen.publicId); } catch (_) {}
+          if (resena.imagenes[imagenIndex].publicId) {
+            try { await cloudinary.uploader.destroy(resena.imagenes[imagenIndex].publicId); } catch (_) {}
           }
 
-          await Recipe.findOneAndUpdate(
-            { _id: recipeId, 'resenas._id': resenaId },
-            { $unset: { 'resenas.$.imagen': '' } }
-          );
+          resena.imagenes.splice(imagenIndex, 1);
+          await recipe.save();
 
           ok++;
         } catch {

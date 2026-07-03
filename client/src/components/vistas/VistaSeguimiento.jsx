@@ -455,7 +455,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
         </div>
       ) : (
         <div className="seg-layout">
-          <div className="seg-col seg-col-izq">
+          <div className="seg-col seg-col-izq" data-modal="true">
             <div className="seg-selector-scroll">
               {ops.map(op => (
                 <button
@@ -506,7 +506,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
             )}
           </div>
 
-          <div className="seg-col seg-col-der">
+          <div className="seg-col seg-col-der" data-modal="true">
             <ResumenNutricional
               nutri={nutriAcumulado}
               periodo={periodo}
