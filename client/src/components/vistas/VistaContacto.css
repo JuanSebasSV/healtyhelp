@@ -1,16 +1,21 @@
 :root {
-  --contacto-bg-base:       #0c1a12;
-  --contacto-bg-tint:       #1a4d2e;
-  --contacto-surface:       rgba(255, 255, 255, 0.06);
-  --contacto-surface-hi:    rgba(255, 255, 255, 0.10);
-  --contacto-border:        rgba(255, 255, 255, 0.16);
-  --contacto-border-hi:     rgba(255, 255, 255, 0.26);
-  --contacto-text:          #f1f7f2;
-  --contacto-text-muted:    rgba(241, 247, 242, 0.68);
-  --contacto-text-faint:    rgba(241, 247, 242, 0.45);
-  --contacto-accent:        #6ee7b7;
-  --contacto-accent-soft:   rgba(110, 231, 183, 0.18);
+  --contacto-bg-base:       #a8c3a5;
+  --contacto-bg-tint:       var(--verde-bosque);
+  --contacto-surface:       var(--overlay-blanco-10);
+  --contacto-surface-hi:    var(--overlay-blanco-10);
+  --contacto-border:        var(--overlay-verde-hoja-10);
+  --contacto-border-hi:     var(--overlay-verde-hoja-10);
+  --contacto-text:          var(--verde-bosque);
+  --contacto-text-muted:    var(--overlay-verde-hoja-10);
+  --contacto-text-faint:    var(--overlay-verde-hoja-10);
+  --contacto-accent:        var(--fondo-grad-claro-medio);
+  --contacto-accent-soft:   rgba(110, 231, 183, 0.28);
   --contacto-cta:           #f77f00;
+
+  --contacto-glass-bg:        var(--overlay-blanco-10);
+  --contacto-glass-border:    var(--overlay-blanco-10);
+  --contacto-glass-highlight: var(--overlay-blanco-10);
+  --contacto-input-bg:        var(--overlay-blanco-10);
 
   --contacto-radius:         clamp(14px, 2vw, 22px);
   --contacto-pad-y:          clamp(1rem, 2vw, 2.25rem);
@@ -28,12 +33,33 @@
 }
 
 .modo-oscuro {
-  --contacto-bg-base:       #060e0a;
-  --contacto-bg-tint:       #0f3022;
-  --contacto-surface:       rgba(255, 255, 255, 0.04);
-  --contacto-surface-hi:    rgba(255, 255, 255, 0.07);
-  --contacto-border:        rgba(255, 255, 255, 0.10);
-  --contacto-border-hi:     rgba(255, 255, 255, 0.18);
+  --contacto-bg-base:       var(--fondo-oscuro-0);
+  --contacto-bg-tint:       var(--fondo-oscuro-50);
+  --contacto-surface:       var(--overlay-blanco-10);
+  --contacto-surface-hi:    var(--overlay-blanco-10);
+  --contacto-border:        var(--overlay-blanco-10);
+  --contacto-border-hi:     var(--overlay-blanco-10);
+  --contacto-text:          #f1f7f2;
+  --contacto-text-muted:    var(--overlay-blanco-10);
+  --contacto-text-faint:    var(--overlay-blanco-10);
+  --contacto-accent:        #6ee7b7;
+  --contacto-accent-soft:   rgba(110, 231, 183, 0.22);
+  --contacto-input-bg:      var(--overlay-blanco-10);
+
+  --contacto-glass-bg:        var(--overlay-blanco-10);
+  --contacto-glass-border:    var(--overlay-blanco-10);
+  --contacto-glass-highlight: var(--overlay-blanco-10);
+}
+
+body:not(.modo-oscuro) {
+  --contacto-dot-pattern:        var(--overlay-verde-hoja-10);
+  --contacto-overlay-input:      var(--overlay-verde-hoja-10);
+  --contacto-overlay-hover:      var(--overlay-verde-hoja-10);
+  --contacto-chip-bg:            var(--overlay-verde-hoja-10);
+  --contacto-modal-bg-from:      var(--overlay-blanco-10);
+  --contacto-modal-bg-to:        var(--overlay-verde-mint-10);
+  --contacto-form-mobile-bg-from: var(--overlay-blanco-10);
+  --contacto-form-mobile-bg-to:   var(--overlay-verde-mint-10);
 }
 
 @keyframes contactoFadeIn    { from { opacity: 0; transform: translateY(8px); }  to { opacity: 1; transform: translateY(0); } }
@@ -69,19 +95,21 @@
   gap: clamp(1.25rem, 3vw, 3rem);
   min-height: calc(100dvh - var(--navbar-h) - var(--page-py) * 3);
   background:
-    radial-gradient(ellipse 60% 50% at 18% 22%, rgba(26, 77, 46, 0.55) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 82% 78%, rgba(110, 231, 183, 0.10) 0%, transparent 60%),
-    var(--contacto-bg-base);
+    radial-gradient(ellipse 70% 55% at 18% 22%, var(--overlay-verde-hoja-10) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 82% 78%, rgba(110, 231, 183, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, var(--overlay-blanco-10) 0%, transparent 70%),
+    linear-gradient(180deg, var(--contacto-bg-base) 0%, color-mix(in srgb, var(--contacto-bg-base) 85%, #ffffff 15%) 100%);
   color: var(--contacto-text);
   animation: contactoFadeIn 0.5s ease;
   box-sizing: border-box;
+  border-radius: clamp(18px, 2.5vw, 32px);
 }
 
 .vista-contacto::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.045) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--contacto-dot-pattern, var(--overlay-blanco-10)) 1px, transparent 0);
   background-size: 22px 22px;
   pointer-events: none;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 40%, transparent 100%);
@@ -162,11 +190,11 @@
   -webkit-backdrop-filter: blur(16px) saturate(1.05);
   border: 1px solid var(--contacto-border);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.20),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-    0 1px 2px rgba(0, 0, 0, 0.12),
-    0 8px 28px rgba(0, 0, 0, 0.25),
-    0 32px 80px rgba(0, 0, 0, 0.40);
+    inset 0 1px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
+    0 1px 2px var(--overlay-negro-10),
+    0 8px 28px var(--overlay-negro-10),
+    0 32px 80px var(--overlay-negro-10);
 }
 
 .contacto-info {
@@ -190,14 +218,13 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 40% at 30% 15%, rgba(26, 77, 46, 0.40) 0%, transparent 70%),
-    linear-gradient(to top, rgba(6, 14, 10, 0.92) 0%, rgba(6, 14, 10, 0.55) 50%, rgba(6, 14, 10, 0.10) 100%);
+    radial-gradient(ellipse 60% 40% at 30% 15%, var(--overlay-verde-hoja-10) 0%, transparent 70%);
   z-index: 0;
 }
 
 .contacto-info::after {
   content: 'Contáctanos';
-  color: var(--contacto-text);
+  color: #ffffff;
   font-family: 'Playfair Display', 'Georgia', serif;
   font-size: clamp(1.7rem, 7vw, 2.15rem);
   font-weight: 700;
@@ -207,6 +234,7 @@
   margin-bottom: clamp(0.5rem, 1.5vw, 0.85rem);
   position: relative;
   z-index: 1;
+  text-shadow: 0 1px 2px var(--overlay-negro-10), 0 2px 12px var(--overlay-negro-10);
 }
 
 .contacto-info > * {
@@ -215,10 +243,12 @@
 }
 
 .info-item {
-  background: var(--contacto-surface-hi);
-  border: 1px solid var(--contacto-border-hi);
+  background: var(--contacto-glass-bg);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  border: 1px solid var(--contacto-glass-border);
   padding: clamp(0.7rem, 1.6vw, 1.05rem) clamp(0.85rem, 1.8vw, 1.2rem);
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   gap: clamp(0.65rem, 1.4vw, 0.9rem);
@@ -230,29 +260,33 @@
     border-color 0.22s ease,
     transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1),
     box-shadow 0.22s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    inset 0 1px 0 var(--contacto-glass-highlight),
+    inset 0 -1px 0 var(--overlay-blanco-10),
+    0 8px 28px var(--overlay-negro-10),
+    0 2px 6px var(--overlay-negro-10);
   -webkit-tap-highlight-color: transparent;
 }
 
 .info-item:nth-child(3),
 .info-item:nth-child(4) {
-  background: var(--contacto-surface);
-  border-color: var(--contacto-border);
+  background: color-mix(in srgb, var(--contacto-glass-bg) 70%, var(--overlay-blanco-10) 30%);
+  border-color: color-mix(in srgb, var(--contacto-glass-border) 75%, var(--overlay-blanco-10) 25%);
 }
 
 .info-item[href] { cursor: pointer; }
 
 .info-item[href]:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--contacto-overlay-hover, var(--overlay-blanco-10));
   border-color: var(--contacto-accent);
   transform: translateX(4px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(110, 231, 183, 0.15);
+  box-shadow: 0 8px 22px var(--overlay-negro-10), 0 0 0 1px rgba(110, 231, 183, 0.15);
 }
 
 .info-item[href]:focus-visible {
   outline: 2px solid var(--contacto-accent);
   outline-offset: 2px;
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--overlay-blanco-10);
 }
 
 .info-icono {
@@ -263,9 +297,9 @@
   width: clamp(32px, 7vw, 42px);
   height: clamp(32px, 7vw, 42px);
   border-radius: clamp(9px, 1.5vw, 12px);
-  background: linear-gradient(135deg, rgba(110, 231, 183, 0.22), rgba(46, 190, 132, 0.08));
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.22), var(--overlay-verde-brillante-10));
   border: 1px solid rgba(110, 231, 183, 0.35);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 var(--overlay-blanco-10);
   color: var(--contacto-accent);
 }
 
@@ -306,7 +340,7 @@
 .contacto-form {
   background: linear-gradient(180deg, var(--contacto-surface-hi) 0%, var(--contacto-surface) 100%);
   border-top: 1px solid var(--contacto-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 var(--overlay-blanco-10);
   padding: clamp(1.5rem, 3vw, 2.75rem) var(--contacto-pad-x);
   display: flex;
   flex-direction: column;
@@ -373,7 +407,7 @@
   padding: clamp(0.75rem, 1.8vw, 0.85rem) clamp(0.9rem, 2vw, 1.05rem)
            clamp(0.75rem, 1.8vw, 0.85rem) clamp(1.1rem, 2.4vw, 1.2rem);
   margin-bottom: 0;
-  background: var(--contacto-surface);
+  background: var(--contacto-input-bg);
   border: 1px solid var(--contacto-border);
   border-left: 3px solid rgba(110, 231, 183, 0.20);
   border-radius: 11px;
@@ -402,15 +436,16 @@
   border-color: var(--contacto-border-hi);
 }
 
-.contacto-form input:focus,
-.contacto-form textarea:focus {
+.contacto-form input:focus-visible,
+.contacto-form textarea:focus-visible {
   outline: none;
   border-color: var(--contacto-accent);
   border-left-color: var(--contacto-accent);
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--contacto-overlay-input, var(--overlay-blanco-10));
   box-shadow:
-    0 0 0 4px rgba(110, 231, 183, 0.15),
-    0 4px 18px rgba(0, 0, 0, 0.20);
+    0 0 0 4px rgba(110, 231, 183, 0.22),
+    inset 0 1px 2px var(--overlay-negro-10),
+    0 4px 18px var(--overlay-negro-10);
 }
 
 .contacto-form input:disabled,
@@ -430,7 +465,7 @@
   color: var(--contacto-text-faint);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--contacto-chip-bg, var(--overlay-negro-10));
   padding: 0.1rem 0.45rem;
   border-radius: 5px;
   backdrop-filter: blur(6px);
@@ -451,9 +486,9 @@
   letter-spacing: 0.01em;
   min-height: var(--contacto-touch);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 1px 0 var(--overlay-blanco-10) inset,
     0 6px 18px rgba(247, 127, 0, 0.32),
-    0 2px 6px rgba(0, 0, 0, 0.15);
+    0 2px 6px var(--overlay-negro-10);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -463,9 +498,9 @@
   transform: translateY(-2px);
   background: linear-gradient(135deg, #ffb347 0%, var(--contacto-cta) 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 1px 0 var(--overlay-blanco-10) inset,
     0 10px 26px rgba(247, 127, 0, 0.42),
-    0 4px 10px rgba(0, 0, 0, 0.18);
+    0 4px 10px var(--overlay-negro-10);
 }
 
 .contacto-form .btn-primario:active:not(:disabled) { transform: translateY(0); }
@@ -479,7 +514,7 @@
 .confirmacion-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.72);
+  background: var(--overlay-negro-10);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
@@ -491,7 +526,7 @@
 }
 
 .confirmacion-modal {
-  background: linear-gradient(160deg, rgba(26, 77, 46, 0.50) 0%, rgba(8, 22, 13, 0.97) 100%);
+  background: linear-gradient(160deg, var(--contacto-modal-bg-from, var(--overlay-verde-hoja-10)) 0%, var(--contacto-modal-bg-to, var(--overlay-negro-10)) 100%);
   border: 1px solid var(--contacto-border-hi);
   border-radius: var(--contacto-radius);
   width: 100%;
@@ -500,8 +535,8 @@
   overflow-y: auto;
   animation: contactoModalIn 0.28s cubic-bezier(0.34, 1.5, 0.64, 1);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.30),
-    0 24px 64px rgba(0, 0, 0, 0.60),
+    0 1px 2px var(--overlay-negro-10),
+    0 24px 64px var(--overlay-negro-10),
     0 0 60px rgba(110, 231, 183, 0.10);
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -510,7 +545,7 @@
 .confirmacion-header {
   padding: clamp(1.5rem, 3vw, 2rem) clamp(1.4rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.4rem);
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--overlay-blanco-10);
   position: relative;
 }
 
@@ -528,7 +563,7 @@
   width: clamp(48px, 12vw, 56px);
   height: clamp(48px, 12vw, 56px);
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(110, 231, 183, 0.22), rgba(46, 190, 132, 0.08));
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.22), var(--overlay-verde-brillante-10));
   border: 1px solid rgba(110, 231, 183, 0.40);
   display: flex;
   align-items: center;
@@ -536,7 +571,7 @@
   margin: 0 auto clamp(0.6rem, 1.5vw, 0.85rem);
   color: var(--contacto-accent);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 1px 0 var(--overlay-blanco-10),
     0 6px 20px rgba(110, 231, 183, 0.22);
 }
 
@@ -658,14 +693,14 @@
   color: #ffffff;
   font-weight: 700;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 1px 0 var(--overlay-blanco-10) inset,
     0 6px 18px rgba(247, 127, 0, 0.32);
 }
 
 .confirmacion-btn-enviar:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 1px 0 var(--overlay-blanco-10) inset,
     0 10px 26px rgba(247, 127, 0, 0.45);
 }
 
@@ -699,11 +734,11 @@
   border-radius: var(--contacto-radius);
   overflow: hidden;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.20),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.12),
-    0 8px 28px rgba(0, 0, 0, 0.25),
-    0 24px 56px rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
+    0 1px 2px var(--overlay-negro-10),
+    0 8px 28px var(--overlay-negro-10),
+    0 24px 56px var(--overlay-negro-10);
 }
 
 .faq-fila {
@@ -814,6 +849,22 @@
   .contacto-form { padding: 2rem 1.5rem; }
 }
 
+@media (min-width: 901px) {
+  .contacto-contenedor {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: stretch;
+  }
+  .contacto-info {
+    border-radius: var(--contacto-radius) 0 0 var(--contacto-radius);
+    min-height: clamp(420px, 50dvh, 540px);
+  }
+  .contacto-form {
+    border-radius: 0 var(--contacto-radius) var(--contacto-radius) 0;
+    border-top: none;
+    border-left: 1px solid var(--contacto-border);
+  }
+}
+
 @media (max-width: 767px) {
   .vista-contacto {
     padding: 0;
@@ -853,13 +904,12 @@
 
   .contacto-info::before {
     background:
-      radial-gradient(ellipse 60% 40% at 30% 15%, rgba(26, 77, 46, 0.40) 0%, transparent 70%),
-      linear-gradient(to top, rgba(6, 14, 10, 0.88) 0%, rgba(6, 14, 10, 0.55) 50%, rgba(6, 14, 10, 0.10) 100%);
+      radial-gradient(ellipse 60% 40% at 30% 15%, var(--overlay-verde-hoja-10) 0%, transparent 70%);
   }
 
   .contacto-info::after {
     content: 'Contáctanos';
-    color: var(--contacto-text);
+    color: #ffffff;
     font-family: 'Playfair Display', 'Georgia', serif;
     font-size: clamp(1.7rem, 7vw, 2.1rem);
     font-weight: 700;
@@ -867,6 +917,7 @@
     text-align: center;
     width: 100%;
     margin-bottom: 0.75rem;
+    text-shadow: 0 1px 2px var(--overlay-negro-10), 0 2px 12px var(--overlay-negro-10);
   }
 
   .info-item {
@@ -891,7 +942,7 @@
     border-left: none;
     border-top: 1px solid var(--contacto-border);
     justify-content: flex-start;
-    background: linear-gradient(180deg, rgba(8, 22, 13, 0.97) 0%, rgba(8, 22, 13, 0.90) 100%);
+    background: linear-gradient(180deg, var(--contacto-form-mobile-bg-from, var(--overlay-negro-10)) 0%, var(--contacto-form-mobile-bg-to, var(--overlay-negro-10)) 100%);
     backdrop-filter: blur(16px) saturate(1.05);
     -webkit-backdrop-filter: blur(16px) saturate(1.05);
     margin-top: -20px;

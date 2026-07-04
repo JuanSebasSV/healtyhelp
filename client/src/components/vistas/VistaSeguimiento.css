@@ -8,7 +8,7 @@
   font-size: 2.5rem;
   margin-bottom: 2rem;
   font-family: 'Playfair Display', Georgia, serif;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
 }
 
 /*Botones período*/
@@ -22,9 +22,9 @@
 
 .seg-periodo-btns button {
   padding: 0.75rem 2rem;
-  background: rgba(45, 106, 89, 0.704);
+  background: var(--overlay-verde-hoja-10);
   color: #6ee7b7;
-  border: 1.5px solid rgba(25, 75, 52, 0.745);
+  border: 1.5px solid var(--overlay-verde-hoja-10);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 50px;
@@ -35,7 +35,7 @@
 }
 
 .seg-periodo-btns button:hover {
-  background: rgba(255,255,255,0.16);
+  background: var(--overlay-blanco-10);
   border-color: rgba(247, 127, 0, 0.5);
 }
 
@@ -47,9 +47,9 @@
 }
 
 .modo-oscuro .seg-periodo-btns button {
-  background: rgba(65, 83, 83, 0.232);
-  border: 1.5px solid rgba(38, 77, 74, 0.22);
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--overlay-verde-hoja-10);
+  border: 1.5px solid var(--overlay-verde-hoja-10);
+  color: var(--overlay-blanco-10);
 }
 
 /*Layout dividido*/
@@ -63,9 +63,9 @@
 .seg-col {
   border-radius: 22px;
   padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.458);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  background: var(--overlay-negro-10);
+  border: 1px solid var(--overlay-blanco-10);
+  box-shadow: 0 8px 32px var(--overlay-negro-10);
   max-height: 82vh;
   overflow-y: auto;
 }
@@ -75,21 +75,21 @@
 
 /*Modo oscuro*/
 .modo-oscuro .seg-col {
-  background: rgba(31, 33, 33, 0.95);
-  border-color: rgba(79, 119, 45, 0.25);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
 }
 
 .modo-oscuro .seg-consumo-card {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(79, 119, 45, 0.2);
+  background: var(--overlay-blanco-10);
+  border-color: var(--overlay-verde-hoja-10);
 }
 
 .modo-oscuro .seg-consumo-nombre {
-  color: rgba(210, 235, 195, 0.95) !important;
+  color: var(--overlay-verde-claro-10) !important;
 }
 
 .modo-oscuro .seg-dia-titulo {
-  color: rgba(167, 213, 136, 0.95);
+  color: var(--overlay-verde-claro-10);
 }
 
 /*Selector scroll*/
@@ -108,9 +108,9 @@
 .seg-selector-item {
   padding: 0.55rem 1rem;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255, 255, 255, 0.326);
-  color: rgba(255,255,255,0.65);
+  border: 1px solid var(--overlay-blanco-10);
+  background: var(--overlay-blanco-10);
+  color: var(--overlay-blanco-10);
   font-size: 0.83rem;
   font-weight: 600;
   cursor: pointer;
@@ -120,7 +120,7 @@
 }
 
 .seg-selector-item:hover {
-  background: rgba(255,255,255,0.1);
+  background: var(--overlay-blanco-10);
   color: var(--blanco-puro);
 }
 
@@ -138,11 +138,11 @@
 .seg-dia-titulo {
   font-size: 0.95rem;
   font-weight: 700;
-  color: rgba(167, 213, 136, 0.85);
+  color: var(--overlay-verde-claro-10);
   margin-bottom: 0.75rem;
   text-transform: capitalize;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--overlay-blanco-10);
 }
 
 .seg-consumos-lista {
@@ -164,7 +164,7 @@
   gap: 0.4rem;
   font-size: 0.82rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
   margin-bottom: 0.5rem;
   margin-top: 0.25rem;
 }
@@ -176,15 +176,15 @@
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255, 255, 255, 0.262);
+  background: var(--overlay-blanco-10);
+  border: 1px solid var(--overlay-blanco-10);
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   flex-wrap: wrap;
 }
 
 .seg-consumo-card:hover {
-  background: rgba(255,255,255,0.12);
+  background: var(--overlay-blanco-10);
   border-color: rgba(247,127,0,0.3);
   transform: translateX(4px);
 }
@@ -228,7 +228,7 @@
 
 .seg-consumo-hora {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--overlay-blanco-10);
 }
 
 .seg-consumo-cal {
@@ -275,7 +275,7 @@
   font-size: 0.75rem;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
 }
 
 .seg-btn-eliminar:hover {
@@ -294,9 +294,9 @@
 .seg-tipo-btn {
   padding: 0.25rem 0.6rem;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.7);
+  border: 1px solid var(--overlay-blanco-10);
+  background: var(--overlay-blanco-10);
+  color: var(--overlay-blanco-10);
   font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
@@ -313,9 +313,9 @@
 .seg-tipo-cancelar {
   padding: 0.25rem 0.5rem;
   background: none;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--overlay-blanco-10);
   border-radius: 8px;
-  color: rgba(255,255,255,0.4);
+  color: var(--overlay-blanco-10);
   font-size: 0.72rem;
   cursor: pointer;
 }
@@ -327,12 +327,12 @@
   justify-content: space-between;
   padding: 0.65rem 1rem;
   border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.567);
-  background: rgba(255,255,255,0.02);
+  border: 1px dashed var(--overlay-blanco-10);
+  background: var(--overlay-blanco-10);
 }
 
 .modo-oscuro .seg-consumo-vacio {
-  border: 1px dashed rgba(255, 255, 255, 0.326);
+  border: 1px dashed var(--overlay-blanco-10);
 }
 
 .seg-vacio-label {
@@ -340,15 +340,15 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.785);
+  color: var(--overlay-blanco-10);
 }
 
 .seg-btn-agregar {
   padding: 0.3rem 0.85rem;
   border-radius: 8px;
-  border: 1px solid rgba(22, 133, 74, 0.474);
-  background: rgba(79,119,45,0.1);
-  color: rgba(167,213,136,0.8);
+  border: 1px solid var(--overlay-verde-hoja-10);
+  background: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -356,18 +356,18 @@
 }
 
 .seg-btn-agregar:hover {
-  background: rgba(79,119,45,0.25);
+  background: var(--overlay-verde-hoja-10);
   color: var(--blanco-puro);
 }
 
 .modo-oscuro .seg-btn-agregar {
-  border: 1px solid rgba(27, 113, 67, 0.474);
+  border: 1px solid var(--overlay-verde-hoja-10);
 }
 
 /*Límite snacks*/
 .seg-snacks-limite {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--overlay-blanco-10);
   text-align: center;
   padding: 0.4rem 0;
 }
@@ -375,7 +375,7 @@
 /*Estados*/
 .seg-estado {
   text-align: center;
-  color: rgba(255, 255, 255, 0.247);
+  color: var(--overlay-blanco-10);
   font-size: 0.9rem;
   padding: 2rem 0;
 }
@@ -388,7 +388,7 @@
 .seg-vacio-icono { font-size: 4rem; margin-bottom: 1rem; }
 
 .seg-vacio-total p {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
   font-size: 1rem;
   margin-bottom: 0.5rem;
   line-height: 1.6;

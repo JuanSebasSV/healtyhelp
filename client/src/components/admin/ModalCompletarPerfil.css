@@ -4,7 +4,7 @@
 .completar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 18, 8, 0.78);
+  background: var(--bg-super-oscuro-78);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 9998;
@@ -18,17 +18,17 @@
 
 /* Modal */
 .completar-modal {
-  background: rgba(255, 255, 255, 0.10);
+  background: var(--overlay-blanco-10);
 backdrop-filter: blur(10px) saturate(140%);
     -webkit-backdrop-filter: blur(10px) saturate(140%);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 24px;
   width: 100%;
   max-width: 440px;
   padding: 2.5rem 3rem;
   box-shadow:
-    0 16px 48px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 16px 48px var(--overlay-negro-10),
+    inset 0 1px 0 var(--overlay-blanco-10);
   max-height: 90vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -57,7 +57,7 @@ backdrop-filter: blur(10px) saturate(140%);
 
 .completar-brand svg {
   stroke: var(--blanco-puro, #ffffff);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 2px 6px var(--overlay-negro-10));
 }
 
 .completar-brand-nombre {
@@ -65,20 +65,20 @@ backdrop-filter: blur(10px) saturate(140%);
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--blanco-puro, #ffffff);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
 }
 
 .completar-header h2 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 1rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.80);
+  color: var(--overlay-blanco-10);
   margin: 0;
   letter-spacing: 0.2px;
 }
 
 .completar-header p {
-  color: rgba(255, 255, 255, 0.60);
+  color: var(--overlay-blanco-10);
   font-size: 0.82rem;
   line-height: 1.5;
   margin: 0;
@@ -88,8 +88,8 @@ backdrop-filter: blur(10px) saturate(140%);
 .completar-icono {
   width: 48px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@ backdrop-filter: blur(10px) saturate(140%);
 }
 
 .completar-icono svg {
-  stroke: rgba(255, 255, 255, 0.85);
+  stroke: var(--overlay-blanco-10);
   width: 24px;
   height: 24px;
 }
@@ -120,7 +120,7 @@ backdrop-filter: blur(10px) saturate(140%);
 
 .completar-grupo label {
   display: block;
-  color: rgba(255, 255, 255, 0.70);
+  color: var(--overlay-blanco-10);
   font-size: 0.78rem;
   font-weight: 600;
   margin-bottom: 0.15rem;
@@ -132,8 +132,8 @@ backdrop-filter: blur(10px) saturate(140%);
 .completar-grupo .numero-wrapper input,
 .completar-grupo input[type='date'] {
   width: 100%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 12px;
   font-size: 1rem;
   color: var(--blanco-puro, #ffffff);
@@ -161,13 +161,13 @@ backdrop-filter: blur(10px) saturate(140%);
 
 .completar-grupo .numero-wrapper input::placeholder,
 .completar-grupo input[type='date']::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--overlay-blanco-10);
 }
 
 .completar-grupo .numero-wrapper input:focus,
 .completar-grupo input[type='date']:focus {
   border-color: var(--naranja, #f77f00);
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--overlay-blanco-10);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.18);
 }
 
@@ -203,7 +203,7 @@ backdrop-filter: blur(10px) saturate(140%);
   border: none;
   cursor: pointer;
   padding: 1px 3px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--overlay-blanco-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,7 +232,7 @@ backdrop-filter: blur(10px) saturate(140%);
 
 /* Nota informativa */
 .completar-nota {
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
   font-size: 0.78rem;
   line-height: 1.55;
   margin-top: 0.1rem;
@@ -260,7 +260,7 @@ backdrop-filter: blur(10px) saturate(140%);
 .completar-aviso--naranja {
   background: rgba(247, 127, 0, 0.12);
   border: 1px solid rgba(247, 127, 0, 0.40);
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
 }
 .completar-aviso--naranja svg    { color: var(--naranja, #f77f00); }
 .completar-aviso--naranja strong { color: var(--naranja, #f77f00); }
@@ -268,7 +268,7 @@ backdrop-filter: blur(10px) saturate(140%);
 .completar-aviso--rojo {
   background: rgba(220, 38, 38, 0.10);
   border: 1px solid rgba(220, 38, 38, 0.35);
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
 }
 .completar-aviso--rojo svg    { color: #f87171; }
 .completar-aviso--rojo strong { color: #f87171; }
@@ -308,37 +308,37 @@ backdrop-filter: blur(10px) saturate(140%);
 
 /* Modo oscuro */
 .modo-oscuro .completar-modal {
-  background: rgba(10, 25, 15, 0.60);
-  border-color: rgba(79, 119, 45, 0.35);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  background: var(--bg-verde-oscuro-60);
+  border-color: var(--overlay-verde-hoja-10);
+  box-shadow: 0 16px 48px var(--overlay-negro-10);
 }
 
-.modo-oscuro .completar-brand svg    { stroke: rgba(210, 245, 185, 0.97); }
-.modo-oscuro .completar-brand-nombre { color: rgba(210, 245, 185, 0.97); }
-.modo-oscuro .completar-header h2    { color: rgba(210, 245, 185, 0.80); }
-.modo-oscuro .completar-header p     { color: rgba(200, 230, 185, 0.60); }
+.modo-oscuro .completar-brand svg    { stroke: var(--overlay-verde-claro-10); }
+.modo-oscuro .completar-brand-nombre { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .completar-header h2    { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .completar-header p     { color: var(--overlay-verde-claro-10); }
 
 .modo-oscuro .completar-grupo .numero-wrapper input,
 .modo-oscuro .completar-grupo input[type='date'] {
-  background: rgba(20, 50, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.40);
-  color: rgba(220, 245, 205, 0.97);
+  background: var(--bg-verde-oscuro-50-55);
+  border-color: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
   color-scheme: dark;
 }
 
 .modo-oscuro .completar-grupo .numero-wrapper input::placeholder,
 .modo-oscuro .completar-grupo input[type='date']::placeholder {
-  color: rgba(210, 245, 185, 0.55);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .completar-grupo .numero-wrapper input:focus,
 .modo-oscuro .completar-grupo input[type='date']:focus {
   border-color: var(--naranja, #f77f00);
-  background: rgba(25, 60, 30, 0.65);
+  background: var(--bg-verde-profundo-65);
 }
 
 .modo-oscuro .completar-grupo .numero-flechas button {
-  color: rgba(200, 230, 185, 0.55);
+  color: var(--overlay-verde-claro-10);
 }
 .modo-oscuro .completar-grupo .numero-flechas button:hover {
   color: var(--naranja, #f77f00);
@@ -347,19 +347,19 @@ backdrop-filter: blur(10px) saturate(140%);
 .modo-oscuro .completar-aviso--naranja {
   background: rgba(247, 127, 0, 0.10);
   border-color: rgba(247, 127, 0, 0.30);
-  color: rgba(200, 230, 185, 0.85);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .completar-aviso--rojo {
   background: rgba(220, 38, 38, 0.08);
   border-color: rgba(220, 38, 38, 0.28);
-  color: rgba(200, 230, 185, 0.85);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .completar-nota {
   background: rgba(247, 127, 0, 0.08);
   border-color: rgba(247, 127, 0, 0.25);
-  color: rgba(200, 230, 185, 0.80);
+  color: var(--overlay-verde-claro-10);
 }
 
 /* MÓVIL ≤ 768px */

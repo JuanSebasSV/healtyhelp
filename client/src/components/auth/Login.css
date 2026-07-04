@@ -7,13 +7,13 @@
 }
 
 .login-container {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   padding: 3rem;
   border-radius: 24px;
   max-width: 460px;
   width: 100%;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 16px 48px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
   animation: fadeIn 0.6s ease;
   contain: layout style;
 }
@@ -47,7 +47,7 @@
   font-size: 2rem;
   margin-bottom: 0.5rem;
   font-family: 'Georgia', serif;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,11 +56,11 @@
 
 .login-header h1 svg {
   stroke: var(--blanco-puro);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 2px 6px var(--overlay-negro-10));
 }
 
 .login-header p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--overlay-blanco-10);
   font-size: 0.95rem;
 }
 
@@ -80,14 +80,14 @@
 .form-group label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--overlay-blanco-10);
   letter-spacing: 0.3px;
 }
 
 .form-group input {
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 12px;
   font-size: 1rem;
   transition: var(--transicion);
@@ -96,12 +96,12 @@
 }
 
 .form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--overlay-blanco-10);
 }
 
 .form-group input:focus {
   border-color: var(--naranja);
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--overlay-blanco-10);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.18);
 }
 
@@ -111,7 +111,7 @@
 }
 
 .form-group input:disabled {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--overlay-blanco-10);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -138,17 +138,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--overlay-blanco-10);
   transition: color 0.2s;
 }
 
 .toggle-password:hover {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--overlay-blanco-10);
 }
 
 .toggle-password svg {
   display: block;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 3px var(--overlay-negro-10));
 }
 
 .error-message {
@@ -189,7 +189,7 @@
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 14px rgba(247, 127, 0, 0.35);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px var(--overlay-negro-10);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -202,7 +202,7 @@
 }
 
 .btn-primary:disabled {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--overlay-blanco-10);
   cursor: not-allowed;
   box-shadow: none;
   opacity: 0.5;
@@ -213,7 +213,7 @@
   align-items: center;
   gap: 1rem;
   margin: 1.5rem 0;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--overlay-blanco-10);
   font-size: 0.85rem;
 }
 
@@ -222,13 +222,13 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--overlay-blanco-10);
 }
 
 .btn-google {
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 12px;
   color: var(--blanco-puro);
   font-size: 1rem;
@@ -247,10 +247,10 @@
 }
 
 .btn-google:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--overlay-blanco-10);
+  border-color: var(--overlay-blanco-10);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px var(--overlay-negro-10);
 }
 
 .btn-google:disabled {
@@ -280,7 +280,7 @@
 
 .login-footer p {
   margin-top: 1rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
 }
 
 .login-footer a {
@@ -296,72 +296,72 @@
 
 /* Modo oscuro */
 .modo-oscuro .login-container {
-  background: rgba(10, 25, 15, 0.6);
-  border-color: rgba(79, 119, 45, 0.35);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
+  box-shadow: 0 16px 48px var(--overlay-negro-10);
 }
 
 .modo-oscuro .login-header h1 {
-  color: rgba(210, 245, 185, 0.97);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .login-header h1 svg {
-  stroke: rgba(210, 245, 185, 0.97);
+  stroke: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .login-header p {
-  color: rgba(200, 230, 185, 0.8);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .form-group label {
-  color: rgba(220, 245, 205, 0.9);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .form-group input {
-  background: rgba(20, 50, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.4);
-  color: rgba(220, 245, 205, 0.97);
+  background: var(--bg-verde-oscuro-50-55);
+  border-color: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .form-group input::placeholder {
-  color: rgba(180, 210, 160, 0.45);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .form-group input:focus {
   border-color: var(--naranja);
-  background: rgba(25, 60, 30, 0.65);
+  background: var(--bg-verde-profundo-65);
 }
 
 .modo-oscuro .toggle-password {
-  color: rgba(200, 230, 185, 0.6);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .toggle-password:hover {
-  color: rgba(220, 245, 205, 0.9);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .divider {
-  color: rgba(200, 230, 185, 0.6);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .divider::before,
 .modo-oscuro .divider::after {
-  background: rgba(79, 119, 45, 0.3);
+  background: var(--overlay-verde-hoja-10);
 }
 
 .modo-oscuro .btn-google {
-  background: rgba(20, 50, 25, 0.4);
-  border-color: rgba(79, 119, 45, 0.4);
-  color: rgba(220, 245, 205, 0.97);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .btn-google:hover:not(:disabled) {
-  background: rgba(25, 60, 30, 0.5);
-  border-color: rgba(79, 119, 45, 0.6);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
 }
 
 .modo-oscuro .login-footer p {
-  color: rgba(200, 230, 185, 0.75);
+  color: var(--overlay-verde-claro-10);
 }
 
 /* Responsive */

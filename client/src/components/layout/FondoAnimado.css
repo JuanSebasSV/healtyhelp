@@ -6,7 +6,7 @@
   height: 100%;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.933), rgba(0, 0, 0, 0.486)),
+    linear-gradient(var(--overlay-negro-10), var(--overlay-negro-10)),
     url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
   background-position: center;
   background-repeat: no-repeat;

@@ -5,40 +5,42 @@
 }
 
 :root {
-  --verde-bosque: #1a4d2e;
-  --verde-hoja:   #4f772d;
-  --naranja:      #f77f00;
-  --naranja-oscuro: #d66e00;
-  --blanco:       #ffffff;
-  --blanco-puro:  #ffffff;
-  --gris-claro:   #f8f9fa;
-  --gris-medio:   #dee2e6;
-  --gris-oscuro:  #2d2d2d;
-  --negro:        #000000;
-  --ambar:        #f59e0b;
-  --rojo:         #dc2626;
-  --rojo-texto:   #ff8a8a;
-  --naranja-hover: #ffb347;
-  --naranja-medio: #ff8c42;
+  /* ============ Marca: Verdes ============ */
+  --verde-bosque: var(--verde-bosque);
+  --verde-hoja:   var(--verde-hoja);
   --verde-btn:    #a7d588;
   --verde-exito:  #6fcf7c;
   --verde-texto-oscuro: #d2ebc3;
   --verde-texto-claro:  #b4dca0;
-  --dorado:       #ffd47a;
-  --amarillo:     #fcd34d;
-  --amarillo-intenso: #fbbf24;
   --verde-menta:  #6ee7b7;
   --verde-progreso: #34d399;
   --verde-progreso-oscuro: #059669;
-  --verde-profundo: #0a1a0f;
-  --fondo-grad-claro-medio: #2d5a3d;
-  --fondo-oscuro-0: #0f1a14;
-  --fondo-oscuro-50: #1a2820;
-  --fondo-oscuro-100: #2d3d2f;
-  --rojo-claro:   #f87171;
-  --rojo-rosa:    #fca5a5;
+  --verde-profundo: var(--verde-profundo);
+  --verde-lima:   #4ade80;
+  --verde-exito-texto: #a8e063;
+  --verde-google: #34a853;
+
+  /* ============ Marca: Naranjas ============ */
+  --naranja:      #f77f00;
+  --naranja-oscuro: #d66e00;
+  --naranja-hover: #ffb347;
+  --naranja-medio: #ff8c42;
   --naranja-claro: #fb923c;
   --naranja-suave: #fdba74;
+
+  /* ============ Marca: Rojos ============ */
+  --rojo:         #dc2626;
+  --rojo-texto:   #ff8a8a;
+  --rojo-claro:   #f87171;
+  --rojo-rosa:    #fca5a5;
+  --rojo-eliminar: #c0392b;
+  --rojo-medio:   #ef4444;
+
+  /* ============ Acentos secundarios ============ */
+  --ambar:        #f59e0b;
+  --dorado:       #ffd47a;
+  --amarillo:     #fcd34d;
+  --amarillo-intenso: #fbbf24;
   --azul-claro:   #93c5fd;
   --azul-medio:   #60a5fa;
   --azul-suave:   #a5b4fc;
@@ -47,13 +49,82 @@
   --indigo-claro: #c7d2fe;
   --indigo-medio: #667eea;
   --purpura:      #764ba2;
-  --rojo-eliminar: #c0392b;
-  --rojo-medio:   #ef4444;
-  --verde-lima:   #4ade80;
-  --verde-exito-texto: #a8e063;
-  --verde-google: #34a853;
-  --sombra:       0 4px 6px rgba(0, 0, 0, 0.1);
-  --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* ============ Neutros / grises ============ */
+  --blanco:       #ffffff;
+  --blanco-puro:  #ffffff;
+  --gris-claro:   #f8f9fa;
+  --gris-medio:   #dee2e6;
+  --gris-oscuro:  #2d2d2d;
+  --negro:        #000000;
+
+  /* ============ Fondos oscuros reutilizables ============ */
+  --fondo-grad-claro-medio: var(--fondo-grad-claro-medio);
+  --fondo-oscuro-0: var(--fondo-oscuro-0);
+  --fondo-oscuro-50: var(--fondo-oscuro-50);
+  --fondo-oscuro-100: var(--fondo-oscuro-100);
+
+  /* ============ Sombras base reutilizables ============ */
+  --sombra:       0 4px 6px var(--overlay-negro-10);
+  --sombra-hover: 0 8px 16px var(--overlay-negro-10);
+
+  /* ============ Overlays translúcidos (5 escalones: 10/20/30/50/70) ============
+     Sistema de opacidades consolidadas. Se aceptan diferencias de hasta ~12%
+     entre el valor original y el escalón más cercano.
+     Colores base: negro, blanco, verde-hoja (rgb 79,119,45), verde-hoja-dark
+     (rgb 107,158,74), verde-claro (rgb 200,230,185), verde-mint (rgb 209,250,229),
+     verde-brillante (rgb 74,222,128).
+     Total: 7 colores × 5 escalones = 35 variables. */
+  --overlay-negro-10: rgba(0, 0, 0, 0.10);
+  --overlay-negro-20: rgba(0, 0, 0, 0.20);
+  --overlay-negro-30: rgba(0, 0, 0, 0.30);
+  --overlay-negro-50: rgba(0, 0, 0, 0.50);
+  --overlay-negro-70: rgba(0, 0, 0, 0.70);
+  --overlay-negro-90: rgba(0, 0, 0, 0.90);
+
+  --overlay-blanco-10: rgba(255, 255, 255, 0.10);
+  --overlay-blanco-20: rgba(255, 255, 255, 0.20);
+  --overlay-blanco-30: rgba(255, 255, 255, 0.30);
+  --overlay-blanco-50: rgba(255, 255, 255, 0.50);
+  --overlay-blanco-70: rgba(255, 255, 255, 0.70);
+  --overlay-blanco-90: rgba(255, 255, 255, 0.90);
+
+  --overlay-verde-hoja-10: rgba(79, 119, 45, 0.10);
+  --overlay-verde-hoja-20: rgba(79, 119, 45, 0.20);
+  --overlay-verde-hoja-30: rgba(79, 119, 45, 0.30);
+  --overlay-verde-hoja-50: rgba(79, 119, 45, 0.50);
+  --overlay-verde-hoja-70: rgba(79, 119, 45, 0.70);
+  --overlay-verde-hoja-90: rgba(79, 119, 45, 0.90);
+
+  --overlay-verde-hoja-dark-10: rgba(107, 158, 74, 0.10);
+  --overlay-verde-hoja-dark-20: rgba(107, 158, 74, 0.20);
+  --overlay-verde-hoja-dark-30: rgba(107, 158, 74, 0.30);
+  --overlay-verde-hoja-dark-50: rgba(107, 158, 74, 0.50);
+  --overlay-verde-hoja-dark-70: rgba(107, 158, 74, 0.70);
+  --overlay-verde-hoja-dark-90: rgba(107, 158, 74, 0.90);
+
+  --overlay-verde-claro-10: rgba(200, 230, 185, 0.10);
+  --overlay-verde-claro-20: rgba(200, 230, 185, 0.20);
+  --overlay-verde-claro-30: rgba(200, 230, 185, 0.30);
+  --overlay-verde-claro-50: rgba(200, 230, 185, 0.50);
+  --overlay-verde-claro-70: rgba(200, 230, 185, 0.70);
+  --overlay-verde-claro-90: rgba(200, 230, 185, 0.90);
+
+  --overlay-verde-mint-10: rgba(209, 250, 229, 0.10);
+  --overlay-verde-mint-20: rgba(209, 250, 229, 0.20);
+  --overlay-verde-mint-30: rgba(209, 250, 229, 0.30);
+  --overlay-verde-mint-50: rgba(209, 250, 229, 0.50);
+  --overlay-verde-mint-70: rgba(209, 250, 229, 0.70);
+  --overlay-verde-mint-90: rgba(209, 250, 229, 0.90);
+
+  --overlay-verde-brillante-10: rgba(74, 222, 128, 0.10);
+  --overlay-verde-brillante-20: rgba(74, 222, 128, 0.20);
+  --overlay-verde-brillante-30: rgba(74, 222, 128, 0.30);
+  --overlay-verde-brillante-50: rgba(74, 222, 128, 0.50);
+  --overlay-verde-brillante-70: rgba(74, 222, 128, 0.70);
+  --overlay-verde-brillante-90: rgba(74, 222, 128, 0.90);
+
+  /* ============ Otros ============ */
   --transicion:   transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
   --page-px:  clamp(0.6rem, 4vw, 4rem);
   --page-py:  clamp(1.25rem, 2.5vw, 2rem);
@@ -62,16 +133,16 @@
 }
 
 .modo-oscuro {
-  --verde-bosque: #2d5a3d;
-  --verde-hoja:   #6b9e4a;
+  --verde-bosque: var(--fondo-grad-claro-medio);
+  --verde-hoja:   var(--verde-hoja);
   --naranja:      #ff9a3c;
   --blanco:       #1a1a1a;
   --gris-claro:   #2d2d2d;
   --gris-medio:   #404040;
   --gris-oscuro:  #e0e0e0;
   --negro:        #ffffff;
-  --sombra:       0 4px 6px rgba(0, 0, 0, 0.4);
-  --sombra-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --sombra:       0 4px 6px var(--overlay-negro-10);
+  --sombra-hover: 0 8px 16px var(--overlay-negro-10);
 }
 
 html, body {
@@ -137,7 +208,7 @@ body {
 
 .App:has(.vista-favoritos) {
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.673), rgba(0, 0, 0, 0.382)),
+    linear-gradient(var(--overlay-negro-10), var(--overlay-negro-10)),
     url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
   background-size: cover;
   background-position: center;
@@ -173,7 +244,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--overlay-negro-10);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -183,7 +254,7 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-.modo-oscuro .modal-overlay { background: rgba(0, 0, 0, 0.9); }
+.modo-oscuro .modal-overlay { background: var(--overlay-negro-10); }
 
 @media (max-width: 968px) {
   .modal-overlay {
@@ -199,8 +270,8 @@ body {
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--overlay-blanco-10);
+  background: var(--overlay-blanco-10);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   color: var(--blanco);
@@ -209,7 +280,7 @@ body {
      en lugar de "all" que fuerza al navegador a revisar cada propiedad posible */
   transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   z-index: 2001;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,14 +302,14 @@ body {
   background: rgba(247, 127, 0, 0.85);
   border-color: rgba(247, 127, 0, 0.5);
   transform: scale(1.05);
-  box-shadow: 0 6px 24px rgba(247, 127, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 24px rgba(247, 127, 0, 0.35), inset 0 1px 0 var(--overlay-blanco-10);
 }
 .modal-cerrar:hover svg { stroke: var(--blanco); }
 .modo-oscuro .modal-cerrar {
-  background: rgba(20, 40, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.35);
+  background: var(--overlay-verde-hoja-50);
+  border-color: var(--overlay-verde-hoja-dark-30);
 }
-.modo-oscuro .modal-cerrar svg { stroke: rgba(255, 255, 255, 0.85); }
+.modo-oscuro .modal-cerrar svg { stroke: var(--overlay-blanco-10); }
 .modo-oscuro .modal-cerrar:hover { background: rgba(247, 127, 0, 0.85); }
 .modo-oscuro .modal-cerrar:hover svg { stroke: var(--blanco); }
 
@@ -259,7 +330,7 @@ body {
   box-shadow: var(--sombra-hover);
   animation: fadeIn 0.6s ease;
 }
-.modo-oscuro .auth-card { background: rgba(45, 45, 45, 0.95); }
+.modo-oscuro .auth-card { background: var(--overlay-negro-90); }
 
 .auth-card h2 {
   text-align: center;
@@ -282,7 +353,7 @@ body {
   color: var(--negro);
 }
 .modo-oscuro .auth-form input {
-  background: rgba(64, 64, 64, 0.8);
+  background: var(--overlay-verde-hoja-dark-90);
   border-color: var(--gris-medio);
   color: var(--gris-oscuro);
 }
@@ -375,26 +446,26 @@ input[type="number"] { -moz-appearance: textfield; }
   display: flex;
   flex-direction: column;
   width: 28px;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid var(--overlay-blanco-10);
   border-radius: 0 10px 10px 0;
   overflow: hidden;
 }
 .numero-flechas button {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--overlay-blanco-10);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--overlay-blanco-10);
   transition: background 0.15s ease, color 0.15s ease;
   padding: 0;
 }
-.numero-flechas button:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.numero-flechas button:first-child { border-bottom: 1px solid var(--overlay-blanco-10); }
 .numero-flechas button:hover {
-  background: rgba(79, 119, 45, 0.3);
-  color: rgba(167, 213, 136, 0.95);
+  background: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
 }
 .numero-flechas button:disabled { opacity: 0.25; cursor: not-allowed; }
 .numero-flechas button svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2.5; }
@@ -405,15 +476,15 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 
 .password-requisitos-previos {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--overlay-blanco-10);
+  border: 1px solid var(--overlay-blanco-10);
   border-radius: 10px;
   padding: 0.85rem 1rem;
   margin-bottom: 0.75rem;
 }
 
 .req-titulo {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--overlay-blanco-10);
   font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -434,7 +505,7 @@ input[type="number"] { -moz-appearance: textfield; }
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--overlay-blanco-10);
   font-size: 0.82rem;
   transition: color 0.2s ease;
 }
@@ -442,10 +513,10 @@ input[type="number"] { -moz-appearance: textfield; }
 .password-requisitos-previos li svg {
   width: 13px;
   height: 13px;
-  stroke: rgba(255, 255, 255, 0.2);
+  stroke: var(--overlay-blanco-10);
   flex-shrink: 0;
   transition: stroke 0.2s ease;
 }
 
-.password-requisitos-previos li.req-ok { color: rgba(167, 213, 136, 0.9); }
-.password-requisitos-previos li.req-ok svg { stroke: rgba(107, 158, 74, 0.9); }
+.password-requisitos-previos li.req-ok { color: var(--overlay-verde-claro-10); }
+.password-requisitos-previos li.req-ok svg { stroke: var(--overlay-verde-hoja-dark-10); }

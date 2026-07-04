@@ -11,7 +11,7 @@
 
 .auth-brand svg {
   stroke: var(--blanco-puro);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 2px 6px var(--overlay-negro-10));
 }
 
 .auth-brand-nombre {
@@ -19,15 +19,15 @@
   font-size: 1.9rem;
   font-weight: 700;
   color: var(--blanco-puro);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
 }
 
 .modo-oscuro .auth-brand svg {
-  stroke: rgba(210, 245, 185, 0.97);
+  stroke: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .auth-brand-nombre {
-  color: rgba(210, 245, 185, 0.97);
+  color: var(--overlay-verde-claro-10);
 }
 
 /*Header con logo Healthy Help*/
@@ -43,7 +43,7 @@
   width: 36px;
   height: 36px;
   stroke: var(--blanco-puro);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 2px 6px var(--overlay-negro-10));
 }
 
 .auth-brand-nombre {
@@ -51,15 +51,15 @@
   font-size: 1.9rem;
   font-weight: 700;
   color: var(--blanco-puro);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
 }
 
 .modo-oscuro .auth-brand svg {
-  stroke: rgba(210, 245, 185, 0.97);
+  stroke: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .auth-brand-nombre {
-  color: rgba(210, 245, 185, 0.97);
+  color: var(--overlay-verde-claro-10);
 }
 
 
@@ -72,16 +72,16 @@
 }
 
 .verificar-card {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--overlay-blanco-10);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--overlay-blanco-10);
   border-radius: 24px;
   padding: 3rem 2.5rem;
   max-width: 440px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 16px 48px var(--overlay-negro-10);
   animation: slideUp 0.35s ease;
 }
 
@@ -89,8 +89,8 @@
 .verificar-icono {
   width: 64px;
   height: 64px;
-  background: rgba(79, 119, 45, 0.15);
-  border: 1.5px solid rgba(79, 119, 45, 0.35);
+  background: var(--overlay-verde-hoja-10);
+  border: 1.5px solid var(--overlay-verde-hoja-10);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -101,7 +101,7 @@
 .verificar-icono svg {
   width: 30px;
   height: 30px;
-  stroke: rgba(167, 213, 136, 0.9);
+  stroke: var(--overlay-verde-claro-10);
 }
 
 .verificar-titulo {
@@ -113,14 +113,14 @@
 }
 
 .verificar-desc {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--overlay-blanco-10);
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0 0 2rem;
 }
 
 .verificar-desc strong {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--overlay-blanco-10);
   font-weight: 600;
 }
 
@@ -139,8 +139,8 @@
   font-size: 1.6rem;
   font-weight: 800;
   color: white;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 14px;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -149,18 +149,18 @@
 
 .verificar-digito:focus {
   border-color: var(--naranja);
-  background: rgba(255, 255, 255, 0.11);
+  background: var(--overlay-blanco-10);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.15);
 }
 
 .verificar-digito--lleno {
-  border-color: rgba(79, 119, 45, 0.55);
-  background: rgba(79, 119, 45, 0.1);
+  border-color: var(--overlay-verde-hoja-10);
+  background: var(--overlay-verde-hoja-10);
 }
 
 .verificar-digito--error {
-  border-color: rgba(220, 53, 69, 0.6) !important;
-  background: rgba(220, 53, 69, 0.06) !important;
+  border-color: var(--overlay-verde-hoja-dark-10) !important;
+  background: var(--overlay-verde-hoja-dark-10) !important;
   animation: shake 0.35s ease;
 }
 
@@ -193,13 +193,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 16px rgba(26, 77, 46, 0.35);
+  box-shadow: 0 4px 16px var(--overlay-verde-hoja-10);
   margin-bottom: 1.5rem;
 }
 
 .verificar-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(26, 77, 46, 0.45);
+  box-shadow: 0 8px 24px var(--overlay-verde-hoja-10);
 }
 
 .verificar-btn:disabled {
@@ -211,7 +211,7 @@
 .verificar-spinner {
   width: 18px;
   height: 18px;
-  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border: 2.5px solid var(--overlay-blanco-10);
   border-top-color: white;
   border-radius: 50%;
   animation: girar 0.6s linear infinite;
@@ -227,13 +227,13 @@
   justify-content: center;
   gap: 0.5rem;
   font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--overlay-blanco-10);
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
 
 .verificar-countdown {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--overlay-blanco-10);
   font-weight: 600;
 }
 
@@ -257,14 +257,14 @@
 .verificar-volver {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--overlay-blanco-10);
   font-size: 0.82rem;
   cursor: pointer;
   transition: color 0.2s;
   padding: 0;
 }
 
-.verificar-volver:hover { color: rgba(255, 255, 255, 0.65); }
+.verificar-volver:hover { color: var(--overlay-blanco-10); }
 
 /* Responsive */
 @media (max-width: 480px) {

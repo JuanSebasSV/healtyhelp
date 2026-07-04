@@ -59,8 +59,8 @@
   position: absolute;
   inset: -2px;
   border-radius: 12px;
-  background: rgba(79, 119, 45, 0.2);
-  box-shadow: 0 0 0 8px rgba(79, 119, 45, 0.2);
+  background: var(--overlay-verde-hoja-10);
+  box-shadow: 0 0 0 8px var(--overlay-verde-hoja-10);
   pointer-events: none;
   will-change: opacity;
   animation: consumoSeñalar 2.2s ease forwards;
@@ -115,10 +115,10 @@
   left: 0;
   right: 0;
   background: var(--blanco);
-  border: 1.5px solid rgba(79, 119, 45, 0.3);
+  border: 1.5px solid var(--overlay-verde-hoja-10);
   border-radius: 14px;
   padding: 1rem 2.5rem 0.9rem 1rem;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 8px 28px var(--overlay-negro-10);
   z-index: 200;
   animation: tooltipIn 0.22s ease;
 }
@@ -146,8 +146,8 @@
   width: 16px;
   height: 16px;
   background: var(--blanco);
-  border-right: 1.5px solid rgba(79, 119, 45, 0.3);
-  border-bottom: 1.5px solid rgba(79, 119, 45, 0.3);
+  border-right: 1.5px solid var(--overlay-verde-hoja-10);
+  border-bottom: 1.5px solid var(--overlay-verde-hoja-10);
   transform: rotate(45deg);
   border-radius: 2px;
 }
@@ -173,7 +173,7 @@
 
 .btnConsumo-tooltip-cerrar:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.07);
+  background: var(--overlay-negro-10);
 }
 
 .btnConsumo-tooltip-cerrar svg {

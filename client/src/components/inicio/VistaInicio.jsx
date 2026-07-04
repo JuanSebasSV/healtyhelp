@@ -56,12 +56,22 @@ const VistaInicio = ({
   useEffect(() => { imagenActualRef.current = imagenActual; }, [imagenActual]);
 
   useEffect(() => {
+    let preloadLink = null;
     const id = (window.requestIdleCallback || ((cb) => setTimeout(cb, 1)))(() => {
-      HERO_IMGS.forEach(src => { const img = new Image(); img.src = src; });
+      preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.as = 'image';
+      preloadLink.href = HERO_IMGS[0];
+      preloadLink.setAttribute('fetchpriority', 'high');
+      document.head.appendChild(preloadLink);
+      HERO_IMGS.slice(1).forEach(src => { const img = new Image(); img.src = src; });
     });
     return () => {
       if (window.cancelIdleCallback) window.cancelIdleCallback(id);
       else clearTimeout(id);
+      if (preloadLink && preloadLink.parentNode) {
+        preloadLink.parentNode.removeChild(preloadLink);
+      }
     };
   }, []);
 

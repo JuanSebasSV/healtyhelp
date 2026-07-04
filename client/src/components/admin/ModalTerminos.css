@@ -4,7 +4,7 @@
 .terminos-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 26, 15, 0.75);
+  background: var(--overlay-negro-10);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 9999;
@@ -19,7 +19,7 @@
 /* Modal */
 .terminos-modal {
   background: #ffffff;
-  border: 1.5px solid rgba(26, 77, 46, 0.18);
+  border: 1.5px solid var(--overlay-verde-hoja-10);
   border-radius: 20px;
   width: 100%;
   max-width: 720px;
@@ -27,8 +27,8 @@
   display: flex;
   flex-direction: column;
   box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.22),
-    0 4px 16px rgba(26, 77, 46, 0.1);
+    0 24px 64px var(--overlay-negro-10),
+    0 4px 16px var(--overlay-verde-hoja-10);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -47,18 +47,18 @@
 .terminos-logo {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #1a4d2e, #4f772d);
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.25);
+  box-shadow: 0 4px 14px var(--overlay-verde-hoja-10);
 }
 .terminos-logo svg { stroke: #ffffff; }
 
 .terminos-header h2 {
-  color: #1a4d2e;
+  color: var(--verde-bosque);
   font-size: 1.25rem;
   font-family: 'Playfair Display', 'Georgia', serif;
   font-weight: 700;
@@ -103,7 +103,7 @@
 }
 .terminos-instruccion::before {
   content: '↓';
-  color: #4f772d;
+  color: var(--verde-hoja);
   font-weight: 700;
 }
 
@@ -117,15 +117,15 @@
   padding: 1.5rem 2rem;
   background: #fafcfa;
   scrollbar-width: thin;
-  scrollbar-color: #4f772d #e0ece0;
+  scrollbar-color: var(--verde-hoja) #e0ece0;
 }
 .terminos-contenido::-webkit-scrollbar { width: 7px; }
 .terminos-contenido::-webkit-scrollbar-track { background: #e0ece0; border-radius: 4px; }
-.terminos-contenido::-webkit-scrollbar-thumb { background: #4f772d; border-radius: 4px; }
-.terminos-contenido::-webkit-scrollbar-thumb:hover { background: #1a4d2e; }
+.terminos-contenido::-webkit-scrollbar-thumb { background: var(--verde-hoja); border-radius: 4px; }
+.terminos-contenido::-webkit-scrollbar-thumb:hover { background: var(--verde-bosque); }
 
 .terminos-contenido h3 {
-  color: #1a4d2e;
+  color: var(--verde-bosque);
   font-size: 0.95rem;
   font-weight: 700;
   margin: 1.75rem 0 0.5rem;
@@ -151,16 +151,16 @@
   line-height: 1.75;
   margin-bottom: 0.35rem;
 }
-.terminos-contenido ul li::marker { color: #4f772d; }
+.terminos-contenido ul li::marker { color: var(--verde-hoja); }
 .terminos-contenido strong { color: #111827; font-weight: 700; }
 
 .terminos-fin {
   margin-top: 1.75rem;
   padding: 0.75rem 1rem;
   background: #f0f7ec;
-  border: 1.5px solid #4f772d;
+  border: 1.5px solid var(--verde-hoja);
   border-radius: 8px;
-  color: #1a4d2e;
+  color: var(--verde-bosque);
   font-size: 0.88rem;
   font-weight: 600;
   text-align: center;
@@ -191,7 +191,7 @@
 }
 .terminos-checkbox-label:hover:not(:has(input:disabled)) {
   background: #e4f3d8;
-  border-color: #4f772d;
+  border-color: var(--verde-hoja);
 }
 
 .terminos-checkbox-label input[type="checkbox"] {
@@ -200,7 +200,7 @@
   width: 22px;
   height: 22px;
   min-width: 22px;
-  border: 2.5px solid #1a4d2e;
+  border: 2.5px solid var(--verde-bosque);
   border-radius: 5px;
   background: #ffffff;
   cursor: pointer;
@@ -208,12 +208,12 @@
   transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   margin-top: 1px;
   flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px var(--overlay-negro-10);
 }
 .terminos-checkbox-label input[type="checkbox"]:checked {
-  background: #1a4d2e;
-  border-color: #1a4d2e;
-  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.4);
+  background: var(--verde-bosque);
+  border-color: var(--verde-bosque);
+  box-shadow: 0 2px 8px var(--overlay-verde-hoja-10);
 }
 .terminos-checkbox-label input[type="checkbox"]:checked::after {
   content: '';
@@ -322,7 +322,7 @@
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(26, 77, 46, 0.2);
+    box-shadow: 0 3px 10px var(--overlay-verde-hoja-10);
   }
   .terminos-logo svg { width: 19px; height: 19px; }
   .terminos-header h2 { font-size: 0.95rem; margin-bottom: 0.1rem; }

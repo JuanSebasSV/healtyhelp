@@ -67,8 +67,8 @@ const INFO = [
   {
     id: 'ubicacion',
     titulo: 'Ubicación',
-    valor: 'Carrera 10 No. 11 - 22, Garzón - Huila',
-    href: 'https://maps.google.com/?q=Carrera+10+No.+11-22+Garzon+Huila',
+    valor: 'Cl. 11 #875, Garzón - Huila',
+    href: 'https://maps.google.com/?q=Cl.+11+%23875+Garzon+Huila',
     icono: (
       <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />

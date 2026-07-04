@@ -7,13 +7,13 @@
 }
 
 .authCard {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   padding: 3rem;
   border-radius: 24px;
   max-width: 440px;
   width: 100%;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 16px 48px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
   animation: fadeIn 0.6s ease;
   contain: layout style;
 }
@@ -27,7 +27,7 @@
 
 .authCard h2 {
   text-align: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--overlay-blanco-10);
   font-size: 1rem;
   font-weight: 400;
   margin-bottom: 1.75rem;
@@ -50,8 +50,8 @@
 
 .authForm input {
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 12px;
   font-size: 1rem;
   transition: var(--transicion);
@@ -60,12 +60,12 @@
 }
 
 .authForm input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--overlay-blanco-10);
 }
 
 .authForm input:focus {
   border-color: var(--naranja);
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--overlay-blanco-10);
   box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.18);
 }
 
@@ -83,7 +83,7 @@
 .authCard p {
   text-align: center;
   margin-top: 1.5rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
 }
 
 .linkText {
@@ -99,28 +99,28 @@
 
 /* Modo oscuro */
 .modo-oscuro .authCard {
-  background: rgba(10, 25, 15, 0.6);
-  border-color: rgba(79, 119, 45, 0.35);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
+  box-shadow: 0 16px 48px var(--overlay-negro-10);
 }
 
 .modo-oscuro .authForm input {
-  background: rgba(20, 50, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.4);
-  color: rgba(220, 245, 205, 0.97);
+  background: var(--bg-verde-oscuro-50-55);
+  border-color: var(--overlay-verde-hoja-10);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .authForm input::placeholder {
-  color: rgba(210, 245, 185, 0.55);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .authForm input:focus {
   border-color: var(--naranja);
-  background: rgba(25, 60, 30, 0.65);
+  background: var(--bg-verde-profundo-65);
 }
 
 .modo-oscuro .authCard p {
-  color: rgba(200, 230, 185, 0.75);
+  color: var(--overlay-verde-claro-10);
 }
 
 @media (max-width: 640px) {
@@ -140,7 +140,7 @@
 
 .auth-brand svg {
   stroke: var(--blanco-puro);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 2px 6px var(--overlay-negro-10));
 }
 
 .auth-brand-nombre {
@@ -148,15 +148,15 @@
   font-size: 1.9rem;
   font-weight: 700;
   color: var(--blanco-puro);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px var(--overlay-negro-10);
 }
 
 .modo-oscuro .auth-brand svg {
-  stroke: rgba(210, 245, 185, 0.97);
+  stroke: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .auth-brand-nombre {
-  color: rgba(210, 245, 185, 0.97);
+  color: var(--overlay-verde-claro-10);
 }
 
 @media (max-width: 480px) {
@@ -221,7 +221,7 @@ input.inputOk {
   border: 1px solid rgba(247, 127, 0, 0.40);
   border-radius: 10px;
   padding: 0.6rem 0.85rem;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
   font-size: 0.8rem;
   line-height: 1.5;
   animation: fadeIn 0.2s ease;
@@ -240,7 +240,7 @@ input.inputOk {
 .modo-oscuro .aviso-menor {
   background: rgba(247, 127, 0, 0.10);
   border-color: rgba(247, 127, 0, 0.30);
-  color: rgba(200, 230, 185, 0.85);
+  color: var(--overlay-verde-claro-10);
 }
 
 /* Input contraseña */
@@ -261,17 +261,17 @@ input.inputOk {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--overlay-blanco-10);
   display: flex;
   align-items: center;
   padding: 0;
   transition: color 0.2s ease;
 }
 
-.eyeButton:hover { color: rgba(255, 255, 255, 0.90); }
+.eyeButton:hover { color: var(--overlay-blanco-10); }
 
-.modo-oscuro .eyeButton       { color: rgba(200, 230, 185, 0.55); }
-.modo-oscuro .eyeButton:hover { color: rgba(200, 230, 185, 0.90); }
+.modo-oscuro .eyeButton       { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .eyeButton:hover { color: var(--overlay-verde-claro-10); }
 
 /* Input numérico */
 .numero-wrapper {
@@ -302,7 +302,7 @@ input.inputOk {
   border: none;
   cursor: pointer;
   padding: 1px 3px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--overlay-blanco-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,7 +318,7 @@ input.inputOk {
   stroke-width: 2.5;
 }
 
-.modo-oscuro .numero-flechas button       { color: rgba(200, 230, 185, 0.55); }
+.modo-oscuro .numero-flechas button       { color: var(--overlay-verde-claro-10); }
 .modo-oscuro .numero-flechas button:hover { color: var(--naranja, #f77f00); }
 
 /* Botón primario */
@@ -365,7 +365,7 @@ input.inputOk {
 .aviso-inline--naranja {
   background: rgba(247, 127, 0, 0.12);
   border: 1px solid rgba(247, 127, 0, 0.40);
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
 }
 
 .aviso-inline--naranja svg     { color: var(--naranja, #f77f00); }
@@ -374,7 +374,7 @@ input.inputOk {
 .aviso-inline--rojo {
   background: rgba(220, 38, 38, 0.10);
   border: 1px solid rgba(220, 38, 38, 0.35);
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--overlay-blanco-10);
 }
 
 .aviso-inline--rojo svg    { color: #f87171; }
@@ -383,13 +383,13 @@ input.inputOk {
 .modo-oscuro .aviso-inline--naranja {
   background: rgba(247, 127, 0, 0.10);
   border-color: rgba(247, 127, 0, 0.30);
-  color: rgba(200, 230, 185, 0.85);
+  color: var(--overlay-verde-claro-10);
 }
 
 .modo-oscuro .aviso-inline--rojo {
   background: rgba(220, 38, 38, 0.08);
   border-color: rgba(220, 38, 38, 0.28);
-  color: rgba(200, 230, 185, 0.85);
+  color: var(--overlay-verde-claro-10);
 }
 
 /* Fecha de nacimiento */
@@ -417,7 +417,7 @@ input.inputOk {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--overlay-negro-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,13 +434,13 @@ input.inputOk {
 }
 
 .modal-confirmacion {
-  background: rgba(15, 30, 18, 0.96);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  background: var(--overlay-negro-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 20px;
   padding: 2rem;
   max-width: 420px;
   width: 100%;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px var(--overlay-negro-10);
   animation: fadeIn 0.25s ease;
   contain: layout style;
 }
@@ -464,7 +464,7 @@ input.inputOk {
 }
 
 .modal-conf__header p {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--overlay-blanco-10);
   font-size: 0.85rem;
   margin: 0;
 }
@@ -482,19 +482,19 @@ input.inputOk {
   align-items: baseline;
   gap: 1rem;
   padding: 0.55rem 0.75rem;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--overlay-blanco-10);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--overlay-blanco-10);
 }
 
 .modal-conf__label {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--overlay-blanco-10);
   font-size: 0.8rem;
   flex-shrink: 0;
 }
 
 .modal-conf__valor {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--overlay-blanco-10);
   font-size: 0.9rem;
   font-weight: 500;
   text-align: right;
@@ -520,14 +520,14 @@ input.inputOk {
   border: 1px solid rgba(247, 127, 0, 0.30);
   border-radius: 10px;
   padding: 0.6rem 0.85rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--overlay-blanco-10);
   font-size: 0.78rem;
   line-height: 1.5;
   margin-bottom: 1.25rem;
 }
 
 .modal-conf__aviso svg    { color: var(--naranja, #f77f00); flex-shrink: 0; }
-.modal-conf__aviso strong { color: rgba(255, 255, 255, 0.9); }
+.modal-conf__aviso strong { color: var(--overlay-blanco-10); }
 
 .modal-conf__acciones {
   display: flex;
@@ -538,8 +538,8 @@ input.inputOk {
   flex: 1;
   padding: 0.85rem;
   background: transparent;
-  color: rgba(255, 255, 255, 0.75);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: var(--overlay-blanco-10);
+  border: 1.5px solid var(--overlay-blanco-10);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -548,7 +548,7 @@ input.inputOk {
 }
 
 .modal-conf__btn-editar:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--overlay-blanco-10);
   color: var(--blanco-puro, #fff);
 }
 
@@ -572,6 +572,6 @@ input.inputOk {
 }
 
 .modo-oscuro .modal-confirmacion {
-  background: rgba(8, 20, 12, 0.97);
-  border-color: rgba(79, 119, 45, 0.30);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
 }

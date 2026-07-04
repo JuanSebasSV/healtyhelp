@@ -1,18 +1,18 @@
 .nutriPanel {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--overlay-blanco-10);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--overlay-blanco-10);
   border-radius: 18px;
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px var(--overlay-negro-10);
   contain: layout style;
 }
 
 .modo-oscuro .nutriPanel {
-  background: rgba(20, 40, 25, 0.55);
-  border-color: rgba(79, 119, 45, 0.28);
+  background: var(--overlay-negro-10);
+  border-color: var(--overlay-verde-hoja-10);
 }
 
 .nutriPanel h3 {
@@ -27,7 +27,7 @@
   height: 200px;
   margin: 1rem auto;
   display: block;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 4px 12px var(--overlay-negro-10));
 }
 
 .nutriLeyenda {
@@ -43,7 +43,7 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--overlay-blanco-10);
 }
 
 .nutriColor {
@@ -61,9 +61,9 @@
 }
 
 .nutriSeccion {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--overlay-blanco-10);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--overlay-blanco-10);
   overflow: hidden;
 }
 
@@ -74,9 +74,9 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 185, 60, 0.8);
+  color: var(--overlay-verde-claro-10);
   background: rgba(247, 127, 0, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--overlay-blanco-10);
 }
 
 .nutriFila {
@@ -85,16 +85,16 @@
   align-items: center;
   padding: 0.5rem 0.9rem;
   font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--overlay-blanco-10);
+  border-bottom: 1px solid var(--overlay-blanco-10);
   transition: background 0.15s ease;
 }
 .nutriFila:last-child { border-bottom: none; }
-.nutriFila:hover { background: rgba(255, 255, 255, 0.04); }
+.nutriFila:hover { background: var(--overlay-blanco-10); }
 .nutriFila strong { color: var(--blanco-puro); font-weight: 700; }
 
 .nutriFilaDestacada { background: rgba(247, 127, 0, 0.08); }
-.nutriFilaDestacada span { color: rgba(255, 185, 60, 0.85); font-weight: 600; }
+.nutriFilaDestacada span { color: var(--overlay-verde-claro-10); font-weight: 600; }
 .nutriFilaDestacada strong { color: var(--ambar); font-size: 1rem; }
 
 /* will-change: transform mantiene el botón en su propia capa; el hover anima solo transform */

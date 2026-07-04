@@ -1,33 +1,33 @@
 :root {
-  --robot-fab-bg:          linear-gradient(135deg, #1a4d2e 0%, #2d5a3d 50%, #3a6e3a 100%);
+  --robot-fab-bg:          linear-gradient(135deg, var(--verde-bosque) 0%, var(--fondo-grad-claro-medio) 50%, #3a6e3a 100%);
   --robot-fab-border:      rgba(110, 231, 183, 0.45);
-  --robot-fab-shadow-1:    0 8px 32px rgba(26, 77, 46, 0.32);
-  --robot-fab-shadow-2:    0 2px 8px rgba(26, 77, 46, 0.18);
-  --robot-fab-shadow-hi:   0 12px 40px rgba(26, 77, 46, 0.45);
+  --robot-fab-shadow-1:    0 8px 32px var(--overlay-verde-hoja-10);
+  --robot-fab-shadow-2:    0 2px 8px var(--overlay-verde-hoja-10);
+  --robot-fab-shadow-hi:   0 12px 40px var(--overlay-verde-hoja-10);
   --robot-fab-icon:        #ffffff;
   --robot-fab-icon-hov:    #ffffff;
   --robot-fab-ring:        0 0 0 1px rgba(110, 231, 183, 0.25);
 
   --robot-window-bg:       linear-gradient(180deg, #ffffff 0%, #f4f7f3 100%);
-  --robot-window-border:   rgba(26, 77, 46, 0.20);
-  --robot-window-shadow-1: 0 24px 64px rgba(26, 77, 46, 0.22);
-  --robot-window-shadow-2: 0 8px 24px rgba(26, 77, 46, 0.12);
+  --robot-window-border:   var(--overlay-verde-hoja-10);
+  --robot-window-shadow-1: 0 24px 64px var(--overlay-verde-hoja-10);
+  --robot-window-shadow-2: 0 8px 24px var(--overlay-verde-hoja-10);
 }
 
 .modo-oscuro {
-  --robot-fab-bg:          linear-gradient(135deg, rgba(26, 77, 46, 0.95) 0%, rgba(45, 90, 61, 0.95) 50%, rgba(28, 95, 82, 0.95) 100%);
+  --robot-fab-bg:          linear-gradient(135deg, var(--overlay-verde-hoja-10) 0%, var(--overlay-verde-hoja-10) 50%, var(--overlay-verde-hoja-10) 100%);
   --robot-fab-border:      rgba(110, 231, 183, 0.40);
-  --robot-fab-shadow-1:    0 8px 32px rgba(0, 0, 0, 0.50);
-  --robot-fab-shadow-2:    0 2px 8px rgba(0, 0, 0, 0.30);
-  --robot-fab-shadow-hi:   0 12px 40px rgba(26, 77, 46, 0.45);
+  --robot-fab-shadow-1:    0 8px 32px var(--overlay-negro-10);
+  --robot-fab-shadow-2:    0 2px 8px var(--overlay-negro-10);
+  --robot-fab-shadow-hi:   0 12px 40px var(--overlay-verde-hoja-10);
   --robot-fab-icon:        #ffffff;
   --robot-fab-icon-hov:    #ffffff;
   --robot-fab-ring:        0 0 0 1px rgba(110, 231, 183, 0.20);
 
-  --robot-window-bg:       linear-gradient(180deg, rgba(8, 22, 13, 0.96) 0%, rgba(6, 18, 10, 0.96) 100%);
-  --robot-window-border:   rgba(255, 255, 255, 0.14);
-  --robot-window-shadow-1: 0 24px 64px rgba(0, 0, 0, 0.60);
-  --robot-window-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.40);
+  --robot-window-bg:       linear-gradient(180deg, var(--overlay-negro-10) 0%, var(--overlay-negro-10) 100%);
+  --robot-window-border:   var(--overlay-blanco-10);
+  --robot-window-shadow-1: 0 24px 64px var(--overlay-negro-10);
+  --robot-window-shadow-2: 0 8px 24px var(--overlay-negro-10);
 }
 
 @keyframes robotIAContainerEntrada {
@@ -45,8 +45,8 @@
   background: var(--robot-fab-bg);
   border: 1px solid var(--robot-fab-border);
   box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    inset 0 1.5px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
     var(--robot-fab-shadow-1),
     var(--robot-fab-shadow-2),
     var(--robot-fab-ring);
@@ -75,12 +75,12 @@
 
 .robotBoton:hover {
   transform: scale(1.08);
-  background: linear-gradient(135deg, #2d5a3d 0%, #1a4d2e 50%, #3a6e3a 100%);
+  background: linear-gradient(135deg, var(--fondo-grad-claro-medio) 0%, var(--verde-bosque) 50%, #3a6e3a 100%);
   border-color: rgba(110, 231, 183, 0.60);
   color: var(--robot-fab-icon-hov);
   box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    inset 0 1.5px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
     var(--robot-fab-shadow-hi),
     0 0 0 1px rgba(110, 231, 183, 0.30);
 }
@@ -89,8 +89,8 @@
   background: linear-gradient(135deg, rgba(45, 90, 61, 1) 0%, rgba(26, 77, 46, 1) 50%, rgba(28, 95, 82, 1) 100%);
   border-color: rgba(110, 231, 183, 0.55);
   box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.20),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    inset 0 1.5px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
     var(--robot-fab-shadow-hi),
     0 0 0 1px rgba(110, 231, 183, 0.35);
 }
@@ -119,8 +119,8 @@
   backdrop-filter: blur(14px) saturate(1.05);
   border: 1px solid var(--robot-window-border);
   box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    inset 0 1.5px 0 var(--overlay-blanco-10),
+    inset 0 -1px 0 var(--overlay-negro-10),
     var(--robot-window-shadow-1),
     var(--robot-window-shadow-2);
 }
