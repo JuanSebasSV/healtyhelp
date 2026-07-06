@@ -6,8 +6,8 @@
 
 :root {
   /* ============ Marca: Verdes ============ */
-  --verde-bosque: var(--verde-bosque);
-  --verde-hoja:   var(--verde-hoja);
+  --verde-bosque: #1a4d2e;
+  --verde-hoja:   #4f772d;
   --verde-btn:    #a7d588;
   --verde-exito:  #6fcf7c;
   --verde-texto-oscuro: #d2ebc3;
@@ -15,7 +15,8 @@
   --verde-menta:  #6ee7b7;
   --verde-progreso: #34d399;
   --verde-progreso-oscuro: #059669;
-  --verde-profundo: var(--verde-profundo);
+  --verde-profundo: #0a1a0f;
+  --negro-grisaceo: #0e1014;
   --verde-lima:   #4ade80;
   --verde-exito-texto: #a8e063;
   --verde-google: #34a853;
@@ -59,10 +60,10 @@
   --negro:        #000000;
 
   /* ============ Fondos oscuros reutilizables ============ */
-  --fondo-grad-claro-medio: var(--fondo-grad-claro-medio);
-  --fondo-oscuro-0: var(--fondo-oscuro-0);
-  --fondo-oscuro-50: var(--fondo-oscuro-50);
-  --fondo-oscuro-100: var(--fondo-oscuro-100);
+  --fondo-grad-claro-medio: #2d5a3d;
+  --fondo-oscuro-0: #0f1a14;
+  --fondo-oscuro-50: #1a2820;
+  --fondo-oscuro-100: #2d3d2f;
 
   /* ============ Sombras base reutilizables ============ */
   --sombra:       0 4px 6px var(--overlay-negro-10);
@@ -133,8 +134,8 @@
 }
 
 .modo-oscuro {
-  --verde-bosque: var(--fondo-grad-claro-medio);
-  --verde-hoja:   var(--verde-hoja);
+  --verde-bosque: #2d5a3d;
+  --verde-hoja:   #6b9e4a;
   --naranja:      #ff9a3c;
   --blanco:       #1a1a1a;
   --gris-claro:   #2d2d2d;
@@ -214,6 +215,12 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;
+}
+
+.modo-oscuro .App:has(.vista-favoritos) {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)),
+    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
 }
 
 .contenido-principal:has(.vistaChatbot) {

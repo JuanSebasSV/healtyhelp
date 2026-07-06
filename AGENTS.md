@@ -1,96 +1,119 @@
-# AGENTS.md — HealtyHelp
+# AGENTS.md
 
-Repo-level guidance for OpenCode sessions. Project overview / Spanish product documentation lives in `client/README.md` — do not duplicate it here.
+Healthy Help — nutrition SPA (React 19 + Vite) backed by an Express 5 / Mongoose API. Operated from Colombia; all timestamps use `America/Bogota`.
 
-## Layout
+## Layout (monorepo without workspaces)
+Two independent Node projects share this repo via folder convention only — there are no npm/pnpm/yarn workspaces and no root scripts.
 
-Three independent npm projects (not workspaces — no root `npm install` drives children):
-
-- **root** — only `sharp` + `compress-images.js` (standalone image CLI). No app code.
-- `client/` — React 19 + Vite SPA (`name: healtyhelp`).
-- `server/` — Express 5 + MongoDB API (`name: healthyhelp-server`).
-
-Real entrypoints:
-- `server/server.js` → mounts `/api/{auth,admin,users,recipes,consumos,chat,terms,notifications,utils,recomendaciones,contacto,favoritos}`.
-- `client/src/main.jsx` → `client/src/App.jsx`.
+- `client/` — React 19 + Vite 7 + react-router-dom 7 + ESLint 9. Entry: `src/main.jsx` → `src/App.jsx`. API client at `src/api/axios.js`.
+- `server/` — Express 5, Mongoose 8, Passport (JWT + Google OAuth 2.0), Cloudinary, Groq SDK, Resend. Entry: `server.js` (port 5000). 11 routers mounted under `/api/*` (see `server.js`).
+- Root `package.json` carries only `sharp` for the `compress-images.js` helper. Don't add client/server deps here.
 
 ## Install & run
-
-Three installs required (no workspaces):
-
-```
-npm install                 # root (only sharp, for compress-images.js)
-(cd server && npm install)
-(cd client && npm install)
-```
-
-Dev (two terminals):
+Install per package; root has no installable app deps:
 
 ```
-(cd server && npm run dev)  # nodemon on PORT (default 5000)
-(cd client && npm run dev)  # Vite on :5173
+cd server && npm install
+cd ../client && npm install
 ```
 
-Other useful commands (run in the relevant subdir):
+Dev servers (two terminals):
 
-- `(cd server && npm start)` — production node
-- `(cd client && npm run build)` / `(cd client && npm run preview)`
-- `(cd client && npm run lint)` — ESLint flat config at `client/eslint.config.js`
-- `node compress-images.js [inputDir] [outputDir]` — root image→WebP utility, sharp-based
+- Backend: `cd server && npm run dev` (nodemon on `:5000`)
+- Frontend: `cd client && npm run dev` (Vite on `:5173`)
 
-**There is no test runner** (no `test` script in either package.json, no Jest/Vitest config) and no typecheck (no TS). Verification = lint (client) + manual run.
+`App.jsx` pings `/api/terms` up to 10× before rendering data — pages stay empty until the backend answers. Start the server first.
 
-## First-time server setup gotchas
+## Reglas obligatorias de edición
 
-`server/server.js` calls `process.exit(1)` if `MONGO_URI` fails — the server will not start without a reachable MongoDB.
+- Hablar en el idioma español
 
-On first successful boot the server auto-runs `server/scripts/seedTerms.js` (idempotent — only inserts if `TermsDocument` collection is empty). No action needed.
+- No poner comentarios en el código
 
-The **first admin** is not auto-created. Run it manually, once:
+- Antes de escribir cualquier selector condicional por tema (claro/oscuro), buscá primero dónde se aplica la clase que lo controla:
+   grep -rn "modo-oscuro" src/App.jsx src/**/*.jsx | grep -i "classname\|classlist"
+   Confirmá si la clase va en <html>, <body>, o algún contenedor específico, ANTES de decidir si usar :root, body, o un selector de clase directo.
 
-```
-(cd server && node scripts/initSuperAdmin.js)
-```
+- La convención de este proyecto (ya la vas a encontrar documentada en AGENTS.md) es:
+    Oscuro: .modo-oscuro .selector
+    Claro:  body:not(.modo-oscuro) .selector
+   NUNCA uses :root:not(.modo-oscuro) en este proyecto. Si en algún momento dudás si :root es lo correcto, no lo uses sin antes confirmar en qué elemento vive la clase.
 
-It reads `SUPER_ADMIN_*` from `server/.env` and exits if the email already exists. After login, change that password immediately (the script logs a warning to that effect).
+- Cuando "separes" o reescribas selectores de tema (claro/oscuro) en cualquier archivo, tu verificación de éxito no puede ser solo "stylelint pasa" ni "no hay duplicados". Stylelint valida sintaxis, no lógica de aplicación. Tenés que verificar también:
+   a) Que el selector de cada bloque solo puede ser verdadero en el tema que le corresponde (no ambos a la vez, no siempre).
+   b) Que la especificidad de ambos bloques (claro vs oscuro) sea comparable, para que no haya uno que gane siempre en la cascada sin importar el orden en el archivo.
 
-## Environment files
+- Si un cambio de color "no se refleja" después de editar y confirmar (sintaxis correcta, sin duplicados, servidor corriendo bien), antes de asumir caché o bug de Vite, revisá la especificidad y validez lógica del selector como primera hipótesis, no la última. Es una causa mucho más común de "esto no se aplica nunca" que problemas de build.
 
-`.env` files are gitignored at every level. The committed `*.example` is not used — variables are documented inline in `server/.env` (don't commit your real one; rotate any secrets that ever leaked).
+### CSS
+- Antes de editar cualquier archivo .css, leelo COMPLETO (no solo grep de fragmentos) para
+  entender selectores existentes relacionados al cambio pedido.
+- Nunca dejes dos definiciones del mismo selector en el archivo. Si encontrás una duplicada
+  al editar, eliminá la vieja en la misma operación.
+- Modo claro y modo oscuro deben vivir en bloques separados y comentados
+  (/* MODO CLARO */ / /* MODO OSCURO */), nunca intercalados.
+- No hagas commit de cambios en archivos .css hasta después de correr y resolver la
+  validación de stylelint sobre esos archivos.
+- Después de editar cualquier archivo .css, corré:
+  npx stylelint $(git diff --name-only --diff-filter=ACM -- '*.css')
+  Si no hay archivos .css modificados, este comando no revisa nada (no es un error).
+  Si reporta duplicados o errores, corregilos antes de dar la tarea por terminada.
+- Al terminar, verificá con grep -c que cada selector que tocaste aparece exactamente 1 vez,
+  y reportá ese conteo en tu respuesta final.
 
-- `server/.env` — required: `MONGO_URI`, `JWT_SECRET`, `GOOGLE_CLIENT_ID/SECRET`, `SUPER_ADMIN_*`, `RESEND_API_KEY`, `CLOUDINARY_*`, `GROQ_API_KEY`. Optional: `PORT`, `FRONTEND_URL`, `BACKEND_URL`, `EMAIL_FROM`, `CONTACT_EMAIL`, `NODE_ENV`.
-- `client/.env` — only `VITE_API_URL` (consumed in `client/src/api/axios.js`, defaults to `http://localhost:5000/api`).
+### Modo oscuro (convención del proyecto)
+La clase `.modo-oscuro` se aplica sobre `<body>`, NUNCA sobre `<html>`. Para estilos
+condicionales por tema, usá siempre:
+- Oscuro: `.modo-oscuro .selector`
+- Claro:  `body:not(.modo-oscuro) .selector`
+NUNCA uses `:root:not(.modo-oscuro)` — `:root` es `<html>`, no `<body>`, así que esa
+condición es siempre verdadera y rompe el modo oscuro silenciosamente (bug real ya
+ocurrido en FiltrosSalud.css).
 
-Google OAuth callback URL is derived as `${BACKEND_URL}/api/auth/google/callback` (`server/config/passport.js`) — keep `BACKEND_URL` in sync with the actual public host, or auth will silently fail.
+### Git
+- NUNCA ejecutes git checkout, git reset, git restore, ni git stash sin pedirme
+  confirmación explícita primero, sin importar la situación.
 
-## Security middleware (server)
+### Diagnóstico de "no se reflejan los cambios"
+- Antes de asumir que es caché del navegador, corré:
+  ps aux | grep -E "vite|node" | grep -v grep
+  Si hay más de un proceso del mismo dev server, matalos todos y arrancá uno limpio
+  ANTES de seguir diagnosticando.
 
-Don't remove or reorder these without a reason — they are wired in `server/server.js:15-62`:
+## Verification
+- Lint: `cd client && npm run lint` (eslint .). Server has no lint script.
+- No typecheck (plain JS, no tsconfig). Don't run `tsc`.
+- No test runner (no jest/vitest/playwright configs). Don't run `npm test`.
+- No CI workflows (`.github/` does not exist). No pre-commit hooks.
 
-- `cors` allowlist (localhost:5173, localhost:3000, plus two production origins)
-- `helmet`, `hpp`
-- `express-rate-limit`: 500/15min on `/api/*`, stricter (200 dev / 20 prod) on `/api/auth/login`
-- Global XSS sanitizer that recursively walks `req.body` strings via `xss`
-- `express.json({ limit: '10mb' })` + `urlencoded` same limit
+## Environment
+- `client/.env` must define `VITE_API_URL` (default fallback in `src/api/axios.js` is `http://localhost:5000/api`). Vars without the `VITE_` prefix are not exposed to the bundle.
+- `server/.env` must define: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRE`, `FRONTEND_URL`, `BACKEND_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `SUPER_ADMIN_NAME`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_EMAIL`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `GROQ_API_KEY`, `PORT`, `NODE_ENV`. Missing vars crash startup.
+- `.env` is gitignored at root, client, and server.
 
-JWT is read from `Authorization: Bearer …` on the client side (`client/src/api/axios.js`); 401s clear `localStorage.token`+`user` and redirect to `/login` unless on a public route.
+## Server quirks
+- On Mongo connect, `server.js` calls `scripts/seedTerms.js` automatically — inserts Terms v1.0.0 only when the `termsdocuments` collection is empty. No-op thereafter.
+- One-time admin bootstrap: `cd server && node scripts/initSuperAdmin.js` (uses `SUPER_ADMIN_*` env vars). Script is idempotent and exits 0 if admin exists.
+- CORS whitelist is hardcoded in `server.js` — adding a new frontend origin requires editing that file, not just an env var.
+- Rate limits (also hardcoded): 500 req/15min per IP on `/api/`, 20/15min on `/api/auth/login` in production (200 in dev).
+- Body limit 10mb. XSS sanitizer (`xss` package) walks every `req.body` before route handlers.
+- Static uploads served from `server/uploads/` at `/uploads`.
+- The tail of `server.js` logs `AdminLog.schema.path('action').enumValues` — that's a leftover debug line, not intentional startup output.
 
-## File / formatting conventions
+## Client quirks
+- Every lazy view is wrapped by `safeLazy` and `SinConexionBoundary` in `App.jsx` so dynamic-import failures (offline) degrade silently instead of crashing the SPA. Preserve both when adding new routes.
+- Custom `wheel`/scroll/middle-click handlers in `App.jsx` cap wheel delta and skip a long list of modal selectors — touching these without re-reading the selector list regresses scroll behavior in modals.
+- Auth state lives in `src/context/AuthProvider.jsx` (reads `localStorage.token`, runs inactivity auto-logout, refreshes user via `/api/auth/check`). Axios 401 interceptor clears the token and redirects to `/login` (skipping public routes listed in `src/api/axios.js`).
+- Cookie consent + Terms versioning have cookie/localStorage/sessionStorage fallbacks orchestrated in `App.jsx` (`getPersisted`/`setPersisted`/`migrarSessionACookies`). Refactor carefully — these are coupled to the persistence contract used by `useTermsGuard.js`.
+- Routes are mostly Spanish (`VistaInicio`, `VistaSeguimiento`, `Dashboard`, etc.); keep new routes consistent.
+- Images: Cloudinary cloud `dqwqmipco` for uploads; Google avatars are auto-upgraded to 400px in `server/config/passport.js`.
 
-- `.gitattributes` forces LF on `*.js`, `*.jsx`, `*.css`, `*.html`, `*.json`. Don't commit CRLF.
-- ESLint (`client/eslint.config.js`) tolerates unused vars matching `^[A-Z_]` — use that for intentionally-exported-only constants.
-- `client/src/components/**` co-locates each component with its `.css` (e.g. `Login.jsx` + `Login.css`). Keep the pairing when adding new components.
-- Routes on the server are split per resource under `server/routes/` and per-controller under `server/controllers/`. Mongoose models live in `server/models/`.
+## Deploy hints
+- Client is a Vite SPA. `client/public/_redirects` (`/* /index.html 200`) is the Netlify SPA rewrite — keep it.
+- Production frontend domains hardcoded in `server.js` CORS: `healthyhelpoficial.com`, `api.healthyhelpoficial.com`.
+- LF line endings are enforced via `.gitattributes`; keep new files LF.
 
-## MCP / skills
-
-- `opencode.json` enables `codebase-memory-mcp`. Prefer its graph tools (`search_graph`, `trace_path`, `get_code_snippet`, `query_graph`, `get_architecture`) over grep/glob for code discovery.
-- A large skill library is locked under `.agents/skills/` (see `skills-lock.json`) — load via the `skill` tool when the task matches (e.g. `web-design-guidelines`, `security-review`, `vercel-react-best-practices`, `nodejs-backend-patterns`, `webapp-testing`).
-- OpenCode subagents already configured in `opencode.json`: `explore`, `scout`, `code-reviewer`. `plan` agent has edit+bash denied — use it for read-only planning.
-
-## Things to watch for
-
-- `server/scripts/seedTerms.js` runs on every boot — only writes when collection is empty, so it's safe to restart, but editing it changes the seeded payload silently.
-- No CI workflows exist (`.github/` is absent). Don't assume `npm test` exists.
-- `client/src/components/layout/PrivateRoute.jsx` accepts a `?preview=true` query param that bypasses auth — leave that alone unless you're explicitly changing preview behavior.
-- Several Spanish strings are hardcoded in user-facing UI; keep new UI strings consistent with the existing tone and language unless told otherwise.
+## What to skip
+- `client/README.md` is a 2900+ line manual of component-by-component Spanish prose, not a setup guide. Treat the code as source of truth, not the README.
+- `client/src/assets/` is large binary art — don't try to read it.
+- `.agents/skills/` are community skill packs (webapp-testing, security-review, git-commit, etc.) — auto-loaded by the `skill` tool when relevant; ignore unless a task matches.

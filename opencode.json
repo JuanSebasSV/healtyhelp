@@ -6,6 +6,11 @@
       "command": ["codebase-memory-mcp"],
       "enabled": true,
       "timeout": 30000
+    },
+    "semgrep": {
+      "type": "local",
+      "command": ["semgrep-mcp"],
+      "enabled": true
     }
   },
   "model": "minimax-coding-plan/MiniMax-M3",
@@ -32,6 +37,15 @@
     "explore": {
       "mode": "subagent",
       "permission": "allow"
+    },
+    "permission": {
+      "bash": {
+        "git checkout *": "ask",
+        "git reset *": "ask",
+        "git restore *": "ask",
+        "git stash *": "ask",
+        "*": "allow"
+      }
     },
     "scout": {
       "mode": "subagent",

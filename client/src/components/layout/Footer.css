@@ -1,7 +1,7 @@
 .footer {
-  background: var(--overlay-negro-10);
-  border-top: 1px solid var(--overlay-verde-hoja-dark-10);
-  box-shadow: 0 4px 16px var(--overlay-negro-10);
+  background: rgba(10, 38, 20, 0.92);
+  border-top: 1px solid rgba(120, 180, 90, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   color: var(--blanco-puro);
   padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem) clamp(1rem, 2vw, 1.5rem);
   margin-top: clamp(2rem, 5vw, 4rem);
@@ -9,9 +9,9 @@
 }
 
 .modo-oscuro .footer {
-  background: var(--overlay-negro-10);
-  border-top-color: var(--overlay-verde-hoja-10);
-  box-shadow: 0 4px 16px var(--overlay-negro-10);
+  background: rgba(4, 12, 7, 0.95);
+  border-top-color: rgba(79, 119, 45, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .footerContenido {
@@ -31,7 +31,7 @@
   margin-bottom: 0.85rem;
   display: flex;
   align-items: center;
-  text-shadow: 0 1px 4px var(--overlay-negro-10);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
 }
 
 .footerSeccion h4 {
@@ -39,13 +39,13 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--overlay-verde-claro-10);
+  color: rgba(195, 235, 210, 0.60);
   margin-bottom: 1rem;
 }
 
 /*Párrafos*/
 .footerSeccion p {
-  color: var(--overlay-verde-mint-10);
+  color: rgba(220, 248, 230, 0.75);
   font-size: 0.9rem;
   line-height: 1.7;
   margin-bottom: 0.5rem;
@@ -64,7 +64,7 @@
   margin-bottom: 0.65rem;
   cursor: pointer;
   transition: transform 0.25s ease, color 0.25s ease;
-  color: var(--overlay-verde-mint-10);
+  color: rgba(220, 248, 230, 0.75);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -93,14 +93,14 @@
   margin: 0 auto;
   text-align: center;
   padding-top: clamp(1rem, 2vw, 1.5rem);
-  border-top: 1px solid var(--overlay-verde-hoja-dark-10);
-  color: var(--overlay-verde-claro-10);
+  border-top: 1px solid rgba(120, 180, 90, 0.20);
+  color: rgba(195, 235, 210, 0.45);
   font-size: 0.82rem;
 }
 
 .modo-oscuro .footerCopy {
-  border-top-color: var(--overlay-verde-hoja-10);
-  color: var(--overlay-verde-claro-10);
+  border-top-color: rgba(79, 119, 45, 0.18);
+  color: rgba(180, 210, 160, 0.35);
 }
 
 /*Responsive*/

@@ -1,7 +1,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--overlay-negro-10);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,18 +17,18 @@
   overflow-y: auto;
   border-radius: 22px;
   padding: 2rem;
-  background: var(--overlay-negro-10);
+  background: rgba(20, 40, 25, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--overlay-blanco-10);
-  box-shadow: 0 24px 64px var(--overlay-negro-10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.28s ease;
   scrollbar-width: none;
 }
 .modal-agregar-consumo::-webkit-scrollbar { display: none; }
 
 .modal-agregar-consumo h2 {
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 1.3rem;
   font-family: 'Georgia', serif;
   font-weight: 400;
@@ -41,8 +41,8 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: var(--overlay-blanco-10);
-  border: 1px solid var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -50,13 +50,13 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.45);
   transition: background 0.18s ease, color 0.18s ease;
   padding: 0;
 }
 .modal-cerrar:hover {
-  background: var(--overlay-blanco-10);
-  color: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.88);
 }
 .modal-cerrar svg {
   width: 13px;
@@ -71,17 +71,17 @@
   justify-content: center;
   gap: 0.4rem;
   font-size: 0.8rem;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.42);
   margin: 0 0 1.2rem;
 }
 .agr-destino-label strong {
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 600;
 }
 .agr-destino-icon {
   width: 14px;
   height: 14px;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.42);
   flex-shrink: 0;
 }
 
@@ -101,22 +101,22 @@
   gap: 0.28rem;
   padding: 0.55rem 0.8rem;
   border-radius: 13px;
-  border: 1px solid var(--overlay-blanco-10);
-  background: var(--overlay-blanco-10);
-  color: var(--overlay-blanco-10);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   min-width: 62px;
 }
 .agr-tipo-btn:hover {
-  background: var(--overlay-blanco-10);
-  color: var(--overlay-blanco-10);
-  border-color: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 .agr-tipo-btn.activo {
   background: rgba(247, 127, 0, 0.14);
   border-color: rgba(247, 127, 0, 0.5);
-  color: var(--overlay-verde-hoja-dark-10);
+  color: rgba(247, 163, 65, 0.95);
 }
 
 .agr-tipo-icon {
@@ -138,7 +138,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.35);
   margin: 0 0 0.35rem 0.1rem;
 }
 
@@ -147,8 +147,8 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  background: var(--overlay-blanco-10);
-  border: 1px solid var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 11px;
   padding: 0.62rem 0.95rem;
   margin-bottom: 0.9rem;
@@ -163,7 +163,7 @@
   width: 15px;
   height: 15px;
   flex-shrink: 0;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.28);
 }
 
 .agr-busqueda input {
@@ -171,7 +171,7 @@
   background: none;
   border: none;
   outline: none;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.9rem;
   font-family: inherit;
   caret-color: rgba(247, 127, 0, 0.8);
@@ -190,7 +190,7 @@
 
 .agr-estado {
   text-align: center;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.22);
   font-size: 0.84rem;
   padding: 2rem 0;
 }
@@ -201,13 +201,13 @@
   gap: 0.7rem;
   padding: 0.55rem 0.75rem;
   border-radius: 11px;
-  background: var(--overlay-blanco-10);
-  border: 1px solid var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   transition: background 0.14s ease, border-color 0.14s ease;
 }
 .agr-receta-item:hover {
-  background: var(--overlay-blanco-10);
-  border-color: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.11);
 }
 
 .agr-receta-item img {
@@ -223,7 +223,7 @@
 .agr-receta-nombre {
   font-size: 0.86rem;
   font-weight: 600;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.86);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -232,7 +232,7 @@
 
 .agr-receta-cal {
   font-size: 0.73rem;
-  color: var(--overlay-verde-claro-10);
+  color: rgba(247, 185, 90, 0.78);
   font-weight: 500;
   margin: 0;
 }
@@ -241,9 +241,9 @@
 .agr-btn-añadir {
   padding: 0.36rem 0.82rem;
   border-radius: 8px;
-  border: 1px solid var(--overlay-verde-hoja-dark-10);
-  background: var(--overlay-verde-hoja-dark-10);
-  color: var(--overlay-verde-brillante-10);
+  border: 1px solid rgba(75, 155, 75, 0.32);
+  background: rgba(75, 155, 75, 0.09);
+  color: rgba(145, 215, 135, 0.88);
   font-size: 0.77rem;
   font-weight: 700;
   cursor: pointer;
@@ -252,8 +252,8 @@
   flex-shrink: 0;
 }
 .agr-btn-añadir:hover:not(:disabled) {
-  background: var(--overlay-verde-hoja-dark-10);
-  border-color: var(--overlay-verde-hoja-dark-10);
+  background: rgba(75, 155, 75, 0.22);
+  border-color: rgba(75, 155, 75, 0.55);
   color: rgba(195, 240, 185, 1);
 }
 .agr-btn-añadir:disabled {

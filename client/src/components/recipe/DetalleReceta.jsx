@@ -23,6 +23,23 @@ const IconoCerrar = memo(() => (
 ));
 IconoCerrar.displayName = "IconoCerrar";
 
+const IconoImagenRota = memo(() => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <circle cx="8.5" cy="9" r="1.5" />
+    <path d="m21 15-5-5L5 21" />
+  </svg>
+));
+IconoImagenRota.displayName = "IconoImagenRota";
+
 const DetalleReceta = memo(
   ({
     receta,
@@ -37,6 +54,7 @@ const DetalleReceta = memo(
 
     const [generandoPDF, setGenerandoPDF] = useState(false);
     const [modalListo,   setModalListo]   = useState(false);
+    const [imgError,     setImgError]     = useState(false);
 
     useEffect(() => {
       const t = setTimeout(() => setModalListo(true), 100);
@@ -71,15 +89,28 @@ const DetalleReceta = memo(
 
           <div className="modalCol modalIzq">
             <div className="modalImg-wrap">
-              <img
-                src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_800')}
-                alt={receta.nombre}
-                className="modalImg"
-                width="800"
-                height="500"
-                loading="lazy"
-                decoding="async"
-              />
+              {!imgError && (
+                <img
+                  src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_800')}
+                  alt={receta.nombre}
+                  className="modalImg"
+                  width="800"
+                  height="500"
+                  loading="lazy"
+                  decoding="async"
+                  onError={() => setImgError(true)}
+                />
+              )}
+
+              {imgError && (
+                <div className="modalImg-fallback" role="img" aria-label="Imagen no disponible">
+                  <div className="modalImg-fallback__icono">
+                    <IconoImagenRota />
+                  </div>
+                  <p className="modalImg-fallback__titulo">Imagen no disponible</p>
+                  <span className="modalImg-fallback__subtitulo">Vuelve más tarde</span>
+                </div>
+              )}
 
               {toggleFav && (
                 <button

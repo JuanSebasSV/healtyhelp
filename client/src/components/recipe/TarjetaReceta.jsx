@@ -4,20 +4,6 @@ import ModalNutricionDetallada from "./ModalNutricionDetallada";
 import { optimizeCloudinary } from "../../utils/cloudinary";
 import "./TarjetaReceta.css";
 
-const formatearCosto = (costo, moneda = "COP") => {
-  if (!costo || costo <= 0) return null;
-  try {
-    return new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: moneda,
-      minimumFractionDigits: moneda === "COP" ? 0 : 2,
-      maximumFractionDigits: moneda === "COP" ? 0 : 2,
-    }).format(costo);
-  } catch {
-    return `${moneda} ${costo.toFixed(2)}`;
-  }
-};
-
 const ESTRELLAS = [1, 2, 3, 4, 5];
 
 const IconoCheck = memo(() => (
@@ -53,6 +39,22 @@ const IconoCorazon = memo(() => (
   </svg>
 ));
 
+const IconoImagenRota = memo(() => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <circle cx="8.5" cy="9" r="1.5" />
+    <path d="m21 15-5-5L5 21" />
+  </svg>
+));
+
 const TarjetaReceta = memo(
   ({
     receta,
@@ -68,6 +70,7 @@ const TarjetaReceta = memo(
   }) => {
     const [prevAutoAbrir, setPrevAutoAbrir] = useState(autoAbrir);
     const [vista, setVista] = useState(autoAbrir ? "detalle" : null);
+    const [imgError, setImgError] = useState(false);
     if (autoAbrir !== prevAutoAbrir) {
       setPrevAutoAbrir(autoAbrir);
       if (autoAbrir) setVista("detalle");
@@ -75,11 +78,6 @@ const TarjetaReceta = memo(
 
     const prom = receta.puntosProm || 0;
     const total = receta.totalResenas || 0;
-
-    const costoFormato = useMemo(
-      () => formatearCosto(receta.costoPorcion, receta.moneda || "COP"),
-      [receta.costoPorcion, receta.moneda],
-    );
 
     const promRedondeado = useMemo(() => Math.round(prom), [prom]);
 
@@ -115,14 +113,27 @@ const TarjetaReceta = memo(
           style={{ scrollMarginTop: "80px" }}
         >
           <div className="tarjetaImg">
-            <img
-              src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_640')}
-              alt={receta.nombre}
-              width="640"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            />
+            {!imgError && (
+              <img
+                src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_640')}
+                alt={receta.nombre}
+                width="640"
+                height="400"
+                loading="lazy"
+                decoding="async"
+                onError={() => setImgError(true)}
+              />
+            )}
+
+            {imgError && (
+              <div className="tarjetaImg-fallback" role="img" aria-label="Imagen no disponible">
+                <div className="tarjetaImg-fallback__icono">
+                  <IconoImagenRota />
+                </div>
+                <p className="tarjetaImg-fallback__titulo">Imagen no disponible</p>
+                <span className="tarjetaImg-fallback__subtitulo">Vuelve más tarde</span>
+              </div>
+            )}
 
             <button
               className={`btnFav${esFav ? " activo" : ""}`}
@@ -132,23 +143,15 @@ const TarjetaReceta = memo(
               <IconoCorazon />
             </button>
 
-            <button
-              className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
-              onClick={handleSeleccionar}
-              title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-              aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
-            >
-              {seleccionada ? <IconoCheck /> : <IconoPDF />}
-            </button>
-
-            {costoFormato && (
-              <div className="tarjeta-costo-badge">
-                <span className="tarjeta-costo-icono">🍽️</span>
-                <span className="tarjeta-costo-valor">{costoFormato}</span>
-                <span className="tarjeta-costo-label">/porción</span>
-              </div>
-            )}
-          </div>
+              <button
+                className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
+                onClick={handleSeleccionar}
+                title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+                aria-label={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}
+              >
+                {seleccionada ? <IconoCheck /> : <IconoPDF />}
+              </button>
+            </div>
 
           <div className="tarjetaInfo">
             <h3>{receta.nombre}</h3>

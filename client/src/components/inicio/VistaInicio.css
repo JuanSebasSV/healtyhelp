@@ -47,8 +47,8 @@
   z-index: 3;
   background: linear-gradient(
     to right,
-    var(--overlay-negro-10) 0%,
-    var(--overlay-negro-10)  45%,
+    rgba(2, 13, 5, 0.55) 0%,
+    rgba(2, 13, 5, 0.2)  45%,
     transparent          70%
   );
   pointer-events: none;
@@ -66,26 +66,26 @@
   flex-direction: column;
   gap: 1rem;
   padding: 2.5rem 2.8rem;
-  background: var(--overlay-negro-10);
+  background: rgba(5, 25, 12, 0.52);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--overlay-blanco-10);
+  border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 20px;
-  box-shadow: 0 8px 32px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 
 .hero-texto:hover {
-  background: var(--overlay-negro-10);
-  border-color: var(--overlay-verde-claro-10);
-  box-shadow: 0 16px 48px var(--overlay-negro-10), 0 0 0 1px var(--overlay-verde-claro-10), inset 0 1px 0 var(--overlay-blanco-10);
+  background: rgba(5, 25, 12, 0.72);
+  border-color: rgba(255, 215, 80, 0.45);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(0, 0, 0, 0.45);
   transform: translateY(calc(-50% - 4px));
 }
 
 .hero-tag {
   display: inline-block;
-  background: var(--overlay-verde-claro-10);
-  border: 1px solid var(--overlay-verde-claro-10);
+  background: rgba(255, 215, 80, 0.18);
+  border: 1px solid rgba(255, 215, 80, 0.5);
   color: var(--dorado);
   font-size: 0.75rem;
   font-weight: 700;
@@ -100,13 +100,13 @@
   font-size: clamp(0.95rem, 2.5vw, 2rem);
   color: var(--blanco-puro);
   line-height: 1.35;
-  text-shadow: 0 2px 12px var(--overlay-negro-10);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   margin: 0;
 }
 
 .hero-texto p {
   font-size: 1rem;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.7;
   margin: 0;
 }
@@ -132,7 +132,7 @@
   height: 8px;
   border-radius: 50%;
   border: none;
-  background: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transform: scaleX(1);
   transform-origin: left center;
@@ -198,9 +198,9 @@
   font-size: clamp(1.5rem, 4vw, 2.5rem);
   margin-bottom: 2rem;
   font-family: 'Georgia', serif;
-  text-shadow: 0 2px 8px var(--overlay-negro-10);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-.modo-oscuro .recetasGrid h2 { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .recetasGrid h2 { color: rgba(210, 235, 195, 0.95); }
 
 .recetasGrid-header {
   display: flex;
@@ -219,7 +219,7 @@
   justify-content: center;
   gap: 1rem;
   padding: 4rem 2rem;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
 }
 
@@ -228,7 +228,7 @@
 .spinner-recetas {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--overlay-blanco-10);
+  border: 3px solid rgba(255, 255, 255, 0.15);
   border-top-color: var(--naranja);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -237,12 +237,12 @@
 
 .sinResultados {
   text-align: center;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.2rem;
   padding: 3rem;
-  background: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
-  border: 1px solid var(--overlay-blanco-10);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
 }
 
@@ -293,7 +293,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 20px var(--overlay-negro-10);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   z-index: 999;
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -329,7 +329,7 @@
     transform: translateY(calc(var(--scroll-pct, 0) * 233%));
     background: linear-gradient(180deg, #4ade80 0%, #16a34a 50%, #22c55e 100%);
     border-radius: 999px;
-    box-shadow: 0 0 8px 2px var(--overlay-verde-brillante-10);
+    box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.45);
     cursor: grab;
     pointer-events: auto;
     contain: layout paint;

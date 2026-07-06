@@ -5,11 +5,14 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-image:
-    linear-gradient(var(--overlay-negro-10), var(--overlay-negro-10)),
-    url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
+  background-image: url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  filter: brightness(0.62) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
 }
 
+.modo-oscuro .fondoAnimado {
+  filter: brightness(0.46) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
+}
+  

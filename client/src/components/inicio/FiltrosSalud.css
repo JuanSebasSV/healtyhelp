@@ -7,16 +7,16 @@
     border: 1px solid #c0ddda;
     border-radius: 22px;
     padding: 1.35rem 1.6rem;
-    box-shadow: 0 8px 32px var(--overlay-negro-10);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
     position: relative;
     min-width: 0;
   }
 
   .modo-oscuro .filtros-bloque {
-    background: var(--overlay-negro-10);
-    border-color: var(--overlay-verde-hoja-10);
-    border-top-color: var(--overlay-verde-hoja-10);
-    box-shadow: 0 8px 32px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
+    background: rgba(3, 12, 6, 0.55);
+    border-color: rgba(79, 119, 45, 0.18);
+    border-top-color: rgba(79, 119, 45, 0.28);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(0, 0, 0, 0.38);
   }
 
   .filtros-bloque__sep {
@@ -28,7 +28,7 @@
   }
 
   .modo-oscuro .filtros-bloque__sep {
-    background: linear-gradient(to right, transparent, var(--overlay-blanco-10) 20%, var(--overlay-blanco-10) 80%, transparent);
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.10) 20%, rgba(255,255,255,0.10) 80%, transparent);
   }
 
   /*Fila 1*/
@@ -45,13 +45,13 @@
     margin: 0;
     background: #f5f9f7;
     border-color: #c0ddda;
-    box-shadow: inset 0 1px 3px var(--overlay-negro-10);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
   }
 
   .filtros-top-row .buscador-input-wrap:focus-within {
     border-color: #2ebe84;
     background: #ffffff;
-    box-shadow: 0 0 0 3px var(--overlay-verde-brillante-10), inset 0 1px 3px var(--overlay-negro-10);
+    box-shadow: 0 0 0 3px rgba(46, 190, 132, 0.12), inset 0 1px 3px rgba(46,190,132,0.12);
   }
 
   /*Buscador*/
@@ -64,13 +64,13 @@
     border: 1.5px solid #c0ddda;
     border-radius: 50px;
     padding: 0.7rem 1.2rem;
-    box-shadow: 0 2px 8px var(--overlay-negro-10);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
   .buscador-input-wrap:focus-within {
     border-color: #2ebe84;
-    box-shadow: 0 4px 16px var(--overlay-verde-brillante-10);
+    box-shadow: 0 4px 16px rgba(46, 190, 132, 0.15);
   }
 
   .buscador-input-wrap svg {
@@ -90,7 +90,7 @@
     color: #2a3d30;
   }
 
-  .buscador-input::placeholder { color: var(--overlay-verde-hoja-10); }
+  .buscador-input::placeholder { color: rgba(42, 61, 48, 0.38); }
 
   .buscador-clear {
     background: none;
@@ -112,17 +112,17 @@
   }
 
   .modo-oscuro .buscador-input-wrap {
-    background: var(--overlay-negro-10);
-    border-color: var(--overlay-verde-hoja-10);
+    background: rgba(10, 25, 15, 0.6);
+    border-color: rgba(79, 119, 45, 0.3);
   }
   .modo-oscuro .buscador-input-wrap:focus-within { border-color: rgba(247,127,0,0.5); }
-  .modo-oscuro .buscador-input-wrap svg { stroke: var(--overlay-blanco-10); }
+  .modo-oscuro .buscador-input-wrap svg { stroke: rgba(255, 255, 255, 0.45); }
   .modo-oscuro .buscador-input-wrap:focus-within svg { stroke: rgba(247,127,0,0.7); }
-  .modo-oscuro .buscador-input { color: var(--overlay-verde-claro-10); }
-  .modo-oscuro .buscador-input::placeholder { color: var(--overlay-verde-hoja-dark-10); }
-  .modo-oscuro .buscador-clear svg { stroke: var(--overlay-blanco-10); }
+  .modo-oscuro .buscador-input { color: rgba(200, 231, 179, 0.9); }
+  .modo-oscuro .buscador-input::placeholder { color: rgba(150, 190, 130, 0.35); }
+  .modo-oscuro .buscador-clear svg { stroke: rgba(255, 255, 255, 0.4); }
   .modo-oscuro .buscador-clear:hover svg { stroke: rgba(220,38,38,0.8); }
-  .modo-oscuro .buscador-conteo { color: var(--overlay-blanco-10); }
+  .modo-oscuro .buscador-conteo { color: rgba(255, 255, 255, 0.45); }
   .modo-oscuro .buscador-input:focus-within {color: #194436;}
 
   /*Botón Tu Tipo de Dieta*/
@@ -137,14 +137,14 @@
     white-space: nowrap;
     border-radius: 50px;
     border: 1.5px solid #2ebe84;
-    background: linear-gradient(135deg, var(--overlay-verde-brillante-10) 0%, var(--overlay-verde-hoja-10) 100%);
+    background: linear-gradient(135deg, rgba(46, 190, 132, 0.18) 0%, rgba(46,190,132,0.18) 100%);
     color: #1c5f52;
     font-size: 0.92rem;
     font-weight: 700;
     letter-spacing: 0.01em;
     cursor: pointer;
     overflow: hidden;
-    box-shadow: 0 4px 18px var(--overlay-verde-brillante-10);
+    box-shadow: 0 4px 18px rgba(46, 190, 132, 0.18);
     transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
@@ -155,7 +155,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(105deg, transparent 20%, var(--overlay-blanco-10) 50%, transparent 80%);
+    background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
     transform: translateX(-120%) skewX(-15deg);
     transition: transform 0.55s ease;
     pointer-events: none;
@@ -164,14 +164,14 @@
 
   .filtroModalBtn:hover {
     border-color: #1c5f52;
-    background: linear-gradient(135deg, var(--overlay-verde-brillante-10) 0%, var(--overlay-verde-hoja-10) 100%);
-    box-shadow: 0 6px 24px var(--overlay-verde-brillante-10);
+    background: linear-gradient(135deg, rgba(46, 190, 132, 0.30) 0%, rgba(46,190,132,0.30) 100%);
+    box-shadow: 0 6px 24px rgba(46, 190, 132, 0.30);
     transform: translateY(-2px);
   }
 
   .filtroModalBtn:active {
     transform: translateY(2px) scale(0.96);
-    box-shadow: 0 1px 6px var(--overlay-verde-brillante-10);
+    box-shadow: 0 1px 6px rgba(46, 190, 132, 0.25);
   }
 
   .filtroModalBtn svg { stroke: #1c5f52; flex-shrink: 0; }
@@ -191,17 +191,17 @@
   }
 
   .modo-oscuro .filtroModalBtn {
-    background: linear-gradient(135deg, rgba(247,127,0,0.30) 0%, var(--overlay-verde-hoja-dark-10) 100%);
+    background: linear-gradient(135deg, rgba(247,127,0,0.30) 0%, rgba(255, 165, 30, 0.22) 100%);
     border-color: rgba(247,127,0,0.55);
     color: var(--blanco-puro);
-    box-shadow: 0 4px 18px rgba(247,127,0,0.28), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 4px 18px rgba(247,127,0,0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     animation: filtroModalPulso 3s ease-in-out infinite;
   }
-  .modo-oscuro .filtroModalBtn svg { stroke: var(--overlay-blanco-10); }
+  .modo-oscuro .filtroModalBtn svg { stroke: rgba(255, 255, 255, 0.9); }
   .modo-oscuro .filtroModalBtn:hover {
     border-color: rgba(247,127,0,0.9);
-    background: linear-gradient(135deg, rgba(247,127,0,0.48) 0%, var(--overlay-verde-hoja-dark-10) 100%);
-    box-shadow: 0 6px 24px rgba(247,127,0,0.45), inset 0 1px 0 var(--overlay-blanco-10);
+    background: linear-gradient(135deg, rgba(247,127,0,0.48) 0%, rgba(255, 165, 30, 0.38) 100%);
+    box-shadow: 0 6px 24px rgba(247,127,0,0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
     animation: none;
   }
 
@@ -251,7 +251,7 @@
     margin: 0 1.25rem;
     flex-shrink: 0;
   }
-  .modo-oscuro .filtros-vsep { background: var(--overlay-verde-hoja-10); }
+  .modo-oscuro .filtros-vsep { background: rgba(79, 119, 45, 0.3); }
 
   /*Tarjetas de categoría*/
   .cats-scroll-outer {
@@ -287,7 +287,7 @@
                 background 0.2s ease,
                 border-color 0.2s ease,
                 box-shadow 0.2s ease;
-    box-shadow: 0 1px 6px var(--overlay-negro-10);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
@@ -296,7 +296,7 @@
     transform: translateY(-3px);
     background: #f0faf5;
     border-color: #2ebe84;
-    box-shadow: 0 6px 16px var(--overlay-verde-brillante-10);
+    box-shadow: 0 6px 16px rgba(46, 190, 132, 0.15);
   }
 
   .cat-card.activo {
@@ -329,12 +329,12 @@
   }
   .cat-card.activo .cat-card__label { color: #fff; }
 
-  .modo-oscuro .cat-card { background: var(--overlay-negro-10); border-color: var(--overlay-verde-hoja-10); color: var(--overlay-blanco-10); }
-  .modo-oscuro .cat-card:hover { background: var(--overlay-negro-10); border-color: rgba(247,127,0,0.45); }
+  .modo-oscuro .cat-card { background: rgba(10, 28, 15, 0.55); border-color: rgba(79, 119, 45, 0.3); color: rgba(255, 255, 255, 0.82); }
+  .modo-oscuro .cat-card:hover { background: rgba(20, 50, 25, 0.7); border-color: rgba(247,127,0,0.45); }
   .modo-oscuro .cat-card.activo { background: rgba(247,127,0,0.22); border-color: rgba(247,127,0,0.65); box-shadow: 0 4px 16px rgba(247,127,0,0.25); }
-  .modo-oscuro .cat-card__icono svg { stroke: var(--overlay-verde-claro-10) !important; }
+  .modo-oscuro .cat-card__icono svg { stroke: rgba(180, 220, 160, 0.85) !important; }
   .modo-oscuro .cat-card.activo .cat-card__icono svg { stroke: #fff !important; }
-  .modo-oscuro .cat-card__label { color: var(--overlay-verde-claro-10); }
+  .modo-oscuro .cat-card__label { color: rgba(200, 230, 180, 0.85); }
   .modo-oscuro .cat-card.activo .cat-card__label { color: #fff; }
 
   /*Control de tiempo*/
@@ -360,8 +360,8 @@
     flex-shrink: 0;
   }
   .tiempo-etiqueta svg { stroke: #9ab8a8; flex-shrink: 0; width: 13px; height: 13px; }
-  .modo-oscuro .tiempo-etiqueta { color: var(--overlay-verde-claro-10); }
-  .modo-oscuro .tiempo-etiqueta svg { stroke: var(--overlay-verde-claro-10); }
+  .modo-oscuro .tiempo-etiqueta { color: rgba(180, 230, 155, 0.80); }
+  .modo-oscuro .tiempo-etiqueta svg { stroke: rgba(180, 230, 155, 0.65); }
 
   .tiempo-seg {
     display: inline-flex;
@@ -370,12 +370,12 @@
     padding: 3px;
     gap: 2px;
     border: 1px solid #c0ddda;
-    box-shadow: inset 0 1px 3px var(--overlay-negro-10);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
   }
   .modo-oscuro .tiempo-seg {
-    background: var(--overlay-blanco-10);
-    border-color: var(--overlay-blanco-10);
-    box-shadow: inset 0 1px 3px var(--overlay-negro-10);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
   }
 
   .tiempo-seg__btn {
@@ -395,14 +395,14 @@
   .tiempo-seg__btn.activo {
     background: var(--naranja);
     color: #ffffff;
-    box-shadow: inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  .modo-oscuro .tiempo-seg__btn { color: var(--overlay-verde-claro-10); }
-  .modo-oscuro .tiempo-seg__btn:hover { background: var(--overlay-blanco-10); color: var(--overlay-verde-mint-10); }
+  .modo-oscuro .tiempo-seg__btn { color: rgba(215, 245, 190, 0.80); }
+  .modo-oscuro .tiempo-seg__btn:hover { background: rgba(255, 255, 255, 0.10); color: rgba(230, 255, 210, 0.97); }
   .modo-oscuro .tiempo-seg__btn.activo {
-    background: linear-gradient(135deg, var(--overlay-verde-brillante-10) 0%, var(--overlay-verde-brillante-10) 100%);
+    background: linear-gradient(135deg, rgba(56,189,248,0.32) 0%, rgba(14,165,233,0.24) 100%);
     color: rgba(200,238,255,1);
-    box-shadow: inset 0 1px 0 var(--overlay-blanco-10), 0 2px 10px var(--overlay-verde-brillante-10);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 2px 10px rgba(255, 255, 255, 0.18);
   }
 
   .tiempo-seg__limpiar {
@@ -424,15 +424,15 @@
   .tiempo-seg__limpiar:hover {
     background: rgba(220,38,38,0.08);
     border-color: rgba(220,38,38,0.30);
-    color: var(--overlay-verde-hoja-10);
+    color: rgba(200, 50, 50, 0.85);
   }
-  .modo-oscuro .tiempo-seg__limpiar { border-color: var(--overlay-blanco-10); color: var(--overlay-blanco-10); }
+  .modo-oscuro .tiempo-seg__limpiar { border-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.42); }
 
   /*Modal de condiciones*/
   .filtroModalOverlay {
     position: fixed;
     inset: 0;
-    background: var(--overlay-negro-10);
+    background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 1000;
@@ -445,17 +445,17 @@
   }
 
   .filtroModal {
-    background: var(--overlay-verde-hoja-10);
+    background: rgba(38, 124, 104, 0.96);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--overlay-blanco-10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
     border-radius: 24px;
     width: 100%;
     max-width: 820px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 24px 64px var(--overlay-negro-10);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
     animation: modalEntrada 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
     overflow: hidden;
   }
@@ -470,8 +470,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--overlay-blanco-10);
-    background: var(--overlay-verde-hoja-10);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(26, 77, 46, 0.5);
     flex-shrink: 0;
   }
 
@@ -479,12 +479,12 @@
     color: var(--blanco-puro);
     margin: 0;
     font-size: 1.4rem;
-    text-shadow: 0 1px 4px var(--overlay-negro-10);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
 
   .filtroModalCerrar {
-    background: var(--overlay-blanco-10);
-    border: 1px solid var(--overlay-blanco-10);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     width: 38px;
     height: 38px;
@@ -509,42 +509,56 @@
 
   /* MODO OSCURO */
   .modo-oscuro .filtroModal {
-    background: linear-gradient(180deg, var(--verde-profundo) 0%, #102818 50%, var(--verde-profundo) 100%);
-    border: 1px solid var(--overlay-verde-hoja-10);
+    background: rgba(14, 16, 20, 0.55);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
-      0 1px 2px var(--overlay-negro-10),
-      0 24px 64px var(--overlay-negro-10),
-      inset 0 1px 0 rgba(110, 231, 183, 0.08);
+      0 24px 64px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.10);
   }
   .modo-oscuro .filtroModalOverlay {
-    background: var(--overlay-negro-10);
+    background: rgba(6, 15, 9, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
   .modo-oscuro .filtroModalHeader {
-    background: linear-gradient(180deg, var(--verde-bosque) 0%, #143220 100%);
-    border-bottom: 1px solid var(--overlay-verde-hoja-10);
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
   .modo-oscuro .filtroModalHeader h2 {
     color: #ffffff;
-    text-shadow: 0 1px 6px var(--overlay-negro-10);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.60);
   }
   .modo-oscuro .filtroModalCerrar {
-    background: var(--overlay-negro-10);
-    border: 1px solid var(--overlay-verde-hoja-10);
-    color: var(--overlay-verde-mint-10);
+    background: rgba(45, 90, 61, 0.85);
+    border: 1px solid rgba(110, 231, 183, 0.30);
+    color: var(--verde-hoja);
   }
   .modo-oscuro .filtroModalCerrar:hover {
     background: #c8742c;
     border-color: #c8742c;
     color: #ffffff;
   }
-  .modo-oscuro .filtroModalBody { background: transparent; }
-  .modo-oscuro .filtroInfo p { color: var(--overlay-verde-mint-10); }
+  .modo-oscuro .filtroModalBody {
+    background: transparent;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.20) transparent;
+  }
+  .modo-oscuro .filtroModalBody::-webkit-scrollbar { width: 8px; height: 8px; }
+  .modo-oscuro .filtroModalBody::-webkit-scrollbar-track { background: transparent; }
+  .modo-oscuro .filtroModalBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.20);
+    border-radius: 4px;
+  }
+  .modo-oscuro .filtroModalBody::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.30);
+  }
+  .modo-oscuro .filtroInfo p { color: rgba(220, 248, 230, 0.92); }
   .modo-oscuro .btnLimpiar {
-    background: var(--overlay-negro-10);
-    border-color: var(--overlay-verde-hoja-10);
-    color: var(--verde-menta);
+    background: linear-gradient(135deg, var(--verde-bosque) 0%, #1a4d2e 100%);
+    border-color: var(--verde-menta);
   }
   .modo-oscuro .btnLimpiar:hover {
     background: #c8742c;
@@ -563,17 +577,16 @@
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--verde-menta);
+    color: var(--verde-hoja);
   }
   .modo-oscuro .filtroGrupo__titulo svg { color: currentColor; stroke: currentColor; flex-shrink: 0; }
-  .modo-oscuro .filtroGrupo--medica .filtroGrupo__titulo { color: var(--verde-menta); }
+  .modo-oscuro .filtroGrupo--medica .filtroGrupo__titulo { color: var(--blanco-puro); }
   .modo-oscuro .filtroGrupo--dieta .filtroGrupo__titulo { color: #ffb347; }
   .modo-oscuro .filtroGrupo--alergia .filtroGrupo__titulo { color: #f4a3a3; }
   .modo-oscuro .filtroCard {
-    background: var(--overlay-negro-10);
-    border: 1.5px solid var(--overlay-verde-hoja-10);
-    box-shadow: 0 2px 8px var(--overlay-negro-10);
-    color: var(--overlay-verde-mint-10);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--blanco-puro);
   }
   .modo-oscuro .filtroCard::before {
     content: '';
@@ -587,15 +600,14 @@
     transition: opacity 0.25s ease, height 0.25s ease;
     background: transparent;
   }
-  .modo-oscuro .filtroCard--medica::before { background: #6ee7b7; }
+  .modo-oscuro .filtroCard--medica::before { background: var(--verde-hoja); }
   .modo-oscuro .filtroCard--dieta::before { background: #f77f00; }
   .modo-oscuro .filtroCard--alergia::before { background: #dc2626; }
   .modo-oscuro .filtroCard:hover::before { height: 3px; opacity: 1; }
   .modo-oscuro .filtroCard:hover {
     transform: translateY(-4px);
-    border-color: var(--verde-menta);
-    background: #143220;
-    box-shadow: 0 12px 28px var(--overlay-negro-10), 0 4px 10px rgba(110, 231, 183, 0.20);
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.10);
   }
   .modo-oscuro .filtroCard:active { transform: translateY(-1px); }
   .modo-oscuro .filtroCard:focus-visible {
@@ -605,24 +617,24 @@
   .modo-oscuro .filtroCard.activo {
     background: linear-gradient(135deg, var(--verde-bosque) 0%, var(--fondo-grad-claro-medio) 100%);
     border-color: var(--verde-menta);
-    box-shadow: 0 8px 20px rgba(110, 231, 183, 0.35), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px rgba(110, 231, 183, 0.35), inset 0 1px 0 rgba(110, 231, 183, 0.35);
   }
   .modo-oscuro .filtroCard--dieta.activo {
     background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
     border-color: #ffb347;
-    box-shadow: 0 8px 20px rgba(247, 127, 0, 0.45), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px rgba(247, 127, 0, 0.45), inset 0 1px 0 rgba(247, 127, 0, 0.45);
   }
   .modo-oscuro .filtroCard--alergia.activo {
     background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%);
     border-color: #f4a3a3;
-    box-shadow: 0 8px 20px var(--overlay-verde-hoja-10), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px rgba(185, 28, 28, 0.45), inset 0 1px 0 rgba(185, 28, 28, 0.45);
   }
   .modo-oscuro .filtroIcono svg {
-    color: var(--verde-menta);
-    stroke: var(--verde-menta);
-    opacity: 0.95;
+    color: var(--verde-hoja);
+    stroke: var(--verde-hoja);
+    opacity: 1;
   }
-  .modo-oscuro .filtroCard--medica .filtroIcono svg { color: var(--verde-menta); stroke: var(--verde-menta); }
+  .modo-oscuro .filtroCard--medica .filtroIcono svg { color: var(--verde-hoja); stroke: var(--verde-hoja); }
   .modo-oscuro .filtroCard--dieta .filtroIcono svg { color: #ffb347; stroke: #ffb347; }
   .modo-oscuro .filtroCard--alergia .filtroIcono svg { color: #f4a3a3; stroke: #f4a3a3; }
   .modo-oscuro .filtroCard:hover .filtroIcono svg {
@@ -635,7 +647,7 @@
     fill: #ffffff;
     opacity: 1;
   }
-  .modo-oscuro .filtroNombre { color: var(--overlay-verde-mint-10); font-weight: 600; }
+  .modo-oscuro .filtroNombre { color: var(--blanco-puro); font-weight: 600; }
   .modo-oscuro .filtroCard.activo .filtroNombre { color: #ffffff; }
   .modo-oscuro .filtroCheck {
     background: #c8742c;
@@ -648,15 +660,15 @@
   /* MODO CLARO */
   body:not(.modo-oscuro) .filtroModal {
     background: #d4dec5;
-    border: 1px solid var(--overlay-verde-hoja-10);
+    border: 1px solid var(--verde-bosque);
     box-shadow:
-      0 24px 64px var(--overlay-verde-hoja-10),
-      0 4px 16px var(--overlay-verde-hoja-10),
-      inset 0 1px 0 var(--overlay-blanco-10);
+      0 24px 64px rgba(0, 0, 0, 0.25),
+      0 4px 16px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.30);
   }
   body:not(.modo-oscuro) .filtroModalHeader {
     background: linear-gradient(135deg, var(--verde-bosque) 0%, var(--fondo-grad-claro-medio) 50%, var(--verde-bosque) 100%);
-    border-bottom: 1px solid var(--overlay-verde-hoja-10);
+    border-bottom: 1px solid var(--verde-bosque);
     padding: 1.6rem 2rem;
   }
   body:not(.modo-oscuro) .filtroModalHeader h2 {
@@ -664,23 +676,24 @@
     font-family: 'Playfair Display', 'Georgia', serif;
     font-weight: 700;
     font-size: 1.5rem;
-    text-shadow: 0 1px 4px var(--overlay-negro-10);
+    text-shadow: 0 1px 4px var(--verde-profundo);
     letter-spacing: -0.01em;
   }
   body:not(.modo-oscuro) .filtroModalCerrar {
-    background: var(--overlay-blanco-10);
-    border: 1px solid var(--overlay-blanco-10);
-    color: #ffffff;
+    background: var(--blanco-puro);
+    border: 1px solid var(--verde-bosque);
+    color: var(--verde-bosque);
     box-shadow: none;
   }
   body:not(.modo-oscuro) .filtroModalCerrar:hover {
     background: #c8742c;
     border-color: #e0823a;
     color: #ffffff;
-    box-shadow: 0 4px 14px var(--overlay-verde-hoja-dark-10);
+    box-shadow: 0 4px 14px var(--naranja);
+    transform: rotate(90deg);
   }
   body:not(.modo-oscuro) .filtroModalOverlay {
-    background: var(--overlay-negro-10);
+    background: rgba(20, 50, 38, 0.45);
     backdrop-filter: blur(7px);
     -webkit-backdrop-filter: blur(7px);
   }
@@ -696,14 +709,14 @@
     background: #ffffff;
     border: 1.5px solid #c8742c;
     color: #c8742c;
-    box-shadow: 0 2px 8px var(--overlay-verde-hoja-dark-10);
+    box-shadow: 0 2px 8px var(--naranja-oscuro);
   }
   body:not(.modo-oscuro) .btnLimpiar:hover {
     background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
     border-color: #c8742c;
     color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--overlay-verde-hoja-dark-10);
+    box-shadow: 0 6px 20px var(--naranja-oscuro);
   }
   body:not(.modo-oscuro) .filtroGrupo {
     margin-top: 1.5rem;
@@ -720,12 +733,12 @@
     border-radius: 8px;
     font-size: 0.95rem;
     background: #ffffff;
-    box-shadow: 0 1px 3px var(--overlay-verde-hoja-10);
+    box-shadow: 0 1px 3px var(--verde-bosque);
   }
   body:not(.modo-oscuro) .filtroCard {
     background: #ffffff;
-    border: 1.5px solid var(--overlay-verde-hoja-10);
-    box-shadow: 0 2px 8px var(--overlay-verde-hoja-10);
+    border: 1.5px solid var(--verde-bosque);
+    box-shadow: 0 2px 8px var(--verde-bosque);
   }
   body:not(.modo-oscuro) .filtroCard::before {
     content: '';
@@ -739,15 +752,15 @@
     transition: opacity 0.25s ease, height 0.25s ease;
     background: transparent;
   }
-  body:not(.modo-oscuro) .filtroCard--medica::before  { background: var(--overlay-verde-hoja-10); }
-  body:not(.modo-oscuro) .filtroCard--dieta::before   { background: var(--overlay-verde-hoja-10); }
-  body:not(.modo-oscuro) .filtroCard--alergia::before { background: var(--overlay-verde-hoja-10); }
+  body:not(.modo-oscuro) .filtroCard--medica::before  { background: var(--verde-menta); }
+  body:not(.modo-oscuro) .filtroCard--dieta::before   { background: var(--naranja); }
+  body:not(.modo-oscuro) .filtroCard--alergia::before { background: var(--rojo); }
   body:not(.modo-oscuro) .filtroCard:hover::before    { height: 3px; opacity: 1; }
   body:not(.modo-oscuro) .filtroCard:hover {
     transform: translateY(-4px);
-    border-color: var(--overlay-verde-hoja-10);
+    border-color: var(--verde-bosque);
     background: #ffffff;
-    box-shadow: 0 12px 24px var(--overlay-verde-hoja-10), 0 4px 8px var(--overlay-verde-hoja-10);
+    box-shadow: 0 12px 24px var(--verde-bosque), 0 4px 8px var(--verde-bosque);
   }
   body:not(.modo-oscuro) .filtroCard:active {
     transform: translateY(-1px);
@@ -759,17 +772,17 @@
   body:not(.modo-oscuro) .filtroCard.activo {
     background: linear-gradient(135deg, var(--verde-bosque) 0%, var(--fondo-grad-claro-medio) 100%);
     border-color: var(--verde-bosque);
-    box-shadow: 0 8px 20px var(--overlay-verde-hoja-10), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px var(--verde-bosque), inset 0 1px 0 var(--blanco-puro);
   }
   body:not(.modo-oscuro) .filtroCard--dieta.activo {
     background: linear-gradient(135deg, #c8742c 0%, #e0823a 100%);
     border-color: #c8742c;
-    box-shadow: 0 8px 20px var(--overlay-verde-hoja-dark-10), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px var(--naranja-oscuro), inset 0 1px 0 var(--blanco-puro);
   }
   body:not(.modo-oscuro) .filtroCard--alergia.activo {
     background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
     border-color: #b91c1c;
-    box-shadow: 0 8px 20px var(--overlay-verde-hoja-10), inset 0 1px 0 var(--overlay-blanco-10);
+    box-shadow: 0 8px 20px #b91c1c, inset 0 1px 0 var(--blanco-puro);
   }
   body:not(.modo-oscuro) .filtroIcono svg {
     color: var(--verde-bosque);
@@ -801,7 +814,7 @@
     background: #c8742c;
     color: #ffffff;
     border: 1.5px solid #ffffff;
-    box-shadow: 0 2px 10px var(--overlay-verde-hoja-dark-10);
+    box-shadow: 0 2px 10px var(--naranja);
     font-weight: 800;
   }
 
@@ -830,7 +843,7 @@
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
   }
-  .filtroInfo p { color: var(--overlay-blanco-10); margin: 0; flex: 1; min-width: 250px; }
+  .filtroInfo p { color: rgba(255, 255, 255, 0.85); margin: 0; flex: 1; min-width: 250px; }
 
   .btnLimpiar {
     padding: 0.75rem 1.5rem;
@@ -872,14 +885,14 @@
     gap: 0.5rem;
     text-align: center;
     min-height: 88px;
-    box-shadow: 0 1px 4px var(--overlay-negro-10);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     contain: layout style;
   }
   .filtroCard:hover {
     transform: translateY(-3px);
     border-color: #2ebe84;
     background: #f0faf5;
-    box-shadow: 0 6px 18px var(--overlay-verde-brillante-10);
+    box-shadow: 0 6px 18px rgba(46, 190, 132, 0.15);
   }
   .filtroCard.activo {
     background: var(--naranja);
@@ -891,7 +904,7 @@
   .filtroIcono svg {
     width: 30px;
     height: 30px;
-    color: var(--overlay-verde-brillante-10);
+    color: rgba(58, 162, 150, 0.9);
     stroke-width: 1.5;
     stroke: currentColor;
   }
@@ -917,7 +930,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px var(--overlay-verde-hoja-10);
+    box-shadow: 0 2px 6px rgba(28, 95, 82, 0.35);
   }
 
   /*Responsive*/

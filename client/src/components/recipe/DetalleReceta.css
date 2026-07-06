@@ -14,11 +14,11 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1.5px solid var(--overlay-blanco-10);
-  background: var(--overlay-negro-10);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(20, 20, 20, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -26,12 +26,12 @@
   padding: 0;
   z-index: 10;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 2px 12px var(--overlay-negro-10);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 .btn-cerrar-modal svg {
   width: 15px;
   height: 15px;
-  stroke: var(--overlay-blanco-10);
+  stroke: rgba(255, 255, 255, 0.75);
   transition: stroke 0.2s ease;
 }
 .btn-cerrar-modal:hover {
@@ -48,11 +48,11 @@
   padding: 2rem;
   overflow-y: auto;
   height: 100%;
-  background: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--overlay-blanco-10);
-  box-shadow: 0 16px 48px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-blanco-10);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 0, 0, 0.2);
   scrollbar-width: none;
   contain: layout style;
 }
@@ -62,9 +62,9 @@
 .modalDer { flex: 0.8; }
 
 .modo-oscuro .modalCol {
-  background: var(--overlay-negro-10);
-  border-color: var(--overlay-verde-hoja-10);
-  box-shadow: 0 16px 48px var(--overlay-negro-10), inset 0 1px 0 var(--overlay-verde-hoja-dark-10);
+  background: rgba(20, 40, 34, 0.6);
+  border-color: rgba(79, 119, 45, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .modalImg {
@@ -73,7 +73,75 @@
   object-fit: cover;
   border-radius: 14px;
   margin-bottom: 1.5rem;
-  box-shadow: 0 8px 24px var(--overlay-negro-10);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.modalImg-fallback {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  text-align: center;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(110, 231, 183, 0.12), transparent 55%),
+    radial-gradient(circle at 75% 80%, rgba(46, 190, 132, 0.12), transparent 55%),
+    linear-gradient(135deg, #f5faf6 0%, #e8f3eb 100%);
+  color: var(--verde-bosque);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.modo-oscuro .modalImg-fallback {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(110, 231, 183, 0.12), transparent 55%),
+    radial-gradient(circle at 75% 80%, rgba(46, 190, 132, 0.12), transparent 55%),
+    linear-gradient(135deg, rgba(18, 32, 22, 0.85) 0%, rgba(10, 22, 14, 0.92) 100%);
+  color: #d2ebc3;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.modalImg-fallback__icono {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--verde-bosque);
+  box-shadow: 0 6px 22px rgba(46, 190, 132, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.modo-oscuro .modalImg-fallback__icono {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--verde-hoja);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.modalImg-fallback__icono svg {
+  width: 40px;
+  height: 40px;
+}
+
+.modalImg-fallback__titulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.modalImg-fallback__subtitulo {
+  font-size: 0.78rem;
+  font-weight: 500;
+  opacity: 0.72;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .modalContenedorReceta h2 {
@@ -84,7 +152,7 @@
 }
 
 .modalDesc {
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 1rem;
   margin-bottom: 2rem;
   line-height: 1.65;
@@ -95,9 +163,9 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.9rem;
-  color: var(--overlay-blanco-10);
-  background: var(--overlay-verde-hoja-10);
-  border: 1px solid var(--overlay-verde-hoja-10);
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(45, 106, 82, 0.2);
+  border: 1px solid rgba(45, 106, 82, 0.35);
   border-radius: 50px;
   padding: 0.3rem 0.85rem;
   margin-bottom: 1rem;
@@ -109,7 +177,7 @@
 }
 
 .detalle-tiempo strong {
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 700;
 }
 
@@ -120,7 +188,7 @@
   font-size: 1.25rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--overlay-blanco-10);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .modalSeccion ul,
@@ -128,13 +196,13 @@
 
 .modalSeccion li {
   margin-bottom: 0.55rem;
-  color: var(--overlay-blanco-10);
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
   font-size: 0.95rem;
 }
 
 .resenas-seccion {
-  border-top: 1px solid var(--overlay-blanco-10);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-top: 1.5rem;
 }
 
@@ -148,6 +216,7 @@
   .modalCol { height: auto; overflow-y: visible; padding: 1.25rem; will-change: auto; }
   .modalIzq, .modalDer { flex: 1; }
   .modalImg { height: 180px; }
+  .modalImg-fallback { height: 180px; }
   .modalContenedorReceta h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
 }
 

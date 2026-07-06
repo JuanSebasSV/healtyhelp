@@ -11,7 +11,7 @@
   flex-direction: column;
   background: #fffbf7;
   border: 1.5px solid #c0ddda;
-  box-shadow: 0 2px 14px var(--overlay-verde-hoja-10);
+  box-shadow: 0 2px 14px rgba(80, 60, 20, 0.08);
   contain: layout style;
   height: 100%;
 }
@@ -21,9 +21,9 @@
 }
 
 .modo-oscuro .tarjetaReceta {
-  background: var(--overlay-negro-10);
-  border-color: var(--overlay-verde-hoja-10);
-  box-shadow: 0 4px 24px var(--overlay-negro-10);
+  background: rgba(10, 22, 14, 0.62);
+  border-color: rgba(79, 119, 45, 0.35);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
 }
 
 .modo-oscuro .tarjetaReceta:hover {
@@ -37,7 +37,7 @@
   aspect-ratio: 16 / 11;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--overlay-blanco-10);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 16px 16px 0 0;
   contain: layout paint;
 }
@@ -53,6 +53,72 @@
   clip-path: inset(0 round 16px 16px 0 0);
 }
 
+.tarjetaImg-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  text-align: center;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(110, 231, 183, 0.10), transparent 55%),
+    radial-gradient(circle at 75% 80%, rgba(46, 190, 132, 0.10), transparent 55%),
+    linear-gradient(135deg, #f5faf6 0%, #e8f3eb 100%);
+  color: var(--verde-bosque);
+  z-index: 0;
+}
+
+.modo-oscuro .tarjetaImg-fallback {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(110, 231, 183, 0.10), transparent 55%),
+    radial-gradient(circle at 75% 80%, rgba(46, 190, 132, 0.10), transparent 55%),
+    linear-gradient(135deg, rgba(18, 32, 22, 0.85) 0%, rgba(10, 22, 14, 0.92) 100%);
+  color: #d2ebc3;
+}
+
+.tarjetaImg-fallback__icono {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--verde-bosque);
+  box-shadow: 0 4px 14px rgba(46, 190, 132, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.15rem;
+}
+
+.modo-oscuro .tarjetaImg-fallback__icono {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--verde-hoja);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.tarjetaImg-fallback__icono svg {
+  width: 30px;
+  height: 30px;
+}
+
+.tarjetaImg-fallback__titulo {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tarjetaImg-fallback__subtitulo {
+  font-size: 0.74rem;
+  font-weight: 500;
+  opacity: 0.72;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .tarjetaReceta:hover .tarjetaImg img {
   transform: scale(1.08);
 }
@@ -64,7 +130,7 @@
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, var(--overlay-negro-10));
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.22));
   pointer-events: none;
 }
 
@@ -88,9 +154,9 @@
 .tarjetaImg--cargando {
   background: linear-gradient(
     90deg,
-    var(--overlay-blanco-10) 25%,
-    var(--overlay-blanco-10) 50%,
-    var(--overlay-blanco-10) 75%
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 75%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.5s infinite;
@@ -114,7 +180,7 @@
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: var(--overlay-blanco-10);
+  background: rgba(245, 240, 232, 0.92);
   cursor: pointer;
   transition: background 0.22s ease, transform 0.22s ease;
   display: flex;
@@ -122,7 +188,7 @@
   justify-content: center;
   padding: 0;
   z-index: 3;
-  box-shadow: 0 2px 8px var(--overlay-negro-10);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .btnFav svg {
@@ -151,8 +217,8 @@
 }
 
 .modo-oscuro .tarjetaInfo {
-  background: var(--overlay-negro-10);
-  border-color: var(--overlay-verde-hoja-10);
+  background: rgba(10, 22, 14, 0.35);
+  border-color: rgba(79, 119, 45, 0.18);
 }
 
 .tarjetaInfo h3 {
@@ -167,7 +233,7 @@
   overflow: hidden;
 }
 
-.modo-oscuro .tarjetaInfo h3 { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .tarjetaInfo h3 { color: rgba(220, 245, 200, 0.95); }
 
 .tarjetaInfo p {
   color: #7a6848;
@@ -181,7 +247,7 @@
   overflow: hidden;
 }
 
-.modo-oscuro .tarjetaInfo p { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .tarjetaInfo p { color: rgba(200, 230, 180, 0.6); }
 
 /* Puntuación */
 
@@ -194,7 +260,7 @@
   margin-top: auto;
 }
 
-.modo-oscuro .tarjetaPuntuacion { border-top-color: var(--overlay-verde-hoja-10); }
+.modo-oscuro .tarjetaPuntuacion { border-top-color: rgba(79, 119, 45, 0.2); }
 
 .estrellas-mini { display: flex; gap: 0.1rem; }
 
@@ -206,14 +272,14 @@
 }
 .estrella-ico.llena { color: var(--ambar); }
 .estrella-ico.vacia { color: #c8b99a; }
-.modo-oscuro .estrella-ico.vacia { color: var(--overlay-blanco-10); }
+.modo-oscuro .estrella-ico.vacia { color: rgba(255, 255, 255, 0.15); }
 
 .tarjeta-prom-txt {
   font-size: 0.8rem;
   font-weight: 600;
   color: #a89068;
 }
-.modo-oscuro .tarjeta-prom-txt { color: var(--overlay-verde-claro-10); }
+.modo-oscuro .tarjeta-prom-txt { color: rgba(180, 220, 150, 0.5); }
 
 /* Badge tiempo */
 
@@ -225,8 +291,8 @@
   font-size: 0.72rem;
   font-weight: 600;
   color: #7a6848;
-  background: var(--overlay-verde-hoja-10);
-  border: 1px solid var(--overlay-verde-hoja-10);
+  background: rgba(45, 106, 82, 0.1);
+  border: 1px solid rgba(45, 106, 82, 0.2);
   border-radius: 50px;
   padding: 0.15rem 0.5rem;
   white-space: nowrap;
@@ -235,9 +301,9 @@
 .tarjeta-tiempo svg { stroke: #2d6a52; flex-shrink: 0; }
 
 .modo-oscuro .tarjeta-tiempo {
-  color: var(--overlay-verde-claro-10);
-  background: var(--overlay-verde-hoja-dark-10);
-  border-color: var(--overlay-verde-hoja-dark-10);
+  color: rgba(180, 220, 150, 0.7);
+  background: rgba(78, 158, 122, 0.12);
+  border-color: rgba(78, 158, 122, 0.25);
 }
 
 .modo-oscuro .tarjeta-tiempo svg { stroke: rgba(110, 231, 183, 0.7); }
@@ -251,8 +317,8 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  border: 1px solid var(--overlay-blanco-10);
-  background: var(--overlay-negro-10);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.42);
   color: #fff;
   cursor: pointer;
   display: flex;
@@ -266,24 +332,24 @@
 .btnSeleccionar svg {
   width: 17px;
   height: 17px;
-  stroke: var(--overlay-blanco-10);
+  stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 2;
   fill: none;
   transition: stroke 0.2s ease;
-  filter: drop-shadow(0 1px 3px var(--overlay-negro-10));
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
 }
 
 .btnSeleccionar:hover {
-  background: var(--overlay-verde-hoja-10);
-  border-color: var(--overlay-verde-brillante-10);
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(74, 182, 107, 0.6);
   transform: scale(1.1);
 }
 .btnSeleccionar:hover svg { stroke: #4ab66b; }
 .btnSeleccionar.activo {
-  background: var(--overlay-verde-hoja-10);
-  border-color: var(--overlay-verde-hoja-10);
+  background: rgba(22, 163, 74, 0.35);
+  border-color: rgba(22, 163, 74, 0.65);
 }
-.btnSeleccionar.activo svg { stroke: #4ade80; fill: var(--overlay-verde-brillante-10); }
+.btnSeleccionar.activo svg { stroke: #4ade80; fill: rgba(74, 222, 128, 0.15); }
 
 .tarjeta-seleccionada { outline: 2px solid #16a34a; }
 
@@ -307,8 +373,8 @@
     top: 0.35rem;
     right: 0.35rem;
     border-radius: 8px;
-    background: var(--overlay-blanco-10);
-    box-shadow: 0 2px 8px var(--overlay-negro-10);
+    background: rgba(245, 240, 232, 0.92);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   }
   .btnFav svg { width: 13px; height: 13px; stroke: #9a8060; }
 
@@ -318,8 +384,8 @@
     bottom: 0.35rem;
     right: 0.35rem;
     border-radius: 8px;
-    background: var(--overlay-negro-10);
-    border-color: var(--overlay-blanco-10);
+    background: rgba(0, 0, 0, 0.28);
+    border-color: rgba(255, 255, 255, 0.35);
   }
   .btnSeleccionar svg { width: 13px; height: 13px; }
 
