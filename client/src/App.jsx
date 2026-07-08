@@ -325,22 +325,29 @@ useEffect(() => {
     setMostrarCookies(false);
   }, []);
 
-  const handleAceptarTerminos = useCallback(async () => {
+  const handleAceptarTerminos = useCallback(async (versionAceptada) => {
     terminosAceptadosEnSesion.current = true;
-    const version = activeTermsVersion || "1.0.0";
+    const version = versionAceptada || activeTermsVersion || "1.0.0";
     setPersisted(TERMS_ACCEPTED_KEY, "true");
     setPersisted(TERMS_VERSION_KEY, version);
     if (user) {
       try {
-        await api.post("/auth/accept-terms", { version });
+        const { data } = await api.post("/auth/accept-terms", { version });
         await checkAuth();
-      } catch {
+        if (data?.version) setActiveTermsVersion(data.version);
+        setMostrarTerminos(false);
+        resolverTerminos();
+      } catch (err) {
         terminosAceptadosEnSesion.current = false;
+        if (err?.response?.status === 409 && err.response.data?.activeVersion) {
+          setActiveTermsVersion(err.response.data.activeVersion);
+        }
         return;
       }
+    } else {
+      setMostrarTerminos(false);
+      resolverTerminos();
     }
-    setMostrarTerminos(false);
-    resolverTerminos();
   }, [activeTermsVersion, user, checkAuth, resolverTerminos]);
 
   const handlePerfilCompletado = useCallback(() => {
@@ -617,6 +624,7 @@ function App() {
   useEffect(() => {
     let raf = 0;
     let pending = 0;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     const flush = () => {
       raf = 0;
       if (!pending) return;
@@ -626,9 +634,10 @@ function App() {
       if (max <= 0) return;
       const cur = window.scrollY;
       const target = Math.max(0, Math.min(max, cur + dy));
-      window.scrollTo({ top: target, behavior: 'smooth' });
+      window.scrollTo({ top: target, behavior: reducedMotion?.matches ? 'auto' : 'smooth' });
     };
     const onWheel = (e) => {
+      if (reducedMotion?.matches) return;
       const target = e.target;
       const modalAncestor = target && target.closest && target.closest('[data-modal], .modal-overlay, .terminos-overlay, .terminos-modal, .al-modal-overlay, .pn-modal-movil, .vistaChatbot, .robotChat, .rec-panel, .seg-col, .filtroModalOverlay, .filtroModal');
       if (modalAncestor) return;

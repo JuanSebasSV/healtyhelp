@@ -2,6 +2,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const TermsDocument = require('../models/TermsDocument');
 const { enviarEmail, emailBase } = require('../utils/emailService');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -214,16 +215,30 @@ exports.getMe = async (req, res) => {
 exports.acceptTerms = async (req, res) => {
   try {
     const { version } = req.body;
-    if (!version) return res.status(400).json({ error: 'Versión requerida' });
+    if (!version || typeof version !== 'string' || !version.trim()) {
+      return res.status(400).json({ error: 'Versión requerida' });
+    }
+
+    const activeTerms    = await TermsDocument.findOne().sort({ publishedAt: -1 });
+    const activeVersion  = activeTerms?.version || '1.0.0';
+
+    if (version !== activeVersion) {
+      return res.status(409).json({
+        error: 'La versión de términos que aceptaste está desactualizada. Recarga los términos antes de aceptar.',
+        activeVersion,
+        providedVersion: version,
+      });
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { termsAccepted: true, termsVersion: version, termsAcceptedAt: new Date() },
+      { termsAccepted: true, termsVersion: activeVersion, termsAcceptedAt: new Date() },
       { new: true }
     );
 
-    res.json({ success: true, user: buildUserResponse(user) });
+    res.json({ success: true, user: buildUserResponse(user), version: activeVersion });
   } catch (error) {
+    console.error('acceptTerms error:', error);
     res.status(500).json({ error: 'Error guardando la aceptación de términos' });
   }
 };
@@ -276,6 +291,24 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email }).select('+password +loginAttempts +lockUntil');
 
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
+
+    const banVigente =
+      user.baneado &&
+      (!user.baneadoHasta || new Date(user.baneadoHasta).getTime() > Date.now());
+    if (banVigente) {
+      const permanente = !user.baneadoHasta;
+      const hastaIso = permanente ? null : new Date(user.baneadoHasta).toISOString();
+      const mensaje = permanente
+        ? `Tu cuenta está suspendida permanentemente${user.baneadoMotivo ? `. Motivo: ${user.baneadoMotivo}` : ''}.`
+        : `Tu cuenta está suspendida hasta ${hastaIso}${user.baneadoMotivo ? `. Motivo: ${user.baneadoMotivo}` : ''}.`;
+      return res.status(403).json({
+        error: mensaje,
+        banned: true,
+        permanente,
+        baneadoHasta: hastaIso,
+        baneadoMotivo: user.baneadoMotivo || null,
+      });
+    }
 
     if (user.isLocked) {
       const minutosRestantes = Math.ceil((user.lockUntil - Date.now()) / 60000);

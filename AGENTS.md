@@ -109,7 +109,9 @@ ocurrido en FiltrosSalud.css).
 - Images: Cloudinary cloud `dqwqmipco` for uploads; Google avatars are auto-upgraded to 400px in `server/config/passport.js`.
 
 ## Deploy hints
-- Client is a Vite SPA. `client/public/_redirects` (`/* /index.html 200`) is the Netlify SPA rewrite — keep it.
+- Both client and server are deployed on Render.
+  - Frontend: https://www.healthyhelpoficial.com/
+  - Backend: https://api.healthyhelpoficial.com/
 - Production frontend domains hardcoded in `server.js` CORS: `healthyhelpoficial.com`, `api.healthyhelpoficial.com`.
 - LF line endings are enforced via `.gitattributes`; keep new files LF.
 

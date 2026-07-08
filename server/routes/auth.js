@@ -15,6 +15,7 @@ const {
   verifyEmail,
   resendCode,
   setGooglePassword,
+  acceptTerms,
 } = require("../controllers/authController");
 
 (async () => {
@@ -392,24 +393,7 @@ router.delete("/account", protect, async (req, res) => {
 });
 
 // ACEPTAR TÉRMINOS
-router.post("/accept-terms", protect, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
-
-    const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
-    const activeVersion = activeTerms?.version || "1.0.0";
-
-    user.termsAccepted = true;
-    user.termsAcceptedAt = new Date();
-    user.termsVersion = activeVersion;
-    await user.save({ validateBeforeSave: false });
-
-    res.json({ success: true, version: activeVersion });
-  } catch (error) {
-    res.status(500).json({ error: "Error al guardar aceptación de términos" });
-  }
-});
+router.post("/accept-terms", protect, acceptTerms);
 
 // COMPLETAR PERFIL
 router.post("/complete-profile", protect, async (req, res) => {

@@ -168,6 +168,9 @@ exports.getLogs = async (req, res) => {
 exports.inviteAdmin = async (req, res) => {
   try {
     const { email, name } = req.body;
+    if (!req.user.isSuperAdmin) {
+      return res.status(403).json({ error: 'Solo el Super Administrador puede invitar nuevos administradores' });
+    }
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ error: 'Email ya registrado' });
 
@@ -422,6 +425,10 @@ exports.desbanearUsuario = async (req, res) => {
     const { id } = req.params;
     const target  = await User.findById(id);
     if (!target) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (target.isSuperAdmin)
+      return res.status(400).json({ error: 'No se puede desbanear al Super Admin' });
+    if (!req.user.isSuperAdmin && target.role === 'admin')
+      return res.status(403).json({ error: 'No tienes permisos para desbanear a otro administrador' });
 
     target.baneado       = false;
     target.baneadoHasta  = null;

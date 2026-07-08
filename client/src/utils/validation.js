@@ -7,7 +7,7 @@ export const validateEmail = (email) => {
 
 export const isValidEmail = validateEmail;
 
-//Valida nombre — sin números, sin símbolos, sin letras repetidas 4+ veces seguidas
+//Valida nombre — sin números, sin símbolos, sin letras repetidas 3+ veces seguidas
 
 export const validateName = (name) => {
   if (!name || !name.trim()) {
@@ -19,8 +19,8 @@ export const validateName = (name) => {
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(n)) {
     return { isValid: false, error: 'El nombre solo puede contener letras y espacios' };
   }
-  // Detectar letras repetidas 4+ veces seguidas (ej: hhhh, aaaa)
-  if (/(.)\1{3,}/.test(n)) {
+  // Detectar letras repetidas 3+ veces seguidas (ej: aaa, aaaa)
+  if (/(.)\1{2,}/.test(n)) {
     return { isValid: false, error: 'El nombre no puede tener letras repetidas consecutivamente' };
   }
   return { isValid: true, error: null };

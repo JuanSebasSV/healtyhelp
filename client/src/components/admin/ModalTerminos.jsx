@@ -33,14 +33,17 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
     if (el.scrollHeight - el.scrollTop <= el.clientHeight + 50) setScrollado(true);
   };
 
+  const version = termsData?.version || '1.0.0';
+
   const handleAceptar = async () => {
     if (!aceptado || !scrollado) return;
     setCargando(true);
-    await onAceptar();
-    setCargando(false);
+    try {
+      await onAceptar(version);
+    } finally {
+      setCargando(false);
+    }
   };
-
-  const version = termsData?.version || '1.0.0';
 
   return (
     <div className="terminos-overlay" data-modal="true">
