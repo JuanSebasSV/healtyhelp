@@ -79,6 +79,8 @@ const TarjetaReceta = memo(
     const prom = receta.puntosProm || 0;
     const total = receta.totalResenas || 0;
 
+    const imagenValida = !!receta?.img && !imgError;
+
     const promRedondeado = useMemo(() => Math.round(prom), [prom]);
 
     const abrirDetalle = useCallback(() => setVista("detalle"), []);
@@ -113,7 +115,7 @@ const TarjetaReceta = memo(
           style={{ scrollMarginTop: "80px" }}
         >
           <div className="tarjetaImg">
-            {!imgError && (
+            {imagenValida && (
               <img
                 src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_640')}
                 alt={receta.nombre}
@@ -125,7 +127,7 @@ const TarjetaReceta = memo(
               />
             )}
 
-            {imgError && (
+            {!imagenValida && (
               <div className="tarjetaImg-fallback" role="img" aria-label="Imagen no disponible">
                 <div className="tarjetaImg-fallback__icono">
                   <IconoImagenRota />

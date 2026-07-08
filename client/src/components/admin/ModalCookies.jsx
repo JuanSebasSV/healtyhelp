@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalCookies.css';
 
 const COOKIE_KEY = 'hh_cookie_consent';
@@ -11,6 +12,7 @@ const setCookie = (name, value, maxAge = COOKIE_AGE) => {
 
 const ModalCookies = ({ onAceptar }) => {
   useBodyScrollLock(true);
+  useModalLayerHint(true);
   const [visible,  setVisible]  = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 

@@ -5,6 +5,7 @@
 .terms-manager {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
@@ -162,6 +163,7 @@
   border-radius: 10px; padding: 4px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(16px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(16px);
   display: flex; flex-direction: column; gap: 2px;
 }
@@ -306,6 +308,7 @@
   color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px;
 }

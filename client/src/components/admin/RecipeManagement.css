@@ -20,6 +20,7 @@
   min-width: 130px;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(8px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
@@ -138,6 +139,7 @@
 .recipe-content {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;

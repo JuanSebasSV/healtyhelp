@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalCompletarPerfil.css';
 
 const AVISOS = {
@@ -193,6 +194,7 @@ const MAX_DATE = new Date(new Date().setFullYear(new Date().getFullYear() - 18))
 
 const ModalCompletarPerfil = ({ onCompletado, user }) => {
   useBodyScrollLock(true);
+  useModalLayerHint(true);
   const [form,     setForm]     = useState({ fechaNac: '', weight: '', height: '' });
   const [errors,   setErrors]   = useState({});
   const [touched,  setTouched]  = useState({});

@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import api from "../../api/axios";
 import { optimizeCloudinary } from "../../utils/cloudinary";
 import useBodyScrollLock from "../../hooks/useBodyScrollLock";
+import useModalLayerHint from "../../hooks/useModalLayerHint";
 import "./Navbar.css";
 import PanelNotificaciones from "../notificaciones/PanelNotificaciones";
 
@@ -119,6 +120,7 @@ const Navbar = ({ modoOscuro, toggleModoOscuro, imgPendientes = 0, onAbrirReceta
   const [autoLogout,         setAutoLogout]         = useState(false);
 
   useBodyScrollLock(panelAbierto);
+  useModalLayerHint(panelAbierto || modalCerrarAbierto);
   const panelScrollYRef = useRef(0);
   useEffect(() => {
     if (!panelAbierto || typeof window === 'undefined') return;

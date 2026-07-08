@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalGooglePassword.css';
 
 const EyeIcon = ({ open }) => (
@@ -34,6 +35,7 @@ const validarPassword = (password) => {
 
 const ModalGooglePassword = ({ token, onSuccess }) => {
   useBodyScrollLock(true);
+  useModalLayerHint(true);
   const { setGooglePassword } = useAuth();
 
   const [pass, setPass]         = useState('');

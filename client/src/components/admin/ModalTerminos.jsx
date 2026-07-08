@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalTerminos.css';
 
 const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
   useBodyScrollLock(true);
+  useModalLayerHint(true);
   const [scrollado,    setScrollado]    = useState(false);
   const [aceptado,     setAceptado]     = useState(false);
   const [cargando,     setCargando]     = useState(false);

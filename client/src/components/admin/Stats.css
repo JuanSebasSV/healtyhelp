@@ -26,6 +26,7 @@
   padding: 1.4rem 1.5rem;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px) saturate(140%);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(10px) saturate(140%);
   border: 1.5px solid rgba(255, 255, 255, 0.16);
   border-radius: 18px;
@@ -110,6 +111,7 @@
 .verification-progress {
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(10px) saturate(140%);
+  will-change: backdrop-filter;
   border: 1.5px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;

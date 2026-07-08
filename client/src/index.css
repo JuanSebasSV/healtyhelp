@@ -251,7 +251,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--overlay-negro-10);
+  background: rgba(0, 0, 0, 0.55);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -260,6 +260,7 @@ body {
   animation: fadeIn 0.3s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
 }
 .modo-oscuro .modal-overlay { background: var(--overlay-negro-10); }
 
@@ -527,3 +528,62 @@ input[type="number"] { -moz-appearance: textfield; }
 
 .password-requisitos-previos li.req-ok { color: var(--overlay-verde-claro-10); }
 .password-requisitos-previos li.req-ok svg { stroke: var(--overlay-verde-hoja-dark-10); }
+
+body[data-hh-modal-layer="1"] .modal-overlay,
+body[data-hh-modal-layer="1"] .modalCol,
+body[data-hh-modal-layer="1"] .cookies-card,
+body[data-hh-modal-layer="1"] .completar-overlay,
+body[data-hh-modal-layer="1"] .completar-modal,
+body[data-hh-modal-layer="1"] .terminos-modal,
+body[data-hh-modal-layer="1"] .modalNutriWrapper,
+body[data-hh-modal-layer="1"] .mgp-overlay,
+body[data-hh-modal-layer="1"] .al-modal-overlay,
+body[data-hh-modal-layer="1"] .pn-modal-movil,
+body[data-hh-modal-layer="1"] .robotChat,
+body[data-hh-modal-layer="1"] .filtroModalOverlay,
+body[data-hh-modal-layer="1"] .filtroModal,
+body[data-hh-modal-layer="1"] .vistaChatbot,
+body[data-hh-modal-layer="1"] .pn-overlay,
+body[data-hh-modal-layer="1"] .pn-panel,
+body[data-hh-modal-layer="1"] .modal-agregar-consumo,
+body[data-hh-modal-layer="1"] .seg-col,
+body[data-hh-modal-layer="1"] .rec-panel,
+body[data-hh-modal-layer="1"] .user-list-container,
+body[data-hh-modal-layer="1"] .ban-modal {
+  will-change: backdrop-filter;
+}
+
+.nutriPanel,
+.vistaChatbot__panel,
+.robotChat,
+.rec-panel,
+.hero-texto,
+.sinResultados,
+.seg-periodo-btns,
+.perfil-sidebar,
+.perfil-contenido,
+.modal-eliminar-cuenta,
+.foto-modal-overlay,
+.terms-manager,
+.terms-manager-loading,
+.terms-block-menu,
+.terms-block-trigger,
+.admin-main-tabs,
+.stat-card,
+.panel-ia__card,
+.recipe-stats,
+.recipe-content,
+.btn-import,
+.nutri-editor-overlay,
+.user-list-container,
+.ban-modal,
+.ban-modal-overlay,
+.ia-modal-overlay,
+.ia-card-check-wrap,
+.contacto-contenedor,
+.info-item,
+.campo-contador,
+.confirmacion-overlay,
+.faq-tabla {
+  will-change: backdrop-filter;
+}

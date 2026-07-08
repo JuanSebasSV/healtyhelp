@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './FiltrosSalud.css';
 
 const CATEGORIAS = [
@@ -68,6 +69,7 @@ const FiltrosSalud = ({
 }) => {
   const totalCondicionesActivas = filtros.length;
   useBodyScrollLock(!!filtroAbierto);
+  useModalLayerHint(!!filtroAbierto);
 
   return (
     <>

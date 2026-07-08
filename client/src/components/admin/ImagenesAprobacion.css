@@ -438,6 +438,7 @@
   justify-content: center;
   padding: 2rem;
   backdrop-filter: blur(12px);
+  will-change: backdrop-filter;
   animation: fadeIn 0.2s ease;
 }
 
@@ -538,6 +539,7 @@
   border-radius: 6px;
   padding: 3px;
   backdrop-filter: blur(4px);
+  will-change: backdrop-filter;
 }
 .ia-card-check {
   width: 17px;

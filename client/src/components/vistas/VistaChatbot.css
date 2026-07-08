@@ -121,6 +121,7 @@
   background: var(--chat-side-bg);
   -webkit-backdrop-filter: blur(14px) saturate(1.05);
   backdrop-filter: blur(14px) saturate(1.05);
+  will-change: backdrop-filter;
   border: 1px solid var(--chat-side-border);
   border-radius: 22px;
   box-shadow:

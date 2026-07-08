@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { createPortal } from 'react-dom';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalNutricionDetallada.css';
 
 const FilaNutri = memo(({ nombre, valor, unidad }) => (
@@ -28,6 +29,7 @@ IconoVolver.displayName = 'IconoVolver';
 const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
 
   useBodyScrollLock(true);
+  useModalLayerHint(true);
 
   return createPortal(
     <div className="modal-overlay" data-modal="true" onClick={cerrar}>

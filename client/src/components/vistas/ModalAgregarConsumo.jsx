@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import { optimizeCloudinary } from '../../utils/cloudinary';
+import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './ModalAgregarConsumo.css';
 
 const SvgDesayuno = ({ className }) => (
@@ -68,6 +69,8 @@ const CAT_A_TIPO = {
 };
 
 const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
+  useModalLayerHint(true);
+
   const [busqueda, setBusqueda] = useState('');
   const [recetas,  setRecetas]  = useState([]);
   const [cargando, setCargando] = useState(false);

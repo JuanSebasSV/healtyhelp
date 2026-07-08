@@ -6,6 +6,7 @@ import useAuth from "../../hooks/useAuth";
 import SeccionResenas from "./SeccionResenas";
 import { optimizeCloudinary } from "../../utils/cloudinary";
 import useBodyScrollLock from "../../hooks/useBodyScrollLock";
+import useModalLayerHint from "../../hooks/useModalLayerHint";
 import "./DetalleReceta.css";
 import { generarPDFRecetas } from "../../utils/generarPDF";
 
@@ -61,6 +62,8 @@ const DetalleReceta = memo(
       return () => clearTimeout(t);
     }, []);
 
+    const imagenValida = !!receta?.img && !imgError;
+
     const handlePDF = async (e) => {
       e.stopPropagation();
       setGenerandoPDF(true);
@@ -72,6 +75,7 @@ const DetalleReceta = memo(
     };
 
     useBodyScrollLock(true);
+    useModalLayerHint(!!receta);
 
     return createPortal(
       <div className="modal-overlay" data-modal="true" onClick={cerrar}>
@@ -89,7 +93,7 @@ const DetalleReceta = memo(
 
           <div className="modalCol modalIzq">
             <div className="modalImg-wrap">
-              {!imgError && (
+              {imagenValida && (
                 <img
                   src={optimizeCloudinary(receta.img, 'q_auto,f_auto,w_800')}
                   alt={receta.nombre}
@@ -102,7 +106,7 @@ const DetalleReceta = memo(
                 />
               )}
 
-              {imgError && (
+              {!imagenValida && (
                 <div className="modalImg-fallback" role="img" aria-label="Imagen no disponible">
                   <div className="modalImg-fallback__icono">
                     <IconoImagenRota />

@@ -76,6 +76,7 @@
 .panel-ia__card {
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   padding: 1.1rem 1.25rem;

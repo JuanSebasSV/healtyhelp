@@ -68,6 +68,7 @@
   padding: 2.5rem 2.8rem;
   background: rgba(5, 25, 12, 0.52);
   backdrop-filter: blur(16px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 20px;
@@ -242,6 +243,7 @@
   padding: 3rem;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
 }

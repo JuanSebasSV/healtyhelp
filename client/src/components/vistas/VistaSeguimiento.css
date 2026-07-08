@@ -26,6 +26,7 @@
   color: #6ee7b7;
   border: 1.5px solid rgba(25, 75, 52, 0.745);
   backdrop-filter: blur(12px);
+  will-change: backdrop-filter;
   -webkit-backdrop-filter: blur(12px);
   border-radius: 50px;
   cursor: pointer;
