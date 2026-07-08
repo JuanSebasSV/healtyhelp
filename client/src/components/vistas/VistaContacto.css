@@ -255,7 +255,7 @@ body:not(.modo-oscuro) {
   display: flex;
   align-items: center;
   gap: clamp(0.65rem, 1.4vw, 0.9rem);
-  min-height: var(--contacto-touch);
+  min-height: 76px;
   text-decoration: none;
   color: var(--contacto-text);
   transition:
@@ -348,9 +348,9 @@ body:not(.modo-oscuro) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow-y: auto;
-  overscroll-behavior: contain;
   border-radius: 0 0 var(--contacto-radius) var(--contacto-radius);
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .contacto-form__cabecera {
@@ -932,6 +932,7 @@ body:not(.modo-oscuro) {
     padding: 0.7rem 0.85rem;
     background: var(--contacto-surface-hi);
     border-color: var(--contacto-border-hi);
+    min-height: 72px;
   }
 
   .info-item:nth-child(3),
