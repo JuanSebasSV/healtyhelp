@@ -1,7 +1,8 @@
 .fondoAnimado {
-  display: var(--fondo-animado-display, block);
+  display: block;
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   min-height: 100vh;
   height: 100lvh;
@@ -29,7 +30,8 @@ body.modo-oscuro {
 }
 
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  html {
-    --fondo-animado-display: none;
+  .fondoAnimado {
+    background-position: center top;
+    background-size: min(180vw, 720px) auto;
   }
 }

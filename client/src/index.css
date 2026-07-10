@@ -237,28 +237,6 @@ body {
     url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777313818/top-view-fresh-mexican-food-table_dmwsf5.jpg');
 }
 
-@media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  body:not(.modo-oscuro) .App:not(:has(.vista-favoritos)) {
-    background-color: rgb(20, 30, 22);
-    background-image: url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
-    background-size: 100vw auto;
-    background-position: center top;
-    background-repeat: repeat-y;
-    background-attachment: scroll;
-  }
-
-  .modo-oscuro .App:not(:has(.vista-favoritos)) {
-    background-color: rgb(6, 14, 8);
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)),
-      url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
-    background-size: 100vw auto;
-    background-position: center top;
-    background-repeat: repeat-y;
-    background-attachment: scroll;
-  }
-}
-
 .contenido-principal:has(.vistaChatbot) {
   padding-top: 0;
   padding-left: 0;
