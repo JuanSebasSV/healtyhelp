@@ -110,7 +110,7 @@ const PanelIA = () => {
       <div className="panel-ia__badge-wrapper">
         <span className="panel-ia__badge">
           <span className="panel-ia__badge-dot" />
-          Gemini 2.5 Flash · Activo
+          IA · Activo
         </span>
       </div>
 

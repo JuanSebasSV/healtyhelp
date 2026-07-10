@@ -9,6 +9,8 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  transform: translateZ(0);
+  will-change: transform;
   filter: brightness(0.62) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
 }
 

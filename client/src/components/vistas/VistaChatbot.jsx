@@ -87,7 +87,7 @@ const VistaChatbot = ({ abrirFlotante }) => {
             <h2 className="vistaChatbot__marcaTitulo">
               Asistente <span>Nutricional</span>
             </h2>
-            <p className="vistaChatbot__marcaSub">Powered by IA · Gemini</p>
+            <p className="vistaChatbot__marcaSub">Powered by IA</p>
           </div>
 
           <div className="vistaChatbot__divisor" />

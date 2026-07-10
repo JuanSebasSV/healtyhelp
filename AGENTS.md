@@ -6,7 +6,7 @@ Healthy Help — SPA de nutrición (React 19 + Vite) respaldada por una API Expr
 Dos proyectos de Node independientes comparten este repositorio solo por convención de carpetas — no hay workspaces de npm/pnpm/yarn ni scripts en la raíz.
 
 - `client/` — React 19 + Vite 7 + react-router-dom 7 + ESLint 9. Entrada: `src/main.jsx` → `src/App.jsx`. Cliente de API en `src/api/axios.js`.
-- `server/` — Express 5, Mongoose 8, Passport (JWT + Google OAuth 2.0), Cloudinary, Groq SDK, Resend. Entrada: `server.js` (puerto 5000). 11 routers montados bajo `/api/*` (ver `server.js`).
+- `server/` — Express 5, Mongoose 8, Passport (JWT + Google OAuth 2.0), Cloudinary, OpenAI SDK (apunta a MiniMax-M3 vía `https://api.minimax.io/v1`), Resend. Entrada: `server.js` (puerto 5000). 11 routers montados bajo `/api/*` (ver `server.js`).
 - El `package.json` raíz solo contiene `sharp` para el helper `compress-images.js`. No agregues dependencias de client/server aquí.
 
 ## Instalación y ejecución
