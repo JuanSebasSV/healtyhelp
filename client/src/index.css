@@ -178,23 +178,15 @@ body {
 }
 
 .App {
-  position: relative;
   min-height: 100vh;
   background-color: transparent;
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  overflow-x: clip;
 }
 
 .modo-oscuro .App {
   background-color: transparent;
-}
-
-.contenido-principal,
-.footer {
-  position: relative;
-  z-index: 1;
 }
 
 .contenido-principal {
@@ -217,7 +209,8 @@ body {
   padding-bottom: 0;
 }
 
-.App:has(.vista-favoritos) .fondoAnimado {
+.App:has(.vista-favoritos) .fondoAnimado,
+.App:has(.vista-favoritos) .fondoTinte {
   display: none;
 }
 

@@ -1,37 +1,32 @@
 .fondoAnimado {
-  display: block;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  min-height: 100vh;
-  height: 100lvh;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-color: rgb(20, 30, 22);
+  background-color: rgb(18, 38, 23);
   background-image: url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  image-rendering: auto;
-  filter: var(--fondo-animado-filter, brightness(0.62) sepia(0.65) saturate(1.45) hue-rotate(-8deg));
+  background-attachment: fixed;
   contain: paint;
-  backface-visibility: hidden;
+}
+
+.fondoTinte {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background: var(--fondo-tinte, linear-gradient(rgba(46, 70, 40, 0.55), rgba(20, 40, 24, 0.75)));
 }
 
 /* MODO CLARO */
 body:not(.modo-oscuro) {
-  --fondo-animado-filter: brightness(0.62) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
+  --fondo-tinte: linear-gradient(rgba(46, 70, 40, 0.45), rgba(20, 40, 24, 0.65));
 }
 
 /* MODO OSCURO */
 body.modo-oscuro {
-  --fondo-animado-filter: brightness(0.46) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
-}
-
-@media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  .fondoAnimado {
-    background-position: center top;
-    background-size: min(180vw, 720px) auto;
-  }
+  --fondo-tinte: linear-gradient(rgba(8, 18, 12, 0.72), rgba(2, 8, 4, 0.85));
 }
