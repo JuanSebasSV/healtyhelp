@@ -13,26 +13,10 @@
   transform: translateZ(0);
   will-change: transform;
   image-rendering: crisp-edges;
-}
-
-.fondoAnimado::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(74, 50, 20, 0.35), rgba(20, 40, 25, 0.55)),
-    rgba(0, 0, 0, 0.18);
-  mix-blend-mode: multiply;
+  filter: brightness(0.62) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
 }
 
 .modo-oscuro .fondoAnimado {
-  background-color: rgb(8, 16, 10);
-}
-
-.modo-oscuro .fondoAnimado::after {
-  background:
-    linear-gradient(rgba(40, 30, 12, 0.45), rgba(8, 16, 10, 0.65)),
-    rgba(0, 0, 0, 0.35);
+  filter: brightness(0.46) sepia(0.65) saturate(1.45) hue-rotate(-8deg);
 }
   
