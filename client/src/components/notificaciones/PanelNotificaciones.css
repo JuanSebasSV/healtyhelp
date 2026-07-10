@@ -334,6 +334,8 @@
 
 @media (max-width: 768px) {
 
+  .pn-overlay { display: none; }
+
   .pn-panel {
     position: fixed;
     top: auto;
@@ -345,8 +347,9 @@
     max-height: min(90dvh, calc(100dvh - env(safe-area-inset-top, 0px) - 0.5rem));
     border-radius: 18px 18px 0 0;
     z-index: 99999;
-    background: rgba(12, 28, 18, 0.97);
-    backdrop-filter: blur(10px);
+    background: rgba(12, 28, 18, 1);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom: none;
     animation: pn-subir 0.22s cubic-bezier(0.22, 1, 0.36, 1);
@@ -365,9 +368,9 @@
   .pn-header {
     position: sticky;
     top: 0;
-    background: rgba(12, 28, 18, 0.97);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgb(12, 28, 18);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     z-index: 2;
     padding: 0.9rem 1.1rem 0.75rem;
   }

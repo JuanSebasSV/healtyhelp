@@ -158,7 +158,7 @@ body::-webkit-scrollbar { display: none; }
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--gris-oscuro);
-  background: transparent;
+  background-color: rgb(18, 38, 23);
   line-height: 1.6;
   /* CAMBIO: text-rendering movido de * a body para no aplicar a cada elemento del DOM */
   -webkit-font-smoothing: antialiased;
@@ -179,7 +179,7 @@ body {
 
 .App {
   min-height: 100vh;
-  background-color: rgb(18, 38, 23);
+  background-color: transparent;
   isolation: isolate;
   display: flex;
   flex-direction: column;
