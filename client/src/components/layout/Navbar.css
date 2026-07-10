@@ -923,6 +923,10 @@
   }
 }
 
+@media (min-width: 768px) {
+  .navMenu li > a > svg { display: none; }
+}
+
 @media (min-width: 1024px) {
   .al-modal-overlay { align-items: center; }
 }
