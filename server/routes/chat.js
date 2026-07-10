@@ -1,15 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const OpenAI = require("openai");
+const Groq = require("groq-sdk");
 const { protect } = require("../middleware/auth");
 const User = require("../models/User");
 const AIConfig = require("../models/AIConfig");
 const Recipe = require("../models/Recipe.js");
 
-const openai = new OpenAI({
-  apiKey: process.env.MINIMAX_API_KEY,
-  baseURL: "https://api.minimax.io/v1",
-});
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 let _configCache = null;
 let _configCacheAt = 0;
@@ -125,15 +122,14 @@ REGLAS:
       chatHistory.shift();
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "MiniMax-M3",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
         { role: "system", content: systemPrompt },
         ...chatHistory,
         { role: "user", content: message },
       ],
-      max_completion_tokens: 1024,
-      thinking: { type: "disabled" },
+      max_tokens: 1024,
     });
 
     const raw = completion.choices[0]?.message?.content || "Sin respuesta";

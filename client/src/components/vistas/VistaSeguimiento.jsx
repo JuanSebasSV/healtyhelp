@@ -326,7 +326,10 @@ const BloquesDiaActual = React.memo(({ consumos, seleccionado, editandoId, setEd
 const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const [periodo,      setPeriodo]      = useState('dia');
   const [dias,         setDias]         = useState([]);
-  const [preferido, setSeleccionado] = useState(null);
+  const [preferido, setSeleccionado] = useState(() => {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' });
+    return fmt.format(new Date());
+  });
   const [consumos,     setConsumos]     = useState([]);
   const [cargando,     setCargando]     = useState(true);
   const [editandoId,   setEditandoId]   = useState(null);
@@ -336,7 +339,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const [modalAgregar, setModalAgregar] = useState(null);
 
-  const eliminandoRef = useRef(() => new Set());
+  const eliminandoRef = useRef(new Set());
   const cargandoRef  = useRef({ dias: false, consumos: false });
 
   const cargarDias = useCallback(async (token = { cancelled: false }) => {
@@ -350,19 +353,28 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     }
   }, []);
 
+  const hoyISO = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' });
+    return fmt.format(new Date());
+  }, []);
+
   const ops = useMemo(() => {
-    if (periodo === 'dia')    return dias;
-    if (periodo === 'semana') {
-      const semanas = [...new Set(dias.map(lunesDeSemana))];
-      return semanas.sort((a, b) => b.localeCompare(a));
+    const base = (periodo === 'dia')    ? dias
+              : (periodo === 'semana') ? [...new Set(dias.map(lunesDeSemana))].sort((a, b) => b.localeCompare(a))
+              :                            [...new Set(dias.map(yearMesDe))].sort((a, b) => b.localeCompare(a));
+    if (periodo === 'dia' && !base.includes(hoyISO)) {
+      return [hoyISO, ...base];
     }
-    const meses = [...new Set(dias.map(yearMesDe))];
-    return meses.sort((a, b) => b.localeCompare(a));
-  }, [dias, periodo]);
+    return base;
+  }, [dias, periodo, hoyISO]);
 
   const seleccionado = useMemo(
-    () => (ops.length === 0 ? null : (ops.includes(preferido) ? preferido : ops[0])),
-    [ops, preferido]
+    () => {
+      if (ops.length === 0) return null;
+      if (periodo === 'dia') return preferido;
+      return ops.includes(preferido) ? preferido : ops[0];
+    },
+    [ops, preferido, periodo]
   );
 
   const cargarConsumos = useCallback(async (fechaSel = seleccionado, per = periodo, token = { cancelled: false }) => {

@@ -27,7 +27,22 @@ api.interceptors.request.use(
       _avisarSinConexion();
       return Promise.reject(Object.assign(new Error('sin_conexion'), { sinConexion: true, silencioso: true }));
     }
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    if (token) {
+      config.headers.set('Authorization', `Bearer ${token}`);
+    }
     return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => {
+    const data = response.data;
+    if (data && typeof data === 'object' && typeof data.token === 'string') {
+      try { sessionStorage.setItem('token', data.token); } catch (e) { void e; }
+    }
+    return response;
   },
   (error) => Promise.reject(error)
 );

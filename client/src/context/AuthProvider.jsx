@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
       clearTimeout(visibilityTimerRef.current);
       visibilityTimerRef.current = null;
     }
+    try { localStorage.removeItem('token'); sessionStorage.removeItem('token'); } catch (e) { void e; }
     setUser(null);
   }, []);
 
