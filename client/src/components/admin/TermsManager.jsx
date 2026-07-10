@@ -175,19 +175,22 @@ const TermsManager = () => {
       if (data.terms) {
         setTermsCurrent(data.terms);
         setVersion(data.terms.version);
-        if (editorRef.current) {
-          editorRef.current.innerHTML = DOMPurify.sanitize(data.terms.content || '');
-          actualizarContador();
-        }
       }
     } catch {
       toast.error('Error cargando los términos. Verifica la conexión con el servidor.');
     } finally {
       setLoading(false);
     }
-  }, [actualizarContador]);
+  }, []);
 
   useEffect(() => { cargarTerminos(); }, [cargarTerminos]);
+
+  const editorCallback = useCallback(node => {
+    editorRef.current = node;
+    if (node && termsCurrent) {
+      node.innerHTML = DOMPurify.sanitize(termsCurrent.content || '');
+    }
+  }, [termsCurrent]);
 
   const fmt = useCallback((cmd, value = null) => {
     document.execCommand(cmd, false, value);
@@ -360,7 +363,8 @@ const TermsManager = () => {
           </div>
 
           <div
-            ref={editorRef}
+            key={termsCurrent?.version || 'new'}
+            ref={editorCallback}
             className="terms-editor-rich"
             contentEditable
             suppressContentEditableWarning

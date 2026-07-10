@@ -396,3 +396,82 @@
 @media (max-width: 480px) {
   .rcard-nombre { font-size: 0.85rem; }
 }
+
+.recipe-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--blanco-puro);
+  transform: translateY(-1px);
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.page-btn--active {
+  background: linear-gradient(135deg, var(--verde-bosque), var(--verde-hoja));
+  border-color: transparent;
+  color: var(--blanco-puro);
+  cursor: default;
+  box-shadow: 0 4px 12px rgba(79, 119, 45, 0.35);
+}
+
+.page-btn--nav {
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.page-ellipsis {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.page-info {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 480px) {
+  .page-btn { min-width: 32px; height: 32px; padding: 0 0.5rem; font-size: 0.78rem; }
+  .page-btn--nav { font-size: 0.72rem; }
+  .page-ellipsis { min-width: 32px; height: 32px; }
+}
