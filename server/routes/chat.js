@@ -132,8 +132,7 @@ REGLAS:
       max_tokens: 1024,
     });
 
-    const raw = completion.choices[0]?.message?.content || "Sin respuesta";
-    const reply = raw.replace(/\u003c(redacted-)?think[\s\S]*?\u003c\/(redacted-)?think\u003e/g, "").trim() || "Sin respuesta";
+    const reply = completion.choices[0]?.message?.content || "Sin respuesta";
     res.json({ reply });
   } catch (error) {
     console.error(
