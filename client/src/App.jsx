@@ -304,19 +304,22 @@ useEffect(() => {
 
   useEffect(() => {
     if (isPreview) return;
-    if (!activeTermsVersion) return;
-    if (terminosAceptadosEnSesion.current) return;
-
-    const ruta = window.location.pathname;
-    const esRutaLibre = RUTAS_LIBRES.some((r) => ruta.startsWith(r));
-    if (esRutaLibre) return;
-
     if (!user) {
       const yaDecidio =
         cookiesConsentidas() ||
         sessionStorage.getItem(COOKIE_CONSENT_KEY) === "dismissed";
       if (!yaDecidio) setMostrarCookies(true);
     }
+  }, [user, isPreview]);
+
+  useEffect(() => {
+    if (isPreview) return;
+    if (!activeTermsVersion) return;
+    if (terminosAceptadosEnSesion.current) return;
+
+    const ruta = window.location.pathname;
+    const esRutaLibre = RUTAS_LIBRES.some((r) => ruta.startsWith(r));
+    if (esRutaLibre) return;
 
     evaluarTerminos(activeTermsVersion);
   }, [user, activeTermsVersion, evaluarTerminos, isPreview]);

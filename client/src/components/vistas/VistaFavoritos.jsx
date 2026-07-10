@@ -79,9 +79,10 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
     if (!categoriaActiva) return [];
     let lista = recetasFavoritas.filter(r => r.cat === categoriaActiva);
     if (busqueda.trim()) {
-      const b = normalizarTexto(busqueda);
+      const b = normalizarTexto(busqueda).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(b);
       const textoReceta = (r) => normalizarTexto(`${r.nombre || ''} ${r.desc || ''}`);
-      lista = lista.filter(r => textoReceta(r).includes(b));
+      lista = lista.filter(r => re.test(textoReceta(r)));
     }
     if (filtroTiempo) {
       const t = (r) => r.tiempoMinutos || 0;
