@@ -242,9 +242,9 @@ body {
     background-color: rgb(20, 30, 22);
     background-image: url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: scroll;
   }
 
   .modo-oscuro .App:not(:has(.vista-favoritos)) {
@@ -253,9 +253,9 @@ body {
       linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)),
       url('https://res.cloudinary.com/dlpo2fnuv/image/upload/v1777575212/El_roble_de_Karla_xyxkyv.png');
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: scroll;
   }
 }
 
