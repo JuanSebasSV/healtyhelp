@@ -149,7 +149,12 @@
 
 @media (max-width: 767px) {
   .hero { height: 480px; }
-  .hero-capa { background-position: center 30%; }
+  .hero-capa {
+    background-position: center 30%;
+    transition: none;
+    will-change: auto;
+  }
+  .hero-dot { transition: none; }
   .hero-texto {
     left: 50%;
     top: 50%;
