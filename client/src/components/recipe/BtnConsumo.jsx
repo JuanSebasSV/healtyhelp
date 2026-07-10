@@ -4,6 +4,9 @@ import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import { getTipoPorHora } from '../../utils/bogotaTime';
+import IcoCheck from './IcoCheck';
+import IcoPlus from './IcoPlus';
+import IcoCerrar from './IcoCerrar';
 import './BtnConsumo.css';
 
 const TOOLTIP_KEY = 'consumo_tooltip_visto';
@@ -14,29 +17,7 @@ const incrementTooltip = () => sessionStorage.setItem(TOOLTIP_KEY, String(getToo
 
 const TIPO_EMOJIS = { desayuno: '🌅', almuerzo: '☀️', cena: '🌙' };
 
-//Iconos memoizados 
-const IcoCheck = memo(() => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 6L9 17l-5-5"/>
-  </svg>
-));
-IcoCheck.displayName = 'IcoCheck';
-
-const IcoPlus = memo(() => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 5v14M5 12h14"/>
-  </svg>
-));
-IcoPlus.displayName = 'IcoPlus';
-
-const IcoCerrar = memo(() => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <path d="M18 6L6 18M6 6l12 12"/>
-  </svg>
-));
-IcoCerrar.displayName = 'IcoCerrar';
-
-//BtnConsumo 
+//BtnConsumo
 const BtnConsumo = ({ recetaId }) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -159,7 +140,7 @@ const BtnConsumo = ({ recetaId }) => {
 
       {tooltip && (
         <div className="btnConsumo-tooltip" ref={tooltipRef}>
-          <button
+          <button type="button"
             className="btnConsumo-tooltip-cerrar"
             onClick={handleCerrarTooltip}
             aria-label="Cerrar"
@@ -182,7 +163,7 @@ const BtnConsumo = ({ recetaId }) => {
       )}
 
       <div className="btnConsumo-row">
-        <button
+        <button type="button"
           className={`btnConsumo${registrado ? ' btnConsumo--registrado' : ''}${señalar ? ' btnConsumo--señalar' : ''}`}
           onClick={handleRegistrar}
           disabled={procesando}
@@ -203,7 +184,7 @@ const BtnConsumo = ({ recetaId }) => {
         </button>
 
         {!registrado && (
-          <button
+          <button type="button"
             className="btnConsumo-help"
             onClick={handleVerTooltip}
             aria-label="¿Qué es esto?"

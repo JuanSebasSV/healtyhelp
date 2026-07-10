@@ -4,19 +4,19 @@ import useAuth from '../../hooks/useAuth';
 import ModalGooglePassword from './ModalGooglePassword';
 
 const GoogleCallback = () => {
-  const { checkAuth } = useAuth();
+  const { checkAuth, user } = useAuth();
   const navigate = useNavigate();
-  const [error, setPendingError]  = useState(null);
-  const [pendingToken, setPendingToken] = useState(null);
+  const [pendingError, setPendingError]  = useState(null);
+  const [needsPassword, setNeedsPassword] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
-    const { signal } = controller;
+    let cancelled = false;
 
     const handleGoogleCallback = async () => {
       try {
-        const urlParams  = new URLSearchParams(window.location.search);
-        const token      = urlParams.get('token');
+        const urlParams = new URLSearchParams(window.location.search);
         const errorParam = urlParams.get('error');
 
         if (errorParam) {
@@ -25,36 +25,29 @@ const GoogleCallback = () => {
           return;
         }
 
-        if (!token) {
-          setPendingError('No se recibió el token de autenticación.');
-          setTimeout(() => navigate('/login'), 3000);
-          return;
-        }
-
-        localStorage.setItem('token', token);
-
         const res  = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-          signal,
+          credentials: 'include',
+          signal: controller.signal,
         });
 
-        if (signal.aborted) return;
+        if (cancelled) return;
 
-        const data = await res.json();
-
-        if (!res.ok || !data.user) {
+        if (!res.ok) {
           setPendingError('Error al verificar la sesión. Intenta de nuevo.');
           setTimeout(() => navigate('/login'), 3000);
           return;
         }
 
-        if (data.user.googleId && data.user.hasPassword === false) {
-          setPendingToken(token);
+        const data = await res.json();
+
+        if (data.user?.googleId && data.user?.hasPassword === false) {
+          setNeedsPassword(true);
+          setReady(true);
           return;
         }
 
         await checkAuth();
-        navigate('/');
+        if (!cancelled) navigate('/');
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('Error en Google callback:', err);
@@ -65,28 +58,31 @@ const GoogleCallback = () => {
 
     handleGoogleCallback();
 
-    return () => controller.abort();
+    return () => { cancelled = true; controller.abort(); };
   }, [checkAuth, navigate]);
 
+  useEffect(() => {
+    if (!ready || needsPassword || !user) return;
+    navigate('/');
+  }, [ready, needsPassword, user, navigate]);
+
   const handleModalSuccess = useCallback(async () => {
+    setNeedsPassword(false);
     await checkAuth();
     navigate('/');
   }, [checkAuth, navigate]);
 
-  if (pendingToken) {
+  if (needsPassword) {
     return (
-      <ModalGooglePassword
-        token={pendingToken}
-        onSuccess={handleModalSuccess}
-      />
+      <ModalGooglePassword onSuccess={handleModalSuccess} />
     );
   }
 
-  if (error) {
+  if (pendingError) {
     return (
       <div className="vista-auth">
         <div className="auth-card" style={{ textAlign: 'center' }}>
-          <p style={{ color: '#ff6b6b', marginBottom: '1rem' }}>⚠️ {error}</p>
+          <p style={{ color: '#ff6b6b', marginBottom: '1rem' }}>⚠️ {pendingError}</p>
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
             Redirigiendo al login...
           </p>

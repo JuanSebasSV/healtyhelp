@@ -60,9 +60,11 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
   const [busqueda, setBusqueda]               = useState('');
   const [filtroTiempo, setFiltroTiempo]       = useState(null);
 
+  const favoritosSet = useMemo(() => new Set(favoritos), [favoritos]);
+
   const recetasFavoritas = useMemo(
-    () => recetas.filter(r => favoritos.includes(r._id)),
-    [recetas, favoritos]
+    () => recetas.filter(r => favoritosSet.has(r._id)),
+    [recetas, favoritosSet]
   );
 
   const conteoPorCategoria = useMemo(() => {
@@ -78,10 +80,8 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
     let lista = recetasFavoritas.filter(r => r.cat === categoriaActiva);
     if (busqueda.trim()) {
       const b = normalizarTexto(busqueda);
-      lista = lista.filter(r =>
-        normalizarTexto(r.nombre || '').includes(b) ||
-        normalizarTexto(r.desc   || '').includes(b)
-      );
+      const textoReceta = (r) => normalizarTexto(`${r.nombre || ''} ${r.desc || ''}`);
+      lista = lista.filter(r => textoReceta(r).includes(b));
     }
     if (filtroTiempo) {
       const t = (r) => r.tiempoMinutos || 0;
@@ -120,7 +120,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
             </div>
             <h3>Aún no tienes favoritos</h3>
             <p>Explora las recetas y guarda las que más te gusten tocando el corazón.</p>
-            <button className="vf-btn-explorar" onClick={() => navigate('/')}>
+            <button type="button" className="vf-btn-explorar" onClick={() => navigate('/')}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               Explorar recetas
             </button>
@@ -130,7 +130,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
             {CATEGORIAS.map(cat => {
               const count = conteoPorCategoria[cat.id] || 0;
               return (
-                <button
+                <button type="button"
                   key={cat.id}
                   className={`vf-cat-card${count === 0 ? ' vf-cat-card--vacia' : ''}`}
                   onClick={() => { setCategoriaActiva(cat.id); setBusqueda(''); setFiltroTiempo(null); }}
@@ -161,7 +161,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
   return (
     <div className="vf-wrap2 vista-favoritos">
       <div className="vf-header vf-header--inner">
-        <button className="vf-back" onClick={() => { setCategoriaActiva(null); setBusqueda(''); setFiltroTiempo(null); }}>
+        <button type="button" className="vf-back" onClick={() => { setCategoriaActiva(null); setBusqueda(''); setFiltroTiempo(null); }}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Mis Favoritos
         </button>
@@ -188,8 +188,8 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
               onChange={e => setBusqueda(e.target.value)}
             />
             {busqueda && (
-              <button className="vf-buscador-clear" onClick={() => setBusqueda('')}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <button type="button" className="vf-buscador-clear" aria-label="Limpiar búsqueda" onClick={() => setBusqueda('')}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             )}
           </div>
@@ -207,7 +207,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
 
       <div className="vf-tiempo-fila">
         {TIEMPOS.map(t => (
-          <button
+          <button type="button"
             key={t.id}
             className={`vf-tiempo-btn${filtroTiempo === t.id ? ' activo' : ''}`}
             onClick={() => setFiltroTiempo(prev => prev === t.id ? null : t.id)}
@@ -219,7 +219,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
           </button>
         ))}
         {filtroTiempo && (
-          <button className="vf-tiempo-btn vf-tiempo-limpiar" onClick={() => setFiltroTiempo(null)}>
+          <button type="button" className="vf-tiempo-btn vf-tiempo-limpiar" onClick={() => setFiltroTiempo(null)}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             Limpiar
           </button>
@@ -242,7 +242,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
               : 'Guarda recetas de esta categoría para verlas aquí.'}
           </p>
           {!busqueda && !filtroTiempo && (
-            <button className="vf-btn-explorar" onClick={() => navigate('/')}>
+            <button type="button" className="vf-btn-explorar" onClick={() => navigate('/')}>
               Explorar recetas
             </button>
           )}
@@ -254,7 +254,7 @@ const VistaFavoritos = ({ recetas, favoritos, toggleFav }) => {
               key={receta._id}
               receta={receta}
               toggleFav={toggleFav}
-              esFav={favoritos.includes(receta._id)}
+              esFav={favoritosSet.has(receta._id)}
               seleccionada={false}
               onSeleccionar={() => {}}
             />

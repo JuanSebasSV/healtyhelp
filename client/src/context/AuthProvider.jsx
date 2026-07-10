@@ -1,7 +1,15 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { jwtDecode } from "jwt-decode";
+import { useState, useEffect, useCallback, useMemo, useRef, useEffectEvent } from "react";
 import api from "../api/axios";
 import { AuthContext } from "./authContext";
+
+const ACTIVITY_EVENTS = [
+  "mousemove",
+  "keydown",
+  "mousedown",
+  "touchstart",
+  "scroll",
+  "click",
+];
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -18,8 +26,6 @@ export const AuthProvider = ({ children }) => {
       clearTimeout(visibilityTimerRef.current);
       visibilityTimerRef.current = null;
     }
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
   }, []);
 
@@ -40,14 +46,6 @@ export const AuthProvider = ({ children }) => {
     }, ms);
   }, [clearInactivityTimer, limpiarSesion]);
 
-const ACTIVITY_EVENTS = [
-    "mousemove",
-    "keydown",
-    "mousedown",
-    "touchstart",
-    "scroll",
-    "click",
-  ];
   const activityEventsRef = useRef(ACTIVITY_EVENTS);
 
   const stopActivityListeners = useCallback(() => {
@@ -135,39 +133,14 @@ const ACTIVITY_EVENTS = [
   );
 
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      checkAuthRetryRef.current = 0;
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) {
-        limpiarSesion();
-        setLoading(false);
-        checkAuthRetryRef.current = 0;
-        return;
-      }
-    } catch (e) {
-      console.error('Token inválido:', e);
-      limpiarSesion();
-      setLoading(false);
-      checkAuthRetryRef.current = 0;
-      return;
-    }
-
     try {
       const { data } = await api.get("/auth/me");
       const userData = data.user;
       if (userData && !userData._id && userData.id) userData._id = userData.id;
       setUser(userData);
       applyAutoLogoutPrefs(
-        data.user.autoLogoutEnabled ?? false,
-        data.user.autoLogoutMinutes ?? 15,
+        data.user?.autoLogoutEnabled ?? false,
+        data.user?.autoLogoutMinutes ?? 15,
       );
       checkAuthRetryRef.current = 0;
       setLoading(false);
@@ -194,20 +167,17 @@ const ACTIVITY_EVENTS = [
   }, [checkAuth]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
   }, [checkAuth]);
 
+  const onTickIntervalo = useEffectEvent(() => {
+    if (user) checkAuth();
+  });
+
   useEffect(() => {
-    const intervalo = setInterval(
-      () => {
-        const token = localStorage.getItem("token");
-        if (token && user) checkAuth();
-      },
-      2 * 60 * 1000,
-    );
+    const intervalo = setInterval(onTickIntervalo, 2 * 60 * 1000);
     return () => clearInterval(intervalo);
-  }, [user, checkAuth]);
+  }, [user]);
 
   useEffect(() => {
     const handleStorage = (e) => {
@@ -225,14 +195,13 @@ const ACTIVITY_EVENTS = [
     }
   }, [user, stopActivityListeners]);
 
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     try {
       const { data } = await api.post("/auth/register", userData);
       if (data.needsVerification) {
         return { success: true, needsVerification: true, email: data.email };
       }
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.user) {
         setUser(data.user);
       }
       return { success: true };
@@ -252,20 +221,22 @@ const ACTIVITY_EVENTS = [
         email: err?.email,
       };
     }
-  };
+  }, []);
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     try {
       const { data } = await api.post("/auth/login", credentials);
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
+      if (data.user) setUser(data.user);
 
       applyAutoLogoutPrefs(
-        data.user.autoLogoutEnabled ?? false,
-        data.user.autoLogoutMinutes ?? 15,
+        data.user?.autoLogoutEnabled ?? false,
+        data.user?.autoLogoutMinutes ?? 15,
       );
 
-      return { success: true };
+      return {
+        success: true,
+        needsGooglePassword: !!data.needsGooglePassword,
+      };
     } catch (error) {
       if (error.sinConexion) {
         return {
@@ -285,14 +256,19 @@ const ACTIVITY_EVENTS = [
         attemptsLeft: err?.attemptsLeft,
       };
     }
-  };
+  }, [applyAutoLogoutPrefs]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     stopActivityListeners();
+    try {
+      await api.post("/auth/logout");
+    } catch (e) {
+      if (!e.sinConexion) console.error('Logout error:', e.message);
+    }
     limpiarSesion();
   }, [stopActivityListeners, limpiarSesion]);
 
-  const forgotPassword = async (email) => {
+  const forgotPassword = useCallback(async (email) => {
     try {
       await api.post("/auth/forgot-password", { email });
       return { success: true };
@@ -301,39 +277,38 @@ const ACTIVITY_EVENTS = [
         return { success: false, error: "Sin conexión al servidor." };
       return { success: false, error: error.response?.data?.error };
     }
-  };
+  }, []);
 
-  const resetPassword = async (token, password) => {
+  const resetPassword = useCallback(async (token, password) => {
     try {
       const { data } = await api.put(`/auth/reset-password/${token}`, {
         password,
       });
-      localStorage.setItem("token", data.token);
+      if (data?.user) setUser(data.user);
+      else await checkAuth();
       return { success: true };
     } catch (error) {
       if (error.sinConexion)
         return { success: false, error: "Sin conexión al servidor." };
       return { success: false, error: error.response?.data?.error };
     }
-  };
+  }, [checkAuth]);
 
-  const isAdmin = () => user?.role === "admin";
+  const contextValue = useMemo(() => ({
+    user,
+    loading,
+    register,
+    login,
+    logout,
+    forgotPassword,
+    resetPassword,
+    isAdmin: () => user?.role === "admin",
+    checkAuth,
+    updateAutoLogout,
+  }), [user, loading, register, login, logout, forgotPassword, resetPassword, checkAuth, updateAutoLogout]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        register,
-        login,
-        logout,
-        forgotPassword,
-        resetPassword,
-        isAdmin,
-        checkAuth,
-        updateAutoLogout,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

@@ -162,16 +162,16 @@ const RecipeManagement = () => {
       )}
 
       <div className="recipe-tabs">
-        <button className={activeTab === 'list' ? 'active' : ''} onClick={() => setActiveTab('list')}>
+        <button type="button" className={activeTab === 'list' ? 'active' : ''} onClick={() => setActiveTab('list')}>
           <IcoList />Lista
         </button>
-        <button className={activeTab === 'import' ? 'active' : ''} onClick={() => setActiveTab('import')}>
+        <button type="button" className={activeTab === 'import' ? 'active' : ''} onClick={() => setActiveTab('import')}>
           <IcoImport />Importar
         </button>
-        <button className={activeTab === 'create' ? 'active' : ''} onClick={handleCreateTab}>
+        <button type="button" className={activeTab === 'create' ? 'active' : ''} onClick={handleCreateTab}>
           <IcoCreate />Crear
         </button>
-        <button onClick={handleExport} className="btn-export">
+        <button type="button" onClick={handleExport} className="btn-export">
           <IcoExport />Exportar
         </button>
       </div>
@@ -179,7 +179,7 @@ const RecipeManagement = () => {
       <div className="recipe-content">
         {activeTab === 'list'   && <RecipeList recipes={recipes} onDelete={handleDelete} onEdit={handleEdit} onDeleteMultiple={handleDeleteMultiple} />}
         {activeTab === 'import' && <RecipeImport onSuccess={handleImportSuccess} />}
-        {activeTab === 'create' && <RecipeForm recipe={editingRecipe} onSuccess={handleFormSuccess} onCancel={handleCancel} />}
+        {activeTab === 'create' && <RecipeForm key={editingRecipe?._id ?? 'new'} recipe={editingRecipe} onSuccess={handleFormSuccess} onCancel={handleCancel} />}
       </div>
     </div>
   );

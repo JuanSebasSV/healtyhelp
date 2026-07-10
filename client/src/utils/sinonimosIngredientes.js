@@ -169,17 +169,22 @@ const SINONIMOS = [
    * Dado el texto completo de una receta y una lista de alergias,
    * devuelve true si la receta NO contiene ningún alérgeno.
    */
+  const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   export const recetaEsSegura = (textoReceta, alergias) => {
     const textoNorm = textoReceta
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
-  
+
+    const prohibidosSet = new Set();
     for (const alergia of alergias) {
-      const sinonimos = obtenerSinonimos(alergia);
-      for (const sin of sinonimos) {
-        if (textoNorm.includes(sin)) return false;
+      for (const sin of obtenerSinonimos(alergia)) {
+        prohibidosSet.add(sin);
       }
     }
-    return true;
+    if (prohibidosSet.size === 0) return true;
+    const patron = [...prohibidosSet].map(escapeRegex).join('|');
+    const re = new RegExp(`\\b(?:${patron})\\b`);
+    return !re.test(textoNorm);
   };

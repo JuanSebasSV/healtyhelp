@@ -8,6 +8,44 @@ import UserList from './UserList';
 import Stats from './Stats';
 import RecipeManagement from './RecipeManagement';
 import TermsManager from './TermsManager';
+
+const ICON_USERS = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>
+);
+
+const ICON_RECIPES = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
+    <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+  </svg>
+);
+
+const ICON_TERMS = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+    <polyline points="10 9 9 9 8 9"/>
+  </svg>
+);
+
+const ICON_IMAGES = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
+    <polyline points="21 15 16 10 5 21"/>
+  </svg>
+);
+
+const ICON_IA = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '6px' }}>
+    <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/>
+    <path d="M2 14h2"/><path d="M20 14h2"/>
+    <path d="M15 13v2"/><path d="M9 13v2"/>
+  </svg>
+);
 import PanelIA from './PanelIA';
 import ImagenesAprobacion from './ImagenesAprobacion';
 
@@ -29,7 +67,7 @@ const IcoBack = memo(() => (
 IcoBack.displayName = 'IcoBack';
 
 const TabButton = memo(({ id, label, icon, activeTab, onClick, badge = 0 }) => (
-  <button className={`main-tab ${activeTab === id ? 'active' : ''}`} onClick={() => onClick(id)}>
+  <button type="button" className={`main-tab ${activeTab === id ? 'active' : ''}`} onClick={() => onClick(id)}>
     {icon}
     {label}
     {badge > 0 && <span className="main-tab-badge">{badge}</span>}
@@ -223,7 +261,7 @@ const Dashboard = ({ onBadgeChange }) => {
           <h1><IcoShield />Panel de Administración</h1>
           <p className="admin-subtitle">Bienvenido, {user?.name}</p>
         </div>
-        <button onClick={() => navigate('/')} className="btn-back">
+        <button type="button" onClick={() => navigate('/')} className="btn-back">
           <IcoBack />Volver al inicio
         </button>
       </div>
@@ -231,39 +269,11 @@ const Dashboard = ({ onBadgeChange }) => {
       <Stats stats={stats} />
 
       <div className="admin-main-tabs">
-        <TabButton id="users" label="Usuarios" activeTab={activeTab} onClick={handleTabClick} icon={
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-        } />
-        <TabButton id="recipes" label="Recetas" activeTab={activeTab} onClick={handleTabClick} icon={
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
-            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
-          </svg>
-        } />
-        <TabButton id="terms" label="Términos" activeTab={activeTab} onClick={handleTabClick} icon={
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
-        } />
-        <TabButton id="imagenes" label="Imágenes" activeTab={activeTab} onClick={handleTabClick} badge={imgPendientes} icon={
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-        } />
-        <TabButton id="ia" label="Asistente IA" activeTab={activeTab} onClick={handleTabClick} icon={
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '6px' }}>
-            <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/>
-            <path d="M2 14h2"/><path d="M20 14h2"/>
-            <path d="M15 13v2"/><path d="M9 13v2"/>
-          </svg>
-        } />
+        <TabButton id="users" label="Usuarios" activeTab={activeTab} onClick={handleTabClick} icon={ICON_USERS} />
+        <TabButton id="recipes" label="Recetas" activeTab={activeTab} onClick={handleTabClick} icon={ICON_RECIPES} />
+        <TabButton id="terms" label="Términos" activeTab={activeTab} onClick={handleTabClick} icon={ICON_TERMS} />
+        <TabButton id="imagenes" label="Imágenes" activeTab={activeTab} onClick={handleTabClick} badge={imgPendientes} icon={ICON_IMAGES} />
+        <TabButton id="ia" label="Asistente IA" activeTab={activeTab} onClick={handleTabClick} icon={ICON_IA} />
       </div>
 
       {activeTab === 'users' && (
@@ -276,13 +286,13 @@ const Dashboard = ({ onBadgeChange }) => {
               <input type="text" placeholder="Buscar por nombre o email..." value={searchTerm} onChange={handleSearchChange} />
             </div>
             <div className="filter-box">
-              <select value={filterRole} onChange={handleFilterChange}>
+              <select aria-label="Filtrar por rol de usuario" value={filterRole} onChange={handleFilterChange}>
                 <option value="all">Todos los roles</option>
                 <option value="admin">Solo Administradores</option>
                 <option value="user">Solo Usuarios</option>
               </select>
             </div>
-            <button onClick={exportToCSV} className="btn-export">
+            <button type="button" onClick={exportToCSV} className="btn-export">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
@@ -295,14 +305,14 @@ const Dashboard = ({ onBadgeChange }) => {
 
           {totalPages > 1 && (
             <div className="pagination">
-              <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
+              <button type="button" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="15 18 9 12 15 6"/>
                 </svg>
                 Anterior
               </button>
               <span className="page-info">Página {currentPage} de {totalPages}</span>
-              <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
+              <button type="button" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
                 Siguiente
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="9 18 15 12 9 6"/>
@@ -323,7 +333,7 @@ const Dashboard = ({ onBadgeChange }) => {
       {activeTab === 'recipes' && (
         <>
           <div className="admin-recipes-toolbar">
-            <button
+            <button type="button"
               onClick={handleLimpiarNotifs}
               disabled={limpiandoNotifs}
               className="btn-limpiar-notifs"

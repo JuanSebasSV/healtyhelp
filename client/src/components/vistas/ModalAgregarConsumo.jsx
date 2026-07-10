@@ -130,9 +130,9 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
   const { Icon: IconDestino } = TIPOS_META[tipoDestino];
 
   return (
-    <div className="modal-overlay" onClick={cerrar}>
-      <button className="modal-cerrar" onClick={cerrar}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round">
+    <div className="modal-overlay" role="button" tabIndex={0} onClick={cerrar} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cerrar(); }}}>
+      <button type="button" className="modal-cerrar" aria-label="Cerrar" onClick={cerrar}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
           <path d="M18 6L6 18M6 6l12 12"/>
         </svg>
       </button>
@@ -151,7 +151,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
             {['todas', 'desayuno', 'almuerzo', 'cena'].map(t => {
               const { label, Icon } = TIPOS_META[t];
               return (
-                <button
+                <button type="button"
                   key={t}
                   className={`agr-tipo-btn ${filtroVista === t ? 'activo' : ''}`}
                   onClick={() => setFiltroVista(t)}
@@ -173,9 +173,9 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
           </svg>
           <input
             type="text"
+            aria-label="Buscar receta"
             value={busqueda}
             onChange={e => setBusqueda(e.target.value)}
-            autoFocus
           />
         </div>
 
@@ -192,7 +192,7 @@ const ModalAgregarConsumo = ({ fecha, tipoSugerido, cerrar, onAgregado }) => {
                   <p className="agr-receta-nombre">{r.nombre}</p>
                   <p className="agr-receta-cal">{r.nutri?.cal || 0} kcal</p>
                 </div>
-                <button
+                <button type="button"
                   className="agr-btn-añadir"
                   onClick={() => handleAgregar(r._id)}
                   disabled={enviando}

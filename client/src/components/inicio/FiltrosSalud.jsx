@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './FiltrosSalud.css';
@@ -68,6 +68,7 @@ const FiltrosSalud = ({
   onCerrarFiltro,
 }) => {
   const totalCondicionesActivas = filtros.length;
+  const filtrosSet = useMemo(() => new Set(filtros), [filtros]);
   useBodyScrollLock(!!filtroAbierto);
   useModalLayerHint(!!filtroAbierto);
 
@@ -88,7 +89,7 @@ const FiltrosSalud = ({
               className="buscador-input"
             />
             {busqueda && (
-              <button className="buscador-clear" onClick={() => onBusquedaChange('')} aria-label="Limpiar búsqueda">
+              <button type="button" className="buscador-clear" onClick={() => onBusquedaChange('')} aria-label="Limpiar búsqueda">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
@@ -96,7 +97,7 @@ const FiltrosSalud = ({
             )}
           </div>
 
-          <button className="filtroModalBtn" onClick={onAbrirFiltro}>
+          <button type="button" className="filtroModalBtn" onClick={onAbrirFiltro}>
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
             </svg>
@@ -116,7 +117,7 @@ const FiltrosSalud = ({
               {CATEGORIAS.map(cat => {
                 const esActivo = cat.id === 'todas' ? categoria === '' : categoria === cat.id;
                 return (
-                  <button
+                  <button type="button"
                     key={cat.id}
                     className={`cat-card ${esActivo ? 'activo' : ''}`}
                     onClick={() => onCategoria(cat.id)}
@@ -140,7 +141,7 @@ const FiltrosSalud = ({
             </span>
             <div className="tiempo-seg">
               {TIEMPOS.map(t => (
-                <button
+                <button type="button"
                   key={t.id}
                   className={`tiempo-seg__btn ${filtroTiempo === t.id ? 'activo' : ''}`}
                   onClick={() => onFiltroTiempo(t.id)}
@@ -150,7 +151,7 @@ const FiltrosSalud = ({
               ))}
             </div>
             {filtroTiempo && (
-              <button className="tiempo-seg__limpiar" onClick={onLimpiarTiempo}>
+              <button type="button" className="tiempo-seg__limpiar" onClick={onLimpiarTiempo}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
@@ -173,12 +174,15 @@ const FiltrosSalud = ({
         <div
           className="filtroModalOverlay"
           data-modal="true"
+          role="button"
+          tabIndex={0}
           onClick={e => { if (e.target === e.currentTarget) onCerrarFiltro(); }}
+          onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) onCerrarFiltro(); }}
         >
           <div className="filtroModal">
             <div className="filtroModalHeader">
               <h2>¡Busca tu Tipo de Dieta!</h2>
-              <button className="filtroModalCerrar" onClick={onCerrarFiltro} aria-label="Cerrar">
+              <button type="button" className="filtroModalCerrar" onClick={onCerrarFiltro} aria-label="Cerrar">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -189,7 +193,7 @@ const FiltrosSalud = ({
                 <p>Selecciona todas las condiciones que se apliquen a ti. Solo verás recetas que cumplan con todas tus necesidades.</p>
                 {!listo && <p className="filtroInfo-cargando">Cargando tu perfil...</p>}
                 {totalCondicionesActivas > 0 && (
-                  <button className="btnLimpiar" onClick={onLimpiarTodo}>
+                  <button type="button" className="btnLimpiar" onClick={onLimpiarTodo}>
                     Limpiar filtros ({totalCondicionesActivas})
                   </button>
                 )}
@@ -207,9 +211,9 @@ const FiltrosSalud = ({
                   </h3>
                   <div className="filtroGrid">
                     {items.map(c => {
-                      const activo = filtros.includes(c.id);
+                      const activo = filtrosSet.has(c.id);
                       return (
-                        <button
+                        <button type="button"
                           key={c.id}
                           className={`filtroCard filtroCard--${grupo} ${activo ? 'activo' : ''}`}
                           onClick={() => onToggleFiltro(c.id)}

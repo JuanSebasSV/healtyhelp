@@ -73,7 +73,7 @@ const ModalMensaje = memo(({ user: target, onClose }) => {
   };
 
   return (
-    <div className="ban-modal-overlay" onClick={onClose}>
+    <div className="ban-modal-overlay" role="button" tabIndex={0} onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); }}}>
       <div className="ban-modal msg-modal" onClick={e => e.stopPropagation()}>
         <div className="ban-modal-header">
           <h3>
@@ -82,7 +82,7 @@ const ModalMensaje = memo(({ user: target, onClose }) => {
             </svg>
             Enviar mensaje
           </h3>
-          <button className="ban-modal-cerrar" onClick={onClose}>
+          <button type="button" className="ban-modal-cerrar" aria-label="Cerrar" onClick={onClose}>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12"/>
             </svg>
@@ -92,19 +92,19 @@ const ModalMensaje = memo(({ user: target, onClose }) => {
         <p className="ban-modal-usuario">Para: <strong>{target.name}</strong> — {target.email}</p>
 
         <div className="ban-modal-campo">
-          <label>Asunto <span className="ban-opcional">(opcional)</span></label>
-          <input type="text" value={asunto} onChange={e => setAsunto(e.target.value)} placeholder="Ej: Aviso importante" maxLength={120} className="msg-input" />
+          <label htmlFor="ul-asunto">Asunto <span className="ban-opcional">(opcional)</span></label>
+          <input id="ul-asunto" type="text" value={asunto} onChange={e => setAsunto(e.target.value)} placeholder="Ej: Aviso importante" maxLength={120} className="msg-input" />
         </div>
 
         <div className="ban-modal-campo">
-          <label>Mensaje</label>
-          <textarea value={mensaje} onChange={e => setMensaje(e.target.value)} placeholder="Escribe tu mensaje al usuario..." rows={5} maxLength={1000} />
+          <label htmlFor="ul-mensaje">Mensaje</label>
+          <textarea id="ul-mensaje" value={mensaje} onChange={e => setMensaje(e.target.value)} placeholder="Escribe tu mensaje al usuario..." rows={5} maxLength={1000} />
           <span className="msg-contador">{mensaje.length}/1000</span>
         </div>
 
         <div className="ban-modal-acciones">
-          <button className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
-          <button className="msg-btn-enviar" onClick={handleEnviar} disabled={enviando || !mensaje.trim()}>
+          <button type="button" className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
+          <button type="button" className="msg-btn-enviar" onClick={handleEnviar} disabled={enviando || !mensaje.trim()}>
             {enviando ? <><IcoSpin /> Enviando</> : (
               <><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enviar mensaje</>
             )}
@@ -133,37 +133,37 @@ const ModalBaneo = memo(({ user: target, onClose, onBan }) => {
   };
 
   return (
-    <div className="ban-modal-overlay" onClick={onClose}>
+    <div className="ban-modal-overlay" role="button" tabIndex={0} onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); }}}>
       <div className="ban-modal" onClick={e => e.stopPropagation()}>
         <div className="ban-modal-header">
           <h3>🔨 Banear usuario</h3>
-          <button className="ban-modal-cerrar" onClick={onClose}>✕</button>
+          <button type="button" className="ban-modal-cerrar" aria-label="Cerrar" onClick={onClose}>✕</button>
         </div>
 
         <p className="ban-modal-usuario"><strong>{target.name}</strong> — {target.email}</p>
 
         <div className="ban-modal-campo">
-          <label>Motivo <span className="ban-opcional">(opcional)</span></label>
-          <textarea value={motivo} onChange={e => setMotivo(e.target.value)} placeholder="Ej: Contenido inapropiado, spam..." rows={3} maxLength={300} />
+          <label htmlFor="ul-motivo">Motivo <span className="ban-opcional">(opcional)</span></label>
+          <textarea id="ul-motivo" value={motivo} onChange={e => setMotivo(e.target.value)} placeholder="Ej: Contenido inapropiado, spam..." rows={3} maxLength={300} />
         </div>
 
         <div className="ban-modal-campo">
-          <label>Duración</label>
+          <label htmlFor="ul-duracion-tipo">Duración</label>
           <div className="ban-tipo-btns">
-            <button className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`} onClick={() => setTipo('dias')}>Temporal</button>
-            <button className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`} onClick={() => setTipo('permanente')}>Permanente</button>
+            <button type="button" id="ul-duracion-tipo" className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`} onClick={() => setTipo('dias')}>Temporal</button>
+            <button type="button" className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`} onClick={() => setTipo('permanente')}>Permanente</button>
           </div>
         </div>
 
         {tipo === 'dias' && (
           <div className="ban-modal-campo">
-            <label>Días de baneo</label>
+            <label htmlFor="ul-dias-input">Días de baneo</label>
             <div className="ban-dias-btns">
               {[1, 3, 7, 14, 30, 90].map(d => (
-                <button key={d} className={`ban-dias-btn ${dias === d ? 'activo' : ''}`} onClick={() => setDias(d)}>{d}d</button>
+                <button type="button" key={d} className={`ban-dias-btn ${dias === d ? 'activo' : ''}`} onClick={() => setDias(d)}>{d}d</button>
               ))}
             </div>
-            <input type="number" min={1} max={365} value={dias} onChange={e => setDias(Math.max(1, parseInt(e.target.value) || 1))} className="ban-dias-input" placeholder="O escribe los días manualmente" />
+            <input id="ul-dias-input" type="number" min={1} max={365} value={dias} onChange={e => setDias(Math.max(1, parseInt(e.target.value) || 1))} className="ban-dias-input" placeholder="O escribe los días manualmente" />
           </div>
         )}
 
@@ -172,8 +172,8 @@ const ModalBaneo = memo(({ user: target, onClose, onBan }) => {
         )}
 
         <div className="ban-modal-acciones">
-          <button className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
-          <button className="ban-btn-confirmar" onClick={handleConfirm} disabled={enviando}>
+          <button type="button" className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
+          <button type="button" className="ban-btn-confirmar" onClick={handleConfirm} disabled={enviando}>
             {enviando ? '⏳ Baneando...' : tipo === 'permanente' ? '🔨 Banear permanentemente' : `🔨 Banear por ${dias} día${dias !== 1 ? 's' : ''}`}
           </button>
         </div>
@@ -210,7 +210,7 @@ const UserCard = memo(({ user, isCurrentUser, canEdit, canBanUser, esBaneado, pr
 
       <div className="ucard-mid">
         {canEdit ? (
-          <select value={user.role} onChange={e => onChangeRole(user._id, e.target.value)} className={`role-select role-${user.role}`}>
+          <select aria-label={`Cambiar rol de ${user.name}`} value={user.role} onChange={e => onChangeRole(user._id, e.target.value)} className={`role-select role-${user.role}`}>
             <option value="user">Usuario</option>
             <option value="admin">Administrador</option>
           </select>
@@ -225,19 +225,19 @@ const UserCard = memo(({ user, isCurrentUser, canEdit, canBanUser, esBaneado, pr
         <span className="ucard-fecha">{formatFechaReg(user.createdAt)}</span>
         <div className="ucard-actions">
           {!isCurrentUser && (
-            <button onClick={() => onMensaje(user)} className="btn-message" title="Enviar mensaje"><IcoMsg /></button>
+            <button type="button" onClick={() => onMensaje(user)} className="btn-message" title="Enviar mensaje"><IcoMsg /></button>
           )}
           {canEdit ? (
-            <button onClick={() => onDelete(user._id)} className="btn-delete" title="Eliminar"><IcoTrash /></button>
+            <button type="button" onClick={() => onDelete(user._id)} className="btn-delete" title="Eliminar"><IcoTrash /></button>
           ) : (
             <span className="protected-badge"><IcoLock size={16} /></span>
           )}
           {canBanUser && (esBaneado ? (
-            <button className="btn-unban" onClick={() => onUnban(targetId, user.name)} disabled={procesando}>
+            <button type="button" className="btn-unban" onClick={() => onUnban(targetId, user.name)} disabled={procesando}>
               {procesando ? '⏳' : '✅'}
             </button>
           ) : (
-            <button className="btn-ban" onClick={() => onBaneo(user)} disabled={procesando}>
+            <button type="button" className="btn-ban" onClick={() => onBaneo(user)} disabled={procesando}>
               {procesando ? '⏳' : '🔨'}
             </button>
           ))}
@@ -271,7 +271,7 @@ const UserRow = memo(({ user, isCurrentUser, canEdit, canBanUser, esBaneado, pro
       <td><span className="user-email">{user.email}</span></td>
       <td>
         {canEdit ? (
-          <select value={user.role} onChange={e => onChangeRole(user._id, e.target.value)} className={`role-select role-${user.role}`}>
+          <select aria-label={`Cambiar rol de ${user.name}`} value={user.role} onChange={e => onChangeRole(user._id, e.target.value)} className={`role-select role-${user.role}`}>
             <option value="user">Usuario</option>
             <option value="admin">Administrador</option>
           </select>
@@ -290,19 +290,19 @@ const UserRow = memo(({ user, isCurrentUser, canEdit, canBanUser, esBaneado, pro
       <td>
         <div className="action-buttons">
           {!isCurrentUser && (
-            <button onClick={() => onMensaje(user)} className="btn-message" title={`Enviar mensaje a ${user.name}`}><IcoMsg /></button>
+            <button type="button" onClick={() => onMensaje(user)} className="btn-message" title={`Enviar mensaje a ${user.name}`}><IcoMsg /></button>
           )}
           {canEdit ? (
-            <button onClick={() => onDelete(user._id)} className="btn-delete" title="Eliminar usuario"><IcoTrash /></button>
+            <button type="button" onClick={() => onDelete(user._id)} className="btn-delete" title="Eliminar usuario"><IcoTrash /></button>
           ) : (
             <span className="protected-badge" title={isCurrentUser ? 'No puedes modificarte a ti mismo' : ''}><IcoLock size={18} /></span>
           )}
           {canBanUser && (esBaneado ? (
-            <button className="btn-unban" title="Desbanear usuario" onClick={() => onUnban(targetId, user.name)} disabled={procesando}>
+            <button type="button" className="btn-unban" title="Desbanear usuario" onClick={() => onUnban(targetId, user.name)} disabled={procesando}>
               {procesando ? '⏳' : '✅ Desbanear'}
             </button>
           ) : (
-            <button className="btn-ban" title="Banear usuario" onClick={() => onBaneo(user)} disabled={procesando}>
+            <button type="button" className="btn-ban" title="Banear usuario" onClick={() => onBaneo(user)} disabled={procesando}>
               {procesando ? '⏳' : '🔨 Banear'}
             </button>
           ))}

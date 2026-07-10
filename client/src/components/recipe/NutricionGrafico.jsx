@@ -111,7 +111,7 @@ const NutricionGrafico = memo(({ nutri, abrirNutricion }) => {
         </div>
       </div>
 
-      <button className="btnNutriDetalle" onClick={handleNutricion}>
+      <button type="button" className="btnNutriDetalle" onClick={handleNutricion}>
         Información Nutricional Detallada
       </button>
     </div>

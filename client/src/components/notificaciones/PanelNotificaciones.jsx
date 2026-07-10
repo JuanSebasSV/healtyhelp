@@ -151,7 +151,7 @@ const PanelNotificaciones = ({
   return (
     <>
       <div className="pn-overlay" onClick={onCerrar} aria-hidden="true" />
-      <div className="pn-panel" ref={panelRef} role="dialog" aria-label="Notificaciones">
+      <dialog ref={panelRef} className="pn-panel" aria-label="Notificaciones">
 
         <div className="pn-header">
           <div className="pn-header-izq">
@@ -161,12 +161,12 @@ const PanelNotificaciones = ({
           </div>
           <div className="pn-header-der">
             {noLeidas > 0 && (
-              <button className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
+              <button type="button" className="pn-btn-leer-todas" onClick={onLeerTodas} title="Marcar todas como leídas">
                 <IcoCheck /> Leer todas
               </button>
             )}
             {esMobil && (
-              <button className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
+              <button type="button" className="pn-btn-cerrar-modal" onClick={onCerrar} aria-label="Cerrar notificaciones">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -188,15 +188,26 @@ const PanelNotificaciones = ({
               <span>Aquí aparecerán las respuestas a tus comentarios y mensajes del equipo</span>
             </div>
           ) : (
-            notificaciones.map(n => (
+             notificaciones.map(n => {
+              const isClickable = (n.type === 'reply' || n.type === 'new_recipe') && n.recetaId;
+              return (
               <div
                 key={n._id}
-                className={`pn-item ${!n.leida ? 'no-leida' : 'leida'} pn-tipo-${n.type} ${(n.type === 'reply' || n.type === 'new_recipe') && n.recetaId ? 'pn-clickable' : ''}`}
-                onClick={() => handleClickItem(n)}
+                className={`pn-item ${!n.leida ? 'no-leida' : 'leida'} pn-tipo-${n.type} ${isClickable ? 'pn-clickable' : ''}`}
+                role={isClickable ? 'button' : undefined}
+                tabIndex={isClickable ? 0 : undefined}
+                onClick={isClickable ? () => handleClickItem(n) : undefined}
+                onKeyDown={isClickable ? (e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleClickItem(n);
+                  }
+                } : undefined}
+                aria-label={isClickable ? 'Abrir notificación' : undefined}
               >
                 {!n.leida && <span className="pn-dot" aria-hidden="true" />}
 
-                <button
+                <button type="button"
                   className="pn-btn-eliminar"
                   onClick={e => { e.stopPropagation(); onEliminar(n._id); }}
                   aria-label="Eliminar notificación"
@@ -251,10 +262,11 @@ const PanelNotificaciones = ({
                   <span className="pn-fecha">{formatRelativa(n.createdAt)}</span>
                 </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>
-      </div>
+      </dialog>
     </>
   );
 };

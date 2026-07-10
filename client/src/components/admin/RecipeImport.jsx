@@ -4,7 +4,19 @@ import { toast } from 'react-toastify';
 import { optimizeCloudinary } from '../../utils/cloudinary';
 import './RecipeImport.css';
 
-const STORAGE_KEY = 'healtyhelp_import_draft';
+const STORAGE_KEY = 'healtyhelp_import_draft:v1';
+
+const loadRecetas = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const draft = JSON.parse(raw);
+    return Array.isArray(draft.recipes) && draft.recipes.length > 0 ? draft : null;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+};
 
 const NUTRI_SECCIONES = [
   {
@@ -66,20 +78,20 @@ const NutriEditorModal = memo(({ receta, onGuardar, onCerrar }) => {
   }, []);
 
   return (
-    <div className="nutri-editor-overlay" onClick={onCerrar}>
+      <div className="nutri-editor-overlay" role="button" tabIndex={0} onClick={onCerrar} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onCerrar(); }}}>
       <div className="nutri-editor-modal" onClick={e => e.stopPropagation()}>
         <div className="nutri-editor-header">
           <div>
             <h3>✏️ Editor Nutricional</h3>
             <p className="nutri-editor-receta-nombre">{receta.nombre}</p>
           </div>
-          <button className="nutri-editor-cerrar" onClick={onCerrar}>✕</button>
+          <button type="button" className="nutri-editor-cerrar" onClick={onCerrar}>✕</button>
         </div>
 
         <div className="nutri-editor-body">
           {NUTRI_SECCIONES.map((sec, si) => (
             <div key={si}>
-              <button
+              <button type="button"
                 className={`nutri-seccion-titulo ${seccionAbierta === si ? 'abierta' : ''}`}
                 onClick={() => setSeccion(seccionAbierta === si ? -1 : si)}
               >
@@ -90,9 +102,10 @@ const NutriEditorModal = memo(({ receta, onGuardar, onCerrar }) => {
                 <div className="nutri-campos-grid">
                   {sec.campos.map(c => (
                     <div key={c.key} className="nutri-campo">
-                      <label>{c.label}</label>
+                      <label htmlFor={`ri-${c.key}`}>{c.label}</label>
                       <div className="nutri-campo-input-wrap">
                         <input
+                          id={`ri-${c.key}`}
                           type="number"
                           min="0"
                           step="0.1"
@@ -110,8 +123,8 @@ const NutriEditorModal = memo(({ receta, onGuardar, onCerrar }) => {
         </div>
 
         <div className="nutri-editor-footer">
-          <button className="btn-cancelar-nutri" onClick={onCerrar}>Cancelar</button>
-          <button className="btn-guardar-nutri" onClick={() => onGuardar(nutri)}>
+          <button type="button" className="btn-cancelar-nutri" onClick={onCerrar}>Cancelar</button>
+          <button type="button" className="btn-guardar-nutri" onClick={() => onGuardar(nutri)}>
             💾 Guardar nutrición
           </button>
         </div>
@@ -130,6 +143,7 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
   const handleNombre = useCallback(e => onChange(index, 'nombre', e.target.value), [index, onChange]);
   const handleDesc   = useCallback(e => onChange(index, 'desc',   e.target.value), [index, onChange]);
   const handleImg    = useCallback(e => onChange(index, 'img',    e.target.value), [index, onChange]);
+  const cerrarNutri   = useCallback(() => setEditandoNutri(false), []);
 
   const handleGuardarNutri = useCallback(nuevoNutri => {
     onChange(index, 'nutri', nuevoNutri);
@@ -175,7 +189,7 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
             <span>🥩 {nutri.prot || 0}g prot</span>
             <span>🍞 {nutri.carb || 0}g carb</span>
             <span>🧈 {nutri.gras || 0}g gras</span>
-            <button className="btn-editar-nutri" onClick={() => setEditandoNutri(true)}>
+            <button type="button" className="btn-editar-nutri" onClick={() => setEditandoNutri(true)}>
               ✏️ Editar
             </button>
           </div>
@@ -198,7 +212,7 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
         <NutriEditorModal
           receta={receta}
           onGuardar={handleGuardarNutri}
-          onCerrar={() => setEditandoNutri(false)}
+          onCerrar={cerrarNutri}
         />
       )}
     </>
@@ -207,30 +221,28 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
 ReviewCard.displayName = 'ReviewCard';
 
 const RecipeImport = ({ onSuccess }) => {
-  const [recetas,    setRecetas]    = useState(null);
-  const [mode,       setMode]       = useState('add');
+  const [recetas,    setRecetas]    = useState(() => {
+    const d = loadRecetas();
+    return d ? d.recipes : null;
+  });
+  const [mode,       setMode]       = useState(() => {
+    const d = loadRecetas();
+    return d ? (d.mode || 'add') : 'add';
+  });
   const [loading,    setLoading]    = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [hasDraft,   setHasDraft]   = useState(false);
-  const [paso,       setPaso]       = useState('upload');
+  const [hasDraft,   setHasDraft]   = useState(() => loadRecetas() !== null);
+  const [paso,       setPaso]       = useState(() => {
+    const d = loadRecetas();
+    return d ? 'review' : 'upload';
+  });
 
   const draftTimerRef = useRef(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const draft = JSON.parse(raw);
-        if (Array.isArray(draft.recipes) && draft.recipes.length > 0) {
-          setRecetas(draft.recipes);
-          setMode(draft.mode || 'add');
-          setHasDraft(true);
-          setPaso('review');
-          toast.info(`📂 Borrador recuperado: ${draft.recipes.length} recetas pendientes`, { autoClose: 5000 });
-        }
-      }
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
+    const draft = loadRecetas();
+    if (draft?.recipes?.length) {
+      toast.info(`📂 Borrador recuperado: ${draft.recipes.length} recetas pendientes`, { autoClose: 5000 });
     }
   }, []);
 
@@ -408,13 +420,13 @@ const RecipeImport = ({ onSuccess }) => {
             </div>
           </div>
           <div className="draft-banner-actions">
-            <button className="btn-draft-descartar" onClick={clearDraft}>🗑️ Descartar</button>
+            <button type="button" className="btn-draft-descartar" onClick={clearDraft}>🗑️ Descartar</button>
           </div>
         </div>
       )}
 
       <div className="review-header">
-        <button className="btn-back-step" onClick={() => setPaso('upload')}>← Cargar otro archivo</button>
+        <button type="button" className="btn-back-step" onClick={() => setPaso('upload')}>← Cargar otro archivo</button>
         <div className="review-header-info">
           <span className="review-count">{recetas.length} receta{recetas.length !== 1 ? 's' : ''} para importar</span>
           {sinImagen > 0 && <span className="sin-imagen-badge">⚠️ {sinImagen} sin imagen</span>}
@@ -425,7 +437,7 @@ const RecipeImport = ({ onSuccess }) => {
       <div className="review-grid">
         {recetas.map((receta, i) => (
           <ReviewCard
-            key={i}
+            key={receta.nombre || `receta-${i}`}
             receta={receta}
             index={i}
             onChange={handleChange}
@@ -433,7 +445,7 @@ const RecipeImport = ({ onSuccess }) => {
         ))}
       </div>
 
-      <button onClick={handleImport} disabled={loading} className="btn-import">
+      <button type="button" onClick={handleImport} disabled={loading} className="btn-import">
         {loading
           ? '⏳ Importando...'
           : `📤 Importar ${recetas.length} Receta${recetas.length !== 1 ? 's' : ''} a la BD`}

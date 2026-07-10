@@ -111,7 +111,16 @@ const TarjetaReceta = memo(
       <>
         <div
           className={`tarjetaReceta${seleccionada ? " tarjeta-seleccionada" : ""}`}
+          role="button"
+          tabIndex={0}
           onClick={abrirDetalle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              abrirDetalle();
+            }
+          }}
+          aria-label={`Ver detalles de ${receta?.nombre || 'receta'}`}
           style={{ scrollMarginTop: "80px" }}
         >
           <div className="tarjetaImg">
@@ -137,7 +146,7 @@ const TarjetaReceta = memo(
               </div>
             )}
 
-            <button
+            <button type="button"
               className={`btnFav${esFav ? " activo" : ""}`}
               onClick={handleFav}
               aria-label={esFav ? "Quitar de favoritos" : "Agregar a favoritos"}
@@ -145,7 +154,7 @@ const TarjetaReceta = memo(
               <IconoCorazon />
             </button>
 
-              <button
+              <button type="button"
                 className={`btnSeleccionar${seleccionada ? " activo" : ""}`}
                 onClick={handleSeleccionar}
                 title={seleccionada ? "Quitar del PDF" : "Agregar al PDF"}

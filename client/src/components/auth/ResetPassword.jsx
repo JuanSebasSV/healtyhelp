@@ -93,7 +93,7 @@ const ResetPassword = () => {
           <BrandHeader />
           <h2>❌ Token inválido</h2>
           <p>El enlace de recuperación es inválido o ha expirado.</p>
-          <button
+          <button type="button"
             onClick={() => navigate('/recuperar')}
             className="btn-primario"
             style={{ marginTop: '1.5rem', width: '100%' }}
@@ -128,7 +128,7 @@ const ResetPassword = () => {
                     className={errors.password ? 'inputError' : ''}
                     disabled={loading}
                   />
-                  <button type="button" className="eyeButton" onClick={togglePassword} tabIndex={-1}>
+                  <button type="button" className="eyeButton" aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={togglePassword} tabIndex={-1}>
                     <EyeIcon open={showPassword} />
                   </button>
                 </div>
@@ -147,7 +147,7 @@ const ResetPassword = () => {
                     className={errors.passwordConf ? 'inputError' : ''}
                     disabled={loading}
                   />
-                  <button type="button" className="eyeButton" onClick={togglePasswordConf} tabIndex={-1}>
+                  <button type="button" className="eyeButton" aria-label={showPasswordConf ? "Ocultar confirmación" : "Mostrar confirmación"} onClick={togglePasswordConf} tabIndex={-1}>
                     <EyeIcon open={showPasswordConf} />
                   </button>
                 </div>

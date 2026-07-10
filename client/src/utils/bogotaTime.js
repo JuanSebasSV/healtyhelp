@@ -2,16 +2,15 @@ const TZ = 'America/Bogota';
 
 const _ahoraReal = () => new Date();
 
+const _fmtHora  = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false });
+const _fmtFecha = new Intl.DateTimeFormat('en-CA', { timeZone: TZ });
+
 export const getHoraBogota = () =>
   parseInt(
-    new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hour12: false })
-      .formatToParts(_ahoraReal())
+    _fmtHora.formatToParts(_ahoraReal())
       .find(p => p.type === 'hour')?.value ?? '0',
     10
   );
-
-export const getFechaBogota = () =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(_ahoraReal());
 
 export const getTipoPorHora = () => {
   const h = getHoraBogota();

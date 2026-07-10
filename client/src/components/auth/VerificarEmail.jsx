@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import './VerificarEmail.css';
 
@@ -10,6 +11,7 @@ const EMPTY_CODE = ['', '', '', '', '', ''];
 const VerificarEmail = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
+  const { checkAuth } = useAuth();
 
   const email = location.state?.email || '';
 
@@ -56,12 +58,10 @@ const VerificarEmail = () => {
 
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/verify-email', { email, code });
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        toast.success('¡Cuenta verificada! Bienvenido.');
-        window.location.href = '/';
-      }
+      await api.post('/auth/verify-email', { email, code });
+      toast.success('¡Cuenta verificada! Bienvenido.');
+      await checkAuth();
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Código inválido o expirado');
       setCodigo(EMPTY_CODE);
@@ -69,7 +69,7 @@ const VerificarEmail = () => {
     } finally {
       setLoading(false);
     }
-  }, [codigo, email]);
+  }, [codigo, email, checkAuth, navigate]);
 
   const handleKeyDown = useCallback((i, e) => {
     if (e.key === 'Backspace' && !codigo[i] && i > 0) {
@@ -131,27 +131,28 @@ const VerificarEmail = () => {
         </p>
 
         <div className="verificar-campos">
-          {codigo.map((d, i) => (
+          {codigo.map((d, idx) => (
             <input
-              key={i}
-              ref={el => inputs.current[i] = el}
+              key={d || `slot-${idx}`}
+              aria-label={`Dígito ${idx + 1} del código`}
+              ref={el => inputs.current[idx] = el}
               className={`verificar-digito${error ? ' verificar-digito--error' : ''}${d ? ' verificar-digito--lleno' : ''}`}
               type="text"
               inputMode="numeric"
               maxLength={1}
               value={d}
-              onChange={e => handleChange(i, e.target.value)}
-              onKeyDown={e => handleKeyDown(i, e)}
-              onPaste={i === 0 ? handlePaste : undefined}
+              onChange={e => handleChange(idx, e.target.value)}
+              onKeyDown={e => handleKeyDown(idx, e)}
+              onPaste={idx === 0 ? handlePaste : undefined}
               disabled={loading}
-              autoFocus={i === 0}
+              autoFocus={idx === 0}
             />
           ))}
         </div>
 
         {error && <p className="verificar-error">{error}</p>}
 
-        <button
+        <button type="button"
           className="verificar-btn"
           onClick={handleVerificar}
           disabled={loading || !codigoCompleto}
@@ -173,7 +174,7 @@ const VerificarEmail = () => {
           {countdown > 0 ? (
             <span className="verificar-countdown">Reenviar en {countdown}s</span>
           ) : (
-            <button
+            <button type="button"
               className="verificar-btn-reenviar"
               onClick={handleReenviar}
               disabled={reenviando}
@@ -183,7 +184,7 @@ const VerificarEmail = () => {
           )}
         </div>
 
-        <button className="verificar-volver" onClick={() => navigate('/registro')}>
+        <button type="button" className="verificar-volver" onClick={() => navigate('/registro')}>
           ← Volver al registro
         </button>
 

@@ -1,5 +1,6 @@
 const Consumo  = require('../models/Consumo');
 const Recipe   = require('../models/Recipe');
+const AdminLog = require('../models/AdminLog');
 
 //  Utilidad: fecha y hora actual en Bogotá 
 const bogotaAhora = () => {
@@ -35,7 +36,9 @@ const MAX_SNACKS_DIA = 3;
 
 const verificarLimite = async (userId, fechaBogota, tipo) => {
   if (tipo === 'snack') {
-    const count = await Consumo.countDocuments({ userId, fechaBogota, tipo: 'snack' });
+    const count = await Consumo.countDocuments({
+      userId, fechaBogota, tipo: 'snack', deletedAt: null,
+    });
     if (count >= MAX_SNACKS_DIA) {
       return { bloqueado: true, error: `Máximo ${MAX_SNACKS_DIA} snacks o postres por día` };
     }
@@ -113,7 +116,28 @@ exports.cancelarConsumo = async (req, res) => {
       return res.status(404).json({ error: 'Consumo no encontrado', alreadyDeleted: true });
     }
 
-    await consumo.deleteOne();
+    const wasAlreadyDeleted = consumo.deletedAt !== null && consumo.deletedAt !== undefined;
+    const recetaNombre = consumo.recetaSnapshot?.nombre || 'desconocida';
+
+    consumo.deletedAt = new Date();
+    consumo.deletedBy = req.user._id;
+    await consumo.save();
+
+    AdminLog.create({
+      adminId:     req.user._id,
+      action:      'DELETE_CONSUMO',
+      targetUserId: req.user._id,
+      metadata: {
+        consumoId:  consumo._id,
+        recetaId:   consumo.recetaId,
+        recetaNombre,
+        tipo:       consumo.tipo,
+        fecha:      consumo.fechaBogota,
+        wasAlreadyDeleted,
+      },
+      ipAddress:  req.ip,
+    }).catch((e) => console.error('AdminLog error:', e.message));
+
     res.json({ ok: true });
   } catch (err) {
     if (err.name === 'CastError') {
@@ -149,28 +173,30 @@ exports.editarTipo = async (req, res) => {
     // (si el tipo no cambia, o si snack ya tiene espacio)
     if (limite.bloqueado && consumo.tipo !== tipo) {
       // Si es snack, verificar excluyendo el consumo actual
-      if (tipo === 'snack') {
-        const snacksOtros = await Consumo.countDocuments({
-          userId: req.user._id,
-          fechaBogota: consumo.fechaBogota,
-          tipo: 'snack',
-          _id: { $ne: consumo._id },
-        });
-        if (snacksOtros >= MAX_SNACKS_DIA) {
-          return res.status(409).json({ error: `Máximo ${MAX_SNACKS_DIA} snacks o postres por día` });
+        if (tipo === 'snack') {
+          const snacksOtros = await Consumo.countDocuments({
+            userId: req.user._id,
+            fechaBogota: consumo.fechaBogota,
+            tipo: 'snack',
+            deletedAt: null,
+            _id: { $ne: consumo._id },
+          });
+          if (snacksOtros >= MAX_SNACKS_DIA) {
+            return res.status(409).json({ error: `Máximo ${MAX_SNACKS_DIA} snacks o postres por día` });
+          }
+        } else {
+          // Para comidas principales, verificar excluyendo el consumo actual
+          const conflicto = await Consumo.findOne({
+            userId:      req.user._id,
+            fechaBogota: consumo.fechaBogota,
+            tipo,
+            deletedAt:  null,
+            _id:         { $ne: consumo._id },
+          });
+          if (conflicto) {
+            return res.status(409).json({ error: `Ya tienes un ${tipo} registrado ese día` });
+          }
         }
-      } else {
-        // Para comidas principales, verificar excluyendo el consumo actual
-        const conflicto = await Consumo.findOne({
-          userId:      req.user._id,
-          fechaBogota: consumo.fechaBogota,
-          tipo,
-          _id:         { $ne: consumo._id },
-        });
-        if (conflicto) {
-          return res.status(409).json({ error: `Ya tienes un ${tipo} registrado ese día` });
-        }
-      }
     }
 
     consumo.tipo = tipo;
@@ -239,12 +265,15 @@ exports.agregarManual = async (req, res) => {
 // 
 // GET /api/consumos/hoy
 // 
+const filterActivo = { $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] };
+
 exports.getHoy = async (req, res) => {
   try {
     const { fecha } = bogotaAhora();
     const consumos = await Consumo.find({
       userId:      req.user._id,
       fechaBogota: fecha,
+      ...filterActivo,
     }).sort({ horaBogota: 1 });
 
     res.json({ fecha, consumos });
@@ -258,7 +287,10 @@ exports.getHoy = async (req, res) => {
 // 
 exports.getDiasConConsumos = async (req, res) => {
   try {
-    const dias = await Consumo.distinct('fechaBogota', { userId: req.user._id });
+    const dias = await Consumo.distinct('fechaBogota', {
+      userId: req.user._id,
+      ...filterActivo,
+    });
     dias.sort((a, b) => b.localeCompare(a));
     res.json({ dias });
   } catch (err) {
@@ -274,6 +306,7 @@ exports.getDia = async (req, res) => {
     const consumos = await Consumo.find({
       userId:      req.user._id,
       fechaBogota: req.params.fecha,
+      ...filterActivo,
     }).sort({ horaBogota: 1 });
 
     res.json({ consumos });
@@ -295,6 +328,7 @@ exports.getSemana = async (req, res) => {
     const consumos = await Consumo.find({
       userId:      req.user._id,
       fechaBogota: { $gte: lunes, $lte: domStr },
+      ...filterActivo,
     }).sort({ fechaBogota: 1, horaBogota: 1 });
 
     res.json({ semana: { inicio: lunes, fin: domStr }, consumos });
@@ -317,6 +351,7 @@ exports.getMes = async (req, res) => {
     const consumos = await Consumo.find({
       userId:      req.user._id,
       fechaBogota: { $gte: inicio, $lt: fin },
+      ...filterActivo,
     }).sort({ fechaBogota: 1, horaBogota: 1 });
 
     res.json({ mes: yearMes, consumos });
@@ -341,6 +376,7 @@ exports.getConsumoHoyPorReceta = async (req, res) => {
     const consumosHoy = await Consumo.find({
       userId:      req.user._id,
       fechaBogota: fecha,
+      deletedAt:   null,
     });
 
     const consumoReceta = consumosHoy.find(
@@ -377,6 +413,55 @@ exports.getConsumoHoyPorReceta = async (req, res) => {
       motivoBloqueado,
     });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 
+// POST /api/consumos/:consumoId/restore — Restaurar un consumo soft-deleted
+// 
+exports.restaurarConsumo = async (req, res) => {
+  try {
+    if (!req.params.consumoId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: 'ID de consumo inválido' });
+    }
+
+    const consumo = await Consumo.findOne({
+      _id:    req.params.consumoId,
+      userId: req.user._id,
+    });
+
+    if (!consumo) {
+      return res.status(404).json({ error: 'Consumo no encontrado' });
+    }
+
+    if (!consumo.deletedAt) {
+      return res.status(409).json({ error: 'El consumo no está borrado', alreadyActive: true });
+    }
+
+    consumo.deletedAt = null;
+    consumo.deletedBy = null;
+    await consumo.save();
+
+    AdminLog.create({
+      adminId:      req.user._id,
+      action:       'RESTORE_CONSUMO',
+      targetUserId: req.user._id,
+      metadata: {
+        consumoId:    consumo._id,
+        recetaId:     consumo.recetaId,
+        recetaNombre: consumo.recetaSnapshot?.nombre,
+        tipo:         consumo.tipo,
+        fecha:        consumo.fechaBogota,
+      },
+      ipAddress:     req.ip,
+    }).catch((e) => console.error('AdminLog error:', e.message));
+
+    res.json({ ok: true, consumo });
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ error: 'ID de consumo inválido' });
+    }
     res.status(500).json({ error: err.message });
   }
 };

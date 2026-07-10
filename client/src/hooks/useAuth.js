@@ -1,29 +1,24 @@
-import { useContext } from 'react';
+import { use } from 'react';
 import { AuthContext } from '../context/authContext';
+import api from '../api/axios';
 
 const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = use(AuthContext);
 
   if (!context) {
     throw new Error('useAuth debe usarse dentro de AuthProvider');
   }
 
-  const setGooglePassword = async (password, token) => {
+  const setGooglePassword = async (password) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/set-google-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ password })
-      });
-      const data = await res.json();
-      if (!res.ok) return { success: false, error: data.error };
-      if (data.token && data.user) context.login(data.token, data.user);
-      return { success: true, token: data.token, user: data.user };
-    } catch {
-      return { success: false, error: 'Error de conexión' };
+      await api.post('/auth/set-google-password', { password });
+      await context.checkAuth();
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Error de conexión'
+      };
     }
   };
 
@@ -41,7 +36,7 @@ const useAuth = () => {
     isAdmin: context.isAdmin,
     loading: context.loading,
     checkAuth: context.checkAuth,
-    updateAutoLogout: context.updateAutoLogout, 
+    updateAutoLogout: context.updateAutoLogout,
     setGooglePassword,
   };
 };

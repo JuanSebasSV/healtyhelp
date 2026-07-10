@@ -42,7 +42,7 @@ const ModalCookies = ({ onAceptar }) => {
       <div className="cookies-card">
         <div className="cookies-glow" />
 
-        <button className="cookies-btn-cerrar" onClick={rechazar} aria-label="Cerrar">
+        <button type="button" className="cookies-btn-cerrar" onClick={rechazar} aria-label="Cerrar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
@@ -71,14 +71,14 @@ const ModalCookies = ({ onAceptar }) => {
         </div>
 
         <div className="cookies-acciones">
-          <button className="cookies-btn-aceptar" onClick={aceptar}>
+          <button type="button" className="cookies-btn-aceptar" onClick={aceptar}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" strokeWidth="2.5">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
             Aceptar y continuar
           </button>
-          <button className="cookies-btn-rechazar" onClick={rechazar}>
+          <button type="button" className="cookies-btn-rechazar" onClick={rechazar}>
             Salir
           </button>
         </div>

@@ -131,8 +131,23 @@ const sumarNutri = (consumos) => {
 };
 
 //Sub-componentes 
-const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar, onEliminar, onAbrir }) => (
-  <div className="seg-consumo-card" onClick={() => onAbrir(consumo)}>
+const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar, onEliminar, onAbrir }) => {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onAbrir(consumo);
+    }
+  };
+  const nombre = consumo.recetaSnapshot?.nombre || 'consumo';
+  return (
+    <div
+      className="seg-consumo-card"
+      role="button"
+      tabIndex={0}
+      onClick={() => onAbrir(consumo)}
+      onKeyDown={handleKeyDown}
+      aria-label={`Ver detalles de ${nombre}`}
+    >
     <div className="seg-consumo-img-wrap">
       <img src={optimizeCloudinary(consumo.recetaSnapshot?.img, 'q_auto,f_auto,w_120')} alt={consumo.recetaSnapshot?.nombre} width="60" height="60" loading="lazy" decoding="async" />
       <span
@@ -151,7 +166,7 @@ const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar
       {isEditing ? (
         <div className="seg-tipo-selector">
           {TIPOS_ORDEN.map(t => (
-            <button
+            <button type="button"
               key={t}
               className={`seg-tipo-btn ${consumo.tipo === t ? 'activo' : ''}`}
               onClick={() => onEditar(consumo._id, t)}
@@ -159,21 +174,22 @@ const TarjetaConsumo = React.memo(({ consumo, isEditing, setEditandoId, onEditar
               {TIPOS_LABEL[t]}
             </button>
           ))}
-          <button className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>x</button>
+          <button type="button" className="seg-tipo-cancelar" onClick={() => setEditandoId(null)}>x</button>
         </div>
       ) : (
         <div className="seg-acciones-row">
-          <button className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
+          <button type="button" className="seg-btn-editar" onClick={() => setEditandoId(consumo._id)}>
             <IcoLapiz className="seg-btn-ico" /> Editar tipo
           </button>
-          <button className="seg-btn-eliminar" onClick={() => onEliminar(consumo._id)}>
+          <button type="button" className="seg-btn-eliminar" onClick={() => onEliminar(consumo._id)}>
             <IcoBasura className="seg-btn-ico" />
           </button>
         </div>
       )}
     </div>
-  </div>
-));
+    </div>
+  );
+});
 
 const SeccionTipo = React.memo(({ tipo, consumosDia, fecha, editandoId, setEditandoId, onEditar, onEliminar, onAbrir, onAbrirModal }) => {
   const { label, Icon, placeholder } = TIPOS_META[tipo];
@@ -193,7 +209,7 @@ const SeccionTipo = React.memo(({ tipo, consumosDia, fecha, editandoId, setEdita
       ) : (
         <div className="seg-consumo-vacio">
           <span className="seg-vacio-label"><Icon className="seg-tipo-ico" />{placeholder}</span>
-          <button
+          <button type="button"
             className="seg-btn-agregar"
             onClick={() => onAbrirModal({ fecha, tipo })}
           >
@@ -228,7 +244,7 @@ const SeccionSnacks = React.memo(({ consumosDia, fecha, editandoId, setEditandoI
             <IcoSnack className="seg-tipo-ico" />
             {snacks.length === 0 ? 'Añadir snack o postre' : `+ ${vacios} snack${vacios > 1 ? 's' : ''} más`}
           </span>
-          <button
+          <button type="button"
             className="seg-btn-agregar"
             onClick={() => onAbrirModal({ fecha, tipo: 'snack' })}
           >
@@ -310,7 +326,7 @@ const BloquesDiaActual = React.memo(({ consumos, seleccionado, editandoId, setEd
 const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
   const [periodo,      setPeriodo]      = useState('dia');
   const [dias,         setDias]         = useState([]);
-  const [seleccionado, setSeleccionado] = useState(null);
+  const [preferido, setSeleccionado] = useState(null);
   const [consumos,     setConsumos]     = useState([]);
   const [cargando,     setCargando]     = useState(true);
   const [editandoId,   setEditandoId]   = useState(null);
@@ -320,35 +336,19 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const [modalAgregar, setModalAgregar] = useState(null);
 
-  const eliminandoRef = useRef(new Set());
+  const eliminandoRef = useRef(() => new Set());
+  const cargandoRef  = useRef({ dias: false, consumos: false });
 
-  const cargarDias = useCallback(async () => {
+  const cargarDias = useCallback(async (token = { cancelled: false }) => {
     try {
       const { data } = await api.get('/consumos/dias');
+      if (token.cancelled) return;
       setDias(data.dias || []);
-      if (data.dias?.length > 0) setSeleccionado(p => p || data.dias[0]);
     } catch {
+      if (token.cancelled) return;
       toast.error('Error cargando seguimiento');
     }
   }, []);
-
-  const cargarConsumos = useCallback(async (fechaSel = seleccionado, per = periodo) => {
-    if (!fechaSel) { setConsumos([]); setCargando(false); return; }
-    setCargando(true);
-    try {
-      let data;
-      if (per === 'dia')    ({ data } = await api.get(`/consumos/dia/${fechaSel}`));
-      if (per === 'semana') ({ data } = await api.get(`/consumos/semana/${fechaSel}`));
-      if (per === 'mes')    ({ data } = await api.get(`/consumos/mes/${fechaSel}`));
-      setConsumos(data.consumos || []);
-    } catch {
-      toast.error('Error cargando consumos');
-    } finally {
-      setCargando(false);
-    }
-  }, [seleccionado, periodo]);
-
-  useEffect(() => { cargarDias(); }, [cargarDias]);
 
   const ops = useMemo(() => {
     if (periodo === 'dia')    return dias;
@@ -360,14 +360,45 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
     return meses.sort((a, b) => b.localeCompare(a));
   }, [dias, periodo]);
 
-  useEffect(() => {
-    if (ops.length > 0 && !ops.includes(seleccionado)) {
-      setSeleccionado(ops[0]);
+  const seleccionado = useMemo(
+    () => (ops.length === 0 ? null : (ops.includes(preferido) ? preferido : ops[0])),
+    [ops, preferido]
+  );
+
+  const cargarConsumos = useCallback(async (fechaSel = seleccionado, per = periodo, token = { cancelled: false }) => {
+    if (!fechaSel) { setConsumos([]); setCargando(false); return; }
+    if (cargandoRef.current.consumos) return;
+    cargandoRef.current.consumos = true;
+    setCargando(true);
+    try {
+      let data;
+      if (per === 'dia')    ({ data } = await api.get(`/consumos/dia/${fechaSel}`));
+      if (per === 'semana') ({ data } = await api.get(`/consumos/semana/${fechaSel}`));
+      if (per === 'mes')    ({ data } = await api.get(`/consumos/mes/${fechaSel}`));
+      if (token.cancelled) return;
+      setConsumos(data.consumos || []);
+    } catch {
+      if (token.cancelled) return;
+      toast.error('Error cargando consumos');
+    } finally {
+      if (!token.cancelled) {
+        setCargando(false);
+      }
+      cargandoRef.current.consumos = false;
     }
-  }, [ops, seleccionado]);
+  }, [seleccionado, periodo]);
 
   useEffect(() => {
-    if (seleccionado) cargarConsumos();
+    const token = { cancelled: false };
+    cargarDias(token);
+    return () => { token.cancelled = true; };
+  }, [cargarDias]);
+
+  useEffect(() => {
+    if (!seleccionado) return;
+    const token = { cancelled: false };
+    cargarConsumos(undefined, undefined, token);
+    return () => { token.cancelled = true; };
   }, [seleccionado, periodo, cargarConsumos]);
 
   const consumosPorFecha = useMemo(() => {
@@ -437,7 +468,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
       <div className="seg-periodo-btns">
         {['dia', 'semana', 'mes'].map(p => (
-          <button
+          <button type="button"
             key={p}
             className={periodo === p ? 'activo' : ''}
             onClick={() => setPeriodo(p)}
@@ -458,7 +489,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
           <div className="seg-col seg-col-izq" data-modal="true">
             <div className="seg-selector-scroll">
               {ops.map(op => (
-                <button
+                <button type="button"
                   key={op}
                   className={`seg-selector-item ${seleccionado === op ? 'activo' : ''}`}
                   onClick={() => setSeleccionado(op)}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import './VistaContacto.css';
@@ -114,11 +114,7 @@ const VistaContacto = () => {
   const [datosForm, setDatosForm]               = useState(FORM_VACIO);
   const [enviando, setEnviando]                 = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const [faqs, setFaqs]                         = useState([]);
-
-  useEffect(() => {
-    setFaqs(FAQS_FALLBACK);
-  }, []);
+  const faqs                                      = FAQS_FALLBACK;
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -162,9 +158,7 @@ const VistaContacto = () => {
     setMostrarConfirmacion(false);
     setEnviando(true);
     try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      await api.post('/contacto', datosForm, { headers });
+      await api.post('/contacto', datosForm);
       toast.success('Mensaje enviado correctamente. Te responderemos pronto.');
       setDatosForm(FORM_VACIO);
     } catch (error) {
@@ -179,7 +173,7 @@ const VistaContacto = () => {
     <div className="vista-contacto">
 
       {mostrarConfirmacion && (
-        <div className="confirmacion-overlay" onClick={cerrarConfirmacion}>
+        <div className="confirmacion-overlay" role="button" tabIndex={0} onClick={cerrarConfirmacion} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cerrarConfirmacion(); }}}>
           <div className="confirmacion-modal" onClick={(e) => e.stopPropagation()}>
             <div className="confirmacion-header">
               <div className="confirmacion-icono" aria-hidden="true">

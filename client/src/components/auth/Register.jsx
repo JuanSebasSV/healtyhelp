@@ -63,6 +63,27 @@ const esEmailPermitido = (email) => {
   return DOMINIOS_PERMITIDOS.has(dominio);
 };
 
+const calcEdadDisplay = (fechaStr) => {
+  if (!fechaStr) return null;
+  const fecha = new Date(fechaStr);
+  if (isNaN(fecha.getTime())) return null;
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - fecha.getFullYear();
+  const m = hoy.getMonth() - fecha.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+  return edad;
+};
+
+const formatFecha = (fechaStr) => {
+  if (!fechaStr) return "—";
+  const fecha = new Date(fechaStr + "T00:00:00");
+  return fecha.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 /*  Iconos  */
 const EyeIcon = ({ open }) =>
   open ? (
@@ -301,13 +322,13 @@ const NumeroInput = ({
         style={{ width: "100%", paddingRight: "2.2rem" }}
       />
       <div className="numero-flechas">
-        <button type="button" onClick={increment} disabled={disabled}>
-          <svg viewBox="0 0 24 24" fill="none">
+        <button type="button" aria-label="Aumentar valor" onClick={increment} disabled={disabled}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <polyline points="18 15 12 9 6 15" />
           </svg>
         </button>
-        <button type="button" onClick={decrement} disabled={disabled}>
-          <svg viewBox="0 0 24 24" fill="none">
+        <button type="button" aria-label="Disminuir valor" onClick={decrement} disabled={disabled}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </button>
@@ -447,8 +468,8 @@ const FieldHint = ({ field, value, datos, touched }) => {
 
   return (
     <ul className="field-hints">
-      {items.map((item, idx) => (
-        <li key={idx} className={item.ok ? "hint-ok" : "hint-pending"}>
+      {items.map(item => (
+        <li key={item.label} className={item.ok ? "hint-ok" : "hint-pending"}>
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -474,11 +495,11 @@ const FieldHint = ({ field, value, datos, touched }) => {
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const STORAGE_KEY = "register_form_draft";
+  const STORAGE_KEY = "register_form_draft:v1";
 
   const [datos, setDatos] = useState(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem("register_form_draft");
       if (saved) {
         const parsed = JSON.parse(saved);
         return { ...parsed, pass: "", passConf: "" };
@@ -637,37 +658,6 @@ const Register = () => {
     setLoading(false);
   };
 
-  // Helper para renderizar el aviso de un campo
-  const renderAviso = (field) => {
-    const key = avisos[field];
-    if (!key || !AVISOS[key]) return null;
-    const { titulo, mensaje, variante } = AVISOS[key];
-    return (
-      <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />
-    );
-  };
-
-  const calcEdadDisplay = (fechaStr) => {
-    if (!fechaStr) return null;
-    const fecha = new Date(fechaStr);
-    if (isNaN(fecha.getTime())) return null;
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fecha.getFullYear();
-    const m = hoy.getMonth() - fecha.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
-    return edad;
-  };
-
-  const formatFecha = (fechaStr) => {
-    if (!fechaStr) return "—";
-    const fecha = new Date(fechaStr + "T00:00:00");
-    return fecha.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   return (
     <div className="vistaAuth">
       <div className="authCard">
@@ -720,7 +710,7 @@ const Register = () => {
               datos={datos}
               touched={touched.nombre}
             />
-            {renderAviso("nombre")}
+            <AvisoCampo field="nombre" avisos={avisos} />
             {touched.nombre && errors.nombre && (
               <span className="errorMessage">{errors.nombre}</span>
             )}
@@ -730,6 +720,7 @@ const Register = () => {
           <div className="formGroup">
             <input
               type="date"
+              aria-label="Fecha de nacimiento"
               value={datos.fechaNac}
               onChange={(e) => handleChange("fechaNac", e.target.value)}
               onBlur={() => handleBlur("fechaNac")}
@@ -758,7 +749,7 @@ const Register = () => {
               datos={datos}
               touched={touched.fechaNac}
             />
-            {renderAviso("fechaNac")}
+            <AvisoCampo field="fechaNac" avisos={avisos} />
             {touched.fechaNac && errors.fechaNac && (
               <span className="errorMessage">{errors.fechaNac}</span>
             )}
@@ -783,7 +774,7 @@ const Register = () => {
               datos={datos}
               touched={touched.peso}
             />
-            {renderAviso("peso")}
+            <AvisoCampo field="peso" avisos={avisos} />
             {touched.peso && errors.peso && (
               <span className="errorMessage">{errors.peso}</span>
             )}
@@ -808,7 +799,7 @@ const Register = () => {
               datos={datos}
               touched={touched.altura}
             />
-            {renderAviso("altura")}
+            <AvisoCampo field="altura" avisos={avisos} />
             {touched.altura && errors.altura && (
               <span className="errorMessage">{errors.altura}</span>
             )}
@@ -849,7 +840,7 @@ const Register = () => {
               datos={datos}
               touched={touched.email}
             />
-            {renderAviso("email")}
+            <AvisoCampo field="email" avisos={avisos} />
             {touched.email && errors.email && (
               <span className="errorMessage">{errors.email}</span>
             )}
@@ -877,6 +868,7 @@ const Register = () => {
               <button
                 type="button"
                 className="eyeButton"
+                aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
                 onClick={() => setShowPass(!showPass)}
                 tabIndex={-1}
               >
@@ -889,7 +881,7 @@ const Register = () => {
               datos={datos}
               touched={touched.pass}
             />
-            {renderAviso("pass")}
+            <AvisoCampo field="pass" avisos={avisos} />
             {touched.pass && errors.pass && (
               <span className="errorMessage">{errors.pass}</span>
             )}
@@ -917,6 +909,7 @@ const Register = () => {
               <button
                 type="button"
                 className="eyeButton"
+                aria-label={showPassConf ? "Ocultar confirmación" : "Mostrar confirmación"}
                 onClick={() => setShowPassConf(!showPassConf)}
                 tabIndex={-1}
               >
@@ -929,7 +922,7 @@ const Register = () => {
               datos={datos}
               touched={touched.passConf}
             />
-            {renderAviso("passConf")}
+            <AvisoCampo field="passConf" avisos={avisos} />
             {touched.passConf && errors.passConf && (
               <span className="errorMessage">{errors.passConf}</span>
             )}
@@ -953,7 +946,7 @@ const Register = () => {
         </p>
       </div>
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+        <div className="modal-overlay" role="button" tabIndex={0} onClick={() => setShowModal(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowModal(false); }}}>
           <div
             className="modal-confirmacion"
             onClick={(e) => e.stopPropagation()}
@@ -1042,13 +1035,13 @@ const Register = () => {
             </div>
 
             <div className="modal-conf__acciones">
-              <button
+              <button type="button"
                 className="modal-conf__btn-editar"
                 onClick={() => setShowModal(false)}
               >
                 Editar datos
               </button>
-              <button
+              <button type="button"
                 className="modal-conf__btn-confirmar"
                 onClick={confirmarRegistro}
               >
@@ -1059,6 +1052,15 @@ const Register = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const AvisoCampo = ({ field, avisos }) => {
+  const key = avisos[field];
+  if (!key || !AVISOS[key]) return null;
+  const { titulo, mensaje, variante } = AVISOS[key];
+  return (
+    <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />
   );
 };
 

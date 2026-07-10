@@ -1,8 +1,11 @@
 // Seccionresenas.jsx
-import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+import React, { useState, useEffect, useReducer, useCallback, useRef, useMemo, memo } from "react";
 import api from "../../api/axios";
 import { toast } from "react-toastify";
 import "./SeccionResenas.css";
+
+const EMPTY_IMAGENES = [];
+const EMPTY_RESPUESTAS = [];
 
 //Componente de icono genérico
 const Icon = memo(
@@ -27,196 +30,184 @@ const Icon = memo(
 );
 Icon.displayName = "Icon";
 
+const D_EDITAR = (
+  <>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </>
+);
+
 const IcoEditar = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_EDITAR} />
 ));
 IcoEditar.displayName = "IcoEditar";
+const D_BORRAR = (
+  <>
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+    <path d="M10 11v6M14 11v6" />
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+  </>
+);
+
 const IcoBorrar = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <polyline points="3 6 5 6 21 6" />
-        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-        <path d="M10 11v6M14 11v6" />
-        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_BORRAR} />
 ));
 IcoBorrar.displayName = "IcoBorrar";
+const D_GUARDAR = (
+  <>
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
+  </>
+);
+
 const IcoGuardar = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-        <polyline points="17 21 17 13 7 13 7 21" />
-        <polyline points="7 3 7 8 15 8" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_GUARDAR} />
 ));
 IcoGuardar.displayName = "IcoGuardar";
+const D_PUBLICAR = (
+  <>
+    <line x1="22" y1="2" x2="11" y2="13" />
+    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+  </>
+);
+
 const IcoPublicar = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <line x1="22" y1="2" x2="11" y2="13" />
-        <polygon points="22 2 15 22 11 13 2 9 22 2" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_PUBLICAR} />
 ));
 IcoPublicar.displayName = "IcoPublicar";
+const D_LOCK = (
+  <>
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </>
+);
+
 const IcoLock = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_LOCK} />
 ));
 IcoLock.displayName = "IcoLock";
+const D_THUMBUP = <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H4.72A2 2 0 0 1 3 18.28V13a2 2 0 0 1 2-2h2v9z" />;
+
 const IcoThumbUp = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zm-7 11H4.72A2 2 0 0 1 3 18.28V13a2 2 0 0 1 2-2h2v9z" />
-    }
-  />
+  <Icon size={size} d={D_THUMBUP} />
 ));
 IcoThumbUp.displayName = "IcoThumbUp";
+const D_THUMBDOWN = <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17V2z" />;
+
 const IcoThumbDown = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17V2z" />
-    }
-  />
+  <Icon size={size} d={D_THUMBDOWN} />
 ));
 IcoThumbDown.displayName = "IcoThumbDown";
+const D_CLOCK = (
+  <>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </>
+);
+
 const IcoClock = memo(({ size, style }) => (
-  <Icon
-    size={size}
-    style={style}
-    d={
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </>
-    }
-  />
+  <Icon size={size} style={style} d={D_CLOCK} />
 ));
 IcoClock.displayName = "IcoClock";
+const D_CHEVRONDOWN = (<polyline points="6 9 12 15 18 9" />);
+
 const IcoChevronDown = memo(({ size, style }) => (
-  <Icon size={size} style={style} d={<polyline points="6 9 12 15 18 9" />} />
+  <Icon size={size} style={style} d={D_CHEVRONDOWN} />
 ));
 IcoChevronDown.displayName = "IcoChevronDown";
+const D_CHEVRONUP = (<polyline points="18 15 12 9 6 15" />);
+
 const IcoChevronUp = memo(({ size }) => (
-  <Icon size={size} d={<polyline points="18 15 12 9 6 15" />} />
+  <Icon size={size} d={D_CHEVRONUP} />
 ));
 IcoChevronUp.displayName = "IcoChevronUp";
+const D_CORNERDOWNLEFT = (
+  <>
+    <polyline points="9 10 4 15 9 20" />
+    <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+  </>
+);
+
 const IcoCornerDownLeft = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <polyline points="9 10 4 15 9 20" />
-        <path d="M20 4v7a4 4 0 0 1-4 4H4" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_CORNERDOWNLEFT} />
 ));
 IcoCornerDownLeft.displayName = "IcoCornerDownLeft";
+const D_IMAGE = (
+  <>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+  </>
+);
+
 const IcoImage = memo(({ size, className }) => (
-  <Icon
-    size={size}
-    className={className}
-    d={
-      <>
-        <rect x="3" y="3" width="18" height="18" rx="3" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <polyline points="21 15 16 10 5 21" />
-      </>
-    }
-  />
+  <Icon size={size} className={className} d={D_IMAGE} />
 ));
 IcoImage.displayName = "IcoImage";
+const D_INFO = (
+  <>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </>
+);
+
 const IcoInfo = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_INFO} />
 ));
 IcoInfo.displayName = "IcoInfo";
+const D_X = <path d="M18 6L6 18M6 6l12 12" />;
+
 const IcoX = memo(({ size }) => (
-  <Icon size={size} d={<path d="M18 6L6 18M6 6l12 12" />} />
+  <Icon size={size} d={D_X} />
 ));
 IcoX.displayName = "IcoX";
+const D_IMAGEPLUS = (
+  <>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+    <line x1="14" y1="8" x2="14" y2="14" strokeWidth="2" />
+    <line x1="11" y1="11" x2="17" y2="11" strokeWidth="2" />
+  </>
+);
+
 const IcoImagePlus = memo(({ size, className }) => (
-  <Icon
-    size={size}
-    className={className}
-    d={
-      <>
-        <rect x="3" y="3" width="18" height="18" rx="3" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <polyline points="21 15 16 10 5 21" />
-        <line x1="14" y1="8" x2="14" y2="14" strokeWidth="2" />
-        <line x1="11" y1="11" x2="17" y2="11" strokeWidth="2" />
-      </>
-    }
-  />
+  <Icon size={size} className={className} d={D_IMAGEPLUS} />
 ));
 IcoImagePlus.displayName = "IcoImagePlus";
+const D_LOADER = (
+  <>
+    <line x1="12" y1="2" x2="12" y2="6" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+    <line x1="2" y1="12" x2="6" y2="12" />
+    <line x1="18" y1="12" x2="22" y2="12" />
+    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
+    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
+  </>
+);
+
 const IcoLoader = memo(({ size, className }) => (
-  <Icon
-    size={size}
-    className={className}
-    d={
-      <>
-        <line x1="12" y1="2" x2="12" y2="6" />
-        <line x1="12" y1="18" x2="12" y2="22" />
-        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-        <line x1="2" y1="12" x2="6" y2="12" />
-        <line x1="18" y1="12" x2="22" y2="12" />
-        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-      </>
-    }
-  />
+  <Icon size={size} className={className} d={D_LOADER} />
 ));
 IcoLoader.displayName = "IcoLoader";
+const STYLE_ICO_EN_REVISION = { marginRight: "5px", verticalAlign: "middle" };
+const STYLE_CHEVRON_LEFT  = { transform: "rotate(90deg)" };
+const STYLE_CHEVRON_RIGHT = { transform: "rotate(-90deg)" };
+
+const D_EMPTYREVIEWS = (
+  <>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <line x1="9" y1="10" x2="15" y2="10" />
+  </>
+);
+
 const IcoEmptyReviews = memo(({ size }) => (
-  <Icon
-    size={size}
-    d={
-      <>
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        <line x1="9" y1="10" x2="15" y2="10" />
-      </>
-    }
-  />
+  <Icon size={size} d={D_EMPTYREVIEWS} />
 ));
 IcoEmptyReviews.displayName = "IcoEmptyReviews";
 
@@ -243,16 +234,29 @@ const getIniciales = (name = "") =>
 const Estrellas = memo(({ valor, onChange, readonly = false }) => {
   const [hover, setHover] = useState(0);
   return (
-    <div className={`sr-estrellas${readonly ? " readonly" : ""}`}>
+    <div className={`sr-estrellas${readonly ? " readonly" : ""}`} role={readonly ? undefined : "radiogroup"} aria-label="Calificación">
       {ESTRELLAS.map((n) => (
         <span
           key={n}
+          role={readonly ? undefined : "radio"}
+          tabIndex={readonly ? -1 : 0}
+          aria-checked={!readonly && n <= valor}
+          aria-label={`${n} ${n === 1 ? 'estrella' : 'estrellas'}`}
           className={`sr-estrella ${n <= (hover || valor) ? "llena" : "vacia"}`}
           onClick={() => !readonly && onChange?.(n)}
+          onKeyDown={(e) => {
+            if (readonly) return;
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onChange?.(n);
+            }
+          }}
           onMouseEnter={() => !readonly && setHover(n)}
           onMouseLeave={() => !readonly && setHover(0)}
         >
-          ★
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
         </span>
       ))}
     </div>
@@ -274,7 +278,7 @@ const ImagenesResena = memo(({ imagenes = [], esPropia }) => {
     <div className="sr-imagenes-wrap">
       {visibles.map((img, i) =>
         img.estado === "aprobada" ? (
-          <div key={i} className="sr-imagen-wrap">
+          <div key={img.url || img.publicId || `aprobada-${i}`} className="sr-imagen-wrap">
             <img
               src={img.url}
               alt={`Imagen ${i + 1} del comentario`}
@@ -283,10 +287,10 @@ const ImagenesResena = memo(({ imagenes = [], esPropia }) => {
             />
           </div>
         ) : (
-          <div key={i} className="sr-imagen-pendiente">
+          <div key={img.url || img.publicId || `pendiente-${i}`} className="sr-imagen-pendiente">
             <IcoImage size={28} className="sr-imagen-pendiente-icono" />
             <span className="sr-imagen-pendiente-titulo">
-              <IcoClock size={13} style={{ marginRight: "5px", verticalAlign: "middle" }} />
+                                <IcoClock size={13} style={STYLE_ICO_EN_REVISION} />
               En revisión
             </span>
             <span className="sr-imagen-pendiente-sub">
@@ -331,7 +335,7 @@ const SelectorImagenes = memo(({ imagenes, onChange, onRemove }) => {
         {imagenes.map((img, i) => {
           const url = URL.createObjectURL(img);
           return (
-            <div key={i} className="sr-preview-wrap">
+            <div key={url} className="sr-preview-wrap">
               <img src={url} alt={`Vista previa ${i + 1}`} className="sr-preview-img" />
               <button
                 type="button"
@@ -487,6 +491,7 @@ const RespuestaItem = memo(
             <span className="sr-resp-fecha">{formatFecha(rp.createdAt)}</span>
             {isAuthenticated && (esPropia || esAdmin) && (
               <button
+                type="button"
                 className="sr-btn-borrar-resp"
                 onClick={() => onEliminar(rp._id)}
                 title="Eliminar respuesta"
@@ -505,6 +510,7 @@ const RespuestaItem = memo(
 
           {isAuthenticated && (
             <button
+              type="button"
               className="sr-btn-responder sr-btn-responder--inline"
               onClick={() => setRespondiendo((v) => !v)}
             >
@@ -544,6 +550,7 @@ const RespuestaItem = memo(
                 <div className="sr-resp-actions">
                   <span className="sr-resp-contador">{texto.length}/500</span>
                   <button
+                    type="button"
                     className="sr-btn-cancelar-resp"
                     onClick={() => {
                       setTexto("");
@@ -554,6 +561,7 @@ const RespuestaItem = memo(
                     Cancelar
                   </button>
                   <button
+                    type="button"
                     className="sr-btn-enviar-resp"
                     onClick={handleEnviar}
                     disabled={enviando || !texto.trim()}
@@ -600,11 +608,6 @@ const SeccionRespuestas = memo(
         ),
     );
     const [respondiendo, setRespondiendo] = useState(false);
-
-    useEffect(() => {
-      if (!respuestaIdDestacada) return;
-      setExpandido(true);
-    }, [respuestaIdDestacada]);
 
     const handleEnviarPrincipal = useCallback(async () => {
       if (!texto.trim()) return;
@@ -661,6 +664,7 @@ const SeccionRespuestas = memo(
         <div className="sr-resp-acciones-fila">
           {respuestas.length > 0 && (
             <button
+              type="button"
               className="sr-btn-toggle-resp"
               onClick={() => setExpandido((v) => !v)}
             >
@@ -678,6 +682,7 @@ const SeccionRespuestas = memo(
           )}
           {isAuthenticated && (
             <button
+              type="button"
               className="sr-btn-responder"
               onClick={() => setRespondiendo((v) => !v)}
             >
@@ -730,6 +735,7 @@ const SeccionRespuestas = memo(
               <div className="sr-resp-actions">
                 <span className="sr-resp-contador">{texto.length}/500</span>
                 <button
+                  type="button"
                   className="sr-btn-cancelar-resp"
                   onClick={() => {
                     setTexto("");
@@ -740,6 +746,7 @@ const SeccionRespuestas = memo(
                   Cancelar
                 </button>
                 <button
+                  type="button"
                   className="sr-btn-enviar-resp"
                   onClick={handleEnviarPrincipal}
                   disabled={enviando || !texto.trim()}
@@ -772,6 +779,164 @@ const esDelUsuario = (r, user) =>
 //SeccionResenas
 const idIgual = (a, b) => a && b && String(a) === String(b);
 
+const ResenaItem = memo(({
+  resena,
+  user,
+  resenaIdDestacada,
+  resenaDestacadaRef,
+  recetaId,
+  isAuthenticated,
+  modalListo,
+  respuestaIdDestacada,
+  onBorrarResena,
+  onVotar,
+}) => {
+  const esPropia     = esDelUsuario(resena, user);
+  const esAdmin      = user?.role === "admin";
+  const esDestacada  = idIgual(resena._id, resenaIdDestacada);
+
+  return (
+    <div
+      ref={esDestacada ? resenaDestacadaRef : null}
+      className={`sr-item${esPropia ? " propia" : ""}${esDestacada ? " sr-item--destacada" : ""}`}
+    >
+      <div className="sr-item-header">
+        <div className="sr-avatar" aria-hidden="true">
+          {getIniciales(resena.userName)}
+        </div>
+        <div className="sr-item-meta">
+          <span className="sr-nombre">{resena.userName}</span>
+          <span className="sr-fecha">{formatFecha(resena.createdAt)}</span>
+        </div>
+        <Estrellas valor={resena.estrellas} readonly />
+        {isAuthenticated && (esPropia || esAdmin) && (
+          <button
+            type="button"
+            className="sr-btn-borrar-lista"
+            onClick={() => onBorrarResena(resena._id)}
+            title="Eliminar reseña"
+          >
+            <IcoBorrar size={15} />
+          </button>
+        )}
+      </div>
+      {resena.texto && <p className="sr-texto">{resena.texto}</p>}
+      <ImagenesResena
+        imagenes={resena.imagenes || EMPTY_IMAGENES}
+        esPropia={!!esPropia}
+      />
+      <div className="sr-votos">
+        <span className="sr-votos-label">¿Te resultó útil?</span>
+        <button
+          type="button"
+          className={`sr-btn-voto sr-like${resena.miVoto === "like" ? " activo" : ""}`}
+          onClick={() => onVotar(resena._id, "like")}
+          title="Es útil"
+        >
+          <IcoThumbUp size={13} /> <span>{resena.likes}</span>
+        </button>
+        <button
+          type="button"
+          className={`sr-btn-voto sr-dislike${resena.miVoto === "dislike" ? " activo" : ""}`}
+          onClick={() => onVotar(resena._id, "dislike")}
+          title="No es útil"
+        >
+          <IcoThumbDown size={13} /> <span>{resena.dislikes}</span>
+        </button>
+      </div>
+      <SeccionRespuestas
+        recetaId={recetaId}
+        resenaId={resena._id}
+        respuestas={resena.respuestas || EMPTY_RESPUESTAS}
+        user={user}
+        isAuthenticated={isAuthenticated}
+        respuestaIdDestacada={
+          (resena.respuestas || []).some((rp) => idIgual(rp._id, respuestaIdDestacada))
+            ? respuestaIdDestacada
+            : undefined
+        }
+        modalListo={modalListo}
+      />
+    </div>
+  );
+});
+ResenaItem.displayName = "ResenaItem";
+
+const initialList = (receta) => ({
+  resenas: [],
+  puntosProm: receta.puntosProm || 0,
+  totalResenas: receta.totalResenas || 0,
+  totalPags: 1,
+  pagina: 1,
+  orden: "reciente",
+  refresco: 0,
+});
+
+function listReducer(state, action) {
+  switch (action.type) {
+    case "SET_PAGINA":
+      return { ...state, pagina: typeof action.val_or_fn === "function" ? action.val_or_fn(state.pagina) : action.val_or_fn };
+    case "INC_PAGINA":
+      return { ...state, pagina: state.pagina + 1 };
+    case "DEC_PAGINA":
+      return { ...state, pagina: Math.max(1, state.pagina - 1) };
+    case "SET_ORDEN":
+      return { ...state, orden: action.val, pagina: 1 };
+    case "INC_REFRESCO":
+      return { ...state, refresco: state.refresco + 1 };
+    case "LOAD_LIST":
+      return {
+        ...state,
+        resenas: action.data.resenas,
+        puntosProm: action.data.puntosProm,
+        totalResenas: action.data.totalResenas,
+        totalPags: action.data.totalPags,
+      };
+    case "APPLY_VOTE":
+      return {
+        ...state,
+        resenas: state.resenas.map((r) =>
+          r._id === action.resenaId
+            ? { ...r, likes: action.likes, dislikes: action.dislikes, miVoto: action.miVoto }
+            : r
+        ),
+      };
+    default:
+      return state;
+  }
+}
+
+const initialForm = {
+  miResena: null,
+  editando: false,
+  formEstrellas: 5,
+  formTexto: "",
+  formImagenes: [],
+};
+
+function formReducer(state, action) {
+  switch (action.type) {
+    case "SET_MI_RESENA":
+      return { ...state, miResena: typeof action.val_or_fn === "function" ? action.val_or_fn(state.miResena) : action.val_or_fn };
+    case "SET_EDITANDO":
+      return { ...state, editando: action.val };
+    case "OPEN_EDIT":
+      return { ...state, editando: true };
+    case "SET_ESTRELLAS":
+      return { ...state, formEstrellas: typeof action.val_or_fn === "function" ? action.val_or_fn(state.formEstrellas) : action.val_or_fn };
+    case "SET_FORM_TEXTO":
+      return { ...state, formTexto: typeof action.val_or_fn === "function" ? action.val_or_fn(state.formTexto) : action.val_or_fn };
+    case "SET_FORM_IMAGENES":
+      return { ...state, formImagenes: typeof action.val_or_fn === "function" ? action.val_or_fn(state.formImagenes) : action.val_or_fn };
+    case "REMOVE_IMAGE_AT":
+      return { ...state, formImagenes: state.formImagenes.filter((_, idx) => idx !== action.idx) };
+    case "RESET_FORM":
+      return { ...state, miResena: null, editando: false, formEstrellas: 5, formTexto: "", formImagenes: [] };
+    default:
+      return state;
+  }
+}
+
 const SeccionResenas = ({
   receta,
   user,
@@ -780,36 +945,58 @@ const SeccionResenas = ({
   respuestaIdDestacada,
   modalListo = false,
 }) => {
-  const [resenas, setResenas] = useState([]);
-  const [puntosProm, setPuntosProm] = useState(receta.puntosProm || 0);
-  const [totalResenas, setTotalResenas] = useState(receta.totalResenas || 0);
-  const [cargandoRes, setCargandoRes] = useState(true);
-  const [pagina, setPagina] = useState(1);
-  const [totalPags, setTotalPags] = useState(1);
-  const [orden, setOrden] = useState("reciente");
-  const [refresco, setRefresco] = useState(0);
-  const [buscandoPagina, setBuscandoPagina] = useState(false);
-  useEffect(() => {
-    setBuscandoPagina(!!(respuestaIdDestacada || resenaIdDestacada));
-  }, [respuestaIdDestacada, resenaIdDestacada]);
+  const [listState, dispatchList] = useReducer(listReducer, initialList(receta));
+  const resenas = listState.resenas;
+  const puntosProm = listState.puntosProm;
+  const totalResenas = listState.totalResenas;
+  const totalPags = listState.totalPags;
+  const pagina = listState.pagina;
+  const orden = listState.orden;
+  const refresco = listState.refresco;
+  const setPagina = (val_or_fn) => dispatchList({ type: "SET_PAGINA", val_or_fn });
+  const incPagina = () => dispatchList({ type: "INC_PAGINA" });
+  const decPagina = () => dispatchList({ type: "DEC_PAGINA" });
+  const setOrden = (val) => dispatchList({ type: "SET_ORDEN", val });
+  const incRefresco = () => dispatchList({ type: "INC_REFRESCO" });
 
-  const [miResena, setMiResena] = useState(null);
-  const [editando, setEditando] = useState(false);
-  const [formEstrellas, setFormEstrellas] = useState(5);
-  const [formTexto, setFormTexto] = useState("");
-  const [formImagenes, setFormImagenes] = useState([]);
+  const [cargandoRes, setCargandoRes] = useState(true);
+  const hayTarget = !!(respuestaIdDestacada || resenaIdDestacada);
+  const [buscandoActivo, setBuscandoActivo] = useState(false);
+
+  const [formState, dispatchForm] = useReducer(formReducer, initialForm);
+  const miResena = formState.miResena;
+  const editando = formState.editando;
+  const formEstrellas = formState.formEstrellas;
+  const formTexto = formState.formTexto;
+  const formImagenes = formState.formImagenes;
   const [enviando, setEnviando] = useState(false);
+  const setMiResena = (val_or_fn) => dispatchForm({ type: "SET_MI_RESENA", val_or_fn });
+  const setEditando = (val) => dispatchForm({ type: val ? "OPEN_EDIT" : "SET_EDITANDO", val });
+  const setFormEstrellas = (val_or_fn) => dispatchForm({ type: "SET_ESTRELLAS", val_or_fn });
+  const setFormTexto = (val_or_fn) => dispatchForm({ type: "SET_FORM_TEXTO", val_or_fn });
+  const setFormImagenes = (val_or_fn) => dispatchForm({ type: "SET_FORM_IMAGENES", val_or_fn });
+  const handleQuitarImagenForm = useCallback(
+    (i) => dispatchForm({ type: "REMOVE_IMAGE_AT", idx: i }),
+    [],
+  );
 
   const resenaDestacadaRef = useRef(null);
 
+  const imagenesValidas = useMemo(
+    () => (miResena?.imagenes || EMPTY_IMAGENES).reduce((acc, img) => {
+      if (img.estado !== "rechazada") acc.push(img);
+      return acc;
+    }, []),
+    [miResena?.imagenes],
+  );
+
   useEffect(() => {
     if (!respuestaIdDestacada && !resenaIdDestacada) {
-      setBuscandoPagina(false);
       return;
     }
     let cancelled = false;
     const buscar = async () => {
-      setBuscandoPagina(true);
+      setBuscandoActivo(true);
       try {
         const { data: d1 } = await api.get(
           `/recipes/${receta._id}/resenas?page=1&limit=5&orden=${orden}`,
@@ -837,22 +1024,23 @@ const SeccionResenas = ({
           return;
         }
 
-        for (let p = 2; p <= totalPaginas; p++) {
-          if (cancelled) return;
-          const { data } = await api.get(
-            `/recipes/${receta._id}/resenas?page=${p}&limit=5&orden=${orden}`,
+        if (totalPaginas >= 2) {
+          const restantes = await Promise.all(
+            Array.from({ length: totalPaginas - 1 }, (_, i) =>
+              api
+                .get(`/recipes/${receta._id}/resenas?page=${i + 2}&limit=5&orden=${orden}`)
+                .then((r) => ({ page: i + 2, resenas: r.data.resenas, revisar }))
+            )
           );
           if (cancelled) return;
-          if (revisar(data.resenas)) {
-            setPagina(p);
-            return;
-          }
+          const match = restantes.find((r) => r.revisar(r.resenas));
+          if (match && !cancelled) setPagina(match.page);
         }
         if (!cancelled) setPagina(1);
       } catch (e) {
         console.error('Error en paginación:', e);
       } finally {
-        if (!cancelled) setBuscandoPagina(false);
+        if (!cancelled) setBuscandoActivo(false);
       }
     };
     buscar();
@@ -865,7 +1053,7 @@ const SeccionResenas = ({
     if (
       !resenaIdDestacada ||
       cargandoRes ||
-      buscandoPagina ||
+      buscandoActivo ||
       !modalListo ||
       !resenaDestacadaRef.current
     )
@@ -882,7 +1070,7 @@ const SeccionResenas = ({
       );
     }, 300);
     return () => clearTimeout(t);
-  }, [resenaIdDestacada, cargandoRes, buscandoPagina, modalListo]);
+  }, [resenaIdDestacada, cargandoRes, buscandoActivo, modalListo]);
 
   // Carga principal
   useEffect(() => {
@@ -896,10 +1084,15 @@ const SeccionResenas = ({
         );
         if (cancelled) return;
 
-        setResenas(data.resenas);
-        setPuntosProm(data.puntosProm);
-        setTotalResenas(data.totalResenas);
-        setTotalPags(data.pagination.pages);
+        dispatchList({
+          type: "LOAD_LIST",
+          data: {
+            resenas: data.resenas,
+            puntosProm: data.puntosProm,
+            totalResenas: data.totalResenas,
+            totalPags: data.pagination.pages,
+          },
+        });
 
         if (user) {
           const mia = data.resenas.find((r) => esDelUsuario(r, user));
@@ -921,28 +1114,32 @@ const SeccionResenas = ({
             setFormEstrellas(mia.estrellas);
             setFormTexto(mia.texto || "");
           } else if (pagina === 1) {
-            // Buscar la reseña propia en otras páginas
             const totalPaginas = data.pagination.pages;
-            let encontrada = false;
-            for (
-              let p = 2;
-              p <= totalPaginas && !encontrada && !cancelled;
-              p++
-            ) {
-              const { data: d2 } = await api.get(
-                `/recipes/${receta._id}/resenas?page=${p}&limit=5&orden=${orden}`,
+            if (totalPaginas >= 2) {
+              const restantes = await Promise.all(
+                Array.from({ length: totalPaginas - 1 }, (_, i) =>
+                  api
+                    .get(`/recipes/${receta._id}/resenas?page=${i + 2}&limit=5&orden=${orden}`)
+                    .then((r) => ({
+                      page: i + 2,
+                      resenas: r.data.resenas,
+                    }))
+                )
               );
-              const mia2 = d2.resenas.find((r) => esDelUsuario(r, user));
-              if (mia2) {
-                encontrada = true;
-                if (!cancelled) {
-                  setMiResena((prev) => fusionarImagenes(mia2, prev));
-                  setFormEstrellas(mia2.estrellas);
-                  setFormTexto(mia2.texto || "");
-                }
+              if (cancelled) return;
+              const match = restantes
+                .map((r) => ({ page: r.page, mia: r.resenas.find((x) => esDelUsuario(x, user)) }))
+                .find((x) => x.mia);
+              if (match?.mia && !cancelled) {
+                setMiResena((prev) => fusionarImagenes(match.mia, prev));
+                setFormEstrellas(match.mia.estrellas);
+                setFormTexto(match.mia.texto || "");
+              } else if (!cancelled) {
+                setMiResena(null);
+                setFormEstrellas(5);
+                setFormTexto("");
               }
-            }
-            if (!encontrada && !cancelled) {
+            } else if (!cancelled) {
               setMiResena(null);
               setFormEstrellas(5);
               setFormTexto("");
@@ -965,7 +1162,6 @@ const SeccionResenas = ({
 
   const cambiarOrden = useCallback((nuevoOrden) => {
     setOrden(nuevoOrden);
-    setPagina(1);
   }, []);
 
   const handleSubmitResena = useCallback(async () => {
@@ -1002,15 +1198,15 @@ const SeccionResenas = ({
       }
 
       toast.success(miResena ? "Reseña actualizada" : "Reseña publicada");
-      setPuntosProm(data.puntosProm);
-      setTotalResenas(data.totalResenas);
+      dispatchList({ type: "SET_PUNTOS_PROM", val: data.puntosProm });
+      dispatchList({ type: "SET_TOTAL_RESENAS", val: data.totalResenas });
       setMiResena(data.resena);
       setFormEstrellas(data.resena.estrellas);
       setFormTexto(data.resena.texto || "");
       setFormImagenes([]);
       setEditando(false);
       setPagina(1);
-      setRefresco((r) => r + 1);
+      incRefresco();
     } catch (error) {
       toast.error(error.response?.data?.error || "Error al publicar la reseña");
     } finally {
@@ -1031,7 +1227,7 @@ const SeccionResenas = ({
         setFormImagenes([]);
         setEditando(false);
         setPagina(1);
-        setRefresco((r) => r + 1);
+        incRefresco();
       } catch (e) {
         toast.error(e.response?.data?.error || "Error al borrar");
       }
@@ -1050,18 +1246,13 @@ const SeccionResenas = ({
           `/recipes/${receta._id}/resenas/${resenaId}/voto`,
           { tipo },
         );
-        setResenas((prev) =>
-          prev.map((r) =>
-            r._id === resenaId
-              ? {
-                  ...r,
-                  likes: data.likes,
-                  dislikes: data.dislikes,
-                  miVoto: data.miVoto,
-                }
-              : r,
-          ),
-        );
+        dispatchList({
+          type: "APPLY_VOTE",
+          resenaId,
+          likes: data.likes,
+          dislikes: data.dislikes,
+          miVoto: data.miVoto,
+        });
       } catch (e) {
         toast.error(e.response?.data?.error || "Error al votar");
       }
@@ -1094,7 +1285,7 @@ const SeccionResenas = ({
         .sr-item--flash { animation: sr-flash 2.8s ease-out forwards; }
       `}</style>
 
-      {buscandoPagina && (
+      {hayTarget && buscandoActivo && (
         <div
           style={{
             display: "flex",
@@ -1141,12 +1332,14 @@ const SeccionResenas = ({
                 <span className="sr-mi-resena-label">Tu reseña</span>
                 <div className="sr-mi-resena-acciones">
                   <button
+                    type="button"
                     className="sr-btn-editar"
                     onClick={() => setEditando(true)}
                   >
                     <IcoEditar size={13} /> Editar
                   </button>
                   <button
+                    type="button"
                     className="sr-btn-borrar"
                     onClick={() => handleBorrarResena(miResena._id)}
                   >
@@ -1158,11 +1351,11 @@ const SeccionResenas = ({
               {miResena.texto && (
                 <p className="sr-mi-resena-texto">"{miResena.texto}"</p>
               )}
-              <ImagenesResena imagenes={miResena.imagenes || []} esPropia />
+              <ImagenesResena imagenes={miResena.imagenes || EMPTY_IMAGENES} esPropia />
               <SeccionRespuestas
                 recetaId={receta._id}
                 resenaId={miResena._id}
-                respuestas={miResena.respuestas || []}
+                respuestas={miResena.respuestas || EMPTY_RESPUESTAS}
                 user={user}
                 isAuthenticated={isAuthenticated}
                 respuestaIdDestacada={
@@ -1200,19 +1393,15 @@ const SeccionResenas = ({
                 <SelectorImagenes
                   imagenes={formImagenes}
                   onChange={setFormImagenes}
-                  onRemove={(i) =>
-                    setFormImagenes((prev) => prev.filter((_, idx) => idx !== i))
-                  }
+                  onRemove={handleQuitarImagenForm}
                 />
               )}
 
-              {(miResena?.imagenes || []).filter(img => img.estado !== "rechazada").length > 0 && (
+              {imagenesValidas.length > 0 && (
                 <div className="sr-edit-imagen-wrap">
                   <div className="sr-previews-grid">
-                    {(miResena.imagenes || [])
-                      .filter(img => img.estado !== "rechazada")
-                      .map((img, idx) => (
-                        <div key={idx} className="sr-edit-imagen-inner">
+                    {imagenesValidas.map((img, idx) => (
+                        <div key={img.url || img.publicId || `edit-${idx}`} className="sr-edit-imagen-inner">
                           {img.estado === "aprobada" ? (
                             <img
                               src={img.url}
@@ -1224,7 +1413,7 @@ const SeccionResenas = ({
                             <div className="sr-imagen-pendiente sr-edit-pendiente">
                               <IcoImage size={28} className="sr-imagen-pendiente-icono" />
                               <span className="sr-imagen-pendiente-titulo">
-                                <IcoClock size={13} style={{ marginRight: "5px", verticalAlign: "middle" }} />
+              <IcoClock size={13} style={STYLE_ICO_EN_REVISION} />
                                 En revisión
                               </span>
                               <span className="sr-imagen-pendiente-sub">
@@ -1261,6 +1450,7 @@ const SeccionResenas = ({
               <div className="sr-form-actions">
                 {miResena && (
                   <button
+                    type="button"
                     className="sr-btn-cancelar"
                     onClick={handleCancelarEdicion}
                     disabled={enviando}
@@ -1269,6 +1459,7 @@ const SeccionResenas = ({
                   </button>
                 )}
                 <button
+                  type="button"
                   className="sr-btn-enviar"
                   onClick={handleSubmitResena}
                   disabled={
@@ -1307,12 +1498,14 @@ const SeccionResenas = ({
         <span className="sr-filtro-label">Ordenar por:</span>
         <div className="sr-filtro-btns">
           <button
+            type="button"
             className={`sr-btn-orden${orden === "reciente" ? " activo" : ""}`}
             onClick={() => cambiarOrden("reciente")}
           >
             <IcoClock size={13} /> Más recientes
           </button>
           <button
+            type="button"
             className={`sr-btn-orden${orden === "relevancia" ? " activo" : ""}`}
             onClick={() => cambiarOrden("relevancia")}
           >
@@ -1331,107 +1524,48 @@ const SeccionResenas = ({
             <IcoEmptyReviews size={18} /> Sé el primero en dejar una reseña
           </p>
         ) : (
-          resenas
-            .filter((r) => {
-              if (!miResena || editando) return true;
-              return !esDelUsuario(r, user);
-            })
-            .map((r) => {
-              const esPropia = esDelUsuario(r, user);
-              const esAdmin = user?.role === "admin";
-              return (
-                <div
-                  key={r._id}
-                  ref={
-                    idIgual(r._id, resenaIdDestacada)
-                      ? resenaDestacadaRef
-                      : null
-                  }
-                  className={`sr-item${esPropia ? " propia" : ""}${idIgual(r._id, resenaIdDestacada) ? " sr-item--destacada" : ""}`}
-                >
-                  <div className="sr-item-header">
-                    <div className="sr-avatar" aria-hidden="true">
-                      {getIniciales(r.userName)}
-                    </div>
-                    <div className="sr-item-meta">
-                      <span className="sr-nombre">{r.userName}</span>
-                      <span className="sr-fecha">
-                        {formatFecha(r.createdAt)}
-                      </span>
-                    </div>
-                    <Estrellas valor={r.estrellas} readonly />
-                    {isAuthenticated && (esPropia || esAdmin) && (
-                      <button
-                        className="sr-btn-borrar-lista"
-                        onClick={() => handleBorrarResena(r._id)}
-                        title="Eliminar reseña"
-                      >
-                        <IcoBorrar size={15} />
-                      </button>
-                    )}
-                  </div>
-                  {r.texto && <p className="sr-texto">{r.texto}</p>}
-                  <ImagenesResena
-                    imagenes={r.imagenes || []}
-                    esPropia={!!esPropia}
-                  />
-                  <div className="sr-votos">
-                    <span className="sr-votos-label">¿Te resultó útil?</span>
-                    <button
-                      className={`sr-btn-voto sr-like${r.miVoto === "like" ? " activo" : ""}`}
-                      onClick={() => handleVotar(r._id, "like")}
-                      title="Es útil"
-                    >
-                      <IcoThumbUp size={13} /> <span>{r.likes}</span>
-                    </button>
-                    <button
-                      className={`sr-btn-voto sr-dislike${r.miVoto === "dislike" ? " activo" : ""}`}
-                      onClick={() => handleVotar(r._id, "dislike")}
-                      title="No es útil"
-                    >
-                      <IcoThumbDown size={13} /> <span>{r.dislikes}</span>
-                    </button>
-                  </div>
-                  <SeccionRespuestas
-                    recetaId={receta._id}
-                    resenaId={r._id}
-                    respuestas={r.respuestas || []}
-                    user={user}
-                    isAuthenticated={isAuthenticated}
-                    respuestaIdDestacada={
-                      // Solo pasar si la respuesta destacada pertenece a esta reseña
-                      (r.respuestas || []).some((rp) =>
-                        idIgual(rp._id, respuestaIdDestacada),
-                      )
-                        ? respuestaIdDestacada
-                        : undefined
-                    }
-                    modalListo={modalListo}
-                  />
-                </div>
-              );
-            })
+          resenas.reduce((acc, r) => {
+            if (miResena && !editando && esDelUsuario(r, user)) return acc;
+            acc.push(
+              <ResenaItem
+                key={r._id}
+                resena={r}
+                user={user}
+                resenaIdDestacada={resenaIdDestacada}
+                resenaDestacadaRef={resenaDestacadaRef}
+                recetaId={receta._id}
+                isAuthenticated={isAuthenticated}
+                modalListo={modalListo}
+                respuestaIdDestacada={respuestaIdDestacada}
+                onBorrarResena={handleBorrarResena}
+                onVotar={handleVotar}
+              />
+            );
+            return acc;
+          }, [])
         )}
       </div>
 
       {totalPags > 1 && (
         <div className="sr-paginacion">
           <button
+            type="button"
             disabled={pagina === 1}
-            onClick={() => setPagina((p) => p - 1)}
+            onClick={() => decPagina()}
           >
-            <IcoChevronDown size={14} style={{ transform: "rotate(90deg)" }} />{" "}
+            <IcoChevronDown size={14} style={STYLE_CHEVRON_LEFT} />{" "}
             Anterior
           </button>
           <span>
             {pagina} / {totalPags}
           </span>
           <button
+            type="button"
             disabled={pagina === totalPags}
-            onClick={() => setPagina((p) => p + 1)}
+            onClick={() => incPagina()}
           >
             Siguiente{" "}
-            <IcoChevronDown size={14} style={{ transform: "rotate(-90deg)" }} />
+            <IcoChevronDown size={14} style={STYLE_CHEVRON_RIGHT} />
           </button>
         </div>
       )}

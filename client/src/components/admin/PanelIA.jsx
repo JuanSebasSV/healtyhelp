@@ -156,7 +156,7 @@ const PanelIA = () => {
           <IcoInfo />
           Los cambios aplican en el siguiente mensaje del usuario
         </span>
-        <button
+        <button type="button"
           className="panel-ia__btn-save"
           onClick={guardarPrompt}
           disabled={guardando}

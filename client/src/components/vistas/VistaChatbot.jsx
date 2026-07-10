@@ -94,8 +94,8 @@ const VistaChatbot = ({ abrirFlotante }) => {
 
           <div className="vistaChatbot__caps">
             <p className="vistaChatbot__capsTitle">Puedo ayudarte con</p>
-            {capacidades.map((cap, i) => (
-              <div key={i} className="vistaChatbot__cap">
+            {capacidades.map(cap => (
+              <div key={cap.titulo} className="vistaChatbot__cap">
                 <div className="vistaChatbot__capIcono">{cap.icono}</div>
                 <div className="vistaChatbot__capTexto">
                   <strong>{cap.titulo}</strong>

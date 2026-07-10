@@ -1,19 +1,13 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.DEV
+    ? '/api'
+    : (import.meta.env.VITE_API_URL || ''),
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
   timeout: 10000,
 });
-
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
 
 let _ultimoAvisoSinConexion = 0;
 const _avisarSinConexion = () => {
@@ -29,8 +23,6 @@ const _avisarSinConexion = () => {
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
     if (!navigator.onLine) {
       _avisarSinConexion();
       return Promise.reject(Object.assign(new Error('sin_conexion'), { sinConexion: true, silencioso: true }));
@@ -52,9 +44,6 @@ api.interceptors.response.use(
     }
 
     if (error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-
       const ruta = window.location.pathname;
       const rutasPublicas = [
         '/login', '/registro', '/recuperar',

@@ -79,7 +79,7 @@ const ForgotPassword = () => {
                 />
                 {error && <span className="errorMessage">{error}</span>}
               </div>
-              <button onClick={manejarRecuperar} className="btn-primario" disabled={loading}>
+              <button type="button" onClick={manejarRecuperar} className="btn-primario" disabled={loading}>
                 {loading ? 'Enviando...' : 'Enviar enlace'}
               </button>
             </div>

@@ -9,6 +9,45 @@ const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
 });
 
+const parseJwtExpireToMs = (expire) => {
+  if (!expire) return 7 * 24 * 60 * 60 * 1000;
+  const match = /^(\d+)([smhd])$/.exec(String(expire).trim());
+  if (!match) return 7 * 24 * 60 * 60 * 1000;
+  const n = parseInt(match[1], 10);
+  const unit = match[2];
+  const multipliers = { s: 1000, m: 60 * 1000, h: 60 * 60 * 1000, d: 24 * 60 * 60 * 1000 };
+  return n * multipliers[unit];
+};
+
+const COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: 'lax',
+  path: '/',
+  secure: process.env.NODE_ENV === 'production',
+  domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost',
+  maxAge: parseJwtExpireToMs(process.env.JWT_EXPIRE)
+};
+
+const setAuthCookie = (res, token) => {
+  res.cookie('token', token, COOKIE_OPTS);
+};
+
+const clearAuthCookie = (res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost'
+  });
+};
+
+const buildAuthResponse = async (user) => {
+  const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 }).select('version');
+  const activeTermsVersion = activeTerms?.version || '1.0.0';
+  return { ...buildUserResponse(user), activeTermsVersion };
+};
+
 const calcularEdad = (birthDate) => {
   if (!birthDate) return null;
   const hoy = new Date();
@@ -191,7 +230,8 @@ exports.verifyEmail = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const token = generateToken(user._id);
-    res.json({ success: true, token, user: buildUserResponse(user) });
+    setAuthCookie(res, token);
+    res.json({ success: true, token, user: await buildAuthResponse(user) });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -260,7 +300,7 @@ exports.completeProfile = async (req, res) => {
         userActual.profileComplete = true;
         await userActual.save({ validateBeforeSave: false });
       }
-      return res.json({ success: true, user: buildUserResponse(userActual) });
+      return       res.json({ success: true, user: await buildAuthResponse(userActual) });
     }
 
     const { weight, height } = req.body;
@@ -279,7 +319,7 @@ exports.completeProfile = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    res.json({ success: true, user: buildUserResponse(user) });
+    res.json({ success: true, user: await buildAuthResponse(user) });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -321,6 +361,7 @@ exports.login = async (req, res) => {
 
     if (user.googleId && !user.password) {
       const token = generateToken(user._id);
+      setAuthCookie(res, token);
       return res.status(200).json({
         needsGooglePassword: true,
         token,
@@ -359,7 +400,8 @@ exports.login = async (req, res) => {
 
     await user.resetLoginAttempts();
     const token = generateToken(user._id);
-    res.json({ success: true, token, user: buildUserResponse(user) });
+    setAuthCookie(res, token);
+    res.json({ success: true, token, user: await buildAuthResponse(user) });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -381,7 +423,8 @@ exports.setGooglePassword = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    res.json({ success: true, token, user: buildUserResponse(user) });
+    setAuthCookie(res, token);
+    res.json({ success: true, token, user: await buildAuthResponse(user) });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -499,7 +542,9 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    res.json({ success: true, token });
+    setAuthCookie(res, token);
+    const userSafe = await User.findById(user._id);
+    res.json({ success: true, token, user: await buildAuthResponse(userSafe) });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

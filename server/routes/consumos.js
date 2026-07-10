@@ -4,6 +4,7 @@ const { protect } = require('../middleware/auth');
 const {
   registrarConsumo,
   cancelarConsumo,
+  restaurarConsumo,
   editarTipo,
   agregarManual,
   getHoy,
@@ -29,6 +30,7 @@ router.get('/receta/:recetaId/hoy', getConsumoHoyPorReceta);
 router.post('/manual',               agregarManual);
 router.post('/:recetaId',            registrarConsumo);
 router.delete('/:consumoId',         cancelarConsumo);
+router.post('/:consumoId/restore',    restaurarConsumo);
 router.put('/:consumoId/tipo',       editarTipo);
 
 module.exports = router;

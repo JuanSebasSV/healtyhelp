@@ -1,19 +1,10 @@
-import React, { useCallback, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { memo } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Footer.css';
 
 const Footer = memo(() => {
-  const navigate = useNavigate();
   const { user } = useAuth();
-
-  const irA = useCallback((ruta, requiereAuth = false) => {
-    if (requiereAuth && !user) {
-      navigate('/registro');
-    } else {
-      navigate(ruta);
-    }
-  }, [navigate, user]);
 
   return (
     <footer className="footer">
@@ -32,31 +23,39 @@ const Footer = memo(() => {
         <div className="footerSeccion">
           <h4>Enlaces Rápidos</h4>
           <ul>
-            <li onClick={() => irA('/')}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-              Inicio
+            <li>
+              <Link to="/" className="footer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Inicio
+              </Link>
             </li>
-            <li onClick={() => irA('/seguimiento', true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
-                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-              </svg>
-              Seguimiento
-              {!user && <span className="footer-auth-hint">🔒</span>}
+            <li>
+              <Link to={user ? '/seguimiento' : '/registro'} className="footer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
+                  <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+                </svg>
+                Seguimiento
+                {!user && <span className="footer-auth-hint">🔒</span>}
+              </Link>
             </li>
-            <li onClick={() => irA('/favoritos', true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-              Favoritos
-              {!user && <span className="footer-auth-hint">🔒</span>}
+            <li>
+              <Link to={user ? '/favoritos' : '/registro'} className="footer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                Favoritos
+                {!user && <span className="footer-auth-hint">🔒</span>}
+              </Link>
             </li>
-            <li onClick={() => irA('/contacto')}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              Contáctanos
+            <li>
+              <Link to="/contacto" className="footer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{verticalAlign:'middle',marginRight:'6px',opacity:0.7}}>
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Contáctanos
+              </Link>
             </li>
           </ul>
         </div>

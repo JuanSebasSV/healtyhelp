@@ -67,6 +67,18 @@ const SECCIONES = [
 
 const PERIODO_LABEL = { dia: 'hoy', semana: 'esta semana', mes: 'este mes' };
 
+const polar = (cx, cy, r, deg) => {
+  const rad = (deg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+};
+
+const arco = (start, end) => {
+  if (end - start >= 360) end = 359.99;
+  const s = polar(100, 100, 80, end);
+  const e = polar(100, 100, 80, start);
+  return `M ${s.x} ${s.y} A 80 80 0 ${end - start > 180 ? 1 : 0} 0 ${e.x} ${e.y} L 100 100 Z`;
+};
+
 const ResumenNutricional = ({ nutri, periodo, totalConsumos }) => {
   const [seccionAbierta, setSeccionAbierta] = useState('Macronutrientes');
 
@@ -89,20 +101,8 @@ const ResumenNutricional = ({ nutri, periodo, totalConsumos }) => {
   const porcGras = totalMacros > 0 ? Math.round((nutri.gras / totalMacros) * 100) : 0;
   const porcCarb = totalMacros > 0 ? Math.round((nutri.carb / totalMacros) * 100) : 0;
   const porcProt = totalMacros > 0 ? Math.round((nutri.prot / totalMacros) * 100) : 0;
-
   const anguloGras = (porcGras / 100) * 360;
   const anguloCarb = (porcCarb / 100) * 360;
-
-  const polar = (cx, cy, r, deg) => {
-    const rad = (deg - 90) * Math.PI / 180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-  };
-  const arco = (start, end) => {
-    if (end - start >= 360) end = 359.99;
-    const s = polar(100, 100, 80, end);
-    const e = polar(100, 100, 80, start);
-    return `M ${s.x} ${s.y} A 80 80 0 ${end - start > 180 ? 1 : 0} 0 ${e.x} ${e.y} L 100 100 Z`;
-  };
 
   return (
     <div className="resumen-nutri-panel">
@@ -132,7 +132,7 @@ const ResumenNutricional = ({ nutri, periodo, totalConsumos }) => {
       <div className="resumen-acordeon">
         {SECCIONES.map(sec => (
           <div key={sec.titulo} className="resumen-sec">
-            <button
+            <button type="button"
               className={`resumen-sec-header ${seccionAbierta === sec.titulo ? 'abierto' : ''}`}
               onClick={() => setSeccionAbierta(seccionAbierta === sec.titulo ? null : sec.titulo)}
             >

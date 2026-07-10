@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useLayoutEffect } from 'react';
 import './ChatCore.css';
 
 /*Iconos*/
@@ -102,9 +102,10 @@ const sugerencias = [
 ];
 
 /*Componente*/
+const EMPTY_CHAT = [];
 const ChatCore = ({
   modoExpandido = false,
-  chat = [],
+  chat = EMPTY_CHAT,
   cargando = false,
   mensaje = '',
   onMensajeChange,
@@ -123,7 +124,7 @@ const ChatCore = ({
     mensajesRef.current = el;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = mensajesRef.current;
     if (!el) return;
 
@@ -171,18 +172,18 @@ const ChatCore = ({
 
         <div className="robotHeader__acciones">
           {modoExpandido ? (
-            <button className="robotHeader__btn" onClick={onMinimizar} title="Minimizar">
+            <button type="button" className="robotHeader__btn" onClick={onMinimizar} title="Minimizar">
               <IconoMinimizar size={16}/>
             </button>
           ) : (
             onExpandir && (
-              <button className="robotHeader__btn" onClick={onExpandir} title="Pantalla completa">
+              <button type="button" className="robotHeader__btn" onClick={onExpandir} title="Pantalla completa">
                 <IconoExpandir size={16}/>
               </button>
             )
           )}
           {!modoExpandido && (
-            <button className="robotHeader__btn robotHeader__btn--cerrar" onClick={onCerrar} aria-label="Cerrar">
+            <button type="button" className="robotHeader__btn robotHeader__btn--cerrar" onClick={onCerrar} aria-label="Cerrar">
               <IconoCerrar size={15}/>
             </button>
           )}
@@ -200,9 +201,9 @@ const ChatCore = ({
               Soy tu asistente especializado en nutrición y condiciones alimentarias.
             </p>
             <div className="chatSugerencias">
-              {sugerencias.map((s, i) => (
-                <button
-                  key={i}
+              {sugerencias.map(s => (
+                <button type="button"
+                  key={s.texto}
                   className="chatSugerencia"
                   onClick={() => handleSugerencia(s.texto)}
                 >
@@ -214,8 +215,8 @@ const ChatCore = ({
           </div>
         )}
 
-        {chat.map((msg, i) => (
-          <div key={i} className={`robotMensaje ${msg.tipo}`}>
+        {chat.map(msg => (
+          <div key={`${msg.tipo}-${msg.texto}`} className={`robotMensaje ${msg.tipo}`}>
             <div className="robotMensajeAvatar">
               {msg.tipo === 'usuario'
                 ? <IconoUsuario size={14}/>
@@ -248,7 +249,7 @@ const ChatCore = ({
             disabled={cargando}
             rows="1"
           />
-          <button
+          <button type="button"
             className="robotInput__enviar"
             onClick={onEnviar}
             disabled={cargando || !mensaje?.trim()}

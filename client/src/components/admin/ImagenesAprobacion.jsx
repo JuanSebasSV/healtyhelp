@@ -47,11 +47,11 @@ const ModalBaneoImagen = memo(({ imagen, onClose, onBan }) => {
   };
 
   return (
-    <div className="ban-modal-overlay" onClick={onClose}>
+    <div className="ban-modal-overlay" role="button" tabIndex={0} onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); }}}>
       <div className="ban-modal" onClick={e => e.stopPropagation()}>
         <div className="ban-modal-header">
           <h3>🔨 Banear usuario</h3>
-          <button className="ban-modal-cerrar" onClick={onClose}>✕</button>
+          <button type="button" className="ban-modal-cerrar" onClick={onClose}>✕</button>
         </div>
 
         <p className="ban-modal-usuario">
@@ -64,8 +64,9 @@ const ModalBaneoImagen = memo(({ imagen, onClose, onBan }) => {
         )}
 
         <div className="ban-modal-campo">
-          <label>Motivo <span className="ban-opcional">(opcional)</span></label>
+          <label htmlFor="ban-motivo">Motivo <span className="ban-opcional">(opcional)</span></label>
           <textarea
+            id="ban-motivo"
             value={motivo}
             onChange={e => setMotivo(e.target.value)}
             placeholder="Ej: Imagen inapropiada, spam..."
@@ -75,22 +76,23 @@ const ModalBaneoImagen = memo(({ imagen, onClose, onBan }) => {
         </div>
 
         <div className="ban-modal-campo">
-          <label>Duración</label>
+          <label htmlFor="img-duracion-tipo">Duración</label>
           <div className="ban-tipo-btns">
-            <button className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`} onClick={() => setTipo('dias')}>Temporal</button>
-            <button className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`} onClick={() => setTipo('permanente')}>Permanente</button>
+            <button type="button" id="img-duracion-tipo" className={`ban-tipo-btn ${tipo === 'dias' ? 'activo' : ''}`} onClick={() => setTipo('dias')}>Temporal</button>
+            <button type="button" className={`ban-tipo-btn ban-tipo-btn--rojo ${tipo === 'permanente' ? 'activo' : ''}`} onClick={() => setTipo('permanente')}>Permanente</button>
           </div>
         </div>
 
         {tipo === 'dias' && (
           <div className="ban-modal-campo">
-            <label>Días de baneo</label>
+            <label htmlFor="img-dias-input">Días de baneo</label>
             <div className="ban-dias-btns">
               {[1, 3, 7, 14, 30, 90].map(d => (
-                <button key={d} className={`ban-dias-btn ${dias === d ? 'activo' : ''}`} onClick={() => setDias(d)}>{d}d</button>
+                <button type="button" key={d} className={`ban-dias-btn ${dias === d ? 'activo' : ''}`} onClick={() => setDias(d)}>{d}d</button>
               ))}
             </div>
             <input
+              id="img-dias-input"
               type="number" min={1} max={365} value={dias}
               onChange={e => setDias(Math.max(1, parseInt(e.target.value) || 1))}
               className="ban-dias-input"
@@ -105,8 +107,8 @@ const ModalBaneoImagen = memo(({ imagen, onClose, onBan }) => {
         )}
 
         <div className="ban-modal-acciones">
-          <button className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
-          <button className="ban-btn-confirmar" onClick={handleConfirm} disabled={enviando}>
+          <button type="button" className="ban-btn-cancelar" onClick={onClose} disabled={enviando}>Cancelar</button>
+          <button type="button" className="ban-btn-confirmar" onClick={handleConfirm} disabled={enviando}>
             {enviando ? '⏳ Baneando...' : tipo === 'permanente' ? '🔨 Banear permanentemente' : `🔨 Banear por ${dias} día${dias !== 1 ? 's' : ''}`}
           </button>
         </div>
@@ -120,24 +122,57 @@ const ImageCard = memo(({
   img, modoSeleccion, estaSeleccionado, isProcesando,
   onToggleSeleccion, onAprobar, onRechazar, onEliminar,
   onVerImagen, onBanear,
-}) => (
+}) => {
+  const handleCardKeyDown = (e) => {
+    if (!modoSeleccion) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onToggleSeleccion(img._id);
+    }
+  };
+  const handleImgKeyDown = (e) => {
+    if (modoSeleccion) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        onToggleSeleccion(img._id);
+      }
+      return;
+    }
+    if (img.url && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onVerImagen(img);
+    }
+  };
+  return (
   <div
     className={`ia-card ia-card--${ESTADOS[img.estado]?.color || 'naranja'} ${estaSeleccionado ? 'ia-card--seleccionada' : ''}`}
+    role={modoSeleccion ? "button" : undefined}
+    tabIndex={modoSeleccion ? 0 : undefined}
+    aria-pressed={modoSeleccion ? estaSeleccionado : undefined}
+    aria-label={modoSeleccion ? (estaSeleccionado ? `Deseleccionar imagen ${img._id}` : `Seleccionar imagen ${img._id}`) : undefined}
     onClick={modoSeleccion ? () => onToggleSeleccion(img._id) : undefined}
+    onKeyDown={handleCardKeyDown}
     style={modoSeleccion ? { cursor: 'pointer' } : undefined}
   >
     {modoSeleccion && (
       <div className="ia-card-check-wrap" onClick={e => e.stopPropagation()}>
-        <input type="checkbox" className="ia-card-check" checked={estaSeleccionado} onChange={() => onToggleSeleccion(img._id)} />
+        <input type="checkbox" aria-label={`Seleccionar imagen ${img._id}`} className="ia-card-check" checked={estaSeleccionado} onChange={() => onToggleSeleccion(img._id)} />
       </div>
     )}
 
     <div
       className="ia-card-img-wrap"
+      role={modoSeleccion || img.url ? "button" : undefined}
+      tabIndex={(modoSeleccion || img.url) ? 0 : undefined}
+      aria-label={modoSeleccion
+        ? (estaSeleccionado ? `Deseleccionar imagen ${img._id}` : `Seleccionar imagen ${img._id}`)
+        : (img.url ? 'Ver imagen completa' : 'Imagen eliminada de Cloudinary')}
       onClick={e => {
         if (modoSeleccion) { e.stopPropagation(); onToggleSeleccion(img._id); return; }
         img.url && onVerImagen(img);
       }}
+      onKeyDown={handleImgKeyDown}
       title={img.url ? 'Ver imagen completa' : 'Imagen eliminada de Cloudinary'}
       style={{ cursor: img.url ? 'pointer' : 'default' }}
     >
@@ -201,12 +236,12 @@ const ImageCard = memo(({
       <>
         {img.estado === 'pendiente' && (
           <div className="ia-card-acciones">
-            <button className="ia-btn-aprobar" onClick={() => onAprobar(img)} disabled={isProcesando}>
+            <button type="button" className="ia-btn-aprobar" onClick={() => onAprobar(img)} disabled={isProcesando}>
               {isProcesando ? '⏳' : (
                 <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Aprobar</>
               )}
             </button>
-            <button className="ia-btn-rechazar" onClick={() => onRechazar(img)} disabled={isProcesando}>
+            <button type="button" className="ia-btn-rechazar" onClick={() => onRechazar(img)} disabled={isProcesando}>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
               Rechazar
             </button>
@@ -215,28 +250,28 @@ const ImageCard = memo(({
 
         {img.estado === 'aprobada' && (
           <div className="ia-card-acciones">
-            <button className="ia-btn-revertir" onClick={() => onRechazar(img)} disabled={isProcesando}>↩ Revocar aprobación</button>
-            <button className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
+            <button type="button" className="ia-btn-revertir" onClick={() => onRechazar(img)} disabled={isProcesando}>↩ Revocar aprobación</button>
+            <button type="button" className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
           </div>
         )}
 
         {img.estado === 'rechazada' && (
           <div className="ia-card-acciones">
-            <button className="ia-btn-revertir" onClick={() => onAprobar(img)} disabled={isProcesando} title="Restaurar y aprobar esta imagen">↩ Aprobar de todas formas</button>
-            <button className="ia-btn-banear" onClick={() => onBanear(img)} disabled={isProcesando} title="Banear al usuario que subió esta imagen">🔨 Banear usuario</button>
-            <button className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
+            <button type="button" className="ia-btn-revertir" onClick={() => onAprobar(img)} disabled={isProcesando} title="Restaurar y aprobar esta imagen">↩ Aprobar de todas formas</button>
+            <button type="button" className="ia-btn-banear" onClick={() => onBanear(img)} disabled={isProcesando} title="Banear al usuario que subió esta imagen">🔨 Banear usuario</button>
+            <button type="button" className="ia-btn-eliminar" onClick={() => onEliminar(img)} disabled={isProcesando} title="Eliminar del historial">🗑️ Eliminar</button>
           </div>
         )}
       </>
     )}
   </div>
-));
+  );
+});
 ImageCard.displayName = 'ImageCard';
 
 const ImagenesAprobacion = ({ onCambio }) => {
   const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
   const cargandoRef = useRef(false);
-  const filtroRef   = useRef('pendiente');
   const onCambioRef = useRef(onCambio);
 
   useEffect(() => { onCambioRef.current = onCambio; }, [onCambio]);
@@ -252,9 +287,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
   const [seleccionados,    setSeleccionados]    = useState(new Set());
   const [modoSeleccion,    setModoSeleccion]    = useState(false);
 
-  useEffect(() => { filtroRef.current = filtro; }, [filtro]);
-
-  const cargarTodo = useCallback(async () => {
+  const cargarTodo = useCallback(async (filtroActivo) => {
     if (cargandoRef.current) return;
     cargandoRef.current = true;
     setCargando(true);
@@ -265,6 +298,8 @@ const ImagenesAprobacion = ({ onCambio }) => {
         api.get('/admin/imagenes-resenas?estado=rechazada&limit=100'),
       ]);
 
+      if (!cargandoRef.current) return;
+
       const pendItems  = (pendRes.data.items  ?? []).map(mapItem);
       const aprobItems = (aprobRes.data.items ?? []).map(mapItem);
       const rechItems  = (rechRes.data.items  ?? []).map(mapItem);
@@ -274,29 +309,33 @@ const ImagenesAprobacion = ({ onCambio }) => {
       setTotalPorEstado({
         pendiente: pendRes.data.pagination?.total  > pendItems.length  ? pendRes.data.pagination.total  : pendItems.length,
         aprobada:  aprobRes.data.pagination?.total > aprobItems.length ? aprobRes.data.pagination.total : aprobItems.length,
-        rechazada: rechRes.data.pagination?.total  > rechItems.length  ? rechRes.data.pagination.total  : rechItems.length,
+        rechazada: rechRes.data.pagination?.total  > rechItems.length ? rechRes.data.pagination.total : rechItems.length,
       });
-      setImagenes(cacheRef.current[filtroRef.current] ?? []);
+      setImagenes(cacheRef.current[filtroActivo] ?? []);
     } catch (error) {
+      if (!cargandoRef.current) return;
       toast.error('Error cargando imágenes');
       console.error(error);
     } finally {
-      setCargando(false);
-      cargandoRef.current = false;
+      if (cargandoRef.current) {
+        setCargando(false);
+        cargandoRef.current = false;
+      }
     }
   }, []);
 
   useEffect(() => {
-    cargarTodo();
+    cargarTodo('pendiente');
     return () => { cargandoRef.current = false; };
   }, [cargarTodo]);
 
-  useEffect(() => {
-    const curr = filtroRef.current;
-    if (cacheRef.current[curr] !== null) {
-      setImagenes(cacheRef.current[curr]);
+  const cambiarFiltro = useCallback((key) => {
+    if (key === filtro) return;
+    setFiltro(key);
+    if (cacheRef.current[key] !== null) {
+      setImagenes(cacheRef.current[key]);
     } else {
-      cargarTodo();
+      cargarTodo(key);
     }
     setSeleccionados(new Set());
     setModoSeleccion(false);
@@ -323,8 +362,8 @@ const ImagenesAprobacion = ({ onCambio }) => {
     setSeleccionados(new Set());
   }, []);
 
-  const aplicarCambioLocal = useCallback((img, accion) => {
-    const curr = filtroRef.current;
+  const aplicarCambioLocal = useCallback((img, accion, filtroActivo) => {
+    const curr = filtroActivo;
     const estadoDestino = accion === 'aprobar' ? 'aprobada' : 'rechazada';
 
     if (accion === 'eliminar') {
@@ -358,13 +397,13 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/aprobar?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('✅ Imagen aprobada');
-      aplicarCambioLocal(img, 'aprobar');
+      aplicarCambioLocal(img, 'aprobar', filtro);
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al aprobar'}`);
     } finally {
       setProcesando(null);
     }
-  }, [aplicarCambioLocal]);
+  }, [aplicarCambioLocal, filtro]);
 
   const handleRechazar = useCallback(async (img) => {
     if (!window.confirm('¿Rechazar esta imagen? Se eliminará de Cloudinary.')) return;
@@ -372,13 +411,13 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('Imagen rechazada');
-      aplicarCambioLocal(img, 'rechazar');
+      aplicarCambioLocal(img, 'rechazar', filtro);
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al rechazar'}`);
     } finally {
       setProcesando(null);
     }
-  }, [aplicarCambioLocal]);
+  }, [aplicarCambioLocal, filtro]);
 
   const handleEliminar = useCallback(async (img) => {
     if (!window.confirm('¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.')) return;
@@ -386,14 +425,15 @@ const ImagenesAprobacion = ({ onCambio }) => {
     try {
       await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}?imagenIndex=${img.imagenIndex ?? 0}`);
       toast.success('🗑️ Registro eliminado del historial');
-      aplicarCambioLocal(img, 'eliminar');
+      aplicarCambioLocal(img, 'eliminar', filtro);
     } catch (e) {
       toast.error(`❌ ${e.response?.data?.error || 'Error al eliminar'}`);
     } finally {
       setProcesando(null);
     }
-  }, [aplicarCambioLocal]);
+  }, [aplicarCambioLocal, filtro]);
 
+  const cerrarModalBaneo = useCallback(() => setModalBaneo(null), []);
   const handleMasivo = useCallback(async (accion) => {
     if (seleccionados.size === 0) return;
     const esAprobar = accion === 'aprobar';
@@ -442,10 +482,11 @@ const ImagenesAprobacion = ({ onCambio }) => {
     )) return;
 
     setProcesandoMasivo(true);
-    const items = [...seleccionados].map(id => {
+    const items = [...seleccionados].reduce((acc, id) => {
       const img = imagenes.find(i => i._id === id);
-      return img ? { recipeId: img.recipeId, resenaId: img.resenaId, imagenIndex: img.imagenIndex ?? 0 } : null;
-    }).filter(Boolean);
+      if (img) acc.push({ recipeId: img.recipeId, resenaId: img.resenaId, imagenIndex: img.imagenIndex ?? 0 });
+      return acc;
+    }, []);
 
     try {
       const { data } = await api.delete('/admin/imagenes-resenas/masivo', { data: { items } });
@@ -510,10 +551,10 @@ const ImagenesAprobacion = ({ onCambio }) => {
       <div className="ia-filtros-wrap">
         <div className="ia-filtros">
           {Object.entries(ESTADOS).map(([key, { label }]) => (
-            <button
+            <button type="button"
               key={key}
               className={`ia-filtro-btn ia-filtro-btn--${ESTADOS[key].color} ${filtro === key ? 'activo' : ''}`}
-              onClick={() => setFiltro(key)}
+              onClick={() => cambiarFiltro(key)}
             >
               {label}
               {totalPorEstado[key] > 0 && <span className="ia-badge">{totalPorEstado[key]}</span>}
@@ -522,7 +563,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
         </div>
 
         {!cargando && imagenes.length > 0 && (
-          <button
+          <button type="button"
             className={`ia-btn-modo-seleccion ${modoSeleccion ? 'activo' : ''}`}
             onClick={() => modoSeleccion ? salirModoSeleccion() : setModoSeleccion(true)}
           >
@@ -562,12 +603,12 @@ const ImagenesAprobacion = ({ onCambio }) => {
           <div className="ia-barra-masiva-der">
             {filtro === 'pendiente' && (
               <>
-                <button className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : (
                     <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Aprobar {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>
                   )}
                 </button>
-                <button className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳' : (
                     <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>Rechazar {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>
                   )}
@@ -577,10 +618,10 @@ const ImagenesAprobacion = ({ onCambio }) => {
 
             {filtro === 'aprobada' && (
               <>
-                <button className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--rechazar" onClick={() => handleMasivo('rechazar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : `↩ Revocar (${seleccionados.size})`}
                 </button>
-                <button className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳' : (<><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>)}
                 </button>
               </>
@@ -588,10 +629,10 @@ const ImagenesAprobacion = ({ onCambio }) => {
 
             {filtro === 'rechazada' && (
               <>
-                <button className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--aprobar" onClick={() => handleMasivo('aprobar')} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳ Procesando...' : `↩ Aprobar (${seleccionados.size})`}
                 </button>
-                <button className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
+                <button type="button" className="ia-btn-masivo ia-btn-masivo--eliminar" onClick={handleMasivoEliminar} disabled={!algunoSeleccionado || procesandoMasivo}>
                   {procesandoMasivo ? '⏳' : (<><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Eliminar historial {algunoSeleccionado ? `(${seleccionados.size})` : ''}</>)}
                 </button>
               </>
@@ -634,10 +675,10 @@ const ImagenesAprobacion = ({ onCambio }) => {
       )}
 
       {imagenModal && (
-        <div className="ia-modal-overlay" onClick={() => setImagenModal(null)}>
+        <div className="ia-modal-overlay" role="button" tabIndex={0} onClick={() => setImagenModal(null)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setImagenModal(null); }}}>
           <div className="ia-modal-contenido" onClick={e => e.stopPropagation()}>
-            <button className="ia-modal-cerrar" onClick={() => setImagenModal(null)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <button type="button" className="ia-modal-cerrar" aria-label="Cerrar vista de imagen" onClick={() => setImagenModal(null)}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
             <img src={optimizeCloudinary(imagenModal.url, 'q_auto,f_auto,w_1200')} alt="Vista completa" className="ia-modal-img" width="1200" height="800" decoding="async" />
             <div className="ia-modal-info">
@@ -652,8 +693,8 @@ const ImagenesAprobacion = ({ onCambio }) => {
             </div>
             {imagenModal.estado === 'pendiente' && (
               <div className="ia-modal-acciones">
-                <button className="ia-btn-aprobar" onClick={() => { handleAprobar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>✅ Aprobar imagen</button>
-                <button className="ia-btn-rechazar" onClick={() => { handleRechazar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>❌ Rechazar imagen</button>
+                <button type="button" className="ia-btn-aprobar" onClick={() => { handleAprobar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>✅ Aprobar imagen</button>
+                <button type="button" className="ia-btn-rechazar" onClick={() => { handleRechazar(imagenModal); setImagenModal(null); }} disabled={procesando === imagenModal._id}>❌ Rechazar imagen</button>
               </div>
             )}
           </div>
@@ -663,7 +704,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
       {modalBaneo && (
         <ModalBaneoImagen
           imagen={modalBaneo}
-          onClose={() => setModalBaneo(null)}
+          onClose={cerrarModalBaneo}
           onBan={handleBan}
         />
       )}

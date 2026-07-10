@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useContext } from "react";
+import { useState, useEffect, useCallback, useRef, use } from "react";
 import { AuthContext } from "../context/authContext";
 import api from "../api/axios";
 
@@ -35,36 +34,43 @@ const limpiarLS = () => {
 };
 
 const useFiltroSalud = (usuario) => {
-  const { loading: authLoading } = useContext(AuthContext);
+  const { loading: authLoading } = use(AuthContext);
   const uid = usuario?._id ?? null;
 
   if (uid && _cache.uid !== uid) limpiarLS();
 
   const cacheActual = _cache.uid === uid && _cache.cargado && uid !== null ? _cache : null;
 
-  const [filtros, setFiltros] = useState(cacheActual?.filtros ?? []);
-  const [categoria, setCategoria] = useState(cacheActual?.categoria ?? "");
-  const [filtroTiempo, setFiltroTiempo] = useState(cacheActual?.filtroTiempo ?? null);
-  const [listo, setListo] = useState(!!cacheActual?.cargado);
+  const [state, setState] = useState({
+    filtros: cacheActual?.filtros ?? [],
+    categoria: cacheActual?.categoria ?? "",
+    filtroTiempo: cacheActual?.filtroTiempo ?? null,
+    listo: !!cacheActual?.cargado,
+  });
+  const filtros = state.filtros;
+  const categoria = state.categoria;
+  const filtroTiempo = state.filtroTiempo;
+  const listo = state.listo;
 
   const peticionRef = useRef(null);
   const usuarioIdRef = useRef(undefined);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
     if (authLoading) return;
     if (uid === usuarioIdRef.current) return;
     usuarioIdRef.current = uid;
 
     if (_cache.uid === uid && _cache.cargado) {
-      setFiltros(_cache.filtros);
-      setCategoria(_cache.categoria);
-      setFiltroTiempo(_cache.filtroTiempo);
-      setListo(true);
+      setState({
+        filtros: _cache.filtros,
+        categoria: _cache.categoria,
+        filtroTiempo: _cache.filtroTiempo,
+        listo: true,
+      });
       return;
     }
 
-    setListo(false);
+    setState((s) => ({ ...s, listo: false }));
 
     let cancelled = false;
     const cargar = async () => {
@@ -79,30 +85,38 @@ const useFiltroSalud = (usuario) => {
           const nuevaCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? "") : (rawCat ?? "");
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
           _cache = { uid, filtros: nuevosFiltros, categoria: nuevaCategoria, filtroTiempo: nuevoTiempo, cargado: true };
-          setFiltros(nuevosFiltros);
-          setCategoria(nuevaCategoria);
-          setFiltroTiempo(nuevoTiempo);
+          if (!cancelled) {
+            setState({
+              filtros: nuevosFiltros,
+              categoria: nuevaCategoria,
+              filtroTiempo: nuevoTiempo,
+              listo: true,
+            });
+          }
         } catch {
           if (cancelled) return;
           const nuevoTiempo = leerLS(LS_TIEMPO, null);
           const filtrosActuales = _cache.uid === uid ? _cache.filtros : [];
           const categoriaActual = _cache.uid === uid ? _cache.categoria : "";
           _cache = { uid, filtros: filtrosActuales, categoria: categoriaActual, filtroTiempo: nuevoTiempo, cargado: true };
-          setFiltros(filtrosActuales);
-          setCategoria(categoriaActual);
-          setFiltroTiempo(nuevoTiempo);
+          if (!cancelled) {
+            setState({
+              filtros: filtrosActuales,
+              categoria: categoriaActual,
+              filtroTiempo: nuevoTiempo,
+              listo: true,
+            });
+          }
         }
       } else {
         const f = leerLS(LS_CONDICIONES, []);
         const c = leerLS(LS_CATEGORIA, "");
         const t = leerLS(LS_TIEMPO, null);
         _cache = { uid: null, filtros: f, categoria: c, filtroTiempo: t, cargado: true };
-        setFiltros(f);
-        setCategoria(c);
-        setFiltroTiempo(t);
+        if (!cancelled) {
+          setState({ filtros: f, categoria: c, filtroTiempo: t, listo: true });
+        }
       }
-
-      if (!cancelled) setListo(true);
     };
 
     cargar();
@@ -144,8 +158,13 @@ const useFiltroSalud = (usuario) => {
             const rawCat = data.categorias;
             const revertCategoria = Array.isArray(rawCat) ? (rawCat[0] ?? "") : (rawCat ?? "");
             _cache = { ..._cache, uid, filtros: revertFiltros, categoria: revertCategoria, cargado: true };
-            setFiltros(revertFiltros);
-            setCategoria(revertCategoria);
+            if (peticionRef.current === token) {
+              setState((prev) => ({
+                ...prev,
+                filtros: revertFiltros,
+                categoria: revertCategoria,
+              }));
+            }
           } catch (e) { console.error('Error reintentando filtros:', e); }
         }
       }
@@ -155,56 +174,63 @@ const useFiltroSalud = (usuario) => {
 
   const toggleFiltro = useCallback(
     (id) => {
-      setFiltros((prev) => {
-        const nuevas = prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id];
+      setState((prev) => {
+        const nuevas = prev.filtros.includes(id) ? prev.filtros.filter((f) => f !== id) : [...prev.filtros, id];
         persistir({ nuevasCondiciones: nuevas });
-        return nuevas;
+        return { ...prev, filtros: nuevas };
       });
     },
     [persistir],
   );
 
   const limpiarFiltros = useCallback(() => {
-    setFiltros([]);
-    persistir({ nuevasCondiciones: [] });
+    setState((prev) => {
+      persistir({ nuevasCondiciones: [] });
+      return { ...prev, filtros: [] };
+    });
   }, [persistir]);
 
   const seleccionarCategoria = useCallback(
     (id) => {
-      setCategoria((prev) => {
-        const nueva = prev === id ? "" : id;
+      setState((prev) => {
+        const nueva = prev.categoria === id ? "" : id;
         persistir({ nuevaCategoria: nueva });
-        return nueva;
+        return { ...prev, categoria: nueva };
       });
     },
     [persistir],
   );
 
   const limpiarCategoria = useCallback(() => {
-    setCategoria("");
-    persistir({ nuevaCategoria: "" });
+    setState((prev) => {
+      persistir({ nuevaCategoria: "" });
+      return { ...prev, categoria: "" };
+    });
   }, [persistir]);
 
   const cambiarFiltroTiempo = useCallback(
     (id) => {
-      setFiltroTiempo((prev) => {
-        const nuevo = prev === id ? null : id;
+      setState((prev) => {
+        const nuevo = prev.filtroTiempo === id ? null : id;
         persistir({ nuevoTiempo: nuevo });
-        return nuevo;
+        return { ...prev, filtroTiempo: nuevo };
       });
     },
     [persistir],
   );
 
   const limpiarTiempo = useCallback(() => {
-    setFiltroTiempo(null);
-    persistir({ nuevoTiempo: null });
+    setState((prev) => {
+      persistir({ nuevoTiempo: null });
+      return { ...prev, filtroTiempo: null };
+    });
   }, [persistir]);
 
   const limpiarTodo = useCallback(() => {
-    setFiltros([]);
-    setCategoria("");
-    persistir({ nuevasCondiciones: [], nuevaCategoria: "" });
+    setState((prev) => {
+      persistir({ nuevasCondiciones: [], nuevaCategoria: "" });
+      return { ...prev, filtros: [], categoria: "" };
+    });
   }, [persistir]);
 
   return {

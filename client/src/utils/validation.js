@@ -36,14 +36,6 @@ export const validatePassword = (password) => {
   return { isValid: errors.length === 0, errors };
 };
 
-export const validateAge = (age) => {
-  const n = parseInt(age, 10);
-  if (!age && age !== 0) return { isValid: false, error: 'La edad es requerida' };
-  if (isNaN(n) || n < 1 || n > 120) return { isValid: false, error: 'Ingresa una edad válida' };
-  if (n < 18) return { isValid: false, error: 'MINOR' }; // código especial para menores
-  return { isValid: true, error: null };
-};
-
 export const validateLoginForm = (email, password) => {
   const errors = {};
   if (!email) errors.email = 'El correo es requerido';
@@ -83,36 +75,4 @@ export const validateResetPasswordForm = (password, passwordConf) => {
   if (!passwordConf) errors.passwordConf = 'Confirma tu contraseña';
   else if (password !== passwordConf) errors.passwordConf = 'Las contraseñas no coinciden';
   return errors;
-};
-
-export const sanitizeInput = (input) => {
-  if (!input) return '';
-  return input.trim()
-    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
-};
-
-export const isValidPhone = (phone) => {
-  return /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(phone);
-};
-
-export const isValidUrl = (url) => {
-  try { new URL(url); return true; } catch { return false; }
-};
-
-export const validateContactForm = (data) => {
-  const errors = {};
-  if (!data.nombre || data.nombre.trim().length < 2) errors.nombre = 'El nombre debe tener al menos 2 caracteres';
-  if (!data.email) errors.email = 'El correo es requerido';
-  else if (!validateEmail(data.email)) errors.email = 'El correo no es válido';
-  if (!data.mensaje || data.mensaje.trim().length < 10) errors.mensaje = 'El mensaje debe tener al menos 10 caracteres';
-  else if (data.mensaje.trim().length > 1000) errors.mensaje = 'El mensaje es muy largo (máximo 1000 caracteres)';
-  return errors;
-};
-
-export default {
-  validateEmail, isValidEmail, validatePassword, validateName, validateAge,
-  validateLoginForm, validateRegisterForm, validateResetPasswordForm,
-  sanitizeInput, isValidPhone, isValidUrl, validateContactForm
 };

@@ -78,12 +78,12 @@ const DetalleReceta = memo(
     useModalLayerHint(!!receta);
 
     return createPortal(
-      <div className="modal-overlay" data-modal="true" onClick={cerrar}>
+      <div className="modal-overlay" data-modal="true" role="button" tabIndex={0} onClick={cerrar} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cerrar(); }}}>
         <div
           className="modalContenedorReceta"
           onClick={(e) => e.stopPropagation()}
         >
-          <button
+          <button type="button"
             className="btn-cerrar-modal"
             onClick={cerrar}
             aria-label="Cerrar"
@@ -117,7 +117,7 @@ const DetalleReceta = memo(
               )}
 
               {toggleFav && (
-                <button
+                <button type="button"
                   className={`btnFav${esFav ? " activo" : ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -131,7 +131,7 @@ const DetalleReceta = memo(
                 </button>
               )}
 
-              <button
+              <button type="button"
                 className="btnSeleccionar btn-pdf-directo"
                 onClick={handlePDF}
                 disabled={generandoPDF}
@@ -200,8 +200,8 @@ const DetalleReceta = memo(
             <div className="modalSeccion">
               <h3>Ingredientes</h3>
               <ul>
-                {receta.ingredientes.map((ing, i) => (
-                  <li key={i}>{ing}</li>
+                {receta.ingredientes.map(ing => (
+                  <li key={ing}>{ing}</li>
                 ))}
               </ul>
             </div>
@@ -209,8 +209,8 @@ const DetalleReceta = memo(
             <div className="modalSeccion">
               <h3>Preparación</h3>
               <ol>
-                {receta.pasos.map((paso, i) => (
-                  <li key={i}>{paso}</li>
+                {receta.pasos.map(paso => (
+                  <li key={paso}>{paso}</li>
                 ))}
               </ol>
             </div>

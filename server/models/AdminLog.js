@@ -32,7 +32,9 @@ const adminLogSchema = new mongoose.Schema({
       'APPROVE_RESENA',
       'REJECT_RESENA',
       'REJECT_RESENA_IMAGE',
-      'DELETE_RESENA_IMAGE'
+      'DELETE_RESENA_IMAGE',
+      'DELETE_CONSUMO',
+      'RESTORE_CONSUMO'
     ]
   },
   targetUserId: {

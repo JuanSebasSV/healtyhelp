@@ -103,7 +103,7 @@ const {
   }
 })();
 
-const { protect } = require("../middleware/auth");
+const { protect, optionalAuth } = require("../middleware/auth");
 const { uploadAvatar, cloudinary } = require("../config/cloudinary");
 
 const generateToken = (id) =>
@@ -141,11 +141,26 @@ router.post("/forgot-password", forgotPassword);
 router.put("/reset-password/:token", resetPassword);
 router.post("/set-google-password", protect, setGooglePassword);
 
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    domain: process.env.NODE_ENV === "production" ? ".healthyhelpoficial.com" : "localhost",
+  });
+  res.json({ success: true });
+});
+
 // USUARIO ACTUAL
-router.get("/me", protect, async (req, res) => {
+router.get("/me", optionalAuth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.json({ user: null });
+    }
+
     const user = await User.findById(req.user._id).select("+password");
-    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+    if (!user) return res.json({ user: null });
 
     const userRaw = await User.findById(req.user._id).lean();
     const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
@@ -200,9 +215,21 @@ router.get(
   (req, res) => {
     try {
       const token = generateToken(req.user._id);
-      res.redirect(
-        `${process.env.FRONTEND_URL}/google-callback?token=${token}`,
-      );
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain: process.env.NODE_ENV === "production" ? ".healthyhelpoficial.com" : "localhost",
+        maxAge: (() => {
+          const m = /^(\d+)([smhd])$/.exec(String(process.env.JWT_EXPIRE || "").trim());
+          if (!m) return 7 * 24 * 60 * 60 * 1000;
+          const n = parseInt(m[1], 10);
+          const mult = { s: 1000, m: 60 * 1000, h: 60 * 60 * 1000, d: 24 * 60 * 60 * 1000 };
+          return n * mult[m[2]];
+        })(),
+      });
+      res.redirect(`${process.env.FRONTEND_URL}/google-callback`);
     } catch (error) {
       res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
     }

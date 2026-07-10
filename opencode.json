@@ -14,6 +14,15 @@
     }
   },
   "model": "minimax-coding-plan/MiniMax-M3",
+  "permission": {
+    "bash": {
+      "git checkout *": "ask",
+      "git reset *": "ask",
+      "git restore *": "ask",
+      "git stash *": "ask",
+      "*": "allow"
+    }
+  },
   "agent": {
     "build": {
       "mode": "primary",
@@ -37,15 +46,6 @@
     "explore": {
       "mode": "subagent",
       "permission": "allow"
-    },
-    "permission": {
-      "bash": {
-        "git checkout *": "ask",
-        "git reset *": "ask",
-        "git restore *": "ask",
-        "git stash *": "ask",
-        "*": "allow"
-      }
     },
     "scout": {
       "mode": "subagent",

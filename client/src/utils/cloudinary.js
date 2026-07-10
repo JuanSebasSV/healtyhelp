@@ -9,6 +9,7 @@ const needsTransforms = (url) => {
 };
 
 export const optimizeCloudinary = (url, transforms = DEFAULT_TRANSFORMS) => {
+  if (!url || typeof url !== 'string' || url.trim() === '') return null;
   if (!needsTransforms(url)) return url;
   return url.replace('/upload/', `/upload/${transforms}/`);
 };

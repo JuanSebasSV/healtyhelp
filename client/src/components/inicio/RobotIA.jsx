@@ -32,7 +32,7 @@ const RobotIA = memo(({ activo, toggleIA }) => {
 
   return (
     <>
-      <button className="robotBoton" onClick={toggleIA} title="Asistente IA">
+      <button type="button" className="robotBoton" onClick={toggleIA} title="Asistente IA">
         <IcoRobotBtn />
       </button>
 

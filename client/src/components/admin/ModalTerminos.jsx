@@ -1,6 +1,7 @@
 // ModalTerminos.jsx
 
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import api from '../../api/axios';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import useModalLayerHint from '../../hooks/useModalLayerHint';
@@ -81,7 +82,7 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
           Lee los términos completos antes de aceptar. Debes llegar al final del documento.
         </p>
 
-        <div className="terminos-contenido" onScroll={handleScroll} tabIndex={0}>
+        <div className="terminos-contenido" onScroll={handleScroll}>
           {loadingTerms && (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
               Cargando términos...
@@ -100,7 +101,7 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
           )}
 
           {!loadingTerms && !errorCarga && termsData?.content && (
-            <div dangerouslySetInnerHTML={{ __html: termsData.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(termsData.content) }} />
           )}
 
           {!loadingTerms && !errorCarga && (
@@ -128,7 +129,7 @@ const ModalTerminos = ({ onAceptar, esActualizacion = false }) => {
             </p>
           )}
 
-          <button
+          <button type="button"
             className="terminos-btn-aceptar"
             onClick={handleAceptar}
             disabled={!aceptado || !scrollado || cargando || loadingTerms || errorCarga}

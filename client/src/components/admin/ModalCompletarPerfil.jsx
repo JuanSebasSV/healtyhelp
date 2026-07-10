@@ -131,8 +131,8 @@ const FieldHint = memo(({ field, value, touched }) => {
 
   return (
     <ul className="field-hints">
-      {items.map((item, idx) => (
-        <li key={idx} className={item.ok ? 'hint-ok' : 'hint-pending'}>
+      {items.map(item => (
+        <li key={item.label} className={item.ok ? 'hint-ok' : 'hint-pending'}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
             {item.ok
               ? <polyline points="20 6 9 17 4 12"/>
@@ -147,7 +147,7 @@ const FieldHint = memo(({ field, value, touched }) => {
 });
 FieldHint.displayName = 'FieldHint';
 
-const NumeroInput = memo(({ name, value, onChange, onBlur, placeholder, min, max, step }) => {
+const NumeroInput = memo(({ id, name, value, onChange, onBlur, placeholder, min, max, step }) => {
   const s = parseFloat(step) || 1;
 
   const increment = useCallback(() => {
@@ -165,6 +165,7 @@ const NumeroInput = memo(({ name, value, onChange, onBlur, placeholder, min, max
   return (
     <div className="numero-wrapper">
       <input
+        id={id}
         type="number"
         name={name}
         value={value}
@@ -177,11 +178,11 @@ const NumeroInput = memo(({ name, value, onChange, onBlur, placeholder, min, max
         style={{ width: '100%', paddingRight: '2.4rem' }}
       />
       <div className="numero-flechas">
-        <button type="button" onClick={increment}>
-          <svg viewBox="0 0 24 24" fill="none"><polyline points="18 15 12 9 6 15"/></svg>
+        <button type="button" onClick={increment} aria-label="Incrementar valor">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
-        <button type="button" onClick={decrement}>
-          <svg viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+        <button type="button" onClick={decrement} aria-label="Disminuir valor">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </div>
     </div>
@@ -250,13 +251,6 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
     }
   }, [form, onCompletado]);
 
-  const renderAviso = (field) => {
-    const key = avisos[field];
-    if (!key || !AVISOS[key]) return null;
-    const { titulo, mensaje, variante } = AVISOS[key];
-    return <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />;
-  };
-
   return (
     <div className="completar-overlay" data-modal="true">
       <div className="completar-modal">
@@ -286,9 +280,10 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
         <div className="completar-body">
 
           <div className="completar-grupo">
-            <label>Fecha de nacimiento *</label>
+            <label htmlFor="perfil-fechaNac">Fecha de nacimiento *</label>
             <input
               type="date"
+              id="perfil-fechaNac"
               name="fechaNac"
               value={form.fechaNac}
               onChange={handleChange}
@@ -297,31 +292,33 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
               min={MIN_DATE}
             />
             <FieldHint field="fechaNac" value={form.fechaNac} touched={touched.fechaNac} />
-            {renderAviso('fechaNac')}
+            <AvisoCampo field="fechaNac" avisos={avisos} />
             {touched.fechaNac && errors.fechaNac && <span className="completar-error">{errors.fechaNac}</span>}
           </div>
 
           <div className="completar-grupo">
-            <label>Peso (kg) *</label>
+            <label htmlFor="perfil-weight">Peso (kg) *</label>
             <NumeroInput
+              id="perfil-weight"
               name="weight" value={form.weight}
               onChange={handleChange} onBlur={handleBlurWeight}
               placeholder="Ej: 70" min={40} max={300} step={0.5}
             />
             <FieldHint field="weight" value={form.weight} touched={touched.weight} />
-            {renderAviso('weight')}
+            <AvisoCampo field="weight" avisos={avisos} />
             {touched.weight && errors.weight && <span className="completar-error">{errors.weight}</span>}
           </div>
 
           <div className="completar-grupo">
-            <label>Altura (cm) *</label>
+            <label htmlFor="perfil-height">Altura (cm) *</label>
             <NumeroInput
+              id="perfil-height"
               name="height" value={form.height}
               onChange={handleChange} onBlur={handleBlurHeight}
               placeholder="Ej: 165" min={50} max={210} step={1}
             />
             <FieldHint field="height" value={form.height} touched={touched.height} />
-            {renderAviso('height')}
+            <AvisoCampo field="height" avisos={avisos} />
             {touched.height && errors.height && <span className="completar-error">{errors.height}</span>}
           </div>
 
@@ -336,12 +333,19 @@ const ModalCompletarPerfil = ({ onCompletado, user }) => {
           </p>
         </div>
 
-        <button className="completar-btn" onClick={handleSubmit} disabled={cargando}>
+        <button type="button" className="completar-btn" onClick={handleSubmit} disabled={cargando}>
           {cargando ? 'Guardando...' : 'Guardar y continuar'}
         </button>
       </div>
     </div>
   );
+};
+
+const AvisoCampo = ({ field, avisos }) => {
+  const key = avisos[field];
+  if (!key || !AVISOS[key]) return null;
+  const { titulo, mensaje, variante } = AVISOS[key];
+  return <AvisoInline titulo={titulo} mensaje={mensaje} variante={variante} />;
 };
 
 export default ModalCompletarPerfil;

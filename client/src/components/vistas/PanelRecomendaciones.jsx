@@ -140,7 +140,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
     <div className="rec-panel">
       <div className="rec-header"><h2 className="rec-titulo">Recomendaciones Personalizadas</h2></div>
       <p className="rec-error">{error}</p>
-      <button className="rec-btn-reintentar" onClick={cargar}>Reintentar</button>
+      <button type="button" className="rec-btn-reintentar" onClick={cargar}>Reintentar</button>
     </div>
   );
 
@@ -261,8 +261,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
       {contextoHorario.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoReloj />Ahora mismo</h3>
-          {contextoHorario.map((a, i) => (
-            <div key={i} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+          {contextoHorario.map(a => (
+            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
               <p>{a.texto}</p>
             </div>
@@ -273,8 +273,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
       {/*  Alertas generales (perfil + histórico)  */}
       {alertas.length > 0 && (
         <div className="rec-seccion">
-          {alertas.map((a, i) => (
-            <div key={i} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+          {alertas.map(a => (
+            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
               <p>{a.mensaje}</p>
             </div>
@@ -286,8 +286,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
       {alertasHoy.length > 0 && (
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoAlerta />Alertas nutricionales de hoy</h3>
-          {alertasHoy.map((a, i) => (
-            <div key={i} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+          {alertasHoy.map(a => (
+            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
               <p>{a.mensaje}</p>
             </div>
@@ -300,8 +300,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoEjercicio />Actividad recomendada para hoy</h3>
           <ul className="rec-lista">
-            {ejercicioHoy.map((tip, i) => (
-              <li key={i} className="rec-item rec-item--hoy">
+            {ejercicioHoy.map(tip => (
+              <li key={tip} className="rec-item rec-item--hoy">
                 <IcoBulletBolt />{tip}
               </li>
             ))}
@@ -328,8 +328,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoCalendario />Hábitos de comida</h3>
           <ul className="rec-lista">
-            {comidasSaltadas.map((c, i) => (
-              <li key={i} className="rec-item rec-item--naranja">
+            {comidasSaltadas.map(c => (
+              <li key={c.mensaje} className="rec-item rec-item--naranja">
                 <IcoBulletAlarm />{c.mensaje}
               </li>
             ))}
@@ -353,8 +353,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <h3 className="rec-sec-titulo"><IcoComida />Alimentación</h3>
         {coberturaAlimentacion && alimentacion.length > 0 ? (
           <ul className="rec-lista">
-            {alimentacion.map((tip, i) => (
-              <li key={i} className="rec-item"><IcoBulletPlato />{tip}</li>
+            {alimentacion.map(tip => (
+              <li key={tip} className="rec-item"><IcoBulletPlato />{tip}</li>
             ))}
           </ul>
         ) : (
@@ -370,8 +370,8 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <h3 className="rec-sec-titulo"><IcoEjercicio />Actividad Física General</h3>
         {coberturaEjercicio && ejercicio.length > 0 ? (
           <ul className="rec-lista">
-            {ejercicio.map((tip, i) => (
-              <li key={i} className="rec-item"><IcoBulletBolt />{tip}</li>
+            {ejercicio.map(tip => (
+              <li key={tip} className="rec-item"><IcoBulletBolt />{tip}</li>
             ))}
           </ul>
         ) : (

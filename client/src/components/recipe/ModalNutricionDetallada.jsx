@@ -32,17 +32,17 @@ const ModalNutricionDetallada = memo(({ nutri, cerrar, volver }) => {
   useModalLayerHint(true);
 
   return createPortal(
-    <div className="modal-overlay" data-modal="true" onClick={cerrar}>
+    <div className="modal-overlay" data-modal="true" role="button" tabIndex={0} onClick={cerrar} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cerrar(); }}}>
       <div className="modalNutriWrapper" onClick={e => e.stopPropagation()}>
 
-        <button className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
+        <button type="button" className="btn-cerrar-modal" onClick={cerrar} aria-label="Cerrar">
           <IconoCerrar />
         </button>
 
         <div className="modalNutriDetalle">
 
           <div className="modalNutriHeader">
-            <button className="btn-volver-nutri" onClick={volver}>
+            <button type="button" className="btn-volver-nutri" onClick={volver}>
               <IconoVolver />
               Volver
             </button>

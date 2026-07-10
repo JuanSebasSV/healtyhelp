@@ -58,8 +58,6 @@ body:not(.modo-oscuro) {
   --contacto-chip-bg:            rgba(26, 77, 46, 0.10);
   --contacto-modal-bg-from:      rgba(255, 255, 255, 0.96);
   --contacto-modal-bg-to:        rgba(232, 241, 234, 0.99);
-  --contacto-form-mobile-bg-from: rgba(255, 255, 255, 0.97);
-  --contacto-form-mobile-bg-to:   rgba(232, 241, 234, 0.94);
 }
 
 @keyframes contactoFadeIn    { from { opacity: 0; transform: translateY(8px); }  to { opacity: 1; transform: translateY(0); } }
@@ -255,7 +253,7 @@ body:not(.modo-oscuro) {
   display: flex;
   align-items: center;
   gap: clamp(0.65rem, 1.4vw, 0.9rem);
-  min-height: 76px;
+  min-height: 88px;
   text-decoration: none;
   color: var(--contacto-text);
   transition:
@@ -874,10 +872,10 @@ body:not(.modo-oscuro) {
 
 @media (max-width: 767px) {
   .vista-contacto {
-    padding: 0;
+    padding: 0.75rem;
     gap: 1.25rem;
     min-height: unset;
-    border-radius: 0;
+    border-radius: 20px;
   }
 
   .vista-contacto::before {
@@ -887,6 +885,8 @@ body:not(.modo-oscuro) {
   .contacto-header { display: none; }
 
   .contacto-contenedor {
+    display: flex;
+    flex-direction: column;
     grid-template-columns: 1fr;
     min-height: unset;
     border-radius: 0;
@@ -896,18 +896,21 @@ body:not(.modo-oscuro) {
     -webkit-backdrop-filter: none;
     background: transparent;
     border: none;
-    gap: 0;
+    gap: 1.5rem;
+    overflow: visible;
   }
 
   .contacto-info {
-    min-height: 280px;
-    height: 280px;
-    justify-content: flex-end;
+    min-height: unset;
+    justify-content: flex-start;
     align-items: stretch;
-    padding: 1.25rem 1rem 1.5rem;
-    gap: 0.5rem;
-    border-radius: 0 0 28px 28px;
+    padding: 1.5rem 1rem;
+    gap: 0.6rem;
+    border-radius: 22px;
     background-position: center 30%;
+    order: 0;
+    border: 1px solid var(--contacto-border);
+    overflow: hidden;
   }
 
   .contacto-info::before {
@@ -924,15 +927,17 @@ body:not(.modo-oscuro) {
     letter-spacing: -0.02em;
     text-align: center;
     width: 100%;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.25rem;
+    order: -1;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
   }
 
   .info-item {
+    flex: 1;
     padding: 0.7rem 0.85rem;
     background: var(--contacto-surface-hi);
     border-color: var(--contacto-border-hi);
-    min-height: 72px;
+    min-height: 80px;
   }
 
   .info-item:nth-child(3),
@@ -948,15 +953,11 @@ body:not(.modo-oscuro) {
 
   .contacto-form {
     padding: 1.85rem 1.15rem 2rem;
-    border-left: none;
-    border-top: 1px solid var(--contacto-border);
+    border: 1px solid var(--contacto-border);
     justify-content: flex-start;
-    background: linear-gradient(180deg, var(--contacto-form-mobile-bg-from, rgba(8, 22, 13, 0.97)) 0%, var(--contacto-form-mobile-bg-to, rgba(8, 22, 13, 0.97)) 100%);
-    backdrop-filter: blur(16px) saturate(1.05);
-    will-change: backdrop-filter;
-    -webkit-backdrop-filter: blur(16px) saturate(1.05);
-    margin-top: -20px;
-    border-radius: 24px 24px 0 0;
+    margin-top: 0;
+    border-radius: 22px;
+    order: 1;
   }
 
   .contacto-form h2 { font-size: 1.4rem; }
@@ -970,26 +971,37 @@ body:not(.modo-oscuro) {
     font-size: 1rem;
   }
 
-  .seccion-faq-unificada { padding: 0 1rem 1.5rem; }
-  .faq-tabla { border-radius: 18px; }
+  .seccion-faq-unificada {
+    padding: 0;
+    order: 2;
+    background: var(--contacto-surface);
+    border: 1px solid var(--contacto-border);
+    border-radius: 22px;
+    backdrop-filter: blur(16px) saturate(1.05);
+    -webkit-backdrop-filter: blur(16px) saturate(1.05);
+    overflow: hidden;
+  }
+  .faq-tabla {
+    border-radius: 0;
+    background: transparent;
+    border: none;
+  }
 }
 
 @media (min-width: 480px) and (max-width: 767px) {
-  .contacto-info {
-    height: auto;
-    min-height: 300px;
-    padding-top: 1.5rem;
-    padding-bottom: 1.75rem;
-    align-items: center;
-  }
-  .contacto-info::after { margin-bottom: 1rem; }
+  .contacto-info { min-height: unset; padding: 1.75rem 1.5rem; }
+  .contacto-info::after { margin: 0 0 0.25rem; }
+  .info-item { min-height: 80px; }
 }
 
 @media (max-width: 360px) {
-  .contacto-info { height: 240px; min-height: 240px; }
+  .contacto-info { padding: 1.25rem 0.85rem; }
   .contacto-info::after { font-size: 1.55rem; }
   .info-item h3 { font-size: 0.70rem; }
   .info-item p  { font-size: 0.72rem; }
+  .info-icono { width: 28px; height: 28px; }
+  .contacto-form { padding: 1.5rem 0.9rem 1.75rem; }
+  .seccion-faq-unificada { padding: 0.75rem; }
 }
 
 @media print {

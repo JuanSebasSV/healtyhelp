@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
@@ -33,7 +33,7 @@ const validarPassword = (password) => {
   return null;
 };
 
-const ModalGooglePassword = ({ token, onSuccess }) => {
+const ModalGooglePassword = ({ onSuccess }) => {
   useBodyScrollLock(true);
   useModalLayerHint(true);
   const { setGooglePassword } = useAuth();
@@ -63,7 +63,7 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
     setError('');
     setLoading(true);
 
-    const result = await setGooglePassword(currentPass, token);
+    const result = await setGooglePassword(currentPass);
 
     if (result.success) {
       toast.success('¡Contraseña creada! Ya puedes iniciar sesión con tu correo.');
@@ -73,7 +73,7 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
     }
 
     setLoading(false);
-  }, [pass, passConf, token, setGooglePassword, onSuccess]);
+  }, [pass, passConf, setGooglePassword, onSuccess]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !loading) handleSubmit();
@@ -84,9 +84,14 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
   const toggleShowPass       = useCallback(() => setShowPass(p => !p), []);
   const toggleShowConf       = useCallback(() => setShowConf(p => !p), []);
 
+  const dialogRef = useRef(null);
+  useEffect(() => {
+    dialogRef.current?.showModal();
+  }, []);
+
   return (
     <div className="mgp-overlay" data-modal="true">
-      <div className="mgp-card" role="dialog" aria-modal="true" aria-labelledby="mgp-titulo">
+      <dialog ref={dialogRef} className="mgp-card" aria-labelledby="mgp-titulo">
 
         <div className="mgp-brand">
           <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -133,7 +138,7 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
               disabled={loading}
               autoFocus
             />
-            <button type="button" className="mgp-eye" onClick={toggleShowPass} tabIndex={-1}>
+            <button type="button" className="mgp-eye" aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={toggleShowPass} tabIndex={-1}>
               <EyeIcon open={showPass} />
             </button>
           </div>
@@ -148,18 +153,18 @@ const ModalGooglePassword = ({ token, onSuccess }) => {
               className={error && pass !== passConf ? 'mgp-input-error' : ''}
               disabled={loading}
             />
-            <button type="button" className="mgp-eye" onClick={toggleShowConf} tabIndex={-1}>
+            <button type="button" className="mgp-eye" aria-label={showConf ? "Ocultar confirmación" : "Mostrar confirmación"} onClick={toggleShowConf} tabIndex={-1}>
               <EyeIcon open={showConf} />
             </button>
           </div>
 
           {error && <span className="mgp-error">{error}</span>}
 
-          <button className="mgp-btn" onClick={handleSubmit} disabled={loading}>
+          <button type="button" className="mgp-btn" onClick={handleSubmit} disabled={loading}>
             {loading ? 'Guardando...' : 'Crear contraseña'}
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   );
 };

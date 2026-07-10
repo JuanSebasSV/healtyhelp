@@ -74,12 +74,12 @@ const RecipeCard = memo(({ recipe, isSelected, onSelect, onEdit, onDelete }) => 
 
       <div className="rcard-bottom">
         <div className="rcard-check-wrap">
-          <input type="checkbox" checked={isSelected} onChange={handleSelect} />
+          <input type="checkbox" aria-label={`Seleccionar receta ${recipe.nombre}`} checked={isSelected} onChange={handleSelect} />
           <span>Seleccionar</span>
         </div>
         <div className="rcard-actions">
-          <button onClick={handleEdit} className="btn-edit" title="Editar"><IcoEdit /></button>
-          <button onClick={handleDelete} className="btn-delete" title="Eliminar"><IcoTrash /></button>
+          <button type="button" onClick={handleEdit} className="btn-edit" aria-label={`Editar receta ${recipe.nombre}`} title="Editar"><IcoEdit /></button>
+          <button type="button" onClick={handleDelete} className="btn-delete" aria-label={`Eliminar receta ${recipe.nombre}`} title="Eliminar"><IcoTrash /></button>
         </div>
       </div>
     </div>
@@ -94,7 +94,7 @@ const RecipeRow = memo(({ recipe, isSelected, onSelect, onEdit, onDelete }) => {
 
   return (
     <tr>
-      <td><input type="checkbox" checked={isSelected} onChange={handleSelect} /></td>
+      <td><input type="checkbox" aria-label={`Seleccionar receta ${recipe.nombre}`} checked={isSelected} onChange={handleSelect} /></td>
       <td>
         {recipe.img
           ? <img src={optimizeCloudinary(recipe.img, 'q_auto,f_auto,w_160')} alt={recipe.nombre} className="recipe-thumbnail" width="80" height="60" loading="lazy" decoding="async" />
@@ -113,8 +113,8 @@ const RecipeRow = memo(({ recipe, isSelected, onSelect, onEdit, onDelete }) => {
       <td>{recipe.nutri?.cal || 0} kcal</td>
       <td>
         <div className="action-buttons">
-          <button onClick={handleEdit} className="btn-edit" title="Editar"><IcoEdit /></button>
-          <button onClick={handleDelete} className="btn-delete" title="Eliminar"><IcoTrash /></button>
+          <button type="button" onClick={handleEdit} className="btn-edit" title="Editar"><IcoEdit /></button>
+          <button type="button" onClick={handleDelete} className="btn-delete" title="Eliminar"><IcoTrash /></button>
         </div>
       </td>
     </tr>
@@ -177,6 +177,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
           </svg>
           <input
             type="text"
+            aria-label="Buscar receta"
             placeholder="Buscar receta..."
             value={searchTerm}
             onChange={handleSearchChange}
@@ -184,7 +185,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
           />
         </div>
 
-        <select value={filterCat} onChange={handleCatChange} className="filter-select">
+        <select aria-label="Filtrar recetas por categoría" value={filterCat} onChange={handleCatChange} className="filter-select">
           <option value="all">Todas las categorías</option>
           <option value="desayuno">Desayuno</option>
           <option value="almuerzo">Almuerzo</option>
@@ -193,7 +194,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
         </select>
 
         {selectedRecipes.size > 0 && (
-          <button className="btn-bulk-delete" onClick={handleBulkDelete}>
+          <button type="button" className="btn-bulk-delete" onClick={handleBulkDelete}>
             <IcoTrash />
             Eliminar {selectedRecipes.size} seleccionadas
           </button>
@@ -224,7 +225,7 @@ const RecipeList = ({ recipes, onDelete, onEdit, onDeleteMultiple }) => {
             <thead>
               <tr>
                 <th>
-                  <input type="checkbox" onChange={handleSelectAll} checked={allSelected} />
+                  <input type="checkbox" aria-label="Seleccionar todas las recetas" onChange={handleSelectAll} checked={allSelected} />
                 </th>
                 <th>Imagen</th>
                 <th>Nombre</th>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import DOMPurify from 'dompurify';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import './TermsManager.css';
@@ -175,7 +176,7 @@ const TermsManager = () => {
         setTermsCurrent(data.terms);
         setVersion(data.terms.version);
         if (editorRef.current) {
-          editorRef.current.innerHTML = data.terms.content || '';
+          editorRef.current.innerHTML = DOMPurify.sanitize(data.terms.content || '');
           actualizarContador();
         }
       }
@@ -187,13 +188,6 @@ const TermsManager = () => {
   }, [actualizarContador]);
 
   useEffect(() => { cargarTerminos(); }, [cargarTerminos]);
-
-  useEffect(() => {
-    if (!loading && termsCurrent && editorRef.current) {
-      editorRef.current.innerHTML = termsCurrent.content || '';
-      actualizarContador();
-    }
-  }, [loading, termsCurrent, actualizarContador]);
 
   const fmt = useCallback((cmd, value = null) => {
     document.execCommand(cmd, false, value);
@@ -216,6 +210,15 @@ const TermsManager = () => {
     });
   }, []);
 
+  const fmtBold        = useCallback(() => fmt('bold'),                  [fmt]);
+  const fmtItalic      = useCallback(() => fmt('italic'),                [fmt]);
+  const fmtUnderline   = useCallback(() => fmt('underline'),             [fmt]);
+  const fmtUl          = useCallback(() => fmt('insertUnorderedList'),  [fmt]);
+  const fmtOl          = useCallback(() => fmt('insertOrderedList'),    [fmt]);
+  const fmtBlockquote  = useCallback(() => fmt('formatBlock', 'blockquote'), [fmt]);
+  const fmtUndo        = useCallback(() => fmt('undo'),                  [fmt]);
+  const fmtRedo        = useCallback(() => fmt('redo'),                  [fmt]);
+
   const handlePublicar = useCallback(async () => {
     const htmlContent = editorRef.current?.innerHTML || '';
     const textoPlano  = editorRef.current?.innerText?.trim() || '';
@@ -235,12 +238,16 @@ const TermsManager = () => {
       const { data } = await api.put('/admin/terms', { version, content: htmlContent });
       toast.success(`Términos v${data.terms.version} publicados. Todos los usuarios deberán aceptarlos.`);
       setTermsCurrent(data.terms);
+      if (editorRef.current) {
+        editorRef.current.innerHTML = DOMPurify.sanitize(data.terms.content || '');
+        actualizarContador();
+      }
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error publicando los términos');
     } finally {
       setPublicando(false);
     }
-  }, [version, termsCurrent]);
+  }, [version, termsCurrent, actualizarContador]);
 
   const publicarDisabled =
     publicando ||
@@ -295,8 +302,9 @@ const TermsManager = () => {
       </div>
 
       <div className="terms-manager-version-row">
-        <label>Número de versión</label>
+        <label htmlFor="tm-version">Número de versión</label>
         <input
+          id="tm-version"
           type="text"
           value={version}
           onChange={e => setVersion(e.target.value)}
@@ -320,35 +328,35 @@ const TermsManager = () => {
 
             <div className="terms-tb-sep" />
 
-            <TbBtn title="Negrita (Ctrl+B)"   active={activeFormats.bold}      onClick={() => fmt('bold')}>
+            <TbBtn title="Negrita (Ctrl+B)"   active={activeFormats.bold}      onClick={fmtBold}>
               <strong style={{ fontFamily: 'Georgia,serif', fontSize: '13px' }}>N</strong>
             </TbBtn>
-            <TbBtn title="Cursiva (Ctrl+I)"   active={activeFormats.italic}    onClick={() => fmt('italic')}>
+            <TbBtn title="Cursiva (Ctrl+I)"   active={activeFormats.italic}    onClick={fmtItalic}>
               <em style={{ fontFamily: 'Georgia,serif', fontSize: '13px' }}>K</em>
             </TbBtn>
-            <TbBtn title="Subrayado (Ctrl+U)" active={activeFormats.underline} onClick={() => fmt('underline')}>
+            <TbBtn title="Subrayado (Ctrl+U)" active={activeFormats.underline} onClick={fmtUnderline}>
               <span style={{ textDecoration: 'underline', fontSize: '13px' }}>S</span>
             </TbBtn>
 
             <div className="terms-tb-sep" />
 
-            <TbBtn title="Lista con viñetas" active={activeFormats.ul} onClick={() => fmt('insertUnorderedList')}>
+            <TbBtn title="Lista con viñetas" active={activeFormats.ul} onClick={fmtUl}>
               <Icons.ListUl />
             </TbBtn>
-            <TbBtn title="Lista numerada"    active={activeFormats.ol} onClick={() => fmt('insertOrderedList')}>
+            <TbBtn title="Lista numerada"    active={activeFormats.ol} onClick={fmtOl}>
               <Icons.ListOl />
             </TbBtn>
 
             <div className="terms-tb-sep" />
 
-            <TbBtn title="Cita / aviso destacado" active={false} onClick={() => fmt('formatBlock', 'blockquote')}>
+            <TbBtn title="Cita / aviso destacado" active={false} onClick={fmtBlockquote}>
               <Icons.Quote />
             </TbBtn>
 
             <div className="terms-tb-sep" />
 
-            <TbBtn title="Deshacer (Ctrl+Z)" active={false} onClick={() => fmt('undo')}><Icons.Undo /></TbBtn>
-            <TbBtn title="Rehacer (Ctrl+Y)"  active={false} onClick={() => fmt('redo')}><Icons.Redo /></TbBtn>
+            <TbBtn title="Deshacer (Ctrl+Z)" active={false} onClick={fmtUndo}><Icons.Undo /></TbBtn>
+            <TbBtn title="Rehacer (Ctrl+Y)"  active={false} onClick={fmtRedo}><Icons.Redo /></TbBtn>
           </div>
 
           <div
@@ -357,6 +365,10 @@ const TermsManager = () => {
             contentEditable
             suppressContentEditableWarning
             spellCheck={false}
+            role="textbox"
+            aria-multiline="true"
+            aria-label="Editor de términos y condiciones"
+            tabIndex={0}
             onInput={actualizarContador}
             onKeyUp={syncFormatos}
             onMouseUp={syncFormatos}

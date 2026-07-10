@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useRef,
   useCallback,
+  useMemo,
   lazy,
   Suspense,
 } from "react";
@@ -12,7 +13,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { AuthProvider } from "./context/AuthProvider";
@@ -142,7 +143,7 @@ function AppContent() {
   const { user, checkAuth } = useAuth();
 
   const [modoOscuro, setModoOscuro] = useState(() => {
-    const saved = localStorage.getItem("modoOscuro");
+    const saved = localStorage.getItem("modoOscuro:v1") ?? localStorage.getItem("modoOscuro");
     return saved ? JSON.parse(saved) : false;
   });
   const [categoriaActiva, setCategoriaActiva] = useState("todas");
@@ -155,10 +156,20 @@ function AppContent() {
   const [versionFiltros, setVersionFiltros] = useState(0);
   const [mostrarCookies, setMostrarCookies] = useState(false);
   const [mostrarTerminos, setMostrarTerminos] = useState(false);
-  const [esActualizacion, setEsActualizacion] = useState(false);
   const [mostrarCompletarPerfil, setMostrarCompletarPerfil] = useState(false);
   const [mostrarGooglePassword, setMostrarGooglePassword] = useState(false);
   const [activeTermsVersion, setActiveTermsVersion] = useState(null);
+
+  const esActualizacion = useMemo(() => {
+    if (!activeTermsVersion) return false;
+    if (user) {
+      const serverVersion = user.activeTermsVersion || activeTermsVersion;
+      return user.termsAccepted === true && user.termsVersion !== serverVersion;
+    }
+    const localVersion = getPersisted(TERMS_VERSION_KEY);
+    const localAccepted = getPersisted(TERMS_ACCEPTED_KEY);
+    return localAccepted === "true" && localVersion !== activeTermsVersion;
+  }, [user, activeTermsVersion]);
 
   const terminosAceptadosEnSesion = useRef(false);
   const [backendListo, setBackendListo] = useState(false);
@@ -179,7 +190,7 @@ useEffect(() => {
 
   useEffect(() => {
     document.body.classList.toggle("modo-oscuro", modoOscuro);
-    localStorage.setItem("modoOscuro", JSON.stringify(modoOscuro));
+    localStorage.setItem("modoOscuro:v1", JSON.stringify(modoOscuro));
   }, [modoOscuro]);
 
 
@@ -272,9 +283,6 @@ useEffect(() => {
         const necesita =
           !user.termsAccepted || user.termsVersion !== serverVersion;
         if (necesita) {
-          setEsActualizacion(
-            user.termsAccepted === true && user.termsVersion !== serverVersion,
-          );
           setMostrarTerminos(true);
         } else {
           setPersisted(TERMS_ACCEPTED_KEY, "true");
@@ -285,9 +293,6 @@ useEffect(() => {
         const localVersion = getPersisted(TERMS_VERSION_KEY);
         const localAccepted = getPersisted(TERMS_ACCEPTED_KEY);
         if (localAccepted !== "true" || localVersion !== version) {
-          setEsActualizacion(
-            localAccepted === "true" && localVersion !== version,
-          );
           setMostrarTerminos(true);
         } else {
           resolverTerminos();
@@ -342,7 +347,9 @@ useEffect(() => {
         if (err?.response?.status === 409 && err.response.data?.activeVersion) {
           setActiveTermsVersion(err.response.data.activeVersion);
         }
-        return;
+        toast.error(err?.response?.data?.error || 'Error al guardar la aceptación de términos');
+        setMostrarTerminos(false);
+        resolverTerminos();
       }
     } else {
       setMostrarTerminos(false);
