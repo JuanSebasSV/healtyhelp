@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+const loadJsPDF = () => import("jspdf").then((m) => m.default);
 
 // Constantes de diseño
 const W      = 210;
@@ -495,6 +495,7 @@ const renderReceta = (doc, receta, imgB64, idxMostrado, totalMostrado) => {
 
 // EXPORTACIÓN PRINCIPAL
 export const generarPDFRecetas = async (recetas) => {
+  const jsPDF = await loadJsPDF();
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const fecha = new Date().toLocaleString("es-CO", {
     timeZone: "America/Bogota",

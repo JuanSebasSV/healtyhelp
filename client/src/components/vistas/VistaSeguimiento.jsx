@@ -339,8 +339,7 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const [modalAgregar, setModalAgregar] = useState(null);
 
-  const eliminandoRef = useRef(new Set());
-  const cargandoRef  = useRef({ dias: false, consumos: false });
+const eliminandoRef = useRef(new Set());
 
   const cargarDias = useCallback(async (token = { cancelled: false }) => {
     try {
@@ -379,8 +378,6 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
 
   const cargarConsumos = useCallback(async (fechaSel = seleccionado, per = periodo, token = { cancelled: false }) => {
     if (!fechaSel) { setConsumos([]); setCargando(false); return; }
-    if (cargandoRef.current.consumos) return;
-    cargandoRef.current.consumos = true;
     setCargando(true);
     try {
       let data;
@@ -396,7 +393,6 @@ const VistaSeguimiento = ({ recetas, versionFiltros = 0 }) => {
       if (!token.cancelled) {
         setCargando(false);
       }
-      cargandoRef.current.consumos = false;
     }
   }, [seleccionado, periodo]);
 
