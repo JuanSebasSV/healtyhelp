@@ -28,23 +28,25 @@ const COOKIE_OPTS = {
   maxAge: parseJwtExpireToMs(process.env.JWT_EXPIRE)
 };
 
+const CLEAR_COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: 'lax',
+  path: '/',
+  secure: process.env.NODE_ENV === 'production',
+  domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost'
+};
+
 const setAuthCookie = (res, token) => {
   res.cookie('token', token, COOKIE_OPTS);
 };
 
 const clearAuthCookie = (res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost'
-  });
+  res.clearCookie('token', CLEAR_COOKIE_OPTS);
 };
 
 const buildAuthResponse = async (user) => {
   const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 }).select('version');
-  const activeTermsVersion = activeTerms?.version || '1.0.0';
+  const activeTermsVersion = activeTerms?.version || null;
   return { ...buildUserResponse(user), activeTermsVersion };
 };
 
@@ -99,9 +101,12 @@ const validarPassword = (password) => {
 };
 
 exports.register = async (req, res) => {
-  console.log('body registro:', req.body);
   try {
     const { name, email, password, birthDate, weight, height, alergia } = req.body;
+
+    if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return res.status(400).json({ error: 'Email inválido' });
+    }
 
     const nameError = validarNombre(name);
     if (nameError) return res.status(400).json({ error: nameError });
@@ -328,6 +333,11 @@ exports.completeProfile = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) || !password) {
+      return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+    }
+
     const user = await User.findOne({ email }).select('+password +loginAttempts +lockUntil');
 
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });

@@ -18,90 +18,7 @@ const {
   acceptTerms,
 } = require("../controllers/authController");
 
-(async () => {
-  try {
-    const calcEdadMig = (bd) => {
-      if (!bd) return null;
-      const hoy = new Date();
-      const nac = new Date(bd);
-      let e = hoy.getFullYear() - nac.getFullYear();
-      const m = hoy.getMonth() - nac.getMonth();
-      if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) e--;
-      return e;
-    };
-
-    // Fase 1: asignar birthDate a cuentas legacy con age en número
-    const sinFecha = await User.find({
-      birthDate: { $exists: false },
-      age: { $exists: true, $ne: null },
-    }).lean();
-    if (sinFecha.length > 0) {
-      const ahora = new Date();
-      for (const doc of sinFecha) {
-        const edadLegacy = Number(doc.age);
-        if (
-          !edadLegacy ||
-          isNaN(edadLegacy) ||
-          edadLegacy < 1 ||
-          edadLegacy > 120
-        )
-          continue;
-        const mes = Math.floor(Math.random() * 12);
-        let anioNac = ahora.getFullYear() - edadLegacy;
-        const diasMax = new Date(anioNac, mes + 1, 0).getDate();
-        const dia = Math.floor(Math.random() * diasMax) + 1;
-        const bdTest = new Date(anioNac, mes, dia);
-        if (calcEdadMig(bdTest) < edadLegacy) anioNac -= 1;
-        const bd = new Date(anioNac, mes, dia);
-        const edad = calcEdadMig(bd);
-        const update = { birthDate: bd };
-        if (
-          edad >= 18 &&
-          edad <= 120 &&
-          doc.weight >= 40 &&
-          doc.weight <= 300 &&
-          doc.height >= 50 &&
-          doc.height <= 210
-        )
-          update.profileComplete = true;
-        await User.updateOne({ _id: doc._id }, { $set: update });
-      }
-      console.log(
-        `[migración] birthDate asignada a ${sinFecha.length} cuenta(s) legacy`,
-      );
-    }
-
-    // Fase 2: cuentas que ya tienen birthDate pero profileComplete false con datos completos
-    const sinCompletar = await User.find({
-      birthDate: { $exists: true },
-      profileComplete: { $ne: true },
-    }).lean();
-    let corregidas = 0;
-    for (const doc of sinCompletar) {
-      const edad = calcEdadMig(doc.birthDate);
-      if (
-        edad >= 18 &&
-        edad <= 120 &&
-        doc.weight >= 40 &&
-        doc.weight <= 300 &&
-        doc.height >= 50 &&
-        doc.height <= 210
-      ) {
-        await User.updateOne(
-          { _id: doc._id },
-          { $set: { profileComplete: true } },
-        );
-        corregidas++;
-      }
-    }
-    if (corregidas > 0)
-      console.log(
-        `[migración] profileComplete corregido en ${corregidas} cuenta(s)`,
-      );
-  } catch (e) {
-    console.error("[migración] Error:", e.message);
-  }
-})();
+(async () => {})();
 
 const { protect, optionalAuth } = require("../middleware/auth");
 const { uploadAvatar, cloudinary } = require("../config/cloudinary");
@@ -164,7 +81,7 @@ router.get("/me", optionalAuth, async (req, res) => {
 
     const userRaw = await User.findById(req.user._id).lean();
     const activeTerms = await TermsDocument.findOne().sort({ publishedAt: -1 });
-    const activeVersion = activeTerms?.version || "1.0.0";
+    const activeVersion = activeTerms?.version || null;
 
     const edadCalculada = user.birthDate
       ? calcularEdadLocal(user.birthDate)

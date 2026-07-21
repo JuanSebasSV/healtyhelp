@@ -12,17 +12,25 @@ require('dotenv').config();
 
 const app = express();
 
-// ✅ CORS primero
+app.set('trust proxy', 1);
+
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const DEFAULT_ORIGINS = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'https://healthyhelpoficial.com',
+  'https://www.healthyhelpoficial.com',
+];
+
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000',
-    'https://healthyhelpoficial.com',
-    'https://www.healthyhelpoficial.com'
-  ],
+  origin: [...new Set([...DEFAULT_ORIGINS, ...ALLOWED_ORIGINS])],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -71,7 +79,6 @@ app.use(passport.initialize());
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
     console.log('✅ MongoDB conectado');
-    // Seed de términos y condiciones — solo actúa si la colección está vacía
     try {
       const seedTerms = require('./scripts/seedTerms');
       await seedTerms();
@@ -84,9 +91,31 @@ mongoose.connect(process.env.MONGO_URI)
     process.exit(1);
   });
 
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️  MongoDB desconectado. Intentando reconectar...');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('✅ MongoDB reconectado');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB error:', err.message);
+});
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Rutas
+app.get('/healthz', (_req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const dbOk = dbState === 1;
+  res.status(dbOk ? 200 : 503).json({
+    status: dbOk ? 'ok' : 'degraded',
+    db: { state: dbState, ok: dbOk },
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use('/api/auth',           require('./routes/auth'));
 app.use('/api/admin',          require('./routes/admin'));
 app.use('/api/users',          require('./routes/users'));
@@ -126,12 +155,33 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 Servidor corriendo en puerto ${PORT}`);
   console.log(`📍 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
   console.log(`📡 API URL: http://localhost:${PORT}/api`);
   console.log(`🔐 Google OAuth: http://localhost:${PORT}/api/auth/google\n`);
 });
 
-const AdminLog = require('./models/AdminLog');
-console.log('AdminLog enum:', AdminLog.schema.path('action').enumValues);
+const SHUTDOWN_TIMEOUT_MS = 10000;
+const shutdown = (signal) => {
+  console.log(`\n📴 ${signal} recibido, cerrando servidor...`);
+  const timer = setTimeout(() => {
+    console.error('⏰ Timeout en shutdown, forzando salida');
+    process.exit(1);
+  }, SHUTDOWN_TIMEOUT_MS);
+
+  server.close(async () => {
+    try {
+      await mongoose.connection.close();
+      console.log('✅ MongoDB cerrado');
+    } catch (err) {
+      console.error('⚠️  Error cerrando MongoDB:', err.message);
+    }
+    clearTimeout(timer);
+    console.log('✅ Servidor cerrado limpiamente');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT',  () => shutdown('SIGINT'));

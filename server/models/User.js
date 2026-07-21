@@ -11,11 +11,12 @@ const userSchema = new mongoose.Schema({
     required: [true, 'El email es obligatorio'],
     unique: true,
     lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Email inválido']
+    trim: true,
+    match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Email inválido']
   },
   password: {
     type: String,
-    minlength: [6, 'Mínimo 6 caracteres'],
+    minlength: [8, 'Mínimo 8 caracteres'],
     select: false
   },
   birthDate: {
