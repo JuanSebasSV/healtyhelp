@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import RecipeImport from './RecipeImport';
 import RecipeForm from './RecipeForm';
 import RecipeList from './RecipeList';
+import { useConfirm } from '../ui/ConfirmContext';
 import './RecipeManagement.css';
 
 const IcoList = memo(() => (
@@ -41,6 +42,7 @@ const IcoExport = memo(() => (
 IcoExport.displayName = 'IcoExport';
 
 const RecipeManagement = () => {
+  const confirm = useConfirm();
   const [activeTab,     setActiveTab]     = useState('list');
   const [recipes,       setRecipes]       = useState([]);
   const [loading,       setLoading]       = useState(true);
@@ -73,7 +75,7 @@ const RecipeManagement = () => {
   }, [fetchRecipes, fetchStats]);
 
   const handleDelete = useCallback(async (id) => {
-    if (!window.confirm('¿Eliminar esta receta?')) return;
+    if (!await confirm({ title: 'Eliminar receta', message: '¿Eliminar esta receta?', confirmText: 'Eliminar', danger: true })) return;
     try {
       await api.delete(`/recipes/${id}`);
       toast.success('Receta eliminada');
@@ -82,10 +84,10 @@ const RecipeManagement = () => {
     } catch {
       toast.error('Error eliminando receta');
     }
-  }, [fetchStats]);
+  }, [fetchStats, confirm]);
 
   const handleDeleteMultiple = useCallback(async (ids) => {
-    if (!window.confirm(`¿Eliminar ${ids.length} recetas seleccionadas?`)) return;
+    if (!await confirm({ title: 'Eliminación masiva', message: `¿Eliminar ${ids.length} recetas seleccionadas?`, confirmText: `Eliminar ${ids.length}`, danger: true })) return;
     const idSet = new Set(ids);
     try {
       await api.post('/recipes/delete-multiple', { ids });
@@ -95,7 +97,7 @@ const RecipeManagement = () => {
     } catch {
       toast.error('Error eliminando recetas');
     }
-  }, [fetchStats]);
+  }, [fetchStats, confirm]);
 
   const handleEdit = useCallback((recipe) => {
     setEditingRecipe(recipe);

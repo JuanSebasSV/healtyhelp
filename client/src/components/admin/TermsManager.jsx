@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import DOMPurify from 'dompurify';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import { useConfirm } from '../ui/ConfirmContext';
 import './TermsManager.css';
 
 const Icons = {
@@ -138,6 +139,7 @@ const TbBtn = memo(({ title, active, onClick, children }) => (
 TbBtn.displayName = 'TbBtn';
 
 const TermsManager = () => {
+  const confirm = useConfirm();
   const [termsCurrent,  setTermsCurrent]  = useState(null);
   const [version,       setVersion]       = useState('');
   const [loading,       setLoading]       = useState(true);
@@ -231,9 +233,12 @@ const TermsManager = () => {
     if (termsCurrent && version === termsCurrent.version)
       return toast.error('Debes cambiar el número de versión para publicar una actualización');
 
-    const confirmado = window.confirm(
-      `¿Publicar versión ${version}?\n\nEsto obligará a TODOS los usuarios a aceptar los nuevos términos la próxima vez que entren a la aplicación.`
-    );
+    const confirmado = await confirm({
+      title: `Publicar versión ${version}`,
+      message: 'Esto obligará a TODOS los usuarios a aceptar los nuevos términos la próxima vez que entren a la aplicación.',
+      confirmText: 'Publicar',
+      danger: true,
+    });
     if (!confirmado) return;
 
     setPublicando(true);
@@ -250,7 +255,7 @@ const TermsManager = () => {
     } finally {
       setPublicando(false);
     }
-  }, [version, termsCurrent, actualizarContador]);
+  }, [version, termsCurrent, actualizarContador, confirm]);
 
   const publicarDisabled =
     publicando ||

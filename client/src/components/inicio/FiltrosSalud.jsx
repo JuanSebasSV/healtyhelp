@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import useModalLayerHint from '../../hooks/useModalLayerHint';
 import './FiltrosSalud.css';
@@ -122,7 +123,7 @@ const FiltrosSalud = ({
                     className={`cat-card ${esActivo ? 'activo' : ''}`}
                     onClick={() => onCategoria(cat.id)}
                   >
-                    <span className="cat-card__icono" dangerouslySetInnerHTML={{ __html: cat.icono }} />
+                    <span className="cat-card__icono" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(cat.icono) }} />
                     <span className="cat-card__label">{cat.nombre}</span>
                   </button>
                 );
@@ -218,7 +219,7 @@ const FiltrosSalud = ({
                           className={`filtroCard filtroCard--${grupo} ${activo ? 'activo' : ''}`}
                           onClick={() => onToggleFiltro(c.id)}
                         >
-                          <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: c.icono }} />
+                          <span className="filtroIcono" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(c.icono) }} />
                           <span className="filtroNombre">{c.nombre}</span>
                           {activo && <span className="filtroCheck">✓</span>}
                         </button>

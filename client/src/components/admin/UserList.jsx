@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import { optimizeCloudinary } from '../../utils/cloudinary';
+import { useConfirm } from '../ui/ConfirmContext';
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 768px)').matches);
@@ -314,6 +315,7 @@ const UserRow = memo(({ user, isCurrentUser, canEdit, canBanUser, esBaneado, pro
 UserRow.displayName = 'UserRow';
 
 const UserList = ({ users, onDelete, onChangeRole }) => {
+  const confirm = useConfirm();
   const { user: currentUser } = useAuth();
   const isDesktop = useIsDesktop();
 
@@ -356,7 +358,7 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
   }, [onChangeRole]);
 
   const handleUnban = useCallback(async (userId, userName) => {
-    if (!window.confirm(`¿Desbanear a ${userName}?`)) return;
+    if (!await confirm({ title: 'Desbanear usuario', message: `¿Desbanear a ${userName}?`, confirmText: 'Desbanear' })) return;
     setProcesandoBan(userId);
     try {
       const { data } = await api.put(`/admin/users/${userId}/unban`);
@@ -367,7 +369,7 @@ const UserList = ({ users, onDelete, onChangeRole }) => {
     } finally {
       setProcesandoBan(null);
     }
-  }, [onChangeRole]);
+  }, [onChangeRole, confirm]);
 
   const handleMensaje = useCallback(user => setModalMensaje(user), []);
   const handleBaneo   = useCallback(user => setModalBaneo(user),   []);

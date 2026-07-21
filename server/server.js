@@ -40,6 +40,9 @@ app.use(cors({
 app.use(helmet());
 app.use(hpp());
 
+const csrfProtection = require('./middleware/csrf');
+app.use('/api/', csrfProtection);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 500,

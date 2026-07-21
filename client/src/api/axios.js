@@ -4,7 +4,10 @@ const api = axios.create({
   baseURL: import.meta.env.DEV
     ? '/api'
     : (import.meta.env.VITE_API_URL || ''),
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
   withCredentials: true,
   timeout: 10000,
 });

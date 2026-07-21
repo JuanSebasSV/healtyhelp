@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useReducer, useCallback, useRef, useMemo, memo } from "react";
 import api from "../../api/axios";
 import { toast } from "react-toastify";
+import { useConfirm } from "../ui/ConfirmContext";
 import "./SeccionResenas.css";
 
 const EMPTY_IMAGENES = [];
@@ -636,7 +637,7 @@ const SeccionRespuestas = memo(
 
     const handleEliminar = useCallback(
       async (respId) => {
-        if (!window.confirm("¿Eliminar esta respuesta?")) return;
+        if (!await confirm({ title: 'Eliminar respuesta', message: '¿Eliminar esta respuesta?', confirmText: 'Eliminar' })) return;
         try {
           await api.delete(
             `/recipes/${recetaId}/resenas/${resenaId}/respuestas/${respId}`,
@@ -945,6 +946,7 @@ const SeccionResenas = ({
   respuestaIdDestacada,
   modalListo = false,
 }) => {
+  const confirm = useConfirm();
   const [listState, dispatchList] = useReducer(listReducer, initialList(receta));
   const resenas = listState.resenas;
   const puntosProm = listState.puntosProm;
@@ -1216,7 +1218,7 @@ const SeccionResenas = ({
 
   const handleBorrarResena = useCallback(
     async (resenaId) => {
-      if (!window.confirm("¿Eliminar esta reseña? No se puede deshacer."))
+      if (!await confirm({ title: 'Eliminar reseña', message: '¿Eliminar esta reseña? No se puede deshacer.', confirmText: 'Eliminar' }))
         return;
       try {
         await api.delete(`/recipes/${receta._id}/resenas/${resenaId}`);
@@ -1232,7 +1234,7 @@ const SeccionResenas = ({
         toast.error(e.response?.data?.error || "Error al borrar");
       }
     },
-    [receta._id],
+    [receta._id, confirm],
   );
 
   const handleVotar = useCallback(
@@ -1426,7 +1428,7 @@ const SeccionResenas = ({
                             className="sr-edit-quitar-btn"
                             title="Quitar imagen"
                             onClick={async () => {
-                              if (!window.confirm("¿Quitar esta imagen de la reseña?")) return;
+                              if (!await confirm({ title: 'Quitar imagen', message: '¿Quitar esta imagen de la reseña?', confirmText: 'Quitar' })) return;
                               try {
                                 await api.delete(`/recipes/${receta._id}/resenas/imagen`, { data: { idx } });
                                 setMiResena((prev) => ({

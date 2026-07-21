@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import { optimizeCloudinary } from '../../utils/cloudinary';
+import { useConfirm } from '../ui/ConfirmContext';
 import './ImagenesAprobacion.css';
 
 const ESTADOS = {
@@ -270,6 +271,7 @@ const ImageCard = memo(({
 ImageCard.displayName = 'ImageCard';
 
 const ImagenesAprobacion = ({ onCambio }) => {
+  const confirm = useConfirm();
   const cacheRef    = useRef({ pendiente: null, aprobada: null, rechazada: null });
   const cargandoRef = useRef(false);
   const onCambioRef = useRef(onCambio);
@@ -406,7 +408,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
   }, [aplicarCambioLocal, filtro]);
 
   const handleRechazar = useCallback(async (img) => {
-    if (!window.confirm('¿Rechazar esta imagen? Se eliminará de Cloudinary.')) return;
+    if (!await confirm({ title: 'Rechazar imagen', message: '¿Rechazar esta imagen? Se eliminará de Cloudinary.', confirmText: 'Rechazar', danger: true })) return;
     setProcesando(img._id);
     try {
       await api.put(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}/rechazar?imagenIndex=${img.imagenIndex ?? 0}`);
@@ -417,10 +419,10 @@ const ImagenesAprobacion = ({ onCambio }) => {
     } finally {
       setProcesando(null);
     }
-  }, [aplicarCambioLocal, filtro]);
+  }, [aplicarCambioLocal, filtro, confirm]);
 
   const handleEliminar = useCallback(async (img) => {
-    if (!window.confirm('¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.')) return;
+    if (!await confirm({ title: 'Eliminar registro', message: '¿Eliminar este registro del historial? Se borrará la imagen de Cloudinary si aún existe.', confirmText: 'Eliminar', danger: true })) return;
     setProcesando(img._id);
     try {
       await api.delete(`/admin/imagenes-resenas/${img.recipeId}/${img.resenaId}?imagenIndex=${img.imagenIndex ?? 0}`);
@@ -431,7 +433,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
     } finally {
       setProcesando(null);
     }
-  }, [aplicarCambioLocal, filtro]);
+  }, [aplicarCambioLocal, filtro, confirm]);
 
   const cerrarModalBaneo = useCallback(() => setModalBaneo(null), []);
   const handleMasivo = useCallback(async (accion) => {
@@ -440,11 +442,14 @@ const ImagenesAprobacion = ({ onCambio }) => {
     const verbo = esAprobar ? 'aprobar' : 'rechazar';
     const n = seleccionados.size;
 
-    if (!window.confirm(
-      `¿${esAprobar ? 'Aprobar' : 'Rechazar'} ${n} imagen${n !== 1 ? 'es' : ''} seleccionada${n !== 1 ? 's' : ''}?${
+    if (!await confirm({
+      title: `${esAprobar ? 'Aprobar' : 'Rechazar'} ${n} imagen${n !== 1 ? 'es' : ''}`,
+      message: `¿${esAprobar ? 'Aprobar' : 'Rechazar'} ${n} imagen${n !== 1 ? 'es' : ''} seleccionada${n !== 1 ? 's' : ''}?${
         !esAprobar ? '\nLas imágenes rechazadas se eliminarán de Cloudinary.' : ''
-      }`
-    )) return;
+      }`,
+      confirmText: esAprobar ? 'Aprobar' : 'Rechazar',
+      danger: !esAprobar,
+    })) return;
 
     setProcesandoMasivo(true);
     const ids = [...seleccionados];
@@ -472,14 +477,17 @@ const ImagenesAprobacion = ({ onCambio }) => {
     await cargarTodo();
     onCambioRef.current?.();
     setProcesandoMasivo(false);
-  }, [seleccionados, imagenes, cargarTodo]);
+  }, [seleccionados, imagenes, cargarTodo, confirm]);
 
   const handleMasivoEliminar = useCallback(async () => {
     if (seleccionados.size === 0) return;
     const n = seleccionados.size;
-    if (!window.confirm(
-      `¿Eliminar ${n} registro${n !== 1 ? 's' : ''} del historial?\nLas imágenes se borrarán de Cloudinary si aún existen.`
-    )) return;
+    if (!await confirm({
+      title: 'Eliminación masiva',
+      message: `¿Eliminar ${n} registro${n !== 1 ? 's' : ''} del historial?\nLas imágenes se borrarán de Cloudinary si aún existen.`,
+      confirmText: 'Eliminar todo',
+      danger: true,
+    })) return;
 
     setProcesandoMasivo(true);
     const items = [...seleccionados].reduce((acc, id) => {
@@ -502,7 +510,7 @@ const ImagenesAprobacion = ({ onCambio }) => {
     await cargarTodo();
     onCambioRef.current?.();
     setProcesandoMasivo(false);
-  }, [seleccionados, imagenes, cargarTodo]);
+  }, [seleccionados, imagenes, cargarTodo, confirm]);
 
   const handleBan = useCallback(async (userId, motivo, dias) => {
     try {

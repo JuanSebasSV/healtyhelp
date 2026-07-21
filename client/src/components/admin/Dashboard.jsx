@@ -4,6 +4,7 @@ import './Dashboard.css';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
+import { useConfirm } from '../ui/ConfirmContext';
 import UserList from './UserList';
 import Stats from './Stats';
 import RecipeManagement from './RecipeManagement';
@@ -76,6 +77,7 @@ const TabButton = memo(({ id, label, icon, activeTab, onClick, badge = 0 }) => (
 TabButton.displayName = 'TabButton';
 
 const Dashboard = ({ onBadgeChange }) => {
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
@@ -155,7 +157,7 @@ const Dashboard = ({ onBadgeChange }) => {
   }, []);
 
   const handleDeleteUser = useCallback(async (userId) => {
-    if (!window.confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    if (!await confirm({ title: 'Eliminar usuario', message: '¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.', confirmText: 'Eliminar', danger: true })) return;
     try {
       await api.delete(`/admin/users/${userId}`);
       toast.success('Usuario eliminado correctamente');
@@ -163,7 +165,7 @@ const Dashboard = ({ onBadgeChange }) => {
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error eliminando usuario');
     }
-  }, [fetchData]);
+  }, [fetchData, confirm]);
 
   const handleChangeRole = useCallback(async (userId, newRole, action) => {
     if (action === '__refresh__') { fetchData(); return; }
@@ -190,7 +192,7 @@ const Dashboard = ({ onBadgeChange }) => {
   const handleImagenesCambio = useCallback(() => { fetchData(); fetchBadge(); }, [fetchData, fetchBadge]);
 
   const handleLimpiarNotifs = useCallback(async () => {
-    if (!window.confirm('¿Eliminar notificaciones de recetas que ya no existen?')) return;
+    if (!await confirm({ title: 'Limpiar notificaciones', message: '¿Eliminar notificaciones de recetas que ya no existen?', confirmText: 'Limpiar' })) return;
     setLimpiandoNotifs(true);
     try {
       const { data } = await api.delete('/notifications/limpiar-huerfanas');
@@ -208,7 +210,7 @@ const Dashboard = ({ onBadgeChange }) => {
     } finally {
       setLimpiandoNotifs(false);
     }
-  }, []);
+  }, [confirm]);
 
   const filteredUsers = useMemo(() => users.filter(u => {
     const matchesSearch =

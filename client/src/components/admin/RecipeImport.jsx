@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import { optimizeCloudinary } from '../../utils/cloudinary';
+import { useConfirm } from '../ui/ConfirmContext';
 import './RecipeImport.css';
 
 const STORAGE_KEY = 'healtyhelp_import_draft:v1';
@@ -221,6 +222,7 @@ const ReviewCard = memo(({ receta, index, onChange }) => {
 ReviewCard.displayName = 'ReviewCard';
 
 const RecipeImport = ({ onSuccess }) => {
+  const confirm = useConfirm();
   const [recetas,    setRecetas]    = useState(() => {
     const d = loadRecetas();
     return d ? d.recipes : null;
@@ -318,9 +320,12 @@ const RecipeImport = ({ onSuccess }) => {
     if (!recetas || recetas.length === 0) return;
 
     if (mode === 'replace') {
-      const ok = window.confirm(
-        `⚠️ ¿ELIMINAR todas las recetas existentes y reemplazarlas con ${recetas.length} nuevas?\n\nEsta acción no se puede deshacer.`
-      );
+      const ok = await confirm({
+        title: 'Reemplazar todas las recetas',
+        message: `⚠️ ¿ELIMINAR todas las recetas existentes y reemplazarlas con ${recetas.length} nuevas?\n\nEsta acción no se puede deshacer.`,
+        confirmText: 'Reemplazar',
+        danger: true,
+      });
       if (!ok) return;
     }
 
@@ -346,7 +351,7 @@ const RecipeImport = ({ onSuccess }) => {
     } finally {
       setLoading(false);
     }
-  }, [recetas, mode, onSuccess]);
+  }, [recetas, mode, onSuccess, confirm]);
 
   if (paso === 'upload') {
     return (
