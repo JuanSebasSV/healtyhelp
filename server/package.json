@@ -31,5 +31,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true
   }
 }

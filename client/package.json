@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "vite",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "build": "vite build",
+    "build": "vite build && node ../scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "doctor": "react-doctor .",
     "doctor:verbose": "react-doctor . --verbose",
-    "doctor:security": "react-doctor . --category security",
-    "doctor:perf": "react-doctor . --category performance"
+    "doctor:security": "react-doctor --category security",
+    "doctor:perf": "react-doctor --category performance"
   },
   "dependencies": {
     "axios": "^1.13.5",
@@ -33,6 +33,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "puppeteer": "^1.20.0",
     "react-doctor": "^0.7.2",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
