@@ -109,6 +109,22 @@
 
 .adblock-btn--primary:hover { background: #c8e6a8; }
 
+.adblock-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.adblock-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.adblock-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .adblock-close {
   position: absolute;
   top: 0.55rem;

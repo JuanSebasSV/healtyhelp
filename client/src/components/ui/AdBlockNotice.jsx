@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './AdBlockNotice.css';
 
+const STORAGE_KEY = 'hh_adblock_dismissed_forever';
+
 const BAIT_CLASSES = [
   'adsbox',
   'ad-banner',
@@ -18,170 +20,243 @@ const BAIT_IDS = [
   'google_ads_iframe',
 ];
 
-const BANNED_URLS = [
-  'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-  'https://pagead2.googlesyndication.com/pagead/show_ads.js',
-  'https://www.googletagservices.com/tag/js/gpt.js',
-  'https://securepubads.g.doubleclick.net/tag/js/gpt.js',
-];
+const BANNED_URL = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+const CONTROL_URL = '/favicon.ico';
 
-const STORAGE_KEY = 'hh_adblock_notice_dismissed';
-const DISMISS_HOURS = 6;
+const scheduleIdle = (cb, timeout = 4000) => {
+  if (typeof window.requestIdleCallback === 'function') {
+    return window.requestIdleCallback(cb, { timeout });
+  }
+  return setTimeout(cb, 1500);
+};
 
-const detectAdBlock = () => {
+const cancelIdle = (handle) => {
+  if (typeof window.cancelIdleCallback === 'function' && typeof handle === 'number') {
+    window.cancelIdleCallback(handle);
+  } else {
+    clearTimeout(handle);
+  }
+};
+
+const detectViaDOM = () => {
+  if (!document.body) return false;
+
+  const bait = document.createElement('div');
+  bait.className = BAIT_CLASSES.join(' ');
+  bait.id = BAIT_IDS.join(' ');
+  bait.setAttribute('aria-hidden', 'true');
+  bait.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;display:block;visibility:visible;opacity:1;pointer-events:auto;';
+
+  const inner = document.createElement('div');
+  inner.className = 'ad ads ad-banner';
+  inner.innerHTML = '&nbsp;';
+  bait.appendChild(inner);
+
+  const iframe = document.createElement('iframe');
+  iframe.id = 'ad-iframe';
+  iframe.name = 'google_ads_iframe';
+  iframe.src = 'about:blank';
+  iframe.style.cssText = 'width:1px;height:1px;display:block;visibility:visible;';
+  bait.appendChild(iframe);
+
+  const ins = document.createElement('ins');
+  ins.className = 'adsbygoogle';
+  ins.style.cssText = 'display:block;width:1px;height:1px;';
+  bait.appendChild(ins);
+
+  document.body.appendChild(bait);
+
+  let blocked = false;
+
+  try {
+    const baitCs = window.getComputedStyle(bait);
+    const innerStyle = inner.style;
+    const innerCs = window.getComputedStyle(inner);
+    const insCs = window.getComputedStyle(ins);
+
+    blocked =
+      baitCs.display === 'none' ||
+      baitCs.visibility === 'hidden' ||
+      parseFloat(baitCs.opacity) === 0 ||
+      innerStyle.display === 'none' ||
+      innerCs.display === 'none' ||
+      innerCs.visibility === 'hidden' ||
+      insCs.display === 'none' ||
+      iframe.offsetHeight === 0;
+  } catch {
+    blocked = false;
+  } finally {
+    bait.parentNode?.removeChild(bait);
+  }
+
+  return blocked;
+};
+
+const probeUrl = (url, timeoutMs = 1500) => {
   return new Promise((resolve) => {
-    const run = () => {
-      if (!document.body) {
-        resolve(false);
-        return;
-      }
-
-      let detected = false;
-
-      try {
-        const bait = document.createElement('div');
-        bait.className = BAIT_CLASSES.join(' ');
-        bait.id = BAIT_IDS.join(' ');
-        bait.setAttribute('aria-hidden', 'true');
-        bait.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;display:block;visibility:visible;opacity:1;pointer-events:auto;';
-
-        const inner = document.createElement('div');
-        inner.className = 'ad ads ad-banner';
-        inner.innerHTML = '&nbsp;';
-        bait.appendChild(inner);
-
-        const iframe = document.createElement('iframe');
-        iframe.id = 'ad-iframe';
-        iframe.name = 'google_ads_iframe';
-        iframe.src = 'about:blank';
-        iframe.style.cssText = 'width:1px;height:1px;display:block;visibility:visible;';
-        bait.appendChild(iframe);
-
-        document.body.appendChild(bait);
-
-        setTimeout(() => {
-          try {
-            const cs = window.getComputedStyle(bait);
-            const innerStyle = inner.style;
-            const innerCs = window.getComputedStyle(inner);
-
-            const baitBlocked =
-              cs.display === 'none' ||
-              cs.visibility === 'hidden' ||
-              parseFloat(cs.opacity) === 0;
-
-            const innerBlocked =
-              innerStyle.display === 'none' ||
-              innerCs.display === 'none' ||
-              innerCs.visibility === 'hidden';
-
-            const iframeBlocked = iframe.offsetHeight === 0;
-
-            detected = baitBlocked || innerBlocked || iframeBlocked;
-
-            if (!detected) {
-              const ad = document.createElement('ins');
-              ad.className = 'adsbygoogle';
-              ad.style.display = 'block';
-              ad.style.width = '1px';
-              ad.style.height = '1px';
-              document.body.appendChild(ad);
-              setTimeout(() => {
-                const adCs = window.getComputedStyle(ad);
-                if (adCs.display === 'none' || ad.offsetHeight === 0) {
-                  detected = true;
-                }
-                ad.parentNode?.removeChild(ad);
-                bait.parentNode?.removeChild(bait);
-                resolve(detected);
-              }, 200);
-            } else {
-              bait.parentNode?.removeChild(bait);
-              resolve(detected);
-            }
-          } catch {
-            try { bait.parentNode?.removeChild(bait); } catch { /* ignore */ }
-            resolve(false);
-          }
-        }, 200);
-      } catch {
-        resolve(false);
-      }
+    let settled = false;
+    const startTime = Date.now();
+    const finish = (result, ms) => {
+      if (settled) return;
+      settled = true;
+      resolve({ result, ms });
     };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run, { once: true });
-    } else {
-      run();
-    }
+    const img = new Image();
+    const timer = setTimeout(() => finish('timeout', Date.now() - startTime), timeoutMs);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      finish('loaded', Date.now() - startTime);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      finish('error', Date.now() - startTime);
+    };
+
+    img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
   });
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAdBlockerDetected = (delay = 1500) => {
-  const [detected, setDetected] = useState(false);
-  const [checked, setChecked] = useState(false);
+const detectViaNetwork = async () => {
+  const [banned, control] = await Promise.all([
+    probeUrl(BANNED_URL, 1500),
+    probeUrl(CONTROL_URL, 1500),
+  ]);
 
-  useEffect(() => {
-    const t = setTimeout(async () => {
-      try {
-        const result = await detectAdBlock();
-        if (result) setDetected(true);
-      } catch {
-        // ignore
-      } finally {
-        setChecked(true);
-      }
-    }, delay);
+  if (banned.result !== 'error') return false;
 
-    return () => clearTimeout(t);
-  }, [delay]);
+  if (control.result === 'error' || control.result === 'loaded') {
+    const ratio = banned.ms / Math.max(control.ms, 1);
+    if (ratio < 0.4 && banned.ms < 200) return true;
+  }
 
-  return { detected, checked };
+  if (banned.ms < 50) return true;
+
+  return false;
 };
 
-const isDismissedRecently = () => {
+const detectAdBlock = async () => {
+  const domBlocked = detectViaDOM();
+  if (domBlocked) return true;
+
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    const ts = parseInt(raw, 10);
-    if (!Number.isFinite(ts)) return false;
-    return Date.now() - ts < DISMISS_HOURS * 60 * 60 * 1000;
+    const networkBlocked = await detectViaNetwork();
+    if (networkBlocked === true) return true;
+  } catch {
+    /* ignore */
+  }
+
+  return false;
+};
+
+const useAdBlockerDetected = (delay = 1500) => {
+  const [detected, setDetected] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [version, setVersion] = useState(0);
+
+  const recheck = useCallback(() => {
+    setChecked(false);
+    setVersion((v) => v + 1);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    let idleHandle = null;
+
+    const run = async () => {
+      try {
+        const result = await detectAdBlock();
+        if (!cancelled) setDetected(!!result);
+      } catch {
+        if (!cancelled) setDetected(false);
+      } finally {
+        if (!cancelled) setChecked(true);
+      }
+    };
+
+    if (typeof document !== 'undefined' && document.readyState === 'loading') {
+      const onReady = () => {
+        idleHandle = scheduleIdle(run, 4000);
+      };
+      document.addEventListener('DOMContentLoaded', onReady, { once: true });
+      return () => {
+        cancelled = true;
+        document.removeEventListener('DOMContentLoaded', onReady);
+        if (idleHandle !== null) cancelIdle(idleHandle);
+      };
+    }
+
+    idleHandle = scheduleIdle(run, 4000);
+    return () => {
+      cancelled = true;
+      if (idleHandle !== null) cancelIdle(idleHandle);
+    };
+  }, [delay, version]);
+
+  return { detected, checked, recheck };
+};
+
+const isDismissedForever = () => {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY) !== null;
   } catch {
     return false;
   }
 };
 
 const AdBlockNotice = () => {
-  const { detected, checked } = useAdBlockerDetected(2000);
-  const [dismissed, setDismissed] = useState(isDismissedRecently);
+  const { detected, checked, recheck } = useAdBlockerDetected(2000);
   const [visible, setVisible] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [hideUntilReload, setHideUntilReload] = useState(false);
+  const [dismissedForever] = useState(isDismissedForever);
   const closeRef = useRef(null);
 
-  const handleDismiss = useCallback(() => {
+  const handleCloseUntilReload = useCallback(() => {
+    setHideUntilReload(true);
+    setVisible(false);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setVerifying(true);
+    recheck();
+    setTimeout(() => setVerifying(false), 1500);
+  }, [recheck]);
+
+  const handleDismissForever = useCallback(() => {
     try { sessionStorage.setItem(STORAGE_KEY, String(Date.now())); } catch { /* ignore */ }
-    setDismissed(true);
+    setVerified(true);
     setVisible(false);
   }, []);
 
   useEffect(() => {
-    if (detected && checked && !dismissed) {
+    if (dismissedForever) {
+      setVisible(false);
+      return undefined;
+    }
+    if (detected && checked && !verified && !hideUntilReload) {
       const t = setTimeout(() => setVisible(true), 200);
       return () => clearTimeout(t);
     }
     setVisible(false);
     return undefined;
-  }, [detected, checked, dismissed]);
+  }, [detected, checked, verified, hideUntilReload, dismissedForever]);
 
   useEffect(() => {
     if (!visible) return undefined;
     closeRef.current?.focus();
     const onKey = (e) => {
-      if (e.key === 'Escape') handleDismiss();
+      if (e.key === 'Escape') handleCloseUntilReload();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [visible, handleDismiss]);
+  }, [visible, handleCloseUntilReload]);
+
+  useEffect(() => {
+    if (detected || !checked) setVerified(false);
+  }, [detected, checked]);
 
   if (!visible) return null;
 
@@ -205,9 +280,9 @@ const AdBlockNotice = () => {
             <strong>Brave Shields</strong> o similares pueden estar bloqueando.
           </p>
           <p className="adblock-detail">
-            Si experimentás problemas con el inicio de sesión, el chatbot o las recetas,
-            desactivalo para <strong>healthyhelpoficial.com</strong> en tu extensión
-            y recargá la página.
+            Desactivalo para <strong>healthyhelpoficial.com</strong> en tu extensión
+            y volvé a comprobar. Si seguís viendo este aviso, revisá otras extensiones
+            como bloqueadores de privacidad, antivirus o filtros corporativos.
           </p>
         </div>
 
@@ -216,18 +291,28 @@ const AdBlockNotice = () => {
             ref={closeRef}
             type="button"
             className="adblock-btn adblock-btn--primary"
-            onClick={handleDismiss}
+            onClick={handleRetry}
+            disabled={verifying}
           >
-            Entendido
+            {verifying ? 'Comprobando...' : 'Volver a comprobar'}
+          </button>
+          <button
+            type="button"
+            className="adblock-btn adblock-btn--ghost"
+            onClick={handleDismissForever}
+            disabled={verifying}
+          >
+            No mostrar más
           </button>
         </div>
 
         <button
           type="button"
           className="adblock-close"
-          onClick={handleDismiss}
+          onClick={handleCloseUntilReload}
           aria-label="Cerrar aviso"
           tabIndex={-1}
+          title="Cerrar (volverá a aparecer al recargar)"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
