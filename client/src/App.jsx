@@ -23,6 +23,7 @@ import FondoAnimado from "./components/layout/FondoAnimado";
 import PrivateRoute from "./components/layout/PrivateRoute";
 import api from "./api/axios";
 import useAuth from "./hooks/useAuth";
+import AdBlockNotice from "./components/ui/AdBlockNotice";
 
 const safeLazy = (importFn, nombre) => lazy(() => {
   if (!navigator.onLine) {
@@ -618,6 +619,8 @@ useEffect(() => {
           theme={modoOscuro ? "dark" : "light"}
         />
       </div>
+
+      <AdBlockNotice />
     </Router>
   );
 }
