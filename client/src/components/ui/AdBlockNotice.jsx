@@ -263,27 +263,43 @@ const AdBlockNotice = () => {
   return (
     <div className="adblock-notice" role="alertdialog" aria-live="polite" aria-labelledby="adblock-title">
       <div className="adblock-card" data-modal="true">
-        <div className="adblock-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
+        <button
+          type="button"
+          className="adblock-close"
+          onClick={handleCloseUntilReload}
+          aria-label="Cerrar aviso"
+          tabIndex={-1}
+          title="Cerrar (volverá a aparecer al recargar)"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
-        </div>
+        </button>
 
-        <div className="adblock-content">
-          <h3 id="adblock-title" className="adblock-title">Detectamos un bloqueador de anuncios</h3>
-          <p className="adblock-message">
-            Para que <strong>Healthy Help</strong> funcione correctamente necesitamos
-            cargar algunos recursos que extensiones como{' '}
-            <strong>uBlock Origin</strong>, <strong>AdBlock</strong>,{' '}
-            <strong>Brave Shields</strong> o similares pueden estar bloqueando.
-          </p>
-          <p className="adblock-detail">
-            Desactivalo para <strong>healthyhelpoficial.com</strong> en tu extensión
-            y volvé a comprobar. Si seguís viendo este aviso, revisá otras extensiones
-            como bloqueadores de privacidad, antivirus o filtros corporativos.
-          </p>
+        <div className="adblock-header">
+          <div className="adblock-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>
+          </div>
+
+          <div className="adblock-content">
+            <h3 id="adblock-title" className="adblock-title">Detectamos un bloqueador de anuncios</h3>
+            <p className="adblock-message">
+              Para que <strong>Healthy Help</strong> funcione correctamente necesitamos
+              cargar algunos recursos que extensiones como{' '}
+              <strong>uBlock Origin</strong>, <strong>AdBlock</strong>,{' '}
+              <strong>Brave Shields</strong> o similares pueden estar bloqueando.
+            </p>
+            <p className="adblock-detail">
+              Desactivalo para <strong>healthyhelpoficial.com</strong> en tu extensión
+              y volvé a comprobar. Si seguís viendo este aviso, revisá otras extensiones
+              como bloqueadores de privacidad, antivirus o filtros corporativos.
+            </p>
+          </div>
         </div>
 
         <div className="adblock-actions">
@@ -305,20 +321,6 @@ const AdBlockNotice = () => {
             No mostrar más
           </button>
         </div>
-
-        <button
-          type="button"
-          className="adblock-close"
-          onClick={handleCloseUntilReload}
-          aria-label="Cerrar aviso"
-          tabIndex={-1}
-          title="Cerrar (volverá a aparecer al recargar)"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
       </div>
     </div>
   );
