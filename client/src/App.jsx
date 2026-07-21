@@ -324,6 +324,8 @@ useEffect(() => {
         cookiesConsentidas() ||
         sessionStorage.getItem(COOKIE_CONSENT_KEY) === "dismissed";
       if (!yaDecidio) setMostrarCookies(true);
+    } else {
+      setMostrarCookies(false);
     }
   }, [user, isPreview]);
 
