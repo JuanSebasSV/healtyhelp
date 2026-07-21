@@ -5,6 +5,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const TermsDocument = require("../models/TermsDocument");
+const { CLEAR_COOKIE_OPTS } = require("../config/cookies");
 require("../config/passport");
 
 const {
@@ -59,13 +60,7 @@ router.put("/reset-password/:token", resetPassword);
 router.post("/set-google-password", protect, setGooglePassword);
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    domain: process.env.NODE_ENV === "production" ? ".healthyhelpoficial.com" : "localhost",
-  });
+  res.clearCookie("token", CLEAR_COOKIE_OPTS);
   res.json({ success: true });
 });
 

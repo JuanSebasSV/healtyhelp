@@ -336,7 +336,7 @@ const SelectorImagenes = memo(({ imagenes, onChange, onRemove }) => {
           const url = URL.createObjectURL(img);
           return (
             <div key={url} className="sr-preview-wrap">
-              <img src={url} alt={`Vista previa ${i + 1}`} className="sr-preview-img" />
+              <img src={url} alt={`Vista previa ${i + 1}`} className="sr-preview-img" loading="lazy" decoding="async" />
               <button
                 type="button"
                 className="sr-btn-quitar-img"

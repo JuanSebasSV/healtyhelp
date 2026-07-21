@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const TermsDocument = require('../models/TermsDocument');
 const { enviarEmail, emailBase } = require('../utils/emailService');
+const { AUTH_COOKIE_OPTS, CLEAR_COOKIE_OPTS } = require('../config/cookies');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRE
@@ -20,20 +21,8 @@ const parseJwtExpireToMs = (expire) => {
 };
 
 const COOKIE_OPTS = {
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  secure: process.env.NODE_ENV === 'production',
-  domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost',
-  maxAge: parseJwtExpireToMs(process.env.JWT_EXPIRE)
-};
-
-const CLEAR_COOKIE_OPTS = {
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  secure: process.env.NODE_ENV === 'production',
-  domain: process.env.NODE_ENV === 'production' ? '.healthyhelpoficial.com' : 'localhost'
+  ...AUTH_COOKIE_OPTS,
+  maxAge: parseJwtExpireToMs(process.env.JWT_EXPIRE),
 };
 
 const setAuthCookie = (res, token) => {

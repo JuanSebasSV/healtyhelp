@@ -76,7 +76,12 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 
 // Conexión MongoDB + seed de términos al conectar
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 50,
+  minPoolSize: 5,
+})
   .then(async () => {
     console.log('✅ MongoDB conectado');
     try {

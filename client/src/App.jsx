@@ -71,37 +71,52 @@ const setCookie = (name, value, maxAge = COOKIE_MAX_AGE) => {
   document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 };
 
-const cookiesConsentidas = () =>
-  getCookie(COOKIE_CONSENT_KEY) === "accepted" ||
-  localStorage.getItem(COOKIE_CONSENT_KEY) === "accepted";
+const cookiesConsentidas = () => {
+  try {
+    return getCookie(COOKIE_CONSENT_KEY) === "accepted" ||
+      localStorage.getItem(COOKIE_CONSENT_KEY) === "accepted";
+  } catch {
+    return false;
+  }
+};
+
+const safeGet = (storage, key) => {
+  try { return storage.getItem(key); } catch { return null; }
+};
+const safeSet = (storage, key, value) => {
+  try { storage.setItem(key, value); } catch { /* QuotaExceeded o storage deshabilitado */ }
+};
+const safeRemove = (storage, key) => {
+  try { storage.removeItem(key); } catch { /* noop */ }
+};
 
 const getPersisted = (key) => {
   if (cookiesConsentidas())
-    return getCookie(key) || localStorage.getItem(key) || null;
-  return sessionStorage.getItem(key) || null;
+    return getCookie(key) || safeGet(localStorage, key) || null;
+  return safeGet(sessionStorage, key) || null;
 };
 
 const setPersisted = (key, value) => {
   if (cookiesConsentidas()) {
     setCookie(key, value);
-    localStorage.setItem(key, value);
+    safeSet(localStorage, key, value);
   } else {
-    sessionStorage.setItem(key, value);
+    safeSet(sessionStorage, key, value);
   }
 };
 
 const migrarSessionACookies = () => {
   [TERMS_ACCEPTED_KEY, TERMS_VERSION_KEY].forEach((key) => {
-    const val = sessionStorage.getItem(key);
+    const val = safeGet(sessionStorage, key);
     if (val) {
       setCookie(key, val);
-      localStorage.setItem(key, val);
-      sessionStorage.removeItem(key);
+      safeSet(localStorage, key, val);
+      safeRemove(sessionStorage, key);
     }
   });
   setCookie(COOKIE_CONSENT_KEY, "accepted");
-  localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
-  sessionStorage.removeItem(COOKIE_CONSENT_KEY);
+  safeSet(localStorage, COOKIE_CONSENT_KEY, "accepted");
+  safeRemove(sessionStorage, COOKIE_CONSENT_KEY);
 };
 
 const RUTAS_LIBRES = [
