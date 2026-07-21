@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './AdBlockNotice.css';
 
-const STORAGE_KEY = 'hh_adblock_dismissed_forever';
+const STORAGE_KEY = 'hh_adblock_dismissed_until';
+const DISMISS_DAYS = 7;
+const RE_CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 const BAIT_CLASSES = [
   'adsbox',
@@ -36,6 +38,23 @@ const cancelIdle = (handle) => {
   } else {
     clearTimeout(handle);
   }
+};
+
+const isDismissed = () => {
+  try {
+    const until = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+    if (!Number.isFinite(until)) return false;
+    return Date.now() < until;
+  } catch {
+    return false;
+  }
+};
+
+const setDismissed = (days = DISMISS_DAYS) => {
+  try {
+    const until = Date.now() + days * 24 * 60 * 60 * 1000;
+    sessionStorage.setItem(STORAGE_KEY, String(until));
+  } catch { /* ignore */ }
 };
 
 const detectViaDOM = () => {
@@ -197,21 +216,12 @@ const useAdBlockerDetected = (delay = 1500) => {
   return { detected, checked, recheck };
 };
 
-const isDismissedForever = () => {
-  try {
-    return sessionStorage.getItem(STORAGE_KEY) !== null;
-  } catch {
-    return false;
-  }
-};
-
 const AdBlockNotice = () => {
   const { detected, checked, recheck } = useAdBlockerDetected(2000);
   const [visible, setVisible] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [dismissed, setDismissedState] = useState(isDismissed);
   const [hideUntilReload, setHideUntilReload] = useState(false);
-  const [dismissedForever] = useState(isDismissedForever);
   const closeRef = useRef(null);
 
   const handleCloseUntilReload = useCallback(() => {
@@ -225,38 +235,47 @@ const AdBlockNotice = () => {
     setTimeout(() => setVerifying(false), 1500);
   }, [recheck]);
 
-  const handleDismissForever = useCallback(() => {
-    try { sessionStorage.setItem(STORAGE_KEY, String(Date.now())); } catch { /* ignore */ }
-    setVerified(true);
+  const handleDismiss = useCallback(() => {
+    setDismissed(DISMISS_DAYS);
+    setDismissedState(true);
     setVisible(false);
   }, []);
 
   useEffect(() => {
-    if (dismissedForever) {
+    if (dismissed || hideUntilReload) {
       setVisible(false);
       return undefined;
     }
-    if (detected && checked && !verified && !hideUntilReload) {
+    if (detected && checked) {
       const t = setTimeout(() => setVisible(true), 200);
       return () => clearTimeout(t);
     }
     setVisible(false);
     return undefined;
-  }, [detected, checked, verified, hideUntilReload, dismissedForever]);
+  }, [detected, checked, dismissed, hideUntilReload]);
 
   useEffect(() => {
-    if (!visible) return undefined;
-    closeRef.current?.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') handleCloseUntilReload();
+    if (typeof document === 'undefined') return undefined;
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') return;
+      const liveDismissed = isDismissed();
+      if (liveDismissed !== dismissed) setDismissedState(liveDismissed);
+      if (!liveDismissed && !hideUntilReload) recheck();
     };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [visible, handleCloseUntilReload]);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [dismissed, hideUntilReload, recheck]);
 
   useEffect(() => {
-    if (detected || !checked) setVerified(false);
-  }, [detected, checked]);
+    if (typeof window === 'undefined') return undefined;
+    const interval = setInterval(() => {
+      const liveDismissed = isDismissed();
+      if (liveDismissed !== dismissed) setDismissedState(liveDismissed);
+      if (!liveDismissed) recheck();
+    }, RE_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [dismissed, recheck]);
 
   if (!visible) return null;
 
@@ -315,10 +334,10 @@ const AdBlockNotice = () => {
           <button
             type="button"
             className="adblock-btn adblock-btn--ghost"
-            onClick={handleDismissForever}
+            onClick={handleDismiss}
             disabled={verifying}
           >
-            No mostrar más
+            Ocultar por 7 días
           </button>
         </div>
       </div>
