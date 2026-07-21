@@ -574,21 +574,17 @@ const Register = () => {
     setAvisos((prev) => ({ ...prev, [field]: avisoKey }));
   };
 
-  /* Envío */
+/* Envío */
   const manejarRegistro = async (e) => {
     e.preventDefault();
-    console.log("1. iniciando");
 
     const allTouched = Object.keys(datos).reduce(
       (acc, k) => ({ ...acc, [k]: true }),
       {},
     );
     setTouched(allTouched);
-    console.log("2. datos:", datos);
 
-    // 1. Validar email permitido
     if (datos.email && !esEmailPermitido(datos.email)) {
-      console.log("3. bloqueado por email");
       setErrors((prev) => ({
         ...prev,
         email: "Usa un proveedor de correo reconocido (Gmail, Hotmail, etc.)",
@@ -597,7 +593,6 @@ const Register = () => {
       return;
     }
 
-    // 2. Validar fecha
     const fechaError = (() => {
       if (!datos.fechaNac) return "La fecha de nacimiento es requerida";
 
@@ -617,7 +612,6 @@ const Register = () => {
       return;
     }
 
-    // 3. Validar nombre, email, contraseñas
     const validationErrors = validateRegisterForm(
       datos.nombre,
       datos.email,
@@ -626,10 +620,8 @@ const Register = () => {
     );
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      console.log("5. bloqueado por validationErrors:", validationErrors);
       return;
     }
-    console.log("6. abriendo modal");
     setShowModal(true);
   };
 

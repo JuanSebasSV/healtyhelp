@@ -67,12 +67,27 @@ const formatRelativa = (date) => {
 };
 
 const decodeCache = new Map();
+const DECODE_CACHE_MAX = 200;
+
+const decodeEntities = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x2F;/g, '/');
+};
+
 const decodificar = (str) => {
   if (!str) return '';
   if (decodeCache.has(str)) return decodeCache.get(str);
-  const txt = document.createElement('textarea');
-  txt.innerHTML = str;
-  const result = txt.value;
+  const result = decodeEntities(str);
+  if (decodeCache.size >= DECODE_CACHE_MAX) {
+    const firstKey = decodeCache.keys().next().value;
+    decodeCache.delete(firstKey);
+  }
   decodeCache.set(str, result);
   return result;
 };
