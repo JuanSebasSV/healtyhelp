@@ -152,58 +152,58 @@ function obtenerContextoHorario(horaActual, consumosHoy, condiciones, edad, imcC
   const mensajes      = [];
 
   if (horaActual >= 0 && horaActual < 6) {
-    mensajes.push({ texto: 'Consumir alimentos en la madrugada dificulta la digestión y reduce el gasto calórico — el cuerpo está en modo reposo.', nivel: 'advertencia' });
+    mensajes.push({ mensaje: 'Consumir alimentos en la madrugada dificulta la digestión y reduce el gasto calórico — el cuerpo está en modo reposo.', nivel: 'advertencia' });
     if (condiciones.includes('diabetes'))
-      mensajes.push({ texto: 'La sensibilidad a la insulina es mínima de madrugada. Evita carbohidratos simples a esta hora.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'La sensibilidad a la insulina es mínima de madrugada. Evita carbohidratos simples a esta hora.', nivel: 'atencion' });
     if (condiciones.includes('gastritis'))
-      mensajes.push({ texto: 'Comer en la madrugada aumenta la producción de ácido gástrico y puede empeorar los síntomas de la gastritis.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Comer en la madrugada aumenta la producción de ácido gástrico y puede empeorar los síntomas de la gastritis.', nivel: 'atencion' });
     if (imcCategoria === 'obesidad')
-      mensajes.push({ texto: 'Comer de madrugada con obesidad favorece el almacenamiento de grasa visceral. Intenta respetar la ventana de ayuno nocturno.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Comer de madrugada con obesidad favorece el almacenamiento de grasa visceral. Intenta respetar la ventana de ayuno nocturno.', nivel: 'atencion' });
   }
 
   if (horaActual >= 9 && horaActual < 12 && !tieneDesayuno) {
     if (condiciones.includes('gastritis'))
-      mensajes.push({ texto: 'Con gastritis, el estómago vacío más de 3-4 horas puede aumentar la acidez. Registra tu desayuno pronto.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Con gastritis, el estómago vacío más de 3-4 horas puede aumentar la acidez. Registra tu desayuno pronto.', nivel: 'atencion' });
     else if (condiciones.includes('diabetes'))
-      mensajes.push({ texto: 'Saltarte el desayuno puede desestabilizar la glucosa durante el día. Procura desayunar antes de las 10 a.m.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Saltarte el desayuno puede desestabilizar la glucosa durante el día. Procura desayunar antes de las 10 a.m.', nivel: 'atencion' });
     else if (condiciones.includes('hipertension'))
-      mensajes.push({ texto: 'Un desayuno con potasio (banano, espinaca, yogur) contribuye a regular la presión desde temprano.', nivel: 'info' });
+      mensajes.push({ mensaje: 'Un desayuno con potasio (banano, espinaca, yogur) contribuye a regular la presión desde temprano.', nivel: 'info' });
     else if (esMayorAdulto)
-      mensajes.push({ texto: 'En adultos mayores el desayuno es clave para la glucosa matutina y la energía del día. Evita saltarlo.', nivel: 'advertencia' });
+      mensajes.push({ mensaje: 'En adultos mayores el desayuno es clave para la glucosa matutina y la energía del día. Evita saltarlo.', nivel: 'advertencia' });
     else
-      mensajes.push({ texto: 'Aún no registras desayuno. Un desayuno con proteína y fibra estabiliza la energía durante toda la mañana.', nivel: 'info' });
+      mensajes.push({ mensaje: 'Aún no registras desayuno. Un desayuno con proteína y fibra estabiliza la energía durante toda la mañana.', nivel: 'info' });
   }
 
   if (horaActual >= 15 && horaActual < 19 && !tieneAlmuerzo) {
-    mensajes.push({ texto: 'No registras almuerzo hoy. Saltarte la comida principal puede generar sobreconsumo en la noche.', nivel: 'advertencia' });
+    mensajes.push({ mensaje: 'No registras almuerzo hoy. Saltarte la comida principal puede generar sobreconsumo en la noche.', nivel: 'advertencia' });
     if (condiciones.includes('diabetes'))
-      mensajes.push({ texto: 'Omitir el almuerzo con diabetes puede causar hipoglucemia. Ten a mano un snack de emergencia.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Omitir el almuerzo con diabetes puede causar hipoglucemia. Ten a mano un snack de emergencia.', nivel: 'atencion' });
     if (esMayorAdulto)
-      mensajes.push({ texto: 'En adultos mayores, omitir el almuerzo puede provocar mareos y pérdida de concentración por hipoglucemia leve.', nivel: 'advertencia' });
+      mensajes.push({ mensaje: 'En adultos mayores, omitir el almuerzo puede provocar mareos y pérdida de concentración por hipoglucemia leve.', nivel: 'advertencia' });
   }
 
   if (horaActual >= 20 && horaActual < 24) {
     const msgCena = (imcCategoria === 'sobrepeso' || imcCategoria === 'obesidad')
       ? 'Para la cena, opta por proteína magra y verduras al vapor. Reduce los carbohidratos nocturnos — con tu perfil el cuerpo los almacena con mayor facilidad.'
       : 'Para la cena, opta por proteína magra y verduras. Evita carbohidratos de alto índice glucémico a esta hora.';
-    mensajes.push({ texto: msgCena, nivel: 'info' });
+    mensajes.push({ mensaje: msgCena, nivel: 'info' });
     if (condiciones.includes('diabetes'))
-      mensajes.push({ texto: 'De noche, la respuesta insulínica es menor. Prioriza proteínas y grasas saludables sobre carbohidratos.', nivel: 'advertencia' });
+      mensajes.push({ mensaje: 'De noche, la respuesta insulínica es menor. Prioriza proteínas y grasas saludables sobre carbohidratos.', nivel: 'advertencia' });
     if (condiciones.includes('gastritis'))
-      mensajes.push({ texto: 'Cena al menos 2 horas antes de acostarte para reducir la acidez nocturna y favorecer el descanso.', nivel: 'atencion' });
+      mensajes.push({ mensaje: 'Cena al menos 2 horas antes de acostarte para reducir la acidez nocturna y favorecer el descanso.', nivel: 'atencion' });
     if (condiciones.includes('sindrome-intestino'))
-      mensajes.push({ texto: 'Cena en ambiente tranquilo y sin prisa — el estrés nocturno agrava los síntomas del intestino irritable.', nivel: 'info' });
+      mensajes.push({ mensaje: 'Cena en ambiente tranquilo y sin prisa — el estrés nocturno agrava los síntomas del intestino irritable.', nivel: 'info' });
     if (condiciones.includes('colesterol-alto'))
-      mensajes.push({ texto: 'En la noche, evita grasas saturadas y frituras — el metabolismo lipídico es menos eficiente durante el sueño.', nivel: 'info' });
+      mensajes.push({ mensaje: 'En la noche, evita grasas saturadas y frituras — el metabolismo lipídico es menos eficiente durante el sueño.', nivel: 'info' });
     if (esMayorAdulto)
-      mensajes.push({ texto: 'Cena temprano y ligero (antes de las 8 p.m.) — la digestión nocturna es más lenta en adultos mayores y afecta la calidad del sueño.', nivel: 'info' });
+      mensajes.push({ mensaje: 'Cena temprano y ligero (antes de las 8 p.m.) — la digestión nocturna es más lenta en adultos mayores y afecta la calidad del sueño.', nivel: 'info' });
   }
 
   if (horaActual >= 22 || horaActual < 6) {
     const msgNocturno = imcCategoria === 'obesidad'
       ? 'El gasto calórico es mínimo de noche. Con tu perfil, las calorías a estas horas se almacenan casi en su totalidad como grasa visceral.'
       : 'A estas horas el gasto calórico es mínimo. Las comidas calóricas nocturnas se almacenan más fácilmente como grasa.';
-    mensajes.push({ texto: msgNocturno, nivel: 'advertencia' });
+    mensajes.push({ mensaje: msgNocturno, nivel: 'advertencia' });
   }
 
   return mensajes;

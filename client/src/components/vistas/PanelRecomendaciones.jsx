@@ -262,9 +262,9 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoReloj />Ahora mismo</h3>
           {contextoHorario.map(a => (
-            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+            <div key={`${a.nivel}-${a.mensaje}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
-              <p>{a.texto}</p>
+              <p>{a.mensaje}</p>
             </div>
           ))}
         </div>
@@ -274,7 +274,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
       {alertas.length > 0 && (
         <div className="rec-seccion">
           {alertas.map(a => (
-            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+            <div key={`${a.nivel}-${a.mensaje}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
               <p>{a.mensaje}</p>
             </div>
@@ -287,7 +287,7 @@ const PanelRecomendaciones = ({ versionFiltros = 0 }) => {
         <div className="rec-seccion">
           <h3 className="rec-sec-titulo"><IcoAlerta />Alertas nutricionales de hoy</h3>
           {alertasHoy.map(a => (
-            <div key={`${a.nivel}-${a.texto}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
+            <div key={`${a.nivel}-${a.mensaje}`} className={`rec-alerta rec-alerta--${COLOR_NIVEL[a.nivel] || 'azul'}`}>
               {iconAlerta(a.nivel)}
               <p>{a.mensaje}</p>
             </div>
