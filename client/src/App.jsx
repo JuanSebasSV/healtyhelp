@@ -321,9 +321,8 @@ useEffect(() => {
   useEffect(() => {
     if (isPreview) return;
     if (!user) {
-      const yaDecidio =
-        cookiesConsentidas() ||
-        sessionStorage.getItem(COOKIE_CONSENT_KEY) === "dismissed";
+      const yaAcepto = cookiesConsentidas();
+      const yaDecidio = yaAcepto;
       if (!yaDecidio) setMostrarCookies(true);
     } else {
       setMostrarCookies(false);

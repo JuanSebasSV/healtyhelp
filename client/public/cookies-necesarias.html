@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Healthy Help · Cookies necesarias</title>
+<link rel="icon" href="/vite.svg" type="image/svg+xml" />
+<style>
+  :root {
+    --verde-bosque: #1a4d2e;
+    --verde-hoja: #4f772d;
+    --verde-btn: #a7d588;
+    --verde-exito: #6fcf7c;
+    --verde-texto-claro: #b4dca0;
+    --verde-texto-oscuro: #d2ebc3;
+    --verde-menta: #6ee7b7;
+    --verde-progreso: #34d399;
+    --naranja: #f77f00;
+    --naranja-oscuro: #c2410c;
+    --bg-0: #050a06;
+    --bg-1: #0a1a0f;
+    --bg-2: #122617;
+    --ink: #f1f7ee;
+    --ink-mute: rgba(241, 247, 238, 0.72);
+    --ink-dim: rgba(241, 247, 238, 0.5);
+    --line: rgba(167, 213, 136, 0.18);
+    --line-strong: rgba(167, 213, 136, 0.35);
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--line);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg-0);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+    min-height: 100dvh;
+  }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(26, 77, 46, 0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 100%, rgba(79, 119, 45, 0.45) 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+  }
+
+  .grid {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 80%);
+    animation: gridFloat 24s linear infinite;
+  }
+
+  @keyframes gridFloat {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 64px 64px, 64px 64px; }
+  }
+
+  .orbs {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    animation: orbFloat 18s ease-in-out infinite;
+  }
+
+  .orb-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--verde-menta) 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+    animation-delay: 0s;
+  }
+
+  .orb-2 {
+    width: 460px;
+    height: 460px;
+    background: radial-gradient(circle, var(--verde-hoja) 0%, transparent 70%);
+    bottom: -15%;
+    right: -10%;
+    animation-delay: -6s;
+  }
+
+  .orb-3 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, var(--naranja) 0%, transparent 70%);
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.25;
+    animation-delay: -12s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.05); }
+    66% { transform: translate(-30px, 40px) scale(0.95); }
+  }
+
+  .orb-3 {
+    animation-name: orbFloatCenter;
+  }
+
+  @keyframes orbFloatCenter {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    33% { transform: translate(calc(-50% + 40px), calc(-50% - 30px)) scale(1.05); }
+    66% { transform: translate(calc(-50% - 30px), calc(-50% + 40px)) scale(0.95); }
+  }
+
+  main {
+    position: relative;
+    z-index: 10;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 580px;
+    background: rgba(10, 26, 15, 0.65);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--ink);
+    animation: cardEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.75rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--verde-texto-claro);
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--verde-exito) 0%, var(--verde-hoja) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-1);
+    box-shadow: 0 0 24px rgba(110, 231, 183, 0.35);
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 16px rgba(110, 231, 183, 0.3); }
+    50% { box-shadow: 0 0 28px rgba(110, 231, 183, 0.6); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    background: rgba(247, 127, 0, 0.12);
+    border: 1px solid rgba(247, 127, 0, 0.4);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #ffb066;
+    margin-bottom: 1rem;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--naranja);
+    animation: pulseDot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+
+  h1 {
+    margin: 0 0 0.85rem;
+    font-size: clamp(1.6rem, 5vw, 2.3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--ink) 0%, var(--verde-texto-oscuro) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  h1 .accent {
+    background: linear-gradient(135deg, var(--verde-btn) 0%, var(--verde-menta) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lead {
+    margin: 0 0 1.5rem;
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+    line-height: 1.6;
+    color: var(--ink-mute);
+  }
+
+  .section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--verde-btn);
+  }
+
+  .section-title svg {
+    flex-shrink: 0;
+  }
+
+  .features {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(167, 213, 136, 0.12);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  .feature:hover {
+    border-color: var(--line-strong);
+    background: rgba(167, 213, 136, 0.06);
+    transform: translateX(2px);
+  }
+
+  .feature-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(167, 213, 136, 0.12);
+    border: 1px solid rgba(167, 213, 136, 0.25);
+    color: var(--verde-btn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-content strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--ink);
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+  }
+
+  .feature-content span {
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+    line-height: 1.45;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .btn {
+    flex: 1 1 auto;
+    min-width: 180px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.1s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn--primary {
+    background: linear-gradient(135deg, var(--verde-exito) 0%, var(--verde-hoja) 100%);
+    color: var(--bg-1);
+    box-shadow:
+      0 4px 16px rgba(110, 231, 183, 0.35),
+      0 0 0 1px rgba(110, 231, 183, 0.5);
+  }
+
+  .btn--primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .btn--primary:hover {
+    background: linear-gradient(135deg, var(--verde-menta) 0%, var(--verde-exito) 100%);
+    box-shadow:
+      0 6px 24px rgba(110, 231, 183, 0.5),
+      0 0 0 1px rgba(110, 231, 183, 0.7);
+  }
+
+  .btn--primary:hover::before { opacity: 1; }
+
+  .btn--ghost {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink);
+    border-color: rgba(241, 247, 238, 0.2);
+  }
+
+  .btn--ghost:hover {
+    background: rgba(167, 213, 136, 0.1);
+    border-color: rgba(167, 213, 136, 0.5);
+  }
+
+  .footer-note {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    text-align: center;
+  }
+
+  .footer-note strong { color: var(--ink-mute); }
+
+  @media (max-width: 520px) {
+    main { padding: 1rem 0.75rem; align-items: flex-start; padding-top: 3vh; }
+    .card { padding: 1.4rem 1.2rem; border-radius: 18px; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; }
+    h1 { font-size: 1.5rem; }
+    .lead { font-size: 0.92rem; }
+    .feature { padding: 0.7rem 0.85rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <main>
+    <article class="card">
+      <header class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+          </svg>
+        </span>
+        Healthy Help
+      </header>
+
+      <div class="badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        Cookies necesarias
+      </div>
+
+      <h1>
+        Para funcionar, Healthy Help <br class="hide-mobile" />
+        <span class="accent">necesita guardar cookies</span> en tu navegador.
+      </h1>
+
+      <p class="lead">
+        Si rechazás o cerrás este aviso te llevamos a esta página para explicarte por qué.
+        Sin esas cookies la aplicación no puede recordar tus preferencias ni mantener tu sesión iniciada.
+      </p>
+
+      <section class="section">
+        <h2 class="section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          ¿Qué guardamos?
+        </h2>
+        <ul class="features">
+          <li class="feature">
+            <span class="feature-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <span class="feature-content">
+              <strong>Tu sesión</strong>
+              <span>Un token cifrado que te mantiene logueado sin pedir contraseña cada vez.</span>
+            </span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="15" r="3"/>
+              </svg>
+            </span>
+            <span class="feature-content">
+              <strong>Tus preferencias</strong>
+              <span>Filtros de dieta, condiciones de salud, términos aceptados, modo oscuro.</span>
+            </span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+              </svg>
+            </span>
+            <span class="feature-content">
+              <strong>Tu consentimiento</strong>
+              <span>Marcamos que ya aceptaste esta política para no volver a preguntarte.</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <div class="actions">
+        <button type="button" id="back-btn" class="btn btn--primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 14L4 9l5-5"/>
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/>
+          </svg>
+          Volver y aceptar cookies
+        </button>
+        <a href="/" class="btn btn--ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Ir al inicio
+        </a>
+      </div>
+
+      <p class="footer-note">
+        <strong>Tu privacidad importa.</strong> No vendemos tus datos ni usamos cookies de terceros para rastrearte.
+        Consultá nuestra <a href="/" style="color: var(--verde-btn); text-decoration: underline;">política completa</a> cuando quieras.
+      </p>
+    </article>
+  </main>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('back-btn');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        window.location.href = '/';
+      });
+    })();
+  </script>
+</body>
+</html>
